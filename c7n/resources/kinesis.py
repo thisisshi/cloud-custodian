@@ -30,7 +30,7 @@ class KinesisStream(QueryResourceManager):
             'describe_stream', 'StreamName', None, 'StreamDescription')
         name = id = 'StreamName'
         filter_name = None
-        filter_type = 'list' 
+        filter_type = 'list'
         date = None
         dimension = 'StreamName'
 
