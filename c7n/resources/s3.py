@@ -161,6 +161,11 @@ def assemble_bucket(item):
                 methods.append((m, k, default, select))
                 continue
             else:
+                if e.response['Error']['Code'] == 'AccessDenied':
+                    if 'DeniedActions' in b:
+                        b['DeniedActions'].append(m)
+                    else:
+                        b['DeniedActions'] = [m]
                 log.warning(
                     "Bucket:%s unable to invoke method:%s error:%s ",
                     b['Name'], m, e.response['Error']['Message'])
