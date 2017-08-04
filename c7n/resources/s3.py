@@ -520,6 +520,40 @@ class MissingPolicyStatementFilter(Filter):
         return True
 
 
+@filters.register('no-access')
+class AccessDeniedFilter(Filter):
+    """Find buckets that Custodian can not access.
+
+    :example:
+
+        .. code-block: yaml
+
+            policies:
+              - name: s3-bucket-not-accessible
+                resource: s3
+                filters:
+                  - type: no-access
+                    actions:
+                        - get_bucket_tagging
+                        - get_bucket_location
+    """
+    schema = type_schema(
+        'no-access',
+        actions={'type': 'array', 'items': {'type': 'string'}})
+
+    def process(self, buckets, event=None):
+        return list(filter(None, map(self.process_bucket, buckets)))
+
+    def process_bucket(self, b):
+        if b.get('DeniedActions'):
+            denied_actions = list(b.get('DeniedActions'))
+            actions = list(self.data.get('actions', []))
+            matched_actions = [a for a in actions if a in denied_actions]
+            if set(matched_actions) == set(actions):
+                return b
+        return None
+
+
 @actions.register('no-op')
 class NoOp(BucketActionBase):
 
