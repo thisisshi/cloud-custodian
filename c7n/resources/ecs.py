@@ -298,6 +298,7 @@ class DeleteTaskDefinition(BaseAction):
                         'Message'] != 'The specified task definition does not exist.':
                     raise
 
+
 @resources.register('ecs-container-instance')
 class ContainerInstance(query.ChildResourceManager):
 
