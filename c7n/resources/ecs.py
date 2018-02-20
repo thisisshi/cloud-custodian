@@ -326,12 +326,12 @@ class ECSContainerInstanceDescribeSource(ECSClusterResourceDescribeSource):
         results = []
         for service_set in chunks(container_instances, self.manager.chunk_size):
             self.manager.log.info(container_instances)
-            r = client.describe_container_instances(
-                    cluster=cluster_id,
+            r = client.describe_container_instances(cluster=cluster_id,
                     containerInstances=container_instances).get('containerInstances', [])
-            # Many Container Instance API calls require the cluster_id, adding as a 
+            # Many Container Instance API calls require the cluster_id, adding as a
             # custodian specific key in the resource
-            for i in r: i['c7n:cluster'] = cluster_id
+            for i in r:
+                i['c7n:cluster'] = cluster_id
             results.extend(r)
         return results
 
@@ -342,7 +342,7 @@ class UpdateState(BaseAction):
 
     :example:
 
-    .. code0-block:: yaml
+    .. code-block:: yaml
 
         policies:
             - name: drain-container-instances
@@ -352,6 +352,7 @@ class UpdateState(BaseAction):
                   state: DRAINING
     """
     schema = type_schema('update-state', state={"type": "string"})
+    permissions = ('ecs:UpdateContainerInstancesState',)
 
     def process(self, resources):
         cluster_map = group_by(resources, 'c7n:cluster')
@@ -370,10 +371,10 @@ class UpdateState(BaseAction):
                 client.update_container_instances_state(
                     cluster = cluster,
                     containerInstances = service_set,
-                    status = self.data.get('state')
-                    )
+                    status = self.data.get('state'))
             except ClientError as e:
                 self.manager.log.error('Error in setting Container Instance State: %s' % e)
+
 
 @ContainerInstance.action_registry.register('update-agent')
 class UpdateAgent(BaseAction):
@@ -381,12 +382,13 @@ class UpdateAgent(BaseAction):
     """
 
     schema = type_schema('update-agent')
+    permissions = ('ecs:UpdateContainerAgent',)
 
     def process(self, resources):
         for r in resources:
             results = self.process_instance(
-                    r.get('c7n:cluster'),
-                    r.get('containerInstanceArn'))
+                r.get('c7n:cluster'),
+                r.get('containerInstanceArn'))
             return results
 
     def process_instance(self, cluster, instance):
@@ -394,7 +396,6 @@ class UpdateAgent(BaseAction):
         try:
             client.update_container_agent(
                 cluster = cluster,
-                containerInstance = instance
-                )
+                containerInstance = instance)
         except ClientError as e:
             self.manager.log.error('Error in updating Container Instance Agent: %s' % e)
