@@ -32,7 +32,7 @@ from c7n import ipaddress
 from c7n.executor import ThreadPoolExecutor
 from c7n.registry import PluginRegistry
 from c7n.resolver import ValuesFrom
-from c7n.utils import set_annotation, type_schema, parse_cidr
+from c7n.utils import set_annotation, type_schema, parse_cidr, format_string_values
 
 
 class FilterValidationError(Exception):
@@ -269,6 +269,7 @@ class ValueFilter(Filter):
                 'age', 'integer', 'expiration', 'normalize', 'size',
                 'cidr', 'cidr_size', 'swap', 'resource_count', 'expr']},
             'default': {'type': 'object'},
+            'expr': {'type': 'boolean'},
             'value_from': ValuesFrom.schema,
             'value': {'oneOf': [
                 {'type': 'array'},
@@ -375,6 +376,13 @@ class ValueFilter(Filter):
         return r
 
     def match(self, i):
+        if self.data.get('expr', False):
+            config_args = {
+                'account_id': self.manager.config.account_id,
+                'region': self.manager.config.region
+            }
+            self.k = self.data.get('key')
+            self.v = format_string_values(self.data.get('value'), **config_args)
         if self.v is None and len(self.data) == 1:
             [(self.k, self.v)] = self.data.items()
         elif self.v is None:
