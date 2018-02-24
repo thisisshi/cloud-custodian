@@ -30,7 +30,6 @@ class SessionFactory(object):
         self.region = region
         self.profile = profile
         self.assume_role = assume_role
-        self.role_session_name = role_session_name
         self.external_id = external_id
         if role_session_name:
             self.role_session_name = role_session_name
