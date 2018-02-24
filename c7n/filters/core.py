@@ -286,7 +286,7 @@ class ValueFilter(Filter):
                 'account_id': manager.config.account_id,
                 'region': manager.config.region
             }
-        except AttributionError:
+        except AttributeError:
             pass
         self.data = format_string_values(data, **config_args)
         super(ValueFilter, self).__init__(data, manager)
