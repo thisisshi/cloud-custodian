@@ -691,6 +691,8 @@ class Policy(object):
     def __init__(self, data, options, session_factory=None):
         self.data = data
         self.options = options
+        if not hasattr(options, 'role_session_name'):
+            self.options.role_session_name = 'CloudCustodian'
         assert "name" in self.data
         if session_factory is None:
             session_factory = SessionFactory(
