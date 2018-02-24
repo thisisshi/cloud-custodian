@@ -281,10 +281,13 @@ class ValueFilter(Filter):
     annotate = True
 
     def __init__(self, data, manager=None):
-        config_args = {
-            'account_id': manager.config.account_id,
-            'region': manager.config.region
-        }
+        try:
+            config_args = {
+                'account_id': manager.config.account_id,
+                'region': manager.config.region
+            }
+        except AttributionError:
+            pass
         self.data = format_string_values(data, **config_args)
         super(ValueFilter, self).__init__(data, manager)
         self.expr = {}
