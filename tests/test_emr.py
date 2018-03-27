@@ -17,8 +17,9 @@ import unittest
 
 from c7n.resources import emr
 from c7n.resources.emr import actions, QueryFilter
+from c7n.utils import Bag, Config
 
-from .common import BaseTest, Bag, Config
+from .common import BaseTest
 
 
 class TestEMR(BaseTest):

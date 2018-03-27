@@ -22,8 +22,7 @@ import os
 
 from c7n.ctx import ExecutionContext
 from c7n.output import S3Output
-
-from .common import Config, Bag
+from c7n.utils import Config, Bag
 
 
 class S3OutputTest(unittest.TestCase):

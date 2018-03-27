@@ -14,10 +14,11 @@
 
 import time
 
-from .common import BaseTest, Bag
+from .common import BaseTest
 
 from botocore.vendored import requests
 from c7n.filters.locked import SignatureAuth, Locked
+from c7n.utils import Bag
 
 def noop(*args):
     return
