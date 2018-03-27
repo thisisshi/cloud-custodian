@@ -13,6 +13,7 @@
 # limitations under the License.
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from argparse import Namespace
 from collections import Counter, defaultdict
 from datetime import timedelta, datetime
 from functools import wraps
@@ -190,7 +191,7 @@ def validate(options):
             ))
         used_policy_names = used_policy_names.union(conf_policy_names)
         if not errors:
-            null_config = Bag(dryrun=True, log_group=None, cache=None, assume_role="na")
+            null_config = set_null_config()
             for p in data.get('policies', ()):
                 try:
                     policy = Policy(p, null_config, Bag())
@@ -208,6 +209,16 @@ def validate(options):
             log.error("%s" % e)
     if errors:
         sys.exit(1)
+
+def set_null_config():
+    null_config = Namespace()
+    null_config.dryrun = True
+    null_config.log_group = None
+    null_config.cache = None
+    null_config.assume_role = "na"
+    null_config.account_id = "na"
+    null_config.region = "na"
+    return null_config
 
 
 # This subcommand is disabled in cli.py.
