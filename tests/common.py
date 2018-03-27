@@ -103,13 +103,14 @@ class BaseTest(PillTest):
                 raise errors[0]
 
         config = config or {}
-        config['account_id'] = ACCOUNT_ID
         if not output_dir:
             temp_dir = self.get_temp_dir()
             config['output_dir'] = temp_dir
         if cache:
             config['cache'] = os.path.join(temp_dir, 'c7n.cache')
             config['cache_period'] = 300
+        if not config.get('account_id'):
+            config['account_id'] = ACCOUNT_ID
         conf = Config.empty(**config)
         p = policy.Policy(data, conf, session_factory)
         p.validate()
