@@ -82,6 +82,7 @@ class Bag(dict):
         except KeyError:
             raise AttributeError(k)
 
+
 class Config(Bag):
 
     @classmethod
@@ -103,6 +104,7 @@ class Config(Bag):
             'dryrun': False})
         d.update(kw)
         return cls(d)
+
 
 def load_file(path, format=None, vars=None):
     if format is None:
