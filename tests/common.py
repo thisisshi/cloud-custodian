@@ -31,7 +31,7 @@ from c7n.filters import revisions
 from c7n.schema import generate, validate as schema_validate
 from c7n.ctx import ExecutionContext
 from c7n.resources import load_resources
-from c7n.utils import CONN_CACHE
+from c7n.utils import Bag, Config, CONN_CACHE
 
 from .zpill import PillTest
 
@@ -87,7 +87,7 @@ class BaseTest(PillTest):
     def get_context(self, config=None, session_factory=None, policy=None):
         if config is None:
             self.context_output_dir = self.get_temp_dir()
-            config = Config.empty(output_dir=self.context_output_dir)
+            config = Config.empty(output_dir=self.context_output_dir, account_id=ACCOUNT_ID)
         ctx = ExecutionContext(
             session_factory,
             policy or Bag({'name': 'test-policy'}),
@@ -103,6 +103,7 @@ class BaseTest(PillTest):
                 raise errors[0]
 
         config = config or {}
+        config['account_id'] = ACCOUNT_ID
         if not output_dir:
             temp_dir = self.get_temp_dir()
             config['output_dir'] = temp_dir
@@ -117,9 +118,10 @@ class BaseTest(PillTest):
     def load_policy_set(self, data, config=None):
         filename = self.write_policy_file(data)
         if config:
+            config['account_id'] = ACCOUNT_ID
             e = Config.empty(**config)
         else:
-            e = Config.empty()
+            e = Config.empty(account_id=ACCOUNT_ID)
         return policy.load(e, filename)
 
     def patch(self, obj, attr, new):
@@ -287,38 +289,6 @@ def load_data(file_name, state=None, **kw):
 
 def instance(state=None, file='ec2-instance.json', **kw):
     return load_data(file, state, **kw)
-
-
-class Bag(dict):
-
-    def __getattr__(self, k):
-        try:
-            return self[k]
-        except KeyError:
-            raise AttributeError(k)
-
-
-class Config(Bag):
-
-    @classmethod
-    def empty(cls, **kw):
-        region = os.environ.get('AWS_DEFAULT_REGION', "us-east-1")
-        d = {}
-        d.update({
-            'region': region,
-            'regions': [region],
-            'cache': '',
-            'profile': None,
-            'account_id': ACCOUNT_ID,
-            'assume_role': None,
-            'external_id': None,
-            'log_group': None,
-            'metrics_enabled': False,
-            'output_dir': 's3://test-example/foo',
-            'cache_period': 0,
-            'dryrun': False})
-        d.update(kw)
-        return cls(d)
 
 
 class Instance(Bag):

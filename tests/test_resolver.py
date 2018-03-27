@@ -20,10 +20,11 @@ import os
 import tempfile
 from six import binary_type
 
-from .common import Bag, BaseTest, Config, ACCOUNT_ID
+from .common import BaseTest, ACCOUNT_ID
 from .test_s3 import destroyBucket
 
 from c7n.resolver import ValuesFrom, URIResolver
+from c7n.utils import Bag, Config
 
 
 class FakeCache(object):
@@ -94,7 +95,7 @@ class UrlValueTest(BaseTest):
         os.chdir(self.old_dir)
 
     def get_values_from(self, data, content):
-        config = Config.empty()
+        config = Config.empty(account_id=ACCOUNT_ID)
         mgr = Bag({'session_factory': None, '_cache': None, 'config': config})
         values = ValuesFrom(data, mgr)
         values.resolver = FakeResolver(content)
