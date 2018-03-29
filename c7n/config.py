@@ -1,0 +1,69 @@
+# Copyright 2015-2018 Capital One Services, LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+import logging
+import os
+import uuid
+
+from c7n.utils import get_account_id_from_sts
+
+logging.root.setLevel(logging.DEBUG)
+log = logging.getLogger('custodian.config')
+
+
+class Bag(dict):
+    def __getattr__(self, k):
+        try:
+            return self[k]
+        except KeyError:
+            raise AttributeError(k)
+
+
+class Config(Bag):
+
+    @classmethod
+    def empty(cls, **kw):
+        account_id = None
+        if 'AWS_LAMBDA_FUNCTION_NAME' in os.environ:
+            try:
+                import boto3
+                session = boto3.Session()
+                account_id = get_account_id_from_sts(session)
+            except Exception:
+                pass
+
+        d = {}
+        d.update({
+            'region': os.environ.get('AWS_DEFAULT_REGION'),
+            'cache': '',
+            'profile': None,
+            'account_id': account_id,
+            'assume_role': None,
+            'external_id': None,
+            'log_group': None,
+            'metrics_enabled': True,
+            'output_dir': os.environ.get(
+                'C7N_OUTPUT_DIR',
+                '/tmp/' + str(uuid.uuid4())),
+            'cache_period': 0,
+            'dryrun': False})
+        d.update(kw)
+        if not os.path.exists(d['output_dir']):
+            try:
+                os.mkdir(d['output_dir'])
+            except OSError as error:
+                log.warning("Unable to make output directory: {}".format(error))
+
+        return cls(d)
