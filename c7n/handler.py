@@ -26,7 +26,7 @@ import json
 
 from c7n.policy import PolicyCollection
 from c7n.resources import load_resources
-from c7n.utils import format_event
+from c7n.utils import format_event, get_account_id_from_sts
 from c7n.config import Config
 
 
