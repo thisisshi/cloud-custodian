@@ -27,57 +27,12 @@ import json
 from c7n.policy import PolicyCollection
 from c7n.resources import load_resources
 from c7n.utils import format_event, get_account_id_from_sts
+from c7n.config import Config
 
 
 logging.root.setLevel(logging.DEBUG)
 logging.getLogger('botocore').setLevel(logging.WARNING)
 log = logging.getLogger('custodian.lambda')
-
-
-# TODO move me / we should load config options directly from policy config
-class Config(dict):
-
-    def __getattr__(self, k):
-        try:
-            return self[k]
-        except KeyError:
-            raise AttributeError(k)
-
-    @classmethod
-    def empty(cls, **kw):
-        account_id = None
-        if 'AWS_LAMBDA_FUNCTION_NAME' in os.environ:
-            try:
-                import boto3
-                session = boto3.Session()
-                account_id = get_account_id_from_sts(session)
-            except Exception:
-                pass
-
-        d = {}
-        d.update({
-            'region': os.environ.get('AWS_DEFAULT_REGION'),
-            'cache': '',
-            'profile': None,
-            'account_id': account_id,
-            'assume_role': None,
-            'external_id': None,
-            'log_group': None,
-            'metrics_enabled': True,
-            'output_dir': os.environ.get(
-                'C7N_OUTPUT_DIR',
-                '/tmp/' + str(uuid.uuid4())),
-            'cache_period': 0,
-            'dryrun': False})
-        d.update(kw)
-        if not os.path.exists(d['output_dir']):
-            try:
-                os.mkdir(d['output_dir'])
-            except OSError as error:
-                log.warning("Unable to make output directory: {}".format(error))
-
-        return cls(d)
-
 
 def dispatch_event(event, context):
 

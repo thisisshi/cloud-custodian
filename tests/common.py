@@ -22,6 +22,7 @@ import shutil
 import tempfile
 import unittest
 import uuid
+from functools import partial
 
 import six
 import yaml
@@ -31,7 +32,8 @@ from c7n.filters import revisions
 from c7n.schema import generate, validate as schema_validate
 from c7n.ctx import ExecutionContext
 from c7n.resources import load_resources
-from c7n.utils import Bag, Config, CONN_CACHE
+from c7n.utils import CONN_CACHE
+from c7n.config import Bag, Config
 
 from .zpill import PillTest
 
@@ -50,6 +52,9 @@ C7N_SCHEMA = generate()
 
 skip_if_not_validating = unittest.skipIf(
     not C7N_VALIDATE, reason='We are not validating schemas.')
+
+config_args = {"metrics_enabled": False, "account_id":ACCOUNT_ID}
+TestConfig = partial(Config.empty, **config_args)
 
 # Set this so that if we run nose directly the tests will not fail
 if 'AWS_DEFAULT_REGION' not in os.environ:
@@ -87,7 +92,7 @@ class BaseTest(PillTest):
     def get_context(self, config=None, session_factory=None, policy=None):
         if config is None:
             self.context_output_dir = self.get_temp_dir()
-            config = Config.empty(output_dir=self.context_output_dir, account_id=ACCOUNT_ID)
+            config = TestConfig(output_dir=self.context_output_dir)
         ctx = ExecutionContext(
             session_factory,
             policy or Bag({'name': 'test-policy'}),
@@ -109,9 +114,7 @@ class BaseTest(PillTest):
         if cache:
             config['cache'] = os.path.join(temp_dir, 'c7n.cache')
             config['cache_period'] = 300
-        if not config.get('account_id'):
-            config['account_id'] = ACCOUNT_ID
-        conf = Config.empty(**config)
+        conf = TestConfig(**config)
         p = policy.Policy(data, conf, session_factory)
         p.validate()
         return p
@@ -120,9 +123,9 @@ class BaseTest(PillTest):
         filename = self.write_policy_file(data)
         if config:
             config['account_id'] = ACCOUNT_ID
-            e = Config.empty(**config)
+            e = TestConfig(**config)
         else:
-            e = Config.empty(account_id=ACCOUNT_ID)
+            e = TestConfig(account_id=ACCOUNT_ID)
         return policy.load(e, filename)
 
     def patch(self, obj, attr, new):
