@@ -19,6 +19,8 @@ an event.
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import os
+import uuid
 import logging
 import json
 
@@ -52,8 +54,22 @@ def dispatch_event(event, context):
         return False
 
     # TODO. This enshrines an assumption of a single policy per lambda.
+    account_id = None
+    try:
+        import boto3
+        session = boto3.Session()
+        account_id = get_account_id_from_sts(session)
+    except Exception:
+        pass
+
+    output_dir = os.environ.get(
+        'C7N_OUTPUT_DIR',
+        '/tmp/' + str(uuid.uuid4()))
+
     options_overrides = policy_config[
         'policies'][0].get('mode', {}).get('execution-options', {})
+    options_overrides['account_id'] = account_id
+    options_overrides['output_dir'] = output_dir
     options = Config.empty(**options_overrides)
 
     load_resources()

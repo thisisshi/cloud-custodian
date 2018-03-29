@@ -13,13 +13,9 @@
 # limitations under the License.
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import logging
 import os
-import uuid
+import logging
 
-from c7n.utils import get_account_id_from_sts
-
-logging.root.setLevel(logging.DEBUG)
 log = logging.getLogger('custodian.config')
 
 
@@ -35,28 +31,17 @@ class Config(Bag):
 
     @classmethod
     def empty(cls, **kw):
-        account_id = None
-        if 'AWS_LAMBDA_FUNCTION_NAME' in os.environ:
-            try:
-                import boto3
-                session = boto3.Session()
-                account_id = get_account_id_from_sts(session)
-            except Exception:
-                pass
-
         d = {}
         d.update({
-            'region': os.environ.get('AWS_DEFAULT_REGION'),
+            'region': os.environ.get('AWS_DEFAULT_REGION', 'us-east-1'),
             'cache': '',
             'profile': None,
-            'account_id': account_id,
+            'account_id': None,
             'assume_role': None,
             'external_id': None,
             'log_group': None,
-            'metrics_enabled': True,
-            'output_dir': os.environ.get(
-                'C7N_OUTPUT_DIR',
-                '/tmp/' + str(uuid.uuid4())),
+            'metrics_enabled': False,
+            'output_dir': '',
             'cache_period': 0,
             'dryrun': False})
         d.update(kw)
