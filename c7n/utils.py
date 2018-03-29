@@ -74,7 +74,6 @@ class VarsSubstitutionError(Exception):
     pass
 
 
-
 def load_file(path, format=None, vars=None):
     if format is None:
         format = 'yaml'
