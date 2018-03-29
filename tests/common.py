@@ -53,7 +53,7 @@ C7N_SCHEMA = generate()
 skip_if_not_validating = unittest.skipIf(
     not C7N_VALIDATE, reason='We are not validating schemas.')
 
-config_args = {"metrics_enabled": False, "account_id":ACCOUNT_ID}
+config_args = {"metrics_enabled": False, "account_id":ACCOUNT_ID, "region": "us-east-1"}
 TestConfig = partial(Config.empty, **config_args)
 
 # Set this so that if we run nose directly the tests will not fail

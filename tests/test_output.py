@@ -22,7 +22,8 @@ import os
 
 from c7n.ctx import ExecutionContext
 from c7n.output import S3Output
-from c7n.utils import Config, Bag
+
+from .common import Bag, TestConfig as Config
 
 
 class S3OutputTest(unittest.TestCase):
@@ -46,7 +47,7 @@ class S3OutputTest(unittest.TestCase):
             ExecutionContext(
                 None,
                 Bag(name="xyz"),
-                Config.empty(output_dir="s3://cloud-custodian/policies")))
+                Config(output_dir="s3://cloud-custodian/policies")))
         self.addCleanup(shutil.rmtree, output.root_dir)
 
         return output

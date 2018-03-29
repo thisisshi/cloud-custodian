@@ -17,9 +17,8 @@ import unittest
 
 from c7n.resources import emr
 from c7n.resources.emr import actions, QueryFilter
-from c7n.utils import Bag, Config
 
-from .common import BaseTest
+from .common import BaseTest, Bag, TestConfig as Config
 
 
 class TestEMR(BaseTest):
@@ -31,7 +30,7 @@ class TestEMR(BaseTest):
         ctx = Bag(
             session_factory=session_factory,
             log_dir='',
-            options=Config.empty())
+            options=Config())
 
         mgr = emr.EMRCluster(ctx, {})
         resources = mgr.get_resources(["j-1EJMJNTXC63JW"])
@@ -44,7 +43,7 @@ class TestEMR(BaseTest):
         ctx = Bag(
             session_factory=session_factory,
             log_dir='',
-            options=Config.empty())
+            options=Config())
 
         query = {
             'query': [

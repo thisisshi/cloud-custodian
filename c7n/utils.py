@@ -74,37 +74,6 @@ class VarsSubstitutionError(Exception):
     pass
 
 
-class Bag(dict):
-
-    def __getattr__(self, k):
-        try:
-            return self[k]
-        except KeyError:
-            raise AttributeError(k)
-
-
-class Config(Bag):
-
-    @classmethod
-    def empty(cls, **kw):
-        region = os.environ.get('AWS_DEFAULT_REGION', "us-east-1")
-        d = {}
-        d.update({
-            'region': region,
-            'regions': [region],
-            'cache': '',
-            'profile': None,
-            'account_id': 'na',
-            'assume_role': None,
-            'external_id': None,
-            'log_group': None,
-            'metrics_enabled': False,
-            'output_dir': 'na',
-            'cache_period': 0,
-            'dryrun': False})
-        d.update(kw)
-        return cls(d)
-
 
 def load_file(path, format=None, vars=None):
     if format is None:

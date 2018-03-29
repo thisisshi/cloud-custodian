@@ -33,8 +33,7 @@ from c7n.mu import (
     PythonPackageArchive, CloudWatchLogSubscription, SNSSubscription)
 from c7n.policy import Policy
 from c7n.ufuncs import logsub
-from c7n.utils import Bag, Config
-from .common import BaseTest, event_data, functional
+from .common import BaseTest, event_data, functional, Bag, TestConfig as Config
 from .data import helloworld
 
 
@@ -96,7 +95,7 @@ class PolicyLambdaProvision(BaseTest):
             'resource': 'security-group',
             'name': 'sg-modified',
             'mode': {'type': 'config-rule'},
-        }, Config.empty())
+        }, Config())
         pl = PolicyLambda(p)
         mgr = LambdaManager(session_factory)
         result = mgr.publish(pl, 'Dev', role=ROLE)
@@ -207,7 +206,7 @@ class PolicyLambdaProvision(BaseTest):
                 {'type': 'missing-policy-statement',
                  'statement_ids': ['RequireEncryptedPutObject']}],
             'actions': ['no-op']
-        }, Config.empty())
+        }, Config())
         pl = PolicyLambda(p)
         mgr = LambdaManager(session_factory)
         result = mgr.publish(pl, 'Dev', role=ROLE)
@@ -229,7 +228,7 @@ class PolicyLambdaProvision(BaseTest):
                 {'type': 'missing-policy-statement',
                  'statement_ids': ['RequireEncryptedPutObject']}],
             'actions': ['no-op']
-        }, Config.empty())
+        }, Config())
 
         output = self.capture_logging('custodian.lambda', level=logging.DEBUG)
         result2 = mgr.publish(PolicyLambda(p), 'Dev', role=ROLE)
@@ -261,7 +260,7 @@ class PolicyLambdaProvision(BaseTest):
                 {'type': 'missing-policy-statement',
                  'statement_ids': ['RequireEncryptedPutObject']}],
             'actions': ['no-op']
-        }, Config.empty())
+        }, Config())
         pl = PolicyLambda(p)
         mgr = LambdaManager(session_factory)
         self.addCleanup(mgr.remove, pl)
@@ -295,7 +294,7 @@ class PolicyLambdaProvision(BaseTest):
                 'type': 'cloudtrail',
                 'events': ['CreateBucket'],
                 },
-            'actions': ['no-op']}, Config.empty())
+            'actions': ['no-op']}, Config())
         pl = PolicyLambda(p)
         mgr = LambdaManager(session_factory)
         end = datetime.utcnow()
@@ -314,7 +313,7 @@ class PolicyLambdaProvision(BaseTest):
             'mode': {
                 'type': 'ec2-instance-state',
                 'events': ['pending']}
-        }, Config.empty())
+        }, Config())
         pl = PolicyLambda(p)
         mgr = LambdaManager(session_factory)
         self.addCleanup(mgr.remove, pl)
@@ -350,7 +349,7 @@ class PolicyLambdaProvision(BaseTest):
             'mode': {
                 'type': 'asg-instance-state',
                 'events': ['launch-failure']}
-        }, Config.empty())
+        }, Config())
         pl = PolicyLambda(p)
         mgr = LambdaManager(session_factory)
         self.addCleanup(mgr.remove, pl)
@@ -385,7 +384,7 @@ class PolicyLambdaProvision(BaseTest):
                 'type': 'periodic',
                 'schedule': 'rate(1 day)'
                 }
-        }, Config.empty())
+        }, Config())
 
         pl = PolicyLambda(p)
         mgr = LambdaManager(session_factory)
@@ -423,7 +422,7 @@ class PolicyLambdaProvision(BaseTest):
             'name': 'hello-world',
             'actions': ['no-op'],
             'mode': mode,
-        }, Config.empty())
+        }, Config())
         pl = PolicyLambda(p)
         mgr = LambdaManager(session_factory)
         def cleanup():
@@ -452,7 +451,7 @@ class PolicyLambdaProvision(BaseTest):
             'name': 'hello-world',
             'actions': ['no-op'],
             'mode': mode
-        }, Config.empty())
+        }, Config())
         pl = PolicyLambda(p)
         return mgr.publish(pl)
 
@@ -532,7 +531,7 @@ class PolicyLambdaProvision(BaseTest):
                 'type': 'cloudtrail',
                 'packages': ['boto3', 'botocore'],
                 'events': ['CreateBucket'],
-                }}, Config.empty())
+                }}, Config())
         pl = PolicyLambda(p)
         pl.archive.close()
         self.assertTrue('boto3/utils.py' in pl.archive.get_filenames())

@@ -16,8 +16,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from c7n.ctx import ExecutionContext
 from c7n.resources.ec2 import EC2
 from c7n.tags import Tag
-from c7n.utils import Bag, Config
-from .common import BaseTest, instance
+from .common import BaseTest, instance, Bag, TestConfig as Config
 
 
 class TestEC2Manager(BaseTest):
@@ -26,7 +25,7 @@ class TestEC2Manager(BaseTest):
         ctx = ExecutionContext(
             session_factory,
             Bag({'name':'test-policy'}),
-            config or Config.empty())
+            config or Config())
         return EC2(ctx, data)
 
     def test_manager(self):

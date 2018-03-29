@@ -24,7 +24,7 @@ from collections import OrderedDict
 
 from botocore.exceptions import ClientError
 import boto3
-from .common import BaseTest, event_data
+from .common import BaseTest, event_data, TestConfig as Config
 
 from c7n.executor import MainThreadExecutor
 from c7n.filters import FilterValidationError
@@ -305,7 +305,7 @@ class RDSTest(BaseTest):
             'actions': [
                 {'type': 'restore',
                  'restore_options': {'DBInstanceIdentifier': instance_id}}]
-                }, session_factory=session_factory)
+                }, Config(region='us-east-2'), session_factory=session_factory)
         resources = p.run()
 
         self.assertEqual(len(resources), 1)
@@ -744,7 +744,7 @@ class RDSSnapshotTest(BaseTest):
              'actions': [{
                  'type': 'region-copy',
                  'target_region': 'us-east-2'}]},
-            session_factory=factory)
+            Config(region='us-east-2'), session_factory=factory)
         resources = p.run()
         self.assertFalse([r for r in resources if 'c7n:CopiedSnapshot' in r])
         self.assertIn('Source and destination region are the same',

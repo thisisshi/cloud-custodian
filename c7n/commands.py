@@ -30,7 +30,8 @@ import yaml
 from c7n.provider import clouds
 from c7n.policy import Policy, PolicyCollection, load as policy_load
 from c7n.reports import report as do_report
-from c7n.utils import Bag, Config, dumps, load_file
+from c7n.utils import dumps, load_file
+from c7n.config import Bag, Config
 from c7n import provider
 from c7n.resources import load_resources
 from c7n import schema

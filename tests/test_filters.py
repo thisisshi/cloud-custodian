@@ -20,8 +20,8 @@ import unittest
 
 from c7n import filters as base_filters
 from c7n.resources.ec2 import filters
-from c7n.utils import annotation, Bag
-from .common import instance, event_data
+from c7n.utils import annotation
+from .common import instance, event_data, Bag
 
 
 class BaseFilterTest(unittest.TestCase):
