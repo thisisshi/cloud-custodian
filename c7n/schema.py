@@ -31,7 +31,7 @@ from collections import Counter
 import json
 import logging
 
-from jsonschema import Draft4Validator as Validator
+from jsonschema import FormatChecker, Draft4Validator as Validator
 from jsonschema.exceptions import best_match
 
 from c7n.provider import clouds
@@ -42,8 +42,9 @@ from c7n.filters import ValueFilter, EventFilter, AgeFilter
 def validate(data, schema=None):
     if schema is None:
         schema = generate()
-        Validator.check_schema(schema)
-    validator = Validator(schema)
+
+    validator = Validator(schema, format_checker=FormatChecker())
+    validator.check_schema(schema)
 
     errors = list(validator.iter_errors(data))
     if not errors:
@@ -182,6 +183,8 @@ def generate(resource_types=()):
                     'type': 'string',
                     'pattern': "^[A-z][A-z0-9]*(-[A-z0-9]+)*$"},
                 'region': {'type': 'string'},
+                'start': {'format': 'date'},
+                'end': {'format': 'date'},
                 'resource': {'type': 'string'},
                 'max-resources': {'type': 'integer'},
                 'comment': {'type': 'string'},

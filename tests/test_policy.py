@@ -13,7 +13,7 @@
 # limitations under the License.
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import json
 import mock
 import shutil
@@ -529,6 +529,57 @@ class PullModeTest(BaseTest):
         self.assertIn(
             "Skipping policy {} target-region: us-east-1 current-region: us-west-2".format(policy_name),
             lines)
+
+    def test_is_runnable(self):
+        p = self.load_policy(
+            {'name': 'region-mismatch',
+             'resource': 'ec2',
+             'region': 'us-east-1'},
+            config={'region': 'us-west-2'},
+            session_factory=None)
+        pull_mode = policy.PullMode(p)
+        self.assertEquals(pull_mode.is_runnable(), False)
+
+        p = self.load_policy(
+            {'name': 'good-start-date',
+             'resource': 'ec2',
+             'start': date(2018, 03, 29)},
+            session_factory=None)
+        pull_mode = policy.PullMode(p)
+        self.assertEquals(pull_mode.is_runnable(), True)
+
+        p = self.load_policy(
+            {'name': 'bad-start-date',
+             'resource': 'ec2',
+             'start': date(9999, 03, 29)},
+            session_factory=None)
+        pull_mode = policy.PullMode(p)
+        self.assertEquals(pull_mode.is_runnable(), False)
+
+        p = self.load_policy(
+            {'name': 'good-end-date',
+             'resource': 'ec2',
+             'end': date(9999, 03, 29)},
+            session_factory=None)
+        pull_mode = policy.PullMode(p)
+        self.assertEquals(pull_mode.is_runnable(), True)
+
+        p = self.load_policy(
+            {'name': 'bad-end-date',
+             'resource': 'ec2',
+             'end': date(2018, 03, 29)},
+            session_factory=None)
+        pull_mode = policy.PullMode(p)
+        self.assertEquals(pull_mode.is_runnable(), False)
+
+        p = self.load_policy(
+            {'name': 'bad-start-end-date',
+             'resource': 'ec2',
+             'start': date(2018, 03, 28),
+             'end': date(2018, 03, 29)},
+            session_factory=None)
+        pull_mode = policy.PullMode(p)
+        self.assertEquals(pull_mode.is_runnable(), False)
 
 
 class GuardModeTest(BaseTest):

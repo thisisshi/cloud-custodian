@@ -19,6 +19,7 @@ import itertools
 import logging
 import os
 import time
+from datetime import datetime
 
 from botocore.client import ClientError
 import jmespath
@@ -203,12 +204,7 @@ class PullMode(PolicyExecutionMode):
     """
 
     def run(self, *args, **kw):
-        if self.policy.region and (
-                self.policy.region != self.policy.options.region):
-            self.policy.log.info(
-                "Skipping policy %s target-region: %s current-region: %s",
-                self.policy.name, self.policy.region,
-                self.policy.options.region)
+        if not self.is_runnable():
             return
 
         with self.policy.ctx:
@@ -299,6 +295,28 @@ class PullMode(PolicyExecutionMode):
             start,
             end,
         )
+
+    def is_runnable(self):
+        now = datetime.date(datetime.now())
+        if self.policy.start and self.policy.start > now:
+            self.policy.log.info(
+                "Skipping policy %s start-date: %s is after current date: %s",
+                self.policy.name, self.policy.start, now)
+            return False
+        if self.policy.end and self.policy.end < now:
+            self.policy.log.info(
+                "Skipping policy %s end-date: %s is before current date: %s",
+                self.policy.name, self.policy.end, now)
+            return False
+        if self.policy.region and (
+                self.policy.region != self.policy.options.region):
+            self.policy.log.info(
+                "Skipping policy %s target-region: %s current-region: %s",
+                self.policy.name, self.policy.region,
+                self.policy.options.region)
+            return False
+        return True
+
 
 
 class LambdaMode(PolicyExecutionMode):
@@ -637,6 +655,14 @@ class Policy(object):
     @property
     def region(self):
         return self.data.get('region')
+
+    @property
+    def start(self):
+        return self.data.get('start')
+
+    @property
+    def end(self):
+        return self.data.get('end')
 
     @property
     def max_resources(self):
