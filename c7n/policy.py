@@ -318,7 +318,6 @@ class PullMode(PolicyExecutionMode):
         return True
 
 
-
 class LambdaMode(PolicyExecutionMode):
     """A policy that runs/executes in lambda."""
 

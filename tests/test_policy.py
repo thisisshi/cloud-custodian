@@ -559,7 +559,7 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'good-end-date',
              'resource': 'ec2',
-             'end': date(9999, 03, 29)},
+             'end': datetime.date(datetime.now()) + timedelta(days=1)},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), True)
