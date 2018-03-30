@@ -543,7 +543,7 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'good-start-date',
              'resource': 'ec2',
-             'start': date(2018, 03, 29)},
+             'start': date(2018, 3, 29)},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), True)
@@ -551,7 +551,7 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'bad-start-date',
              'resource': 'ec2',
-             'start': date(9999, 03, 29)},
+             'start': datetime.date(datetime.now()) + timedelta(days=1)},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), False)
@@ -567,7 +567,7 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'bad-end-date',
              'resource': 'ec2',
-             'end': date(2018, 03, 29)},
+             'end': date(2018, 3, 29)},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), False)
@@ -575,8 +575,8 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'bad-start-end-date',
              'resource': 'ec2',
-             'start': date(2018, 03, 28),
-             'end': date(2018, 03, 29)},
+             'start': date(2018, 3, 28),
+             'end': date(2018, 3, 29)},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), False)
