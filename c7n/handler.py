@@ -71,7 +71,11 @@ def dispatch_event(event, context):
     options_overrides['account_id'] = account_id
     options_overrides['output_dir'] = output_dir
     options = Config.empty(**options_overrides)
-
+    if not os.path.exists(output_dir):
+        try:
+            os.mkdir(output_dir)
+        except OSError as error:
+            log.warning("Unable to make output directory: {}".format(error))
     load_resources()
     policies = PolicyCollection.from_data(policy_config, options)
     if policies:
