@@ -35,6 +35,15 @@ logging.getLogger('botocore').setLevel(logging.WARNING)
 log = logging.getLogger('custodian.lambda')
 
 
+account_id = None
+try:
+    import boto3
+    session = boto3.Session()
+    account_id = get_account_id_from_sts(session)
+except Exception:
+    pass
+
+
 def dispatch_event(event, context):
 
     error = event.get('detail', {}).get('errorCode')
@@ -53,29 +62,25 @@ def dispatch_event(event, context):
     if not policy_config or not policy_config.get('policies'):
         return False
 
-    # TODO. This enshrines an assumption of a single policy per lambda.
-    account_id = None
-    try:
-        import boto3
-        session = boto3.Session()
-        account_id = get_account_id_from_sts(session)
-    except Exception:
-        pass
-
+    # Initialize output directory, we've seen occassional perm issues with
+    # lambda on temp directory and changing unix execution users, so
+    # use a per execution temp space.
     output_dir = os.environ.get(
         'C7N_OUTPUT_DIR',
         '/tmp/' + str(uuid.uuid4()))
-
-    options_overrides = policy_config[
-        'policies'][0].get('mode', {}).get('execution-options', {})
-    options_overrides['account_id'] = account_id
-    options_overrides['output_dir'] = output_dir
-    options = Config.empty(**options_overrides)
     if not os.path.exists(output_dir):
         try:
             os.mkdir(output_dir)
         except OSError as error:
             log.warning("Unable to make output directory: {}".format(error))
+
+    # TODO. This enshrines an assumption of a single policy per lambda.
+    options_overrides = policy_config[
+        'policies'][0].get('mode', {}).get('execution-options', {})
+    options_overrides['account_id'] = account_id
+    options_overrides['output_dir'] = output_dir
+    options = Config.empty(**options_overrides)
+
     load_resources()
     policies = PolicyCollection.from_data(policy_config, options)
     if policies:
