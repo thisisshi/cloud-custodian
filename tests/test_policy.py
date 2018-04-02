@@ -530,28 +530,34 @@ class PullModeTest(BaseTest):
             "Skipping policy {} target-region: us-east-1 current-region: us-west-2".format(policy_name),
             lines)
 
-    def test_is_runnable(self):
+    def test_is_runnable_mismatch_region(self):
         p = self.load_policy(
             {'name': 'region-mismatch',
              'resource': 'ec2',
              'region': 'us-east-1'},
-            config={'region': 'us-west-2'},
+            config={'region': 'us-west-2', 'validate': True},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), False)
 
+    def test_is_runnable_dates(self):
         p = self.load_policy(
             {'name': 'good-start-date',
              'resource': 'ec2',
-             'start': date(2018, 3, 29)},
+             'tz': 'utc',
+             'start': '2018-3-29'},
+            config={'validate':True},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), True)
 
+        tomorrow_date = str(datetime.date(datetime.now()) + timedelta(days=1))
         p = self.load_policy(
             {'name': 'bad-start-date',
              'resource': 'ec2',
-             'start': datetime.date(datetime.now()) + timedelta(days=1)},
+             'tz': 'utc',
+             'start': tomorrow_date},
+            config={'validate':True},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), False)
@@ -559,7 +565,9 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'good-end-date',
              'resource': 'ec2',
-             'end': datetime.date(datetime.now()) + timedelta(days=1)},
+             'tz': 'utc',
+             'end': tomorrow_date},
+            config={'validate':True},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), True)
@@ -567,7 +575,9 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'bad-end-date',
              'resource': 'ec2',
-             'end': date(2018, 3, 29)},
+             'tz': 'utc',
+             'end': '2018-3-29'},
+            config={'validate':True},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), False)
@@ -575,11 +585,44 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'bad-start-end-date',
              'resource': 'ec2',
-             'start': date(2018, 3, 28),
-             'end': date(2018, 3, 29)},
+             'tz': 'utc',
+             'start': '2018-3-28',
+             'end': '2018-3-29'},
+            config={'validate':True},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), False)
+
+    def test_is_runnable_parse_dates(self):
+        p = self.load_policy(
+            {'name': 'parse-date-policy',
+             'resource': 'ec2',
+             'tz': 'utc',
+             'start': 'March 3 2018'},
+            config={'validate':True},
+            session_factory=None)
+        pull_mode = policy.PullMode(p)
+        self.assertEquals(pull_mode.is_runnable(), True)
+
+        p = self.load_policy(
+            {'name': 'parse-date-policy',
+             'resource': 'ec2',
+             'tz': 'utc',
+             'start': 'March 3rd 2018'},
+            config={'validate':True},
+            session_factory=None)
+        pull_mode = policy.PullMode(p)
+        self.assertEquals(pull_mode.is_runnable(), True)
+
+        p = self.load_policy(
+            {'name': 'parse-date-policy',
+             'resource': 'ec2',
+             'tz': 'utc',
+             'start': '28 March 2018'},
+            config={'validate':True},
+            session_factory=None)
+        pull_mode = policy.PullMode(p)
+        self.assertEquals(pull_mode.is_runnable(), True)
 
 
 class GuardModeTest(BaseTest):
