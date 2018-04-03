@@ -52,6 +52,61 @@ multiple regions the same way as with the ``run`` command::
 A region column will be added to reports generated that include multiple regions to
 indicate which region each row is from.
 
+.. _scheduling-policy-execution:
+
+Scheduling Policy Execution
+---------------------------
+
+Cloud Custodian can skip policies that are included in a policy file when running if
+the start and end date-times are before or after the current date-time respectively.
+To utilize this behavior, include the ``start``, ``end``, and optionally ``tz`` keys in the policy.
+
+If the current time is after ``start`` and there is no ``end``, the policy will
+execute. Likewise, if ``end`` is after the current date-time and there is no ``start``,
+the policy will execute. Otherwise, the current date-time will need to fall between
+``start`` and ``end`` for the policy to execute. Including the ``tz`` key in the policy will
+specify the ``tz`` to use when comparing the date-time(s) specified in ``start`` or ``end`` to
+the current time.
+
+.. code-block:: yaml
+
+  policies:
+
+  # other compliance related policies that
+  # should always be running...
+
+    - name: holiday-break-stop
+      description: |
+        This policy will stop all EC2 instances
+        if the current date is between  12-15-2018
+        to 12-31-2018 when the policy is run.
+
+        Use this in conjunction with a cron job
+        to ensure that the environment is fully
+        turned off during the break.
+      resource: ec2
+      start: 2018-12-15
+      end: 2018-12-31
+      tz: utc
+      filters:
+        - "tag:holiday-off-hours": present
+      actions:
+        - stop
+
+    - name: holiday-break-start
+      description: |
+        This policy will start up all EC2 instances
+        and only run on 1-1-2019.
+      resource: ec2
+      start: 2019-1-1
+      end: 2019-1-1 23:59:59
+      tz: utc
+      filters:
+        - "tag:holiday-off-hours": present
+      actions:
+        - start
+
+
 .. _report-custom-fields:
 
 Adding custom fields to reports
