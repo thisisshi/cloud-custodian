@@ -94,7 +94,7 @@ class UrlValueTest(BaseTest):
         os.chdir(self.old_dir)
 
     def get_values_from(self, data, content):
-        config = Config(account_id=ACCOUNT_ID)
+        config = Config.empty(account_id=ACCOUNT_ID)
         mgr = Bag({'session_factory': None, '_cache': None, 'config': config})
         values = ValuesFrom(data, mgr)
         values.resolver = FakeResolver(content)

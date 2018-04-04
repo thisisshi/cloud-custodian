@@ -25,7 +25,7 @@ class TestEC2Manager(BaseTest):
         ctx = ExecutionContext(
             session_factory,
             Bag({'name':'test-policy'}),
-            config or Config())
+            config or Config.empty())
         return EC2(ctx, data)
 
     def test_manager(self):

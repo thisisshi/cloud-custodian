@@ -13,7 +13,7 @@
 # limitations under the License.
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from .common import BaseTest
+from .common import BaseTest, TestConfig as Config
 
 
 class ElasticSearch(BaseTest):
@@ -46,6 +46,7 @@ class ElasticSearch(BaseTest):
                 'period': 86400,
                 'value': 1000,
                 'op': 'less-than'}]},
+            config=Config.empty(),
             session_factory=factory)
         self.assertEqual(
             p.resource_manager.filters[0].get_dimensions(

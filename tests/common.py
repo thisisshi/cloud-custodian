@@ -49,17 +49,17 @@ ACCOUNT_ID = '644160558196'
 C7N_VALIDATE = bool(os.environ.get('C7N_VALIDATE', ''))
 C7N_SCHEMA = generate()
 
-
 skip_if_not_validating = unittest.skipIf(
     not C7N_VALIDATE, reason='We are not validating schemas.')
 
-config_args = {
-    "metrics_enabled": False,
-    "account_id": ACCOUNT_ID,
-    "region": "us-east-1",
-    "output_dir": "s3://test-example/foo"
+class TestConfig(Config):
+    config_args = {
+        "metrics_enabled": False,
+        "account_id": ACCOUNT_ID,
+        "output_dir": "s3://test-example/foo"
     }
-TestConfig = partial(Config.empty, **config_args)
+
+    empty = staticmethod(partial(Config.empty, **config_args))
 
 # Set this so that if we run nose directly the tests will not fail
 if 'AWS_DEFAULT_REGION' not in os.environ:
@@ -97,7 +97,7 @@ class BaseTest(PillTest):
     def get_context(self, config=None, session_factory=None, policy=None):
         if config is None:
             self.context_output_dir = self.get_temp_dir()
-            config = TestConfig(output_dir=self.context_output_dir)
+            config = Config.empty(output_dir=self.context_output_dir)
         ctx = ExecutionContext(
             session_factory,
             policy or Bag({'name': 'test-policy'}),
@@ -119,7 +119,7 @@ class BaseTest(PillTest):
         if cache:
             config['cache'] = os.path.join(temp_dir, 'c7n.cache')
             config['cache_period'] = 300
-        conf = TestConfig(**config)
+        conf = Config.empty(**config)
         p = policy.Policy(data, conf, session_factory)
         p.validate()
         return p
@@ -128,9 +128,9 @@ class BaseTest(PillTest):
         filename = self.write_policy_file(data)
         if config:
             config['account_id'] = ACCOUNT_ID
-            e = TestConfig(**config)
+            e = Config.empty(**config)
         else:
-            e = TestConfig(account_id=ACCOUNT_ID)
+            e = Config.empty(account_id=ACCOUNT_ID)
         return policy.load(e, filename)
 
     def patch(self, obj, attr, new):

@@ -30,7 +30,7 @@ class TestEMR(BaseTest):
         ctx = Bag(
             session_factory=session_factory,
             log_dir='',
-            options=Config())
+            options=Config.empty())
 
         mgr = emr.EMRCluster(ctx, {})
         resources = mgr.get_resources(["j-1EJMJNTXC63JW"])
@@ -43,7 +43,7 @@ class TestEMR(BaseTest):
         ctx = Bag(
             session_factory=session_factory,
             log_dir='',
-            options=Config())
+            options=Config.empty())
 
         query = {
             'query': [

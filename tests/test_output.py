@@ -47,7 +47,7 @@ class S3OutputTest(unittest.TestCase):
             ExecutionContext(
                 None,
                 Bag(name="xyz"),
-                Config(output_dir="s3://cloud-custodian/policies")))
+                Config.empty(output_dir="s3://cloud-custodian/policies")))
         self.addCleanup(shutil.rmtree, output.root_dir)
 
         return output

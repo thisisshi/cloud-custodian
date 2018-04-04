@@ -115,7 +115,7 @@ class PolicyPermissions(BaseTest):
     def test_resource_shadow_source_augment(self):
         shadowed = []
         bad = []
-        cfg = Config()
+        cfg = Config.empty()
 
         for k, v in manager.resources.items():
             if not getattr(v.resource_type, 'config_type', None):
@@ -155,7 +155,7 @@ class PolicyPermissions(BaseTest):
     def test_resource_permissions(self):
         self.capture_logging('c7n.cache')
         missing = []
-        cfg = Config()
+        cfg = Config.empty()
         for k, v in manager.resources.items():
 
             p = Bag({'name': 'permcheck', 'resource': k})
@@ -211,7 +211,7 @@ class PolicyPermissions(BaseTest):
 class TestPolicyCollection(BaseTest):
 
     def test_expand_partitions(self):
-        cfg = Config(
+        cfg = Config.empty(
             regions=['us-gov-west-1', 'cn-north-1', 'us-west-2'])
         original = policy.PolicyCollection.from_data(
             {'policies': [
@@ -228,10 +228,10 @@ class TestPolicyCollection(BaseTest):
             {'policies': [
                 {'name': 'foo',
                  'resource': 'account'}]},
-            Config(regions=['us-east-1', 'us-west-2']))
+            Config.empty(regions=['us-east-1', 'us-west-2']))
 
         collection = AWS().initialize_policies(
-            original, Config(regions=['all']))
+            original, Config.empty(regions=['all']))
         self.assertEqual(len(collection), 1)
 
     def test_policy_region_expand_global(self):
@@ -241,10 +241,10 @@ class TestPolicyCollection(BaseTest):
                  'resource': 's3'},
                 {'name': 'iam',
                  'resource': 'iam-user'}]},
-            Config(regions=['us-east-1', 'us-west-2']))
+            Config.empty(regions=['us-east-1', 'us-west-2']))
 
         collection = AWS().initialize_policies(
-            original, Config(regions=['all']))
+            original, Config.empty(regions=['all']))
         self.assertEqual(len(collection.resource_types), 2)
         s3_regions = [p.options.region for p in collection if p.resource_type == 's3']
         self.assertTrue('us-east-1' in s3_regions)
@@ -254,7 +254,7 @@ class TestPolicyCollection(BaseTest):
         self.assertEqual(iam[0].options.region, 'us-east-1')
 
         collection = AWS().initialize_policies(
-            original, Config(regions=['eu-west-1', 'eu-west-2']))
+            original, Config.empty(regions=['eu-west-1', 'eu-west-2']))
         iam = [p for p in collection if p.resource_type == 'iam-user']
         self.assertEqual(len(iam), 1)
         self.assertEqual(iam[0].options.region, 'eu-west-1')
@@ -345,7 +345,7 @@ class TestPolicy(BaseTest):
 
     def test_file_not_found(self):
         self.assertRaises(
-            IOError, policy.load, Config(), "/asdf12")
+            IOError, policy.load, Config.empty(), "/asdf12")
 
     def test_lambda_policy_metrics(self):
         session_factory = self.replay_flight_data('test_lambda_policy_metrics')
