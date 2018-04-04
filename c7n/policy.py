@@ -19,9 +19,8 @@ import itertools
 import logging
 import os
 import time
-import pytz
+from dateutil import tz, parser
 from datetime import datetime
-from dateutil.parser import parse
 
 from botocore.client import ClientError
 import jmespath
@@ -299,13 +298,13 @@ class PullMode(PolicyExecutionMode):
         )
 
     def is_runnable(self):
-        now = self.policy.tz.localize(datetime.now())
-        if self.policy.start and self.policy.tz.localize(self.policy.start) > now:
+        now = datetime.now().replace(tzinfo=self.policy.tz)
+        if self.policy.start and self.policy.start > now:
             self.policy.log.info(
                 "Skipping policy %s start-date: %s is after current date: %s",
                 self.policy.name, self.policy.start, now)
             return False
-        if self.policy.end and self.policy.tz.localize(self.policy.end) < now:
+        if self.policy.end and self.policy.end < now:
             self.policy.log.info(
                 "Skipping policy %s end-date: %s is before current date: %s",
                 self.policy.name, self.policy.end, now)
@@ -660,19 +659,19 @@ class Policy(object):
     @property
     def tz(self):
         if 'tz' in self.data:
-            return pytz.timezone(self.data.get('tz'))
-        return pytz.utc
+            return tz.gettz(self.data.get('tz'))
+        return tz.gettz('UTC')
 
     @property
     def start(self):
         if self.data.get('start'):
-            return parse(self.data.get('start'))
+            return parser.parse(self.data.get('start')).replace(tzinfo=self.tz)
         return None
 
     @property
     def end(self):
         if self.data.get('end'):
-            return parse(self.data.get('end'))
+            return parser.parse(self.data.get('end')).replace(tzinfo=self.tz)
         return None
 
     @property
