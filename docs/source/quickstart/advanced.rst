@@ -54,7 +54,7 @@ indicate which region each row is from.
 
 .. _scheduling-policy-execution:
 
-Scheduling Policy Execution
+Filtering Policy Execution by Date
 ---------------------------
 
 Cloud Custodian can skip policies that are included in a policy file when running if
@@ -67,6 +67,13 @@ the policy will execute. Otherwise, the current date-time will need to fall betw
 ``start`` and ``end`` for the policy to execute. Including the ``tz`` key in the policy will
 specify the ``tz`` to use when comparing the date-time(s) specified in ``start`` or ``end`` to
 the current time.
+
+This allows you to continuously run the same policy file for different time periods, without
+having to update the policy file for specific days or times.
+
+**Note**: Date-Times specified in ``start`` or ``end`` should not be offset-aware. The policy's
+``tz`` attribute will be applied to the ``start`` and ``end`` values. If no ``tz`` is specified,
+UTC is set by default.
 
 .. code-block:: yaml
 

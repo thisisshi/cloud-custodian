@@ -665,13 +665,13 @@ class Policy(object):
     @property
     def start(self):
         if self.data.get('start'):
-            return parser.parse(self.data.get('start')).replace(tzinfo=self.tz)
+            return parser.parse(self.data.get('start'), ignoretz=True).replace(tzinfo=self.tz)
         return None
 
     @property
     def end(self):
         if self.data.get('end'):
-            return parser.parse(self.data.get('end')).replace(tzinfo=self.tz)
+            return parser.parse(self.data.get('end'), ignoretz=True).replace(tzinfo=self.tz)
         return None
 
     @property
