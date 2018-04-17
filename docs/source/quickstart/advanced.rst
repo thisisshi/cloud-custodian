@@ -55,7 +55,7 @@ indicate which region each row is from.
 .. _scheduling-policy-execution:
 
 Filtering Policy Execution by Date
----------------------------
+----------------------------------
 
 Cloud Custodian can skip policies that are included in a policy file when running if
 the start and end date-times are before or after the current date-time respectively.
