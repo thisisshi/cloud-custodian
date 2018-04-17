@@ -18,7 +18,7 @@ from json import dumps
 from jsonschema.exceptions import best_match
 
 from c7n.manager import resources
-from c7n.schema import Validator, validate, validate_parse, generate, specific_error
+from c7n.schema import Validator, validate, validate_policy_dt_parse, generate, specific_error
 from .common import BaseTest
 
 
@@ -76,7 +76,7 @@ class SchemaTest(BaseTest):
         self.assertTrue(isinstance(result[0], ValueError))
         self.assertTrue('monday-morning' in str(result[0]))
 
-    def test_validate_parse(self):
+    def test_validate_policy_dt_parse(self):
         data = {
             'policies': [
                 {'name': 'bad-str-parse',
@@ -84,7 +84,7 @@ class SchemaTest(BaseTest):
                  'start': 'asdf'}
                 ]}
 
-        result = validate_parse(data)
+        result = validate_policy_dt_parse(data)
         self.assertTrue(result[0], ValueError)
 
         data = {
@@ -94,7 +94,7 @@ class SchemaTest(BaseTest):
                  'start': 2}
                 ]}
 
-        result = validate_parse(data)
+        result = validate_policy_dt_parse(data)
         self.assertTrue(result[0], ValueError)
 
         data = {
@@ -104,7 +104,7 @@ class SchemaTest(BaseTest):
                  'tz': 'asdf'}
                 ]}
 
-        result = validate_parse(data)
+        result = validate_policy_dt_parse(data)
         self.assertTrue(result[0], ValueError)
 
         data = {
@@ -114,7 +114,8 @@ class SchemaTest(BaseTest):
                  'tz': 2}
                 ]}
 
-        result = validate_parse(data)
+        result = validate_policy_dt_parse(data)
+        self.assertTrue(result[0], ValueError)
 
         data = {
             'policies': [
@@ -123,8 +124,8 @@ class SchemaTest(BaseTest):
                  'start': '4 AM'}
                 ]}
 
-        result = validate_parse(data)
-        self.assertTrue(result, None)
+        result = validate_policy_dt_parse(data)
+        self.assertEqual(result, None)
 
         data = {
             'policies': [
@@ -133,8 +134,8 @@ class SchemaTest(BaseTest):
                  'tz': 'UTC'}
                 ]}
 
-        result = validate_parse(data)
-        self.assertTrue(result, None)
+        result = validate_policy_dt_parse(data)
+        self.assertEqual(result, None)
 
     def test_semantic_error(self):
         data = {

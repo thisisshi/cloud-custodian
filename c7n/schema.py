@@ -90,9 +90,12 @@ def validate_policy_dt_parse(data):
             try:
                 p_tz = tz.gettz(p.get('tz'))
             except Exception as e:
-                if not p_tz:
-                    return [ValueError(
-                        "TZ not parsable: %s, %s" % (p.get('tz'), e)), name]
+                return [ValueError(
+                    "TZ not parsable: %s, %s" % (p.get('tz'), e)), name]
+            if not isinstance(p_tz, tz.tzfile):
+                return [ValueError(
+                    "TZ not parsable: %s" % p.get('tz')), name]
+
         for i in [p.get('start'), p.get('end')]:
             if i:
                 try:
