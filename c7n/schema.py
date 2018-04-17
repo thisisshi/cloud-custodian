@@ -81,22 +81,22 @@ def validate(data, schema=None):
         best_match(validator.iter_errors(data)),
     ]))
 
+
 def validate_policy_dt_parse(data):
+
     for p in data.get('policies'):
         name = p.get('name')
-
         if p.get('tz'):
             try:
                 p_tz = tz.gettz(p.get('tz'))
             except Exception as e:
                 if not p_tz:
                     return [ValueError(
-                            "TZ not parsable: %s, %s" % (p.get('tz'), e) ), name]
-
+                        "TZ not parsable: %s, %s" % (p.get('tz'), e)), name]
         for i in [p.get('start'), p.get('end')]:
             if i:
                 try:
-                    dt_parsed = parser.parse(i)
+                    parser.parse(i)
                 except Exception as e:
                     return [ValueError(
                             "Date/Time not parsable: %s, %s" % (i, e)), name]
