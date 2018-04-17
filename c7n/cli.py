@@ -34,6 +34,7 @@ except ImportError:
         return None
 
 from c7n.commands import schema_completer
+from c7n.config import Config
 
 DEFAULT_REGION = 'us-east-1'
 
@@ -293,6 +294,10 @@ def setup_parser():
     _default_options(run)
     _dryrun_option(run)
     run.add_argument(
+        "--skip-validation",
+        action="store_true",
+        help="Skips validation of policies (assumes you've run the validate command seperately).")
+    run.add_argument(
         "-m", "--metrics-enabled",
         default=False, action="store_true",
         help="Emit metrics to CloudWatch Metrics")
@@ -341,6 +346,8 @@ def main():
     if getattr(options, 'config', None) is not None:
         options.configs.append(options.config)
 
+    config = Config.empty(**vars(options))
+
     try:
         command = options.command
         if not callable(command):
@@ -352,7 +359,7 @@ def main():
         process_name = [os.path.basename(sys.argv[0])]
         process_name.extend(sys.argv[1:])
         setproctitle(' '.join(process_name))
-        command(options)
+        command(config)
     except Exception:
         if not options.debug:
             raise

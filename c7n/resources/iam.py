@@ -522,6 +522,7 @@ class AllowAllIamPolicies(Filter):
                     'Action' in s and
                     isinstance(s['Action'], six.string_types) and
                     s['Action'] == "*" and
+                    'Resource' in s and
                     isinstance(s['Resource'], six.string_types) and
                     s['Resource'] == "*" and
                     s['Effect'] == "Allow"):
@@ -535,6 +536,39 @@ class AllowAllIamPolicies(Filter):
             "%d of %d iam policies have allow all.",
             len(results), len(resources))
         return results
+
+
+@Policy.action_registry.register('delete')
+class PolicyDelete(BaseAction):
+    """Delete an IAM Policy.
+
+    For example, if you want to automatically delete all unused IAM policies.
+
+    :example:
+
+      .. code-block:: yaml
+
+        - name: iam-delete-unused-policies
+          resource: iam-policy
+          filters:
+            - type: unused
+          actions:
+            - delete
+
+    """
+    schema = type_schema('delete')
+    permissions = ('iam:DeletePolicy',)
+
+    def process(self, resources):
+        client = local_session(self.manager.session_factory).client('iam')
+        for r in resources:
+            if not r['Arn'].startswith("arn:aws:iam::aws:policy"):
+                self.log.debug('Deleting policy %s' % r['PolicyName'])
+                client.delete_policy(
+                    PolicyArn=r['Arn'])
+            else:
+                self.log.debug('Cannot delete AWS managed policy %s' % r['PolicyName'])
+
 
 ###############################
 #    IAM Instance Profiles    #
