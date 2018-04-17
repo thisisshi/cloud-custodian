@@ -79,8 +79,8 @@ UTC is set by default.
 
   policies:
 
-  # other compliance related policies that
-  # should always be running...
+    # other compliance related policies that
+    # should always be running...
 
     - name: holiday-break-stop
       description: |
