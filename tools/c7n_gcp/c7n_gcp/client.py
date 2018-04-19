@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Base GCP client which uses the discovery API."""
+import json
 import logging
 import threading
 from googleapiclient import discovery
+from googleapiclient.errors import HttpError
 import httplib2
 from oauth2client import client
 import os
@@ -362,7 +364,13 @@ class ServiceClient(object):
 
         number_of_pages_processed = 0
         while request is not None:
-            response = self._execute(request)
+            try:
+                response = self._execute(request)
+            except HttpError as e:
+                if e.resp['status'] == '403':
+                    log.error('Permission Denied: %s' % json.loads(e.content)['error']['message'])
+                    break
+                continue
             number_of_pages_processed += 1
             log.debug('Executing paged request #%s', number_of_pages_processed)
             request = self._build_next_request(verb, request, response)

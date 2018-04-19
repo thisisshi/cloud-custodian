@@ -53,7 +53,9 @@ class ResourceQuery(object):
         if client.supports_pagination(enum_op):
             results = []
             for page in client.execute_paged_query(enum_op, params):
-                results.extend(jmespath.search(path, page))
+                res = jmespath.search(path, page)
+                if res:
+                    results.extend(res)
             return results
         else:
             return jmespath.search(path,
