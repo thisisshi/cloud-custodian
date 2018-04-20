@@ -58,22 +58,28 @@ Filtering Policy Execution by Date
 ----------------------------------
 
 Cloud Custodian can skip policies that are included in a policy file when running if
-the start and end date-times are before or after the current date-time respectively.
-To utilize this behavior, include the ``start``, ``end``, and optionally ``tz`` keys in the policy.
+the start and end date/times are before or after the current date-time respectively.
+To utilize this behavior, include the ``start``, ``end``, and ``tz`` attributes
+in the policy.
 
-If the current time is after ``start`` and there is no ``end``, the policy will
-execute. Likewise, if ``end`` is after the current date-time and there is no ``start``,
-the policy will execute. Otherwise, the current date-time will need to fall between
-``start`` and ``end`` for the policy to execute. Including the ``tz`` key in the policy will
-specify the ``tz`` to use when comparing the date-time(s) specified in ``start`` or ``end`` to
-the current time.
+If the current date and/or time is after the ``start``  value and there is no ``end``
+value, the policy will execute. Likewise, if the ``end`` value is after the current
+date and/or time and there is no ``start`` value, the policy will execute. Otherwise,
+the current date and/or time must fall between ``start`` and ``end`` values for the
+policy to execute. In order to specify a timezone, a ``tz`` attribute must be
+specified. Otherwise, UTC will be used to perform the comparison.
 
-This allows you to continuously run the same policy file for different time periods, without
-having to update the policy file for specific days or times.
+This allows you to continuously run the same policy file for different time periods,
+without having to update the policy file for specific days or times.
 
-**Note**: Date-Times specified in ``start`` or ``end`` should not be offset-aware. The policy's
-``tz`` attribute will be applied to the ``start`` and ``end`` values. If no ``tz`` is specified,
-UTC is set by default.
+**Note**: Dates and/or times specified in ``start`` or ``end`` must not be offset-aware.
+The policy's ``tz`` attribute will be applied to the ``start`` and ``end`` values.
+If no ``tz`` attribute is specified, UTC is set by default.
+
+``start`` and ``end`` attributes support the following formats:
+* a date (example: ``1-1-2018``, ``January 1 2018``, ``2018-1-1``)
+* a offset-naive time with up to second precision (example: ``2:03:01 PM`` ``16:03:01``, ``3 AM``)
+* a date and a offset-naive time with up to second precision (example: ``1-1-2018 2 PM``, ``January 1 2018 14:00:00``)
 
 .. code-block:: yaml
 
