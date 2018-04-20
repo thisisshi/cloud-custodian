@@ -77,6 +77,7 @@ The policy's ``tz`` attribute will be applied to the ``start`` and ``end`` value
 If no ``tz`` attribute is specified, UTC is set by default.
 
 ``start`` and ``end`` attributes support the following formats:
+
 * a date (example: ``1-1-2018``, ``January 1 2018``, ``2018-1-1``)
 * a offset-naive time with up to second precision (example: ``2:03:01 PM`` ``16:03:01``, ``3 AM``)
 * a date and a offset-naive time with up to second precision (example: ``1-1-2018 2 PM``, ``January 1 2018 14:00:00``)
