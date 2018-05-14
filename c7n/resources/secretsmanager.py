@@ -17,7 +17,6 @@ from botocore.exceptions import ClientError
 from c7n.manager import resources
 from c7n.filters import FilterRegistry
 from c7n.query import QueryResourceManager
-from c7n.actions import BaseAction
 from c7n.tags import RemoveTag, Tag, TagActionFilter, TagDelayedAction
 from c7n.utils import local_session
 
@@ -51,6 +50,7 @@ class SecretsManager(QueryResourceManager):
         with self.executor_factory(max_workers=1) as w:
             return list(filter(None, w.map(_augment, resources)))
 
+
 @SecretsManager.action_registry.register('tag')
 class TagSecretsManagerResource(Tag):
     """Action to create tag(s) on a Secret resource
@@ -67,7 +67,9 @@ class TagSecretsManagerResource(Tag):
                   key: tag-key
                   value: tag-value
     """
+
     permissions = ('secretsmanager:TagResource')
+
     def process_resource_set(self, resources, tags):
         client = local_session(self.manager.session_factory).client('secretsmanager')
         for r in resources:
@@ -77,8 +79,8 @@ class TagSecretsManagerResource(Tag):
             except ClientError as e:
                 if e['Error']['Code'] == 'InternalFailure':
                     self.log.error(
-                        'Exception when tagging resource %s' % (
-                        r['ARN'], e['Error']['Code']))
+                        'Exception when tagging resource %s' %
+                        (r['ARN'], e['Error']['Code']))
 
 
 @SecretsManager.action_registry.register('remove-tag')
@@ -96,7 +98,9 @@ class RemoveTagSecretsManagerResource(RemoveTag):
                 - type: remove-tag
                   tags: ['tag-to-be-removed']
     """
+
     permissions = ('secretsmanager:UntagResource')
+
     def process_resource_set(self, resources, keys):
         client = local_session(self.manager.session_factory).client('secretsmanager')
         for r in resources:
@@ -117,7 +121,9 @@ class MarkSecretForOp(TagDelayedAction):
                   op: delete
                   days: 1
     """
+
     permissions = ('secretsmanager:TagResource')
+
     def process_resource_set(self, resources, tags):
         client = local_session(self.manager.session_factory).client('secretsmanager')
         for r in resources:
@@ -126,8 +132,5 @@ class MarkSecretForOp(TagDelayedAction):
                 client.tag_resource(SecretId=r['ARN'], Tags=r['Tags'])
             except ClientError as e:
                 if e['Error']['Code'] == 'InternalFailure':
-                    self.log.error(
-                        'Exception when tagging resource %s' % (
-                        ['ARN'], e['Error']['Code']))
-
-
+                    self.log.error('Exception when tagging resource %s' %
+                        (['ARN'], e['Error']['Code']))
