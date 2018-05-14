@@ -68,7 +68,7 @@ class TagSecretsManagerResource(Tag):
                   value: tag-value
     """
 
-    permissions = ('secretsmanager:TagResource')
+    permissions = ('secretsmanager:TagResource',)
 
     def process_resource_set(self, resources, tags):
         client = local_session(self.manager.session_factory).client('secretsmanager')
@@ -99,7 +99,7 @@ class RemoveTagSecretsManagerResource(RemoveTag):
                   tags: ['tag-to-be-removed']
     """
 
-    permissions = ('secretsmanager:UntagResource')
+    permissions = ('secretsmanager:UntagResource',)
 
     def process_resource_set(self, resources, keys):
         client = local_session(self.manager.session_factory).client('secretsmanager')
@@ -122,7 +122,7 @@ class MarkSecretForOp(TagDelayedAction):
                   days: 1
     """
 
-    permissions = ('secretsmanager:TagResource')
+    permissions = ('secretsmanager:TagResource',)
 
     def process_resource_set(self, resources, tags):
         client = local_session(self.manager.session_factory).client('secretsmanager')
