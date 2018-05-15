@@ -121,7 +121,7 @@ class MarkSecretForOp(TagDelayedAction):
     def process_resource_set(self, resources, new_tags):
         client = local_session(self.manager.session_factory).client('secretsmanager')
         for r in resources:
-            tags = {t['Key']:t['Value'] for t in r['Tags']}
+            tags = {t['Key']: t['Value'] for t in r['Tags']}
             for t in new_tags:
                 tags[t['Key']] = t['Value']
             formatted_tags = [{'Key': k, 'Value': v} for k, v in tags.iteritems()]
