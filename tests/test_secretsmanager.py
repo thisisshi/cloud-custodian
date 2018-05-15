@@ -18,18 +18,8 @@ import time
 
 class TestSecretsManager(BaseTest):
 
-    def test_secrets_manager_resource(self):
-        session = self.replay_flight_data('test_secrets_manager_resource')
-        client = session(region='us-east-1').client('secretsmanager')
-        p = self.load_policy({
-            'name': 'secrets-manager-resource',
-            'resource': 'secrets-manager'}, session_factory=session)
-        resources = p.run()
-        self.assertEqual(len(resources), 1)
-        self.assertTrue(resources[0].get('Versions'))
-
     def test_secrets_manager_tag_resource(self):
-        session = self.replay_flight_data('test_tag_secrets_manager_resource')
+        session = self.replay_flight_data('test_secrets_manager_tag')
         client = session(region='us-east-1').client('secretsmanager')
         og_tags = client.describe_secret(
                 SecretId='c7n-test-key').get('Tags')
@@ -65,7 +55,7 @@ class TestSecretsManager(BaseTest):
         self.assertEqual(len(new_tags), 0)
 
     def test_mark_secret_for_op(self):
-        session = self.replay_flight_data('test_mark_secret_for_op')
+        session = self.replay_flight_data('test_secrets_manager_mark_for_op')
         client = session(region='us-east-1').client('secretsmanager')
         og_tags = client.describe_secret(
                 SecretId='c7n-test-key').get('Tags')
@@ -81,5 +71,4 @@ class TestSecretsManager(BaseTest):
             },
             session_factory=session)
         resources = p.run()
-        self.assertEqual(str(resources[0].get('Tags')[0].get('Value')),
-            'Resource does not meet policy: tag@2018/05/15')
+        self.assertTrue('tag@' in str(resources[0].get('Tags')[0].get('Value')))

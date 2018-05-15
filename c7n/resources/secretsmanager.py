@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from botocore.exceptions import ClientError
 
 from c7n.manager import resources
@@ -42,7 +41,6 @@ class SecretsManager(QueryResourceManager):
 
         def _augment(r):
             r['Versions'] = client.list_secret_version_ids(SecretId=r['ARN']).get('Versions')
-            self.log.info('adding version info')
             return r
 
         resources = super(SecretsManager, self).augment(resources)
@@ -70,17 +68,14 @@ class TagSecretsManagerResource(Tag):
 
     permissions = ('secretsmanager:TagResource',)
 
-    def process_resource_set(self, resources, tags):
+    def process_resource_set(self, resources, new_tags):
         client = local_session(self.manager.session_factory).client('secretsmanager')
         for r in resources:
-            r['Tags'].extend([{'Key': t['Key'], 'Value':t['Value']} for t in tags])
-            try:
-                client.tag_resource(SecretId=r['ARN'], Tags=r['Tags'])
-            except ClientError as e:
-                if e['Error']['Code'] == 'InternalFailure':
-                    self.log.error(
-                        'Exception when tagging resource %s' %
-                        (r['ARN'], e['Error']['Code']))
+            tags = {t['Key']: t['Value'] for t in r['Tags']}
+            for t in new_tags:
+                tags[t['Key']] = t['Value']
+            formatted_tags = [{'Key': k, 'Value': v} for k, v in tags.iteritems()]
+            client.tag_resource(SecretId=r['ARN'], Tags=formatted_tags)
 
 
 @SecretsManager.action_registry.register('remove-tag')
@@ -124,13 +119,11 @@ class MarkSecretForOp(TagDelayedAction):
 
     permissions = ('secretsmanager:TagResource',)
 
-    def process_resource_set(self, resources, tags):
+    def process_resource_set(self, resources, new_tags):
         client = local_session(self.manager.session_factory).client('secretsmanager')
         for r in resources:
-            r['Tags'].extend([{'Key': t['Key'], 'Value':t['Value']} for t in tags])
-            try:
-                client.tag_resource(SecretId=r['ARN'], Tags=r['Tags'])
-            except ClientError as e:
-                if e['Error']['Code'] == 'InternalFailure':
-                    self.log.error('Exception when tagging resource %s' %
-                        (['ARN'], e['Error']['Code']))
+            tags = {t['Key']:t['Value'] for t in r['Tags']}
+            for t in new_tags:
+                tags[t['Key']] = t['Value']
+            formatted_tags = [{'Key': k, 'Value': v} for k, v in tags.iteritems()]
+            client.tag_resource(SecretId=r['ARN'], Tags=formatted_tags)
