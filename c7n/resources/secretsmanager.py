@@ -11,8 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from botocore.exceptions import ClientError
-
 from c7n.manager import resources
 from c7n.filters import FilterRegistry
 from c7n.query import QueryResourceManager
@@ -44,9 +42,10 @@ class SecretsManager(QueryResourceManager):
             return r
 
         resources = super(SecretsManager, self).augment(resources)
+        for idx, r in enumerate(resources):
+            resources[idx] = _augment(r)
 
-        with self.executor_factory(max_workers=1) as w:
-            return list(filter(None, w.map(_augment, resources)))
+        return resources
 
 
 @SecretsManager.action_registry.register('tag')

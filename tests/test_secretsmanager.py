@@ -14,7 +14,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 from .common import BaseTest, functional
 
-import time
 
 class TestSecretsManager(BaseTest):
 
@@ -35,7 +34,8 @@ class TestSecretsManager(BaseTest):
             },
             session_factory=session)
         resources = p.run()
-        new_tags = resources[0]['Tags']
+        new_tags = client.describe_secret(
+                SecretId='c7n-test-key').get('Tags')
         self.assertEqual(len(new_tags), 1)
         self.assertEqual(new_tags[0].get('Key'), 'new-tag')
 
@@ -71,4 +71,6 @@ class TestSecretsManager(BaseTest):
             },
             session_factory=session)
         resources = p.run()
-        self.assertTrue('tag@' in str(resources[0].get('Tags')[0].get('Value')))
+        new_tags = client.describe_secret(
+                SecretId='c7n-test-key').get('Tags')
+        self.assertTrue('tag@' in new_tags[0].get('Value'))
