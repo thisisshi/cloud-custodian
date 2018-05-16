@@ -2752,18 +2752,25 @@ class BucketEncryption(KMSKeyResolverMixin, Filter):
                 region: us-east-1
                 filters:
                   - type: bucket-encryption
+                    state: True
                     crypto: AES256
               - name: s3-bucket-encryption-KMS
                 resource: s3
                 region: us-east-1
                 filters
                   - type: bucket-encryption
+                    state: True
                     crypto: aws:kms
                     key: alias/some/alias/key
-
+              - name: s3-bucket-encryption-off
+                resource: s3
+                region: us-east-1
+                filters
+                  - type: bucket-encryption
+                    state: False
     """
     schema = type_schema('bucket-encryption',
-                         required=['crypto'],
+                         state={'type': 'boolean'},
                          crypto={'type': 'string', 'enum': ['AES256', 'aws:kms']},
                          key={'type': 'string'})
 
@@ -2795,8 +2802,14 @@ class BucketEncryption(KMSKeyResolverMixin, Filter):
             if e.response['Error']['Code'] != 'ServerSideEncryptionConfigurationNotFoundError':
                 raise
 
-        for sse in rules:
-            if self.filter_bucket(b, sse):
+        # default `state` to True as previous impl assumed state == True
+        # to preserve backwards compatibility
+        if self.data.get('state', True):
+            for sse in rules:
+                if self.filter_bucket(b, sse):
+                    return True
+        else:
+            if not rules:
                 return True
 
     def filter_bucket(self, b, sse):

@@ -1,0 +1,24 @@
+{
+    "status_code": 404, 
+    "data": {
+        "ResponseMetadata": {
+            "HTTPStatusCode": 404, 
+            "RetryAttempts": 0, 
+            "HostId": "9HtP/0dmHyyopVj+mR9gnEb8JyF+Xm8swzmfFb3Xw6iP7crzL8feR9s63ruGrmrXobxC/RtWuPw=", 
+            "RequestId": "CBBC17EF38438185", 
+            "HTTPHeaders": {
+                "x-amz-id-2": "9HtP/0dmHyyopVj+mR9gnEb8JyF+Xm8swzmfFb3Xw6iP7crzL8feR9s63ruGrmrXobxC/RtWuPw=", 
+                "server": "AmazonS3", 
+                "transfer-encoding": "chunked", 
+                "x-amz-request-id": "CBBC17EF38438185", 
+                "date": "Wed, 16 May 2018 19:17:14 GMT", 
+                "content-type": "application/xml"
+            }
+        }, 
+        "Error": {
+            "Message": "The server side encryption configuration was not found", 
+            "Code": "ServerSideEncryptionConfigurationNotFoundError", 
+            "BucketName": "c7n-bucket-without-default-encryption"
+        }
+    }
+}
