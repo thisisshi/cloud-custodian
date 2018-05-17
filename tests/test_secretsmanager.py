@@ -61,6 +61,6 @@ class TestSecretsManager(BaseTest):
             },
             session_factory=session,
         )
-        resources = p.run()
+        p.run()
         new_tags = client.describe_secret(SecretId="c7n-test-key").get("Tags")
         self.assertTrue("tag@" in new_tags[0].get("Value"))
