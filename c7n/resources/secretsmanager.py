@@ -20,9 +20,8 @@ from c7n.utils import local_session
 
 @resources.register('secrets-manager')
 class SecretsManager(QueryResourceManager):
-    filters = FilterRegistry('secrets-manager.filters')
-    filters.register('marked-for-op', TagActionFilter)
-    filter_registry = filters
+    filter_registry = FilterRegistry('secrets-manager.filters')
+    filter_registry.register('marked-for-op', TagActionFilter)
     permissions = ('secretsmanager:ListSecretVersionIds',)
 
     class resource_type(object):
@@ -33,19 +32,6 @@ class SecretsManager(QueryResourceManager):
         name = 'Name'
         dimension = None
         filter_name = None
-
-    def augment(self, resources):
-        client = local_session(self.session_factory).client('secretsmanager')
-
-        def _augment(r):
-            r['Versions'] = client.list_secret_version_ids(SecretId=r['ARN']).get('Versions')
-            return r
-
-        resources = super(SecretsManager, self).augment(resources)
-        for idx, r in enumerate(resources):
-            resources[idx] = _augment(r)
-
-        return resources
 
 
 @SecretsManager.action_registry.register('tag')
