@@ -2816,7 +2816,6 @@ class BucketEncryption(KMSKeyResolverMixin, Filter):
                 return not self.filter_bucket(b, sse)
             return True
 
-
     def filter_bucket(self, b, sse):
         allowed = ['AES256', 'aws:kms']
         key = self.get_key(b)
