@@ -45,7 +45,6 @@ class TestSecretsManager(BaseTest):
         final_tags = client.describe_secret(SecretId="c7n-test-key").get("Tags")
         self.assertFalse(final_tags)
 
-
     def test_mark_secret_for_op(self):
         session = self.replay_flight_data("test_secrets_manager_mark_for_op")
         client = session(region="us-east-1").client("secretsmanager")
