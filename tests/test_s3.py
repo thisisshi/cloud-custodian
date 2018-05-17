@@ -212,7 +212,7 @@ class BucketEncryption(BaseTest):
         self.patch(s3.S3, 'executor-factory', MainThreadExecutor)
         self.patch(s3, 'S3_AUGMENT_TABLE', [])
 
-        session_factory = self.record_flight_data('test_s3_bucket_encryption_disabled')
+        session_factory = self.replay_flight_data('test_s3_bucket_encryption_disabled')
 
         client = session_factory().client('s3')
         client.create_bucket(Bucket=bname)
