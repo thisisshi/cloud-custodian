@@ -1191,9 +1191,8 @@ class BucketPolicyStatements(BaseTest):
 
         self.assertTrue(len(policy["Statement"]) > 0)
         self.assertTrue(
-            len(
-                [s for s in policy["Statement"] if s["Sid"] == sid and
-                  s["Resource"] == "arn:aws:s3:::%s/*" % (bname)]) == 1
+            len([s for s in policy["Statement"] if s["Sid"] == sid and
+              s["Resource"] == "arn:aws:s3:::%s/*" % (bname)]) == 1
         )
 
     @functional
