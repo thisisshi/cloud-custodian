@@ -20,8 +20,6 @@ class TestSecretsManager(BaseTest):
     def test_secrets_manager_tag_resource(self):
         session = self.replay_flight_data("test_secrets_manager_tag")
         client = session(region="us-east-1").client("secretsmanager")
-        og_tags = client.describe_secret(SecretId="c7n-test-key").get("Tags")
-        self.assertFalse(og_tags)
         p = self.load_policy(
             {
                 "name": "secrets-manager-resource",
@@ -31,9 +29,7 @@ class TestSecretsManager(BaseTest):
             session_factory=session,
         )
         resources = p.run()
-        new_tags = client.describe_secret(SecretId="c7n-test-key").get("Tags")
-        self.assertEqual(len(new_tags), 1)
-        self.assertEqual(new_tags[0].get("Key"), "new-tag")
+        self.assertFalse(resources[0].get('Tags'))
 
         p = self.load_policy(
             {
@@ -44,15 +40,15 @@ class TestSecretsManager(BaseTest):
             session_factory=session,
         )
         resources = p.run()
-        new_tags = resources[0]["Tags"]
-        new_tags = client.describe_secret(SecretId="c7n-test-key").get("Tags")
-        self.assertEqual(len(new_tags), 0)
+        self.assertEqual(resources[0]['Tags'][0]['Key'], 'new-tag')
+
+        final_tags = client.describe_secret(SecretId="c7n-test-key").get("Tags")
+        self.assertFalse(final_tags)
+
 
     def test_mark_secret_for_op(self):
         session = self.replay_flight_data("test_secrets_manager_mark_for_op")
         client = session(region="us-east-1").client("secretsmanager")
-        og_tags = client.describe_secret(SecretId="c7n-test-key").get("Tags")
-        self.assertFalse(og_tags)
         p = self.load_policy(
             {
                 "name": "secrets-manager-resource",
@@ -61,6 +57,7 @@ class TestSecretsManager(BaseTest):
             },
             session_factory=session,
         )
-        p.run()
+        resources = p.run()
+        self.assertFalse(resources[0].get('Tags'))
         new_tags = client.describe_secret(SecretId="c7n-test-key").get("Tags")
         self.assertTrue("tag@" in new_tags[0].get("Value"))
