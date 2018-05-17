@@ -236,48 +236,6 @@ class BucketEncryption(BaseTest):
         self.assertRaises(ClientError, client.get_bucket_encryption, Bucket=bname)
 
 
-    def test_s3_filter_bucket_encryption_enabled(self):
-        bname = 'c7n-bucket-with-default-encryption'
-        self.patch(s3.S3, 'executor-factory', MainThreadExecutor)
-        self.patch(s3, 'S3_AUGMENT_TABLE', [])
-
-        session_factory = self.replay_flight_data('test_s3_bucket_encryption_enabled')
-
-        client = session_factory().client('s3')
-        client.create_bucket(Bucket=bname)
-
-        aws_alias = 'arn:aws:kms:us-east-1:108891588060:key/079a6f7d-5f8a-4da1-a465-30aa099b9688'
-        enc = {
-            'Rules': [{
-                'ApplyServerSideEncryptionByDefault': {
-                    'SSEAlgorithm': 'aws:kms',
-                    'KMSMasterKeyID': aws_alias
-                }
-            }]
-        }
-
-        client.put_bucket_encryption(Bucket=bname, ServerSideEncryptionConfiguration=enc)
-        self.addCleanup(client.delete_bucket, Bucket=bname)
-
-        p = self.load_policy({
-            'name': 's3-enabled-encryption',
-            'resource': 's3',
-            'filters': [
-                {
-                    'Name': bname
-                },
-                {
-                    'type': 'bucket-encryption',
-                    'state': True
-                }
-            ]
-            }, session_factory=session_factory)
-
-        resources = p.run()
-        self.assertEqual(len(resources), 1)
-
-
-
 class BucketInventory(BaseTest):
 
     def test_s3_set_encrypted_inventory_sses3(self):
