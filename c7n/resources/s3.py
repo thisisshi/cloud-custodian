@@ -2806,11 +2806,13 @@ class BucketEncryption(KMSKeyResolverMixin, Filter):
         # to preserve backwards compatibility
         if self.data.get('state', True):
             for sse in rules:
-                if self.filter_bucket(b, sse):
-                    return True
+                return self.filter_bucket(b, sse)
+            return False
         else:
-            if not rules:
-                return True
+            for sse in rules:
+                return not self.filter_bucket(b, sse)
+            return True
+
 
     def filter_bucket(self, b, sse):
         allowed = ['AES256', 'aws:kms']

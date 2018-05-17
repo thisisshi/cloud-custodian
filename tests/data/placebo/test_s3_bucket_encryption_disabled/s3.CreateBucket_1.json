@@ -5,15 +5,15 @@
         "ResponseMetadata": {
             "HTTPStatusCode": 200, 
             "RetryAttempts": 0, 
-            "HostId": "AgulwFuHF6nYOwtre0t6jLSIQpC0I7rxqqIQ5F7lrShwHZQzb57zksSXIh2nP7m0xf9U0ZNtfnA=", 
-            "RequestId": "FEE429EFC5F79169", 
+            "HostId": "WncgPj5xWgOHzD9lKjayjj0n5JD4TLBL6FyyHAcMltk6RSRBXaRjHe8Si98yjci9hQ+/MGbQ7Cg=", 
+            "RequestId": "02D8B1AF533D6AA4", 
             "HTTPHeaders": {
                 "content-length": "0", 
-                "x-amz-id-2": "AgulwFuHF6nYOwtre0t6jLSIQpC0I7rxqqIQ5F7lrShwHZQzb57zksSXIh2nP7m0xf9U0ZNtfnA=", 
+                "x-amz-id-2": "WncgPj5xWgOHzD9lKjayjj0n5JD4TLBL6FyyHAcMltk6RSRBXaRjHe8Si98yjci9hQ+/MGbQ7Cg=", 
                 "server": "AmazonS3", 
-                "x-amz-request-id": "FEE429EFC5F79169", 
+                "x-amz-request-id": "02D8B1AF533D6AA4", 
                 "location": "/c7n-bucket-without-default-encryption", 
-                "date": "Wed, 16 May 2018 19:17:15 GMT"
+                "date": "Thu, 17 May 2018 13:54:35 GMT"
             }
         }
     }

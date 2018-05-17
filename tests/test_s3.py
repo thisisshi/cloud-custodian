@@ -212,7 +212,7 @@ class BucketEncryption(BaseTest):
         self.patch(s3.S3, 'executor-factory', MainThreadExecutor)
         self.patch(s3, 'S3_AUGMENT_TABLE', [])
 
-        session_factory = self.replay_flight_data('test_s3_bucket_encryption_disabled')
+        session_factory = self.record_flight_data('test_s3_bucket_encryption_disabled')
 
         client = session_factory().client('s3')
         client.create_bucket(Bucket=bname)
@@ -234,6 +234,36 @@ class BucketEncryption(BaseTest):
         resources = p.run()
         self.assertEqual(len(resources), 1)
         self.assertRaises(ClientError, client.get_bucket_encryption, Bucket=bname)
+
+        client.put_bucket_encryption(
+                Bucket=bname,
+                ServerSideEncryptionConfiguration={
+                    'Rules': [
+                        {
+                            'ApplyServerSideEncryptionByDefault': {
+                                'SSEAlgorithm': 'AES256'
+                                }
+                        }
+                    ]
+                })
+
+        p = self.load_policy({
+            'name': 's3-disabled-encryption',
+            'resource': 's3',
+            'filters': [
+                {
+                    'Name': bname
+                },
+                {
+                    'type': 'bucket-encryption',
+                    'state': False,
+                    'crypto': 'AES256'
+                }
+            ]
+            }, session_factory=session_factory)
+        resources = p.run()
+        self.assertEqual(len(resources), 0)
+
 
 
 class BucketInventory(BaseTest):
