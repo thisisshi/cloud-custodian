@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import six
-from c7n_azure.actions import Tag
 
 from c7n.actions import ActionRegistry
 from c7n.filters import FilterRegistry
@@ -34,6 +33,14 @@ class ResourceQuery(object):
         data = [r.serialize(True) for r in op()]
 
         return data
+
+    @staticmethod
+    def resolve(resource_type):
+        if not isinstance(resource_type, type):
+            raise ValueError(resource_type)
+        else:
+            m = resource_type
+        return m
 
 
 @sources.register('describe-azure')
@@ -60,12 +67,8 @@ class QueryMeta(type):
             attrs['filter_registry'] = FilterRegistry(
                 '%s.filters' % name.lower())
         if 'action_registry' not in attrs:
-            actions = ActionRegistry(
+            attrs['action_registry'] = ActionRegistry(
                 '%s.actions' % name.lower())
-
-            # All ARM resources will have tag support; however, classic resources may not have support
-            actions.register('tag', Tag)
-            attrs['action_registry'] = actions
 
         return super(QueryMeta, cls).__new__(cls, name, parents, attrs)
 
@@ -92,6 +95,10 @@ class QueryResourceManager(ResourceManager):
     def get_cache_key(self, query):
         return {'source_type': self.source_type, 'query': query}
 
+    @classmethod
+    def get_model(cls):
+        return ResourceQuery.resolve(cls.resource_type)
+
     @property
     def source_type(self):
         return self.data.get('source', 'describe-azure')
@@ -102,9 +109,11 @@ class QueryResourceManager(ResourceManager):
         self._cache.save(key, resources)
         return self.filter_resources(resources)
 
-    def augment(self, resources):
-        #TODO: temporary put here. Applicable only to ARM resources. Need to move to ARMResourceManager base class
-        for resource in resources:
-            if 'id' in resource:
-                resource['resourceGroup'] = resource['id'].split('/')[4]
-        return resources
+    def get_resources(self, resource_ids):
+        resource_client = self.get_client('azure.mgmt.resource.ResourceManagementClient')
+        session = local_session(self.session_factory)
+        data = [
+            resource_client.resources.get_by_id(rid, session.resource_api_version(rid))
+            for rid in resource_ids
+        ]
+        return [r.serialize(True) for r in data]

@@ -53,7 +53,7 @@ def main(role, ou, assume, profile, output, region):
         tags = []
         path_parts = a['Path'].strip('/').split('/')
         for idx, _ in enumerate(path_parts):
-            tags.append("path:/%s" % "/".join(path_parts[:idx+1]))
+            tags.append("path:/%s" % "/".join(path_parts[:idx + 1]))
 
         ainfo = {
             'account_id': a['Id'],
@@ -84,7 +84,7 @@ def get_ou_from_path(client, path):
         found = False
         for page in ou_pager.paginate(ParentId=ou['Id']):
             for child in page.get('OrganizationalUnits'):
-                if child['Name']  == part:
+                if child['Name'] == part:
                     found = True
                     ou = child
                     break

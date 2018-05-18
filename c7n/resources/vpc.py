@@ -16,14 +16,15 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import itertools
 import operator
 import zlib
-
+import functools
 import jmespath
 
 from botocore.exceptions import ClientError as BotoClientError
 
 from c7n.actions import BaseAction, ModifyVpcSecurityGroupsAction
+from c7n.exceptions import PolicyValidationError
 from c7n.filters import (
-    DefaultVpcBase, Filter, FilterValidationError, ValueFilter)
+    DefaultVpcBase, Filter, ValueFilter)
 import c7n.filters.vpc as net_filters
 from c7n.filters.iamaccess import CrossAccountAccessFilter
 from c7n.filters.related import RelatedResourceFilter
@@ -32,8 +33,9 @@ from c7n.filters.locked import Locked
 from c7n import query, resolver
 from c7n.manager import resources
 from c7n.utils import (
-    chunks, local_session, type_schema, get_retry, parse_cidr)
+    chunks, local_session, type_schema, get_retry, parse_cidr, generate_arn)
 from botocore.exceptions import ClientError
+from c7n.resources.shield import IsShieldProtected, SetShieldProtection
 
 
 @resources.register('vpc')
@@ -179,7 +181,7 @@ class VpcSecurityGroupFilter(RelatedResourceFilter):
     """
     schema = type_schema(
         'security-group', rinherit=ValueFilter.schema,
-        **{'match-resource':{'type': 'boolean'},
+        **{'match-resource': {'type': 'boolean'},
            'operator': {'enum': ['and', 'or']}})
     RelatedResource = "c7n.resources.vpc.SecurityGroup"
     RelatedIdsExpression = '[SecurityGroups][].GroupId'
@@ -279,7 +281,7 @@ class DhcpOptionsFilter(Filter):
 
     def validate(self):
         if not any([self.data.get(k) for k in self.option_keys]):
-            raise ValueError("one of %s required" % (self.option_keys,))
+            raise PolicyValidationError("one of %s required" % (self.option_keys,))
         return self
 
     def process(self, resources, event=None):
@@ -492,7 +494,7 @@ class SecurityGroupApplyPatch(BaseAction):
         diff_filters = [n for n in self.manager.filters if isinstance(
             n, SecurityGroupDiffFilter)]
         if not len(diff_filters):
-            raise FilterValidationError(
+            raise PolicyValidationError(
                 "resource patching requires diff filter")
         return self
 
@@ -856,7 +858,8 @@ class SGPermission(Filter):
         delta = set(self.data.keys()).difference(self.attrs)
         delta.remove('type')
         if delta:
-            raise FilterValidationError("Unknown keys %s" % ", ".join(delta))
+            raise PolicyValidationError("Unknown keys %s on %s" % (
+                ", ".join(delta), self.manager.data))
         return self
 
     def process(self, resources, event=None):
@@ -1470,6 +1473,32 @@ class NetworkAddress(query.QueryResourceManager):
         dimension = None
         config_type = "AWS::EC2::EIP"
 
+    @property
+    def generate_arn(self):
+        if self._generate_arn is None:
+            self._generate_arn = functools.partial(
+                generate_arn,
+                self.get_model().service,
+                region=self.config.region,
+                account_id=self.account_id,
+                resource_type='eip-allocation',
+                separator='/')
+        return self._generate_arn
+
+    def get_arn(self, r):
+        return self.generate_arn(r[self.get_model().id])
+
+    def get_arns(self, resource_set):
+        arns = []
+        for r in resource_set:
+            _id = r[self.get_model().id]
+            arns.append(self.generate_arn(_id))
+        return arns
+
+
+NetworkAddress.filter_registry.register('shield-enabled', IsShieldProtected)
+NetworkAddress.action_registry.register('set-shield', SetShieldProtection)
+
 
 @NetworkAddress.action_registry.register('release')
 class AddressRelease(BaseAction):
@@ -1494,7 +1523,7 @@ class AddressRelease(BaseAction):
     """
 
     schema = type_schema('release', force={'type': 'boolean'})
-    permissions = ('ec2:ReleaseAddress','ec2:DisassociateAddress',)
+    permissions = ('ec2:ReleaseAddress', 'ec2:DisassociateAddress',)
 
     def process_attached(self, client, associated_addrs):
         for aa in list(associated_addrs):
@@ -1710,11 +1739,13 @@ class CreateFlowLogs(BaseAction):
         self.state = self.data.get('state', True)
         if self.state:
             if not self.data.get('DeliverLogsPermissionArn'):
-                raise ValueError('DeliverLogsPermissionArn required when '
-                                 'creating flow-logs')
+                raise PolicyValidationError(
+                    'DeliverLogsPermissionArn required when '
+                    'creating flow-logs on %s' % (self.manager.data,))
             if not self.data.get('LogGroupName'):
-                raise ValueError('LogGroupName required when '
-                                 'creating flow-logs')
+                raise ValueError(
+                    'LogGroupName required when creating flow-logs on %s' % (
+                        self.manager.data))
         return self
 
     def delete_flow_logs(self, client, rids):

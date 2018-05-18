@@ -14,7 +14,7 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.utils import parseaddr
-
+from itertools import chain
 import six
 
 from .ldap_lookup import LdapLookup
@@ -71,10 +71,10 @@ PRIORITIES = {
 class EmailDelivery(object):
 
     def __init__(self, config, session, logger):
-        self.config      = config
-        self.logger      = logger
-        self.session     = session
-        self.aws_ses     = session.client('ses', region_name=config.get('ses_region'))
+        self.config = config
+        self.logger = logger
+        self.session = session
+        self.aws_ses = session.client('ses', region_name=config.get('ses_region'))
         self.ldap_lookup = self.get_ldap_connection()
 
     def get_ldap_connection(self):
@@ -87,7 +87,7 @@ class EmailDelivery(object):
     def priority_header_is_valid(self, priority_header):
         try:
             priority_header_int = int(priority_header)
-        except:
+        except ValueError:
             return False
         if priority_header_int and 0 < int(priority_header_int) < 6:
             return True
@@ -139,7 +139,14 @@ class EmailDelivery(object):
             return []
         resource_owner_tag_keys = self.config.get('contact_tags', [])
         resource_owner_tag_values = get_resource_tag_targets(resource, resource_owner_tag_keys)
-        return self.get_valid_emails_from_list(resource_owner_tag_values)
+        explicit_emails = self.get_valid_emails_from_list(resource_owner_tag_values)
+
+        # resolve the contact info from ldap
+        non_email_ids = list(set(resource_owner_tag_values).difference(explicit_emails))
+        ldap_emails = list(chain.from_iterable([self.ldap_lookup.get_email_to_addrs_from_uid
+                                              (uid) for uid in non_email_ids]))
+
+        return list(chain(explicit_emails, ldap_emails))
 
     def get_account_emails(self, sqs_message):
         email_list = []
@@ -152,7 +159,8 @@ class EmailDelivery(object):
 
         if account_id is not None:
             account_email_mapping = self.config.get('account_emails', {})
-            self.logger.debug('get_account_emails account_email_mapping: %s.', account_email_mapping)
+            self.logger.debug(
+                'get_account_emails account_email_mapping: %s.', account_email_mapping)
             email_list = account_email_mapping.get(account_id, [])
             self.logger.debug('get_account_emails email_list: %s.', email_list)
 
@@ -193,6 +201,7 @@ class EmailDelivery(object):
                 sqs_message,
                 resource
             )
+
             resource_emails = resource_emails + ro_emails
             # if 'owner_absent_contact' was specified in the policy and no resource
             # owner emails were found, add those addresses
@@ -233,7 +242,7 @@ class EmailDelivery(object):
 
     def send_smtp_email(self, smtp_server, message, to_addrs):
         smtp_port = int(self.config.get('smtp_port', 25))
-        smtp_ssl  = bool(self.config.get('smtp_ssl', True))
+        smtp_ssl = bool(self.config.get('smtp_ssl', True))
         smtp_connection = smtplib.SMTP(smtp_server, smtp_port)
         if smtp_ssl:
             smtp_connection.starttls()
@@ -246,20 +255,21 @@ class EmailDelivery(object):
         smtp_connection.quit()
 
     def get_mimetext_message(self, sqs_message, resources, to_addrs):
-        body = get_rendered_jinja(to_addrs, sqs_message, resources, self.logger, 'template', 'default')
+        body = get_rendered_jinja(
+            to_addrs, sqs_message, resources, self.logger, 'template', 'default')
         if not body:
             return None
         email_format = sqs_message['action'].get('template_format', None)
         if not email_format:
             email_format = sqs_message['action'].get(
                 'template', 'default').endswith('html') and 'html' or 'plain'
-        subject            = get_message_subject(sqs_message)
-        from_addr          = sqs_message['action'].get('from', self.config['from_address'])
-        message            = MIMEText(body, email_format)
-        message['From']    = from_addr
-        message['To']      = ', '.join(to_addrs)
+        subject = get_message_subject(sqs_message)
+        from_addr = sqs_message['action'].get('from', self.config['from_address'])
+        message = MIMEText(body, email_format)
+        message['From'] = from_addr
+        message['To'] = ', '.join(to_addrs)
         message['Subject'] = subject
-        priority_header    = sqs_message['action'].get('priority_header', None)
+        priority_header = sqs_message['action'].get('priority_header', None)
         if priority_header and self.priority_header_is_valid(
             sqs_message['action']['priority_header']
         ):
@@ -288,14 +298,12 @@ class EmailDelivery(object):
                 )
             )
         self.logger.info("Sending account:%s policy:%s %s:%s email:%s to %s" % (
-                sqs_message.get('account', ''),
-                sqs_message['policy']['name'],
-                sqs_message['policy']['resource'],
-                str(len(sqs_message['resources'])),
-                sqs_message['action'].get('template', 'default'),
-                email_to_addrs
-            )
-        )
+            sqs_message.get('account', ''),
+            sqs_message['policy']['name'],
+            sqs_message['policy']['resource'],
+            str(len(sqs_message['resources'])),
+            sqs_message['action'].get('template', 'default'),
+            email_to_addrs))
 
     # https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html
     def get_aws_username_from_event(self, event):
@@ -307,8 +315,11 @@ class EmailDelivery(object):
                 format_struct(event)))
             return None
         if identity['type'] == 'AssumedRole':
-            self.logger.debug('In some cases there is no ldap uid is associated with AssumedRole: %s' % identity['arn'])
-            self.logger.debug('We will try to assume that identity is in the AssumedRoleSessionName')
+            self.logger.debug(
+                'In some cases there is no ldap uid is associated with AssumedRole: %s',
+                identity['arn'])
+            self.logger.debug(
+                'We will try to assume that identity is in the AssumedRoleSessionName')
             user = identity['arn'].rsplit('/', 1)[-1]
             if user is None or user.startswith('i-') or user.startswith('awslambda'):
                 return None
