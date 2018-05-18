@@ -29,6 +29,7 @@ Coverage reports can be generated and viewed with the following:
 Linting can be run with:
 
 .. code-block:: bash
+
   $ make lint
 
 
@@ -121,6 +122,7 @@ for an attribute on a resource to be reflected in an API call or any other reaso
 use ``self.recording`` to only sleep when recording json like so:
 
   .. code-block:: python
+
     import time
 
     ...
