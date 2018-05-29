@@ -1165,15 +1165,15 @@ class UserDelete(BaseAction):
         client.delete_user(UserName=r['UserName'])
 
     OPTIONS = {
-        'console-access':delete_console_access,
-        'access-keys':delete_access_keys,
-        'user-policies':delete_user_policies,
-        'mfa-devices':delete_hw_mfa_devices,
-        'groups':delete_groups,
-        'ssh-keys':delete_ssh_keys,
-        'signing-certificates':delete_signing_certificates,
-        'services-specific-credentials':delete_service_specific_credentials,
-        'user':delete_user,
+        'console-access': delete_console_access,
+        'access-keys': delete_access_keys,
+        'user-policies': delete_user_policies,
+        'mfa-devices': delete_hw_mfa_devices,
+        'groups': delete_groups,
+        'ssh-keys': delete_ssh_keys,
+        'signing-certificates': delete_signing_certificates,
+        'services-specific-credentials': delete_service_specific_credentials,
+        'user': delete_user,
     }
 
     schema = type_schema(
