@@ -1108,7 +1108,84 @@ class UserDelete(BaseAction):
             - delete
 
     """
-    schema = type_schema('delete')
+
+    def delete_console_access(self, client, r):
+        try:
+            client.delete_login_profile(
+                UserName=r['UserName'])
+        except ClientError as e:
+            if e.response['Error']['Code'] not in ('NoSuchEntity',):
+                raise
+
+    def delete_access_keys(self, client, r):
+        response = client.list_access_keys(UserName=r['UserName'])
+        for access_key in response['AccessKeyMetadata']:
+            client.delete_access_key(UserName=r['UserName'],
+                                     AccessKeyId=access_key['AccessKeyId'])
+
+    def delete_user_policies(self, client, r):
+        response = client.list_attached_user_policies(UserName=r['UserName'])
+        for user_policy in response['AttachedPolicies']:
+            client.detach_user_policy(
+                UserName=r['UserName'], PolicyArn=user_policy['PolicyArn'])
+
+    def delete_hw_mfa_devices(self, client, r):
+        response = client.list_mfa_devices(UserName=r['UserName'])
+        for mfa_device in response['MFADevices']:
+            client.deactivate_mfa_device(
+                UserName=r['UserName'], SerialNumber=mfa_device['SerialNumber'])
+
+    def delete_groups(self, client, r):
+        response = client.list_groups_for_user(UserName=r['UserName'])
+        for user_group in response['Groups']:
+            client.remove_user_from_group(
+                UserName=r['UserName'], GroupName=user_group['GroupName'])
+
+    def delete_ssh_keys(self, client, r):
+        response = client.list_ssh_public_keys(UserName=r['UserName'])
+        for key in response.get('SSHPublicKeys', ()):
+            client.delete_ssh_public_key(
+                UserName=r['UserName'], SSHPublicKeyId=key['SSHPublicKeyId'])
+
+    def delete_signing_certificates(self, client, r):
+        response = client.list_signing_certificates(UserName=r['UserName'])
+        for cert in response.get('Certificates', ()):
+            client.delete_signing_certificate(
+                UserName=r['UserName'], CertificateId=cert['CertificateId'])
+
+    def delete_service_specific_credentials(self, client, r):
+        # Service specific user credentials (codecommit)
+        response = client.list_service_specific_credentials(UserName=r['UserName'])
+        for screds in response.get('ServiceSpecificCredentials', ()):
+            client.delete_service_specific_credential(
+                UserName=r['UserName'],
+                ServiceSpecificCredentialId=screds['ServiceSpecificCredentialId'])
+
+    def delete_user(self, client, r):
+        client.delete_user(UserName=r['UserName'])
+
+    OPTIONS = {
+        'console-access':delete_console_access,
+        'access-keys':delete_access_keys,
+        'user-policies':delete_user_policies,
+        'mfa-devices':delete_hw_mfa_devices,
+        'groups':delete_groups,
+        'ssh-keys':delete_ssh_keys,
+        'signing-certificates':delete_signing_certificates,
+        'services-specific-credentials':delete_service_specific_credentials,
+        'user':delete_user,
+    }
+
+    schema = type_schema(
+        'delete',
+        options={
+            'type': 'array',
+            'items': {
+                'type': 'string',
+                'enum': list(OPTIONS.keys()),
+            }
+        })
+
     permissions = (
         'iam:ListAttachedUserPolicies',
         'iam:ListAccessKeys',
@@ -1129,61 +1206,19 @@ class UserDelete(BaseAction):
     def process(self, resources):
         client = local_session(self.manager.session_factory).client('iam')
         for r in resources:
-            self.log.debug('Deleting user %s' % r['UserName'])
+            self.log.debug('Deleting user %s options: %s' %
+                (r['UserName'], self.data.get('options', 'all')))
             self.process_user(client, r)
 
     def process_user(self, client, r):
-        try:
-            client.delete_login_profile(
-                UserName=r['UserName'])
-        except ClientError as e:
-            if e.response['Error']['Code'] not in ('NoSuchEntity',):
-                raise
-
-        # Access Keys
-        response = client.list_access_keys(UserName=r['UserName'])
-        for access_key in response['AccessKeyMetadata']:
-            client.delete_access_key(UserName=r['UserName'],
-                                     AccessKeyId=access_key['AccessKeyId'])
-
-        # User Policies
-        response = client.list_attached_user_policies(UserName=r['UserName'])
-        for user_policy in response['AttachedPolicies']:
-            client.detach_user_policy(
-                UserName=r['UserName'], PolicyArn=user_policy['PolicyArn'])
-
-        # HW MFA Devices
-        response = client.list_mfa_devices(UserName=r['UserName'])
-        for mfa_device in response['MFADevices']:
-            client.deactivate_mfa_device(
-                UserName=r['UserName'], SerialNumber=mfa_device['SerialNumber'])
-
-        # Groups
-        response = client.list_groups_for_user(UserName=r['UserName'])
-        for user_group in response['Groups']:
-            client.remove_user_from_group(
-                UserName=r['UserName'], GroupName=user_group['GroupName'])
-
-        # SSH Keys
-        response = client.list_ssh_public_keys(UserName=r['UserName'])
-        for key in response.get('SSHPublicKeys', ()):
-            client.delete_ssh_public_key(
-                UserName=r['UserName'], SSHPublicKeyId=key['SSHPublicKeyId'])
-
-        # Signing Certificates
-        response = client.list_signing_certificates(UserName=r['UserName'])
-        for cert in response.get('Certificates', ()):
-            client.delete_signing_certificate(
-                UserName=r['UserName'], CertificateId=cert['CertificateId'])
-
-        # Service specific user credentials (codecommit)
-        response = client.list_service_specific_credentials(UserName=r['UserName'])
-        for screds in response.get('ServiceSpecificCredentials', ()):
-            client.delete_service_specific_credential(
-                UserName=r['UserName'],
-                ServiceSpecificCredentialId=screds['ServiceSpecificCredentialId'])
-
-        client.delete_user(UserName=r['UserName'])
+        options = self.data.get('options', list(self.OPTIONS.keys()))
+        for cmd in options:
+            if cmd != 'user':
+                op = self.OPTIONS[cmd]
+                op(self, client, r)
+        # delete user after all other operations
+        if 'user' in options:
+            self.delete_user(client, r)
 
 
 @User.action_registry.register('remove-keys')
