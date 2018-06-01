@@ -1173,7 +1173,7 @@ class ToggleVersioning(BucketActionBase):
 
     def process_versioning(self, resource, state):
         client = bucket_client(
-            local_session(self.manager.session_factory), r)
+            local_session(self.manager.session_factory), resource)
         try:
             client.put_bucket_versioning(
                 Bucket=resource['Name'],
