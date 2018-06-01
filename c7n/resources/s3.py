@@ -1187,7 +1187,6 @@ class ToggleVersioning(BucketActionBase):
             log.warning(
                 "Access Denied Bucket:%s while put bucket versioning" % resource['Name'])
 
-
     # mfa delete enablement looks like it needs the serial and a current token.
     def process(self, resources):
         enabled = self.data.get('enabled', True)
