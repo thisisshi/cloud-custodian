@@ -18,7 +18,7 @@ from json import dumps
 from jsonschema.exceptions import best_match
 
 from c7n.manager import resources
-from c7n.schema import Validator, validate, validate_policy_dt_parse, generate, specific_error
+from c7n.schema import Validator, validate, generate, specific_error
 from .common import BaseTest
 
 
@@ -75,67 +75,6 @@ class SchemaTest(BaseTest):
         self.assertEqual(len(result), 2)
         self.assertTrue(isinstance(result[0], ValueError))
         self.assertTrue('monday-morning' in str(result[0]))
-
-    def test_validate_policy_dt_parse(self):
-        data = {
-            'policies': [
-                {'name': 'bad-str-parse',
-                 'resource': 'ec2',
-                 'start': 'asdf'}
-                ]}
-
-        result = validate_policy_dt_parse(data)
-        self.assertTrue(result[0], ValueError)
-
-        data = {
-            'policies': [
-                {'name': 'bad-non-str-parse',
-                 'resource': 'ec2',
-                 'start': 2}
-                ]}
-
-        result = validate_policy_dt_parse(data)
-        self.assertTrue(result[0], ValueError)
-
-        data = {
-            'policies': [
-                {'name': 'bad-tz-parse',
-                 'resource': 'ec2',
-                 'tz': 'asdf'}
-                ]}
-
-        result = validate_policy_dt_parse(data)
-        self.assertTrue(result[0], ValueError)
-
-        data = {
-            'policies': [
-                {'name': 'bad-tz-int-parse',
-                 'resource': 'ec2',
-                 'tz': 2}
-                ]}
-
-        result = validate_policy_dt_parse(data)
-        self.assertTrue(result[0], ValueError)
-
-        data = {
-            'policies': [
-                {'name': 'good-time-parse',
-                 'resource': 'ec2',
-                 'start': '4 AM'}
-                ]}
-
-        result = validate_policy_dt_parse(data)
-        self.assertEqual(result, None)
-
-        data = {
-            'policies': [
-                {'name': 'good-tz-str-parse',
-                 'resource': 'ec2',
-                 'tz': 'UTC'}
-                ]}
-
-        result = validate_policy_dt_parse(data)
-        self.assertEqual(result, None)
 
     def test_semantic_error(self):
         data = {

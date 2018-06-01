@@ -496,6 +496,60 @@ class TestPolicy(BaseTest):
         p()
         self.assertEqual(len(p.ctx.metrics.data), 3)
 
+    def test_validate_policy_dt_parse(self):
+        data = {
+            'name': 'bad-str-parse',
+            'resource': 'ec2',
+            'start': 'asdf'
+            }
+        with self.assertRaises(ValueError):
+            self.load_policy(data)
+
+        data = {
+            'name': 'bad-non-str-parse',
+            'resource': 'ec2',
+            'start': 2
+            }
+        with self.assertRaises(Exception):
+            self.load_policy(data)
+
+        data = {
+            'name': 'bad-tz-parse',
+            'resource': 'ec2',
+            'tz': 'asdf'
+            }
+        with self.assertRaises(ValueError):
+            self.load_policy(data)
+
+        data = {
+            'name': 'bad-tz-int-parse',
+            'resource': 'ec2',
+            'tz': 2
+            }
+        with self.assertRaises(Exception):
+            self.load_policy(data)
+
+        data = {
+            'name': 'good-time-parse',
+            'resource': 'ec2',
+            'start': '4 AM'
+            }
+
+        p = self.load_policy(data)
+        result = p.validate_policy_dt_parse()
+        self.assertEqual(result, None)
+
+        data = {
+            'name': 'good-tz-str-parse',
+             'resource': 'ec2',
+             'tz': 'UTC'
+             }
+
+        p = self.load_policy(data)
+        result = p.validate_policy_dt_parse()
+        self.assertEqual(result, None)
+
+
 
 class PolicyExecutionModeTest(BaseTest):
 

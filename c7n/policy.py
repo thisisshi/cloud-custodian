@@ -695,6 +695,7 @@ class Policy(object):
     def validate(self):
         m = self.get_execution_mode()
         m.validate()
+        self.validate_policy_dt_parse()
         for f in self.resource_manager.filters:
             f.validate()
         for a in self.resource_manager.actions:
@@ -765,3 +766,27 @@ class Policy(object):
             raise ValueError(
                 "Invalid resource type: %s" % resource_type)
         return factory(self.ctx, self.data)
+
+    def validate_policy_dt_parse(self):
+        policy_name = self.data.get('name')
+        policy_tz = self.data.get('tz')
+        policy_start = self.data.get('start')
+        policy_end = self.data.get('end')
+
+        if policy_tz:
+            try:
+                p_tz = tz.gettz(policy_tz)
+            except Exception as e:
+                raise ValueError(
+                    "Policy: %s TZ not parsable: %s, %s" % (policy_name, policy_tz, e))
+            if not isinstance(p_tz, tz.tzfile):
+                raise ValueError(
+                    "Policy: %s TZ not parsable: %s" % (policy_name, policy_tz))
+
+        for i in [policy_start, policy_end]:
+            if i:
+                try:
+                    parser.parse(i)
+                except Exception as e:
+                    raise ValueError(
+                        "Policy: %s Date/Time not parsable: %s, %s" % (policy_name, i, e))

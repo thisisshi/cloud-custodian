@@ -30,7 +30,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from collections import Counter
 import json
 import logging
-from dateutil import parser, tz
 
 from jsonschema import Draft4Validator as Validator
 from jsonschema.exceptions import best_match
@@ -43,9 +42,9 @@ from c7n.filters import ValueFilter, EventFilter, AgeFilter
 def validate(data, schema=None):
     if schema is None:
         schema = generate()
+        Validator.check_schema(schema)
 
     validator = Validator(schema)
-    validator.check_schema(schema)
 
     errors = list(validator.iter_errors(data))
 
@@ -72,38 +71,10 @@ def validate(data, schema=None):
         logging.exception(
             "specific_error failed, traceback, followed by fallback")
 
-    extra_errs = validate_policy_dt_parse(data)
-    if extra_errs:
-        return extra_errs
-
     return list(filter(None, [
         errors[0],
         best_match(validator.iter_errors(data)),
     ]))
-
-
-def validate_policy_dt_parse(data):
-
-    for p in data.get('policies'):
-        name = p.get('name')
-        if p.get('tz'):
-            try:
-                p_tz = tz.gettz(p.get('tz'))
-            except Exception as e:
-                return [ValueError(
-                    "TZ not parsable: %s, %s" % (p.get('tz'), e)), name]
-            if not isinstance(p_tz, tz.tzfile):
-                return [ValueError(
-                    "TZ not parsable: %s" % p.get('tz')), name]
-
-        for i in [p.get('start'), p.get('end')]:
-            if i:
-                try:
-                    parser.parse(i)
-                except Exception as e:
-                    return [ValueError(
-                            "Date/Time not parsable: %s, %s" % (i, e)), name]
-    return None
 
 
 def specific_error(error):
