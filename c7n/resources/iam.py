@@ -1151,7 +1151,7 @@ class UserDelete(BaseAction):
                   options:
                     - mfa-devices
                     - access-keys
-                - ssh-keys
+                    - ssh-keys
     """
 
     ORDERED_OPTIONS = OrderedDict([
