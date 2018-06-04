@@ -539,6 +539,7 @@ class NotEncryptedFilter(Filter, LaunchConfigFilterBase):
                 raise
             else:
                 return result.get('Snapshots', ())
+        return ()
 
     @staticmethod
     def get_bad_snapshot(e):
