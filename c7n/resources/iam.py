@@ -957,7 +957,7 @@ class GroupMembership(ValueFilter):
 
         matched = []
         for r in resources:
-            for p in r['c7n:Groups']:
+            for p in r.get('c7n:Groups', []):
                 if self.match(p) and r not in matched:
                     matched.append(r)
         return matched
