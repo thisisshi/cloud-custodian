@@ -185,7 +185,7 @@ def generate(resource_types=()):
                     'type': 'string',
                     'pattern': "^[A-z][A-z0-9]*(-[A-z0-9]+)*$"},
                 'region': {'type': 'string'},
-                'tz' : {'type': 'string'},
+                'tz': {'type': 'string'},
                 'start': {'format': 'date-time'},
                 'end': {'format': 'date-time'},
                 'resource': {'type': 'string'},

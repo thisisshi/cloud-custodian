@@ -13,7 +13,7 @@
 # limitations under the License.
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 import json
 import mock
 import shutil
@@ -563,7 +563,7 @@ class TestPolicy(BaseTest):
             'name': 'bad-str-parse',
             'resource': 'ec2',
             'start': 'asdf'
-            }
+        }
         with self.assertRaises(ValueError):
             self.load_policy(data)
 
@@ -571,7 +571,7 @@ class TestPolicy(BaseTest):
             'name': 'bad-non-str-parse',
             'resource': 'ec2',
             'start': 2
-            }
+        }
         with self.assertRaises(Exception):
             self.load_policy(data)
 
@@ -579,7 +579,7 @@ class TestPolicy(BaseTest):
             'name': 'bad-tz-parse',
             'resource': 'ec2',
             'tz': 'asdf'
-            }
+        }
         with self.assertRaises(ValueError):
             self.load_policy(data)
 
@@ -587,7 +587,7 @@ class TestPolicy(BaseTest):
             'name': 'bad-tz-int-parse',
             'resource': 'ec2',
             'tz': 2
-            }
+        }
         with self.assertRaises(Exception):
             self.load_policy(data)
 
@@ -595,22 +595,20 @@ class TestPolicy(BaseTest):
             'name': 'good-time-parse',
             'resource': 'ec2',
             'start': '4 AM'
-            }
-
+        }
         p = self.load_policy(data)
         result = p.validate_policy_dt_parse()
         self.assertEqual(result, None)
 
         data = {
             'name': 'good-tz-str-parse',
-             'resource': 'ec2',
-             'tz': 'UTC'
-             }
+            'resource': 'ec2',
+            'tz': 'UTC'
+        }
 
         p = self.load_policy(data)
         result = p.validate_policy_dt_parse()
         self.assertEqual(result, None)
-
 
 
 class PolicyExecutionModeTest(BaseTest):
@@ -667,7 +665,7 @@ class PullModeTest(BaseTest):
              'resource': 'ec2',
              'tz': 'UTC',
              'start': '2018-3-29'},
-            config={'validate':True},
+            config={'validate': True},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), True)
@@ -678,7 +676,7 @@ class PullModeTest(BaseTest):
              'resource': 'ec2',
              'tz': 'UTC',
              'start': tomorrow_date},
-            config={'validate':True},
+            config={'validate': True},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), False)
@@ -688,7 +686,7 @@ class PullModeTest(BaseTest):
              'resource': 'ec2',
              'tz': 'UTC',
              'end': tomorrow_date},
-            config={'validate':True},
+            config={'validate': True},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), True)
@@ -698,7 +696,7 @@ class PullModeTest(BaseTest):
              'resource': 'ec2',
              'tz': 'UTC',
              'end': '2018-3-29'},
-            config={'validate':True},
+            config={'validate': True},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), False)
@@ -709,7 +707,7 @@ class PullModeTest(BaseTest):
              'tz': 'UTC',
              'start': '2018-3-28',
              'end': '2018-3-29'},
-            config={'validate':True},
+            config={'validate': True},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), False)
@@ -720,7 +718,7 @@ class PullModeTest(BaseTest):
              'resource': 'ec2',
              'tz': 'UTC',
              'start': 'March 3 2018'},
-            config={'validate':True},
+            config={'validate': True},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), True)
@@ -730,7 +728,7 @@ class PullModeTest(BaseTest):
              'resource': 'ec2',
              'tz': 'UTC',
              'start': 'March 3rd 2018'},
-            config={'validate':True},
+            config={'validate': True},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), True)
@@ -740,7 +738,7 @@ class PullModeTest(BaseTest):
              'resource': 'ec2',
              'tz': 'UTC',
              'start': '28 March 2018'},
-            config={'validate':True},
+            config={'validate': True},
             session_factory=None)
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), True)
