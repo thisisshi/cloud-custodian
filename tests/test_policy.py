@@ -661,7 +661,7 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'parse-date-policy',
              'resource': 'ec2',
-             'tz': 'utc',
+             'tz': 'UTC',
              'start': 'March 3rd 2018'},
             config={'validate':True},
             session_factory=None)
@@ -671,7 +671,7 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'parse-date-policy',
              'resource': 'ec2',
-             'tz': 'utc',
+             'tz': 'UTC',
              'start': '28 March 2018'},
             config={'validate':True},
             session_factory=None)
