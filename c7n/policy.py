@@ -658,9 +658,7 @@ class Policy(object):
 
     @property
     def tz(self):
-        if 'tz' in self.data:
-            return tz.gettz(self.data.get('tz'))
-        return tz.gettz('UTC')
+        return tz.gettz(self.data.get('tz', 'UTC'))
 
     @property
     def start(self):

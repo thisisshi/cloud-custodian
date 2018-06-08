@@ -598,7 +598,7 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'good-start-date',
              'resource': 'ec2',
-             'tz': 'utc',
+             'tz': 'UTC',
              'start': '2018-3-29'},
             config={'validate':True},
             session_factory=None)
@@ -609,7 +609,7 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'bad-start-date',
              'resource': 'ec2',
-             'tz': 'utc',
+             'tz': 'UTC',
              'start': tomorrow_date},
             config={'validate':True},
             session_factory=None)
@@ -619,7 +619,7 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'good-end-date',
              'resource': 'ec2',
-             'tz': 'utc',
+             'tz': 'UTC',
              'end': tomorrow_date},
             config={'validate':True},
             session_factory=None)
@@ -629,7 +629,7 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'bad-end-date',
              'resource': 'ec2',
-             'tz': 'utc',
+             'tz': 'UTC',
              'end': '2018-3-29'},
             config={'validate':True},
             session_factory=None)
@@ -639,7 +639,7 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'bad-start-end-date',
              'resource': 'ec2',
-             'tz': 'utc',
+             'tz': 'UTC',
              'start': '2018-3-28',
              'end': '2018-3-29'},
             config={'validate':True},
@@ -651,7 +651,7 @@ class PullModeTest(BaseTest):
         p = self.load_policy(
             {'name': 'parse-date-policy',
              'resource': 'ec2',
-             'tz': 'utc',
+             'tz': 'UTC',
              'start': 'March 3 2018'},
             config={'validate':True},
             session_factory=None)
