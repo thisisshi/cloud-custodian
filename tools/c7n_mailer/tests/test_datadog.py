@@ -3,7 +3,6 @@ import unittest
 from mock import patch
 from mock import MagicMock
 
-from common import SQS_MESSAGE_1
 from common import SQS_MESSAGE_2
 from common import SQS_MESSAGE_3
 
@@ -90,7 +89,8 @@ class TestDataDogDelivery(unittest.TestCase):
     def test_should_initialize_datadog_with_keys_in_config(self):
         DataDogDelivery(self.config, self.session, self.logger)
 
-        self.mock_datadog_initialize.assert_called_with(api_key=DATADOG_API_KEY, app_key=DATADOG_APPLICATION_KEY)
+        self.mock_datadog_initialize.assert_called_with(
+            api_key=DATADOG_API_KEY, app_key=DATADOG_APPLICATION_KEY)
 
     def test_should_not_initialize_datadog_with_no_keys_in_config(self):
         DataDogDelivery({}, self.session, self.logger)
@@ -115,7 +115,8 @@ class TestDataDogDelivery(unittest.TestCase):
 
     @patch('c7n_mailer.datadog_delivery.time.time', return_value=0)
     @patch('c7n_mailer.datadog_delivery.api.Metric.send')
-    def test_deliver_datadog_messages_should_send_correct_metric_to_datadog(self, mock_datadog_api, mock_time):
+    def test_deliver_datadog_messages_should_send_correct_metric_to_datadog(
+            self, mock_datadog_api, mock_time):
         datadog_delivery = DataDogDelivery(self.config, self.session, self.logger)
         datadog_message_packages = datadog_delivery.get_datadog_message_packages(SQS_MESSAGE_2)
         datadog_delivery.deliver_datadog_messages(datadog_message_packages, SQS_MESSAGE_2)
@@ -128,7 +129,8 @@ class TestDataDogDelivery(unittest.TestCase):
 
     @patch('c7n_mailer.datadog_delivery.time.time', return_value=0)
     @patch('c7n_mailer.datadog_delivery.api.Metric.send')
-    def test_deliver_datadog_messages_should_send_correct_metric_value_to_datadog(self, mock_datadog_api, mock_time):
+    def test_deliver_datadog_messages_should_send_correct_metric_value_to_datadog(
+            self, mock_datadog_api, mock_time):
         datadog_delivery = DataDogDelivery(self.config, self.session, self.logger)
         datadog_message_packages = datadog_delivery.get_datadog_message_packages(SQS_MESSAGE_3)
         datadog_delivery.deliver_datadog_messages(datadog_message_packages, SQS_MESSAGE_3)
@@ -137,3 +139,12 @@ class TestDataDogDelivery(unittest.TestCase):
         answer[0]['tags'].sort()
 
         assert answer == DATADOG_METRIC_SQS_MESSAGE_3
+
+    @patch('c7n_mailer.datadog_delivery.time.time', return_value=0)
+    @patch('c7n_mailer.datadog_delivery.api.Metric.send')
+    def test_deliver_datadog_messages_should_not_send_metric_if_metrics_are_empty(
+            self, mock_datadog_api, mock_time):
+        datadog_delivery = DataDogDelivery(self.config, self.session, self.logger)
+        datadog_delivery.deliver_datadog_messages([], SQS_MESSAGE_3)
+
+        mock_datadog_api.assert_not_called()

@@ -13,13 +13,14 @@
 # limitations under the License.
 
 import six
-from c7n_azure.actions import Tag
 
 from c7n.actions import ActionRegistry
 from c7n.filters import FilterRegistry
 from c7n.manager import ResourceManager
 from c7n.query import sources
 from c7n.utils import local_session
+from c7n_azure.provider import resources
+from c7n_azure.actions import Notify
 
 
 class ResourceQuery(object):
@@ -29,11 +30,23 @@ class ResourceQuery(object):
 
     def filter(self, resource_manager, **params):
         m = resource_manager.resource_type
-        enum_op, list_op = m.enum_spec
+        enum_op, list_op, extra_args = m.enum_spec
+
+        if extra_args:
+            params.update(extra_args)
+
         op = getattr(getattr(resource_manager.get_client(), enum_op), list_op)
-        data = [r.serialize(True) for r in op()]
+        data = [r.serialize(True) for r in op(**params)]
 
         return data
+
+    @staticmethod
+    def resolve(resource_type):
+        if not isinstance(resource_type, type):
+            raise ValueError(resource_type)
+        else:
+            m = resource_type
+        return m
 
 
 @sources.register('describe-azure')
@@ -60,10 +73,8 @@ class QueryMeta(type):
             attrs['filter_registry'] = FilterRegistry(
                 '%s.filters' % name.lower())
         if 'action_registry' not in attrs:
-            actions = ActionRegistry(
+            attrs['action_registry'] = ActionRegistry(
                 '%s.actions' % name.lower())
-            actions.register('tag', Tag)
-            attrs['action_registry'] = actions
 
         return super(QueryMeta, cls).__new__(cls, name, parents, attrs)
 
@@ -74,6 +85,9 @@ class QueryResourceManager(ResourceManager):
     def __init__(self, data, options):
         super(QueryResourceManager, self).__init__(data, options)
         self.source = self.get_source(self.source_type)
+
+    def augment(self, resources):
+        return resources
 
     def get_permissions(self):
         return ()
@@ -90,6 +104,10 @@ class QueryResourceManager(ResourceManager):
     def get_cache_key(self, query):
         return {'source_type': self.source_type, 'query': query}
 
+    @classmethod
+    def get_model(cls):
+        return ResourceQuery.resolve(cls.resource_type)
+
     @property
     def source_type(self):
         return self.data.get('source', 'describe-azure')
@@ -100,5 +118,26 @@ class QueryResourceManager(ResourceManager):
         self._cache.save(key, resources)
         return self.filter_resources(resources)
 
-    def augment(self, resources):
-        return resources
+    def get_resources(self, resource_ids, **params):
+        resource_client = self.get_client()
+        m = self.resource_type
+        get_client, get_op, extra_args = m.get_spec
+
+        if extra_args:
+            params.update(extra_args)
+
+        op = getattr(getattr(resource_client, get_client), get_op)
+        data = [
+            op(rid, **params)
+            for rid in resource_ids
+        ]
+        return [r.serialize(True) for r in data]
+
+    @staticmethod
+    def register_actions_and_filters(registry, _):
+        for resource in registry.keys():
+            klass = registry.get(resource)
+            klass.action_registry.register('notify', Notify)
+
+
+resources.subscribe(resources.EVENT_FINAL, QueryResourceManager.register_actions_and_filters)

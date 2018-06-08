@@ -16,12 +16,15 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import itertools
 import operator
 import zlib
-
+import functools
 import jmespath
 
+from botocore.exceptions import ClientError as BotoClientError
+
 from c7n.actions import BaseAction, ModifyVpcSecurityGroupsAction
+from c7n.exceptions import PolicyValidationError
 from c7n.filters import (
-    DefaultVpcBase, Filter, FilterValidationError, ValueFilter)
+    DefaultVpcBase, Filter, ValueFilter)
 import c7n.filters.vpc as net_filters
 from c7n.filters.iamaccess import CrossAccountAccessFilter
 from c7n.filters.related import RelatedResourceFilter
@@ -30,7 +33,9 @@ from c7n.filters.locked import Locked
 from c7n import query, resolver
 from c7n.manager import resources
 from c7n.utils import (
-    chunks, local_session, type_schema, get_retry, parse_cidr)
+    chunks, local_session, type_schema, get_retry, parse_cidr, generate_arn)
+from botocore.exceptions import ClientError
+from c7n.resources.shield import IsShieldProtected, SetShieldProtection
 
 
 @resources.register('vpc')
@@ -176,7 +181,7 @@ class VpcSecurityGroupFilter(RelatedResourceFilter):
     """
     schema = type_schema(
         'security-group', rinherit=ValueFilter.schema,
-        **{'match-resource':{'type': 'boolean'},
+        **{'match-resource': {'type': 'boolean'},
            'operator': {'enum': ['and', 'or']}})
     RelatedResource = "c7n.resources.vpc.SecurityGroup"
     RelatedIdsExpression = '[SecurityGroups][].GroupId'
@@ -276,7 +281,7 @@ class DhcpOptionsFilter(Filter):
 
     def validate(self):
         if not any([self.data.get(k) for k in self.option_keys]):
-            raise ValueError("one of %s required" % (self.option_keys,))
+            raise PolicyValidationError("one of %s required" % (self.option_keys,))
         return self
 
     def process(self, resources, event=None):
@@ -489,7 +494,7 @@ class SecurityGroupApplyPatch(BaseAction):
         diff_filters = [n for n in self.manager.filters if isinstance(
             n, SecurityGroupDiffFilter)]
         if not len(diff_filters):
-            raise FilterValidationError(
+            raise PolicyValidationError(
                 "resource patching requires diff filter")
         return self
 
@@ -853,7 +858,8 @@ class SGPermission(Filter):
         delta = set(self.data.keys()).difference(self.attrs)
         delta.remove('type')
         if delta:
-            raise FilterValidationError("Unknown keys %s" % ", ".join(delta))
+            raise PolicyValidationError("Unknown keys %s on %s" % (
+                ", ".join(delta), self.manager.data))
         return self
 
     def process(self, resources, event=None):
@@ -1353,6 +1359,8 @@ class MissingRoute(Filter):
             for k in ('AccepterVpcInfo', 'RequesterVpcInfo'):
                 if r[k]['OwnerId'] != self.manager.config.account_id:
                     continue
+                if r[k].get('Region') and r['k']['Region'] != self.manager.config.region:
+                    continue
                 if r[k]['VpcId'] not in routed_vpcs[r['VpcPeeringConnectionId']]:
                     results.append(r)
                     break
@@ -1453,19 +1461,105 @@ class AclAwsS3Cidrs(Filter):
 
 
 @resources.register('network-addr')
-class Address(query.QueryResourceManager):
+class NetworkAddress(query.QueryResourceManager):
 
     class resource_type(object):
         service = 'ec2'
         type = 'network-addr'
         enum_spec = ('describe_addresses', 'Addresses', None)
-        name = id = 'PublicIp'
+        name = 'PublicIp'
+        id = 'AllocationId'
         filter_name = 'PublicIps'
         filter_type = 'list'
         date = None
         dimension = None
         config_type = "AWS::EC2::EIP"
-        taggable = False
+
+    @property
+    def generate_arn(self):
+        if self._generate_arn is None:
+            self._generate_arn = functools.partial(
+                generate_arn,
+                self.get_model().service,
+                region=self.config.region,
+                account_id=self.account_id,
+                resource_type='eip-allocation',
+                separator='/')
+        return self._generate_arn
+
+    def get_arn(self, r):
+        return self.generate_arn(r[self.get_model().id])
+
+    def get_arns(self, resource_set):
+        arns = []
+        for r in resource_set:
+            _id = r[self.get_model().id]
+            arns.append(self.generate_arn(_id))
+        return arns
+
+
+NetworkAddress.filter_registry.register('shield-enabled', IsShieldProtected)
+NetworkAddress.action_registry.register('set-shield', SetShieldProtection)
+
+
+@NetworkAddress.action_registry.register('release')
+class AddressRelease(BaseAction):
+    """Action to release elastic IP address(es)
+
+    Use the force option to cause any attached elastic IPs to
+    also be released.  Otherwise, only unattached elastic IPs
+    will be released.
+
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: release-network-addr
+                resource: network-addr
+                filters:
+                  - AllocationId: ...
+                actions:
+                  - type: release
+                    force: true|false
+    """
+
+    schema = type_schema('release', force={'type': 'boolean'})
+    permissions = ('ec2:ReleaseAddress', 'ec2:DisassociateAddress',)
+
+    def process_attached(self, client, associated_addrs):
+        for aa in list(associated_addrs):
+            try:
+                client.disassociate_address(AssociationId=aa['AssociationId'])
+            except BotoClientError as e:
+                # If its already been diassociated ignore, else raise.
+                if not(e.response['Error']['Code'] == 'InvalidAssocationID.NotFound' and
+                       aa['AssocationId'] in e.response['Error']['Message']):
+                    raise e
+                associated_addrs.remove(aa)
+        return associated_addrs
+
+    def process(self, network_addrs):
+        client = local_session(self.manager.session_factory).client('ec2')
+        force = self.data.get('force')
+        assoc_addrs = [addr for addr in network_addrs if 'AssociationId' in addr]
+        unassoc_addrs = [addr for addr in network_addrs if 'AssociationId' not in addr]
+
+        if len(assoc_addrs) and not force:
+            self.log.warning(
+                "Filtered %d attached eips of %d eips. Use 'force: true' to release them.",
+                len(assoc_addrs), len(network_addrs))
+        elif len(assoc_addrs) and force:
+            unassoc_addrs = itertools.chain(
+                unassoc_addrs, self.process_attached(client, assoc_addrs))
+
+        for r in unassoc_addrs:
+            try:
+                client.release_address(AllocationId=r['AllocationId'])
+            except BotoClientError as e:
+                # If its already been released, ignore, else raise.
+                if e.response['Error']['Code'] == 'InvalidAllocationID.NotFound':
+                    raise
 
 
 @resources.register('customer-gateway')
@@ -1600,3 +1694,110 @@ class KeyPair(query.QueryResourceManager):
         name = 'KeyName'
         date = None
         dimension = None
+
+
+@Vpc.action_registry.register('set-flow-log')
+@Subnet.action_registry.register('set-flow-log')
+@NetworkInterface.action_registry.register('set-flow-log')
+class CreateFlowLogs(BaseAction):
+    """Create flow logs for a network resource
+
+    :example:
+
+    .. code-block: yaml
+
+        policies:
+          - name: vpc-enable-flow-logs
+            resource: vpc
+            filters:
+              - type: flow-logs
+                enabled: false
+            actions:
+              - type: set-flow-log
+                DeliverLogsPermissionArn: arn:iam:role
+                LogGroupName: /custodian/vpc/flowlogs/
+    """
+    permissions = ('ec2:CreateFlowLogs',)
+    schema = {
+        'type': 'object',
+        'additionalProperties': False,
+        'properties': {
+            'type': {'enum': ['set-flow-log']},
+            'state': {'type': 'boolean'},
+            'DeliverLogsPermissionArn': {'type': 'string'},
+            'LogGroupName': {'type': 'string'},
+            'TrafficType': {'type': 'string',
+                            'enum': ['ACCEPT', 'REJECT', 'ALL']}
+        }
+    }
+
+    RESOURCE_ALIAS = {
+        'vpc': 'VPC',
+        'subnet': 'Subnet',
+        'eni': 'NetworkInterface'
+    }
+
+    def validate(self):
+        self.state = self.data.get('state', True)
+        if self.state:
+            if not self.data.get('DeliverLogsPermissionArn'):
+                raise PolicyValidationError(
+                    'DeliverLogsPermissionArn required when '
+                    'creating flow-logs on %s' % (self.manager.data,))
+            if not self.data.get('LogGroupName'):
+                raise ValueError(
+                    'LogGroupName required when creating flow-logs on %s' % (
+                        self.manager.data))
+        return self
+
+    def delete_flow_logs(self, client, rids):
+        flow_logs = client.describe_flow_logs(
+            Filters=[{'Name': 'resource-id', 'Values': rids}])['FlowLogs']
+
+        try:
+            results = client.delete_flow_logs(
+                FlowLogIds=[f['FlowLogId'] for f in flow_logs])
+
+            for r in results['Unsuccessful']:
+                self.log.exception(
+                    'Exception: delete flow-log for %s: %s on %s',
+                    r['ResourceId'], r['Error']['Message'])
+        except ClientError as e:
+            if e.response['Error']['Code'] == 'InvalidParameterValue':
+                self.log.exception(
+                    'delete flow-log: %s', e.response['Error']['Message'])
+            else:
+                raise
+
+    def process(self, resources):
+        client = local_session(self.manager.session_factory).client('ec2')
+        params = dict(self.data)
+        params.pop('type')
+
+        if self.data.get('state'):
+            params.pop('state')
+
+        model = self.manager.get_model()
+        params['ResourceIds'] = [r[model.id] for r in resources]
+
+        if not self.state:
+            self.delete_flow_logs(client, params['ResourceIds'])
+            return
+
+        params['ResourceType'] = self.RESOURCE_ALIAS[model.type]
+        params['TrafficType'] = self.data.get('TrafficType', 'ALL').upper()
+
+        try:
+            results = client.create_flow_logs(**params)
+
+            for r in results['Unsuccessful']:
+                self.log.exception(
+                    'Exception: create flow-log for %s: %s',
+                    r['ResourceId'], r['Error']['Message'])
+        except ClientError as e:
+            if e.response['Error']['Code'] == 'FlowLogAlreadyExists':
+                self.log.exception(
+                    'Exception: create flow-log: %s',
+                    e.response['Error']['Message'])
+            else:
+                raise

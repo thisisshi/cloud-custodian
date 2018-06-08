@@ -132,6 +132,7 @@ class Session(object):
                  quota_max_calls=None,
                  quota_period=None,
                  use_rate_limiter=False,
+                 project_id=None,
                  **kwargs):
         """Constructor.
 
@@ -159,6 +160,8 @@ class Session(object):
         else:
             self._rate_limiter = None
 
+        self.project_id = project_id
+
     def __repr__(self):
         """The object representation.
 
@@ -167,6 +170,24 @@ class Session(object):
         """
         return '<GCPSession: name=%s, versions=%s>' % (
             self.name, self.versions)
+
+    def get_default_project(self):
+        if self.project_id:
+            return self.project_id
+        for k in ('GOOGLE_PROJECT', 'GCLOUD_PROJECT', 'CLOUDSDK_CORE_PROJECT'):
+            if k in os.environ:
+                return os.environ[k]
+        raise ValueError("No GCP Project ID set - set CLOUDSDK_CORE_PROJECT")
+
+    def get_default_region(self):
+        for k in ('GOOGLE_REGION', 'GCLOUD_REGION', 'CLOUDSDK_COMPUTE_REGION'):
+            if k in os.environ:
+                return os.environ[k]
+
+    def get_default_zone(self):
+        for k in ('GOOGLE_ZONE', 'GCLOUD_ZONE', 'CLOUDSDK_COMPUTE_ZONE'):
+            if k in os.environ:
+                return os.environ[k]
 
     def client(self, service_name, version, component, **kw):
         """Safely initialize a repository class to a property.
@@ -332,8 +353,7 @@ class ServiceClient(object):
 
         Args:
             verb (str): Method to execute on the component (ex. get, list).
-            verb_arguments (dict): key-value pairs to be passed to
-                _build_request.
+            verb_arguments (dict): key-value pairs to be passed to _build_request.
 
         Returns:
             dict: An async operation Service Response.
@@ -346,8 +366,7 @@ class ServiceClient(object):
 
         Args:
             verb (str): Method to execute on the component (ex. get, list).
-            verb_arguments (dict): key-value pairs to be passed to
-                _BuildRequest.
+            verb_arguments (dict): key-value pairs to be passed to _BuildRequest.
 
         Yields:
             dict: Service Response.
@@ -373,8 +392,7 @@ class ServiceClient(object):
 
         Args:
             verb (str): Method to execute on the component (ex. search).
-            verb_arguments (dict): key-value pairs to be passed to
-                _BuildRequest.
+            verb_arguments (dict): key-value pairs to be passed to _BuildRequest.
 
         Yields:
             dict: Service Response.
@@ -402,8 +420,7 @@ class ServiceClient(object):
 
         Args:
             verb (str): Method to execute on the component (ex. get, list).
-            verb_arguments (dict): key-value pairs to be passed to
-                _BuildRequest.
+            verb_arguments (dict): key-value pairs to be passed to _BuildRequest.
 
         Returns:
             dict: Service Response.
