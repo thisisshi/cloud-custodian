@@ -139,7 +139,7 @@ class ValuesFrom(object):
             if 'expr' in self.data:
                 res = jmespath.search(self.data['expr'], data)
                 if res is None:
-                    log.warning('ValueFilter: %s key returned None' % self.data['expr'])
+                    log.warning('ValueFrom filter: %s key returned None' % self.data['expr'])
                 return res
         elif format == 'csv' or format == 'csv2dict':
             data = csv.reader(io.StringIO(contents))
@@ -152,7 +152,7 @@ class ValuesFrom(object):
             if 'expr' in self.data:
                 res = jmespath.search(self.data['expr'], data)
                 if res is None:
-                    log.warning('ValueFilter: %s key returned None' % self.data['expr'])
+                    log.warning('ValueFrom filter: %s key returned None' % self.data['expr'])
                 return res
             return data
         elif format == 'txt':
