@@ -683,7 +683,7 @@ class GlobalGrantsFilter(Filter):
                 continue
             if grant['Grantee']['URI'] not in [self.AUTH_ALL, self.GLOBAL_ALL]:
                 continue
-            if allow_website and grant['Permission'] == 'READ' and b['Website']:
+            if allow_website and grant['Permission'] == 'READ' and b.get('Website'):
                 continue
             if not perms or (perms and grant['Permission'] in perms):
                 results.append(grant['Permission'])
@@ -973,7 +973,7 @@ class DeleteBucketNotification(BucketActionBase):
     permissions = ('s3:PutBucketNotification',)
 
     def process_bucket(self, bucket):
-        n = bucket['Notification']
+        n = bucket.get('Notification')
         if not n:
             return
 
@@ -1258,7 +1258,7 @@ class ToggleLogging(BucketActionBase):
 
         for r in resources:
             client = bucket_client(session, r)
-            is_logging = bool(r['Logging'])
+            is_logging = bool(r.get('Logging'))
 
             if enabled and not is_logging:
                 variables = {
@@ -1424,7 +1424,7 @@ class EncryptionRequiredPolicy(BucketActionBase):
             return results
 
     def process_bucket(self, b):
-        p = b['Policy']
+        p = b.get('Policy')
         if p is None:
             log.info("No policy found, creating new")
             p = {'Version': "2012-10-17", "Statement": []}
@@ -2116,7 +2116,7 @@ class DeleteGlobalGrants(BucketActionBase):
                 grantee['Type'] = 'CanonicalUser'
             if ('URI' in grantee and
                 grantee['URI'] in grantees and not
-                    (grant['Permission'] == 'READ' and b['Website'])):
+                    (grant['Permission'] == 'READ' and b.get('Website'))):
                 # Remove this grantee.
                 pass
             else:
