@@ -1424,7 +1424,13 @@ class EncryptionRequiredPolicy(BucketActionBase):
             return results
 
     def process_bucket(self, b):
-        p = b.get('Policy')
+        try:
+            p = b['Policy']
+        except KeyError:
+            self.log.warning('Unable to retrieve iam policy for bucket: %s, \
+                skipping put encryption policy' % b)
+            return
+
         if p is None:
             log.info("No policy found, creating new")
             p = {'Version': "2012-10-17", "Statement": []}
