@@ -20,6 +20,36 @@ Filters
   .. c7n-schema:: MissingPolicyStatementFilter
       :module: c7n.resources.s3
 
+``c7n:DeniedMethods``
+  A list of AWS methods that resulted in ``AccessDenied`` when called on the
+  specified bucket.
+
+  S3 buckets are augmented during resource aggregation, i.e. ``get_bucket_location``,
+  ``get_bucket_tagging``, etc. However, as buckets have resource level IAM
+  policies (bucket policy), not all buckets will return all augmentations. A full
+  list of augmentations can be found in ``c7n.resources.s3.S3_AUGMENT_TABLE``.
+
+  Use this annotation on the resource to ensure actions and filters are only
+  enforced on buckets that were augmented.
+
+  .. code-block:: yaml
+
+    policies:
+      - name: delete-non-owner-bucket
+        resource: s3
+        comment: |
+          Checks that custodian was able to retrieve tags before performing
+          delete action
+        filters:
+          - type: value
+            value_type: swap
+            key: "'c7n:DeniedMethods'"
+            value: get_bucket_tagging
+            op: ni
+          - "tag:Owner": absent
+        actions:
+          - delete
+
 Actions
 -------
 
