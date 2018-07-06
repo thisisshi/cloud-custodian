@@ -305,7 +305,7 @@ class PullMode(PolicyExecutionMode):
         )
 
     def is_runnable(self):
-        now = datetime.now().replace(tzinfo=self.policy.tz)
+        now = datetime.now(self.policy.tz)
         if self.policy.start and self.policy.start > now:
             self.policy.log.info(
                 "Skipping policy %s start-date: %s is after current date: %s",
