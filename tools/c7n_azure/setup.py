@@ -18,6 +18,7 @@ setup(
     name="c7n_azure",
     version='0.1',
     description="Cloud Custodian - Azure Support",
+    include_package_data=True,
     classifiers=[
         "Topic :: System :: Systems Administration",
         "Topic :: System :: Distributed Computing"
@@ -31,12 +32,17 @@ setup(
         "custodian.resources": [
             'azure = c7n_azure.entry:initialize_azure']
     },
-    install_requires=["azure",
+    install_requires=["azure-mgmt",
+                      "azure-graphrbac",
+                      "azure-storage-blob",
+                      "azure-storage-queue",
+                      "requests",
+                      "PyJWT",
                       "c7n",
-                      "click",
-                      "azure-cli-core",
+                      "requests",
+                      "azure-cli-core<=2.0.40",
                       "adal~=0.5.0",
                       "backports.functools_lru_cache",
-                      "futures==3.1.1"],
+                      "futures>=3.1.1"],
 
 )
