@@ -558,7 +558,7 @@ class TestPolicy(BaseTest):
         p()
         self.assertEqual(len(p.ctx.metrics.data), 3)
 
-    def test_validate_policy_dt_parse(self):
+    def test_validate_policy_start_stop(self):
         data = {
             'name': 'bad-str-parse',
             'resource': 'ec2',
@@ -597,7 +597,7 @@ class TestPolicy(BaseTest):
             'start': '4 AM'
         }
         p = self.load_policy(data)
-        result = p.validate_policy_dt_parse()
+        result = p.validate_policy_start_stop()
         self.assertEqual(result, None)
 
         data = {
@@ -607,7 +607,7 @@ class TestPolicy(BaseTest):
         }
 
         p = self.load_policy(data)
-        result = p.validate_policy_dt_parse()
+        result = p.validate_policy_start_stop()
         self.assertEqual(result, None)
 
 

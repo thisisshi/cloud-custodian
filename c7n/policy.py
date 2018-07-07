@@ -763,7 +763,7 @@ class Policy(object):
     def validate(self):
         m = self.get_execution_mode()
         m.validate()
-        self.validate_policy_dt_parse()
+        self.validate_policy_start_stop()
         for f in self.resource_manager.filters:
             f.validate()
         for a in self.resource_manager.actions:
@@ -835,7 +835,7 @@ class Policy(object):
                 "Invalid resource type: %s" % resource_type)
         return factory(self.ctx, self.data)
 
-    def validate_policy_dt_parse(self):
+    def validate_policy_start_stop(self):
         policy_name = self.data.get('name')
         policy_tz = self.data.get('tz')
         policy_start = self.data.get('start')
