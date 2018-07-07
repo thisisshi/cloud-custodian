@@ -670,7 +670,7 @@ class PullModeTest(BaseTest):
         pull_mode = policy.PullMode(p)
         self.assertEquals(pull_mode.is_runnable(), True)
 
-        tomorrow_date = str(datetime.date(datetime.now()) + timedelta(days=1))
+        tomorrow_date = str(datetime.date(datetime.utcnow()) + timedelta(days=1))
         p = self.load_policy(
             {'name': 'bad-start-date',
              'resource': 'ec2',
