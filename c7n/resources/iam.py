@@ -376,14 +376,22 @@ class IamRoleInlinePolicy(Filter):
     permissions = ('iam:ListRolePolicies',)
 
     def _inline_policies(self, client, resource):
-        return len(client.list_role_policies(
-            RoleName=resource['RoleName'])['PolicyNames'])
+        policies = client.list_role_policies(
+            RoleName=resource['RoleName'])['PolicyNames']
+        resource['InlinePolicies'] = policies
+        return resource
 
     def process(self, resources, event=None):
         c = local_session(self.manager.session_factory).client('iam')
-        if self.data.get('value', True):
-            return [r for r in resources if self._inline_policies(c, r) > 0]
-        return [r for r in resources if self._inline_policies(c, r) == 0]
+        res = []
+        value = self.data.get('value', True)
+        for r in resources:
+            r = self._inline_policies(c, r)
+            if len(r['InlinePolicies']) > 0 and value:
+                res.append(r)
+            if len(r['InlinePolicies']) == 0 and not value:
+                res.append(r)
+        return res
 
 
 @Role.filter_registry.register('has-specific-managed-policy')

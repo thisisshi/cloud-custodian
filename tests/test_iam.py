@@ -607,6 +607,9 @@ class IamInlinePolicyUsage(BaseTest):
         )
         resources = p.run()
         self.assertEqual(len(resources), 1)
+        self.assertEqual(
+            resources[0]['InlinePolicies'][0],
+            "oneClick_lambda_basic_execution_1466943062384")
 
     def test_iam_role_no_inline_policy(self):
         session_factory = self.replay_flight_data("test_iam_role_no_inline_policy")
