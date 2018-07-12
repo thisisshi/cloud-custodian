@@ -892,15 +892,22 @@ class IamUserInlinePolicy(Filter):
     schema = type_schema('has-inline-policy', value={'type': 'boolean'})
     permissions = ('iam:ListUserPolicies',)
 
-    def _num_inline_policies(self, client, resource):
-        return len(client.list_user_policies(
-            UserName=resource['UserName'])['PolicyNames'])
+    def _inline_policies(self, client, resource):
+        resource['InlinePolicies'] = client.list_user_policies(
+            UserName=resource['UserName'])['PolicyNames']
+        return resource
 
     def process(self, resources, event=None):
         c = local_session(self.manager.session_factory).client('iam')
-        if self.data.get('value', True):
-            return [r for r in resources if self._num_inline_policies(c, r) > 0]
-        return [r for r in resources if self._num_inline_policies(c, r) == 0]
+        value = self.data.get('value', True)
+        res = []
+        for r in resources:
+            r = self._inline_policies(c, r)
+            if len(r['InlinePolicies']) > 0 and value:
+                res.append(r)
+            if len(r['InlinePolicies']) == 0 and not value:
+                res.append(r)
+        return res
 
 
 @User.filter_registry.register('policy')
@@ -1430,11 +1437,18 @@ class IamGroupInlinePolicy(Filter):
     permissions = ('iam:ListGroupPolicies',)
 
     def _inline_policies(self, client, resource):
-        return len(client.list_group_policies(
-            GroupName=resource['GroupName'])['PolicyNames'])
+        resource['InlinePolicies'] = client.list_group_policies(
+            GroupName=resource['GroupName'])['PolicyNames']
+        return resource
 
     def process(self, resources, events=None):
         c = local_session(self.manager.session_factory).client('iam')
-        if self.data.get('value', True):
-            return [r for r in resources if self._inline_policies(c, r) > 0]
-        return [r for r in resources if self._inline_policies(c, r) == 0]
+        value = self.data.get('value', True)
+        res = []
+        for r in resources:
+            r = self._inline_policies(c, r)
+            if len(r['InlinePolicies']) > 0 and value:
+                res.append(r)
+            if len(r['InlinePolicies']) == 0 and not value:
+                res.append(r)
+        return res
