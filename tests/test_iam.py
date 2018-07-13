@@ -567,7 +567,7 @@ class IamInlinePolicyUsage(BaseTest):
         resources = p.run()
         self.assertEqual(len(resources), 1)
         self.assertEqual(resources[0]["UserName"], "kapil")
-        self.assertEqual(resources[0]["InlinePolicies"][0],
+        self.assertEqual(resources[0]["c7n:InlinePolicies"][0],
             "policygen-andrewalexander-201612112039")
 
     def test_iam_user_no_inline_policy(self):
@@ -595,7 +595,7 @@ class IamInlinePolicyUsage(BaseTest):
             sorted([r["UserName"] for r in resources]),
             ["andrewalexander", "scot@sixfeetup.com"],
         )
-        self.assertFalse(resources[0]["InlinePolicies"])
+        self.assertFalse(resources[0]["c7n:InlinePolicies"])
 
     def test_iam_role_has_inline_policy(self):
         session_factory = self.replay_flight_data("test_iam_role_has_inline_policy")
@@ -611,7 +611,7 @@ class IamInlinePolicyUsage(BaseTest):
         resources = p.run()
         self.assertEqual(len(resources), 1)
         self.assertEqual(
-            resources[0]['InlinePolicies'][0],
+            resources[0]['c7n:InlinePolicies'][0],
             "oneClick_lambda_basic_execution_1466943062384")
 
     def test_iam_role_no_inline_policy(self):
@@ -627,7 +627,7 @@ class IamInlinePolicyUsage(BaseTest):
         )
         resources = p.run()
         self.assertEqual(len(resources), 6)
-        self.assertFalse(resources[0]["InlinePolicies"])
+        self.assertFalse(resources[0]["c7n:InlinePolicies"])
 
     def test_iam_group_has_inline_policy(self):
         session_factory = self.replay_flight_data("test_iam_group_has_inline_policy")
@@ -643,7 +643,7 @@ class IamInlinePolicyUsage(BaseTest):
         resources = p.run()
         self.assertEqual(len(resources), 1)
         self.assertEqual(
-            resources[0]['InlinePolicies'][0],
+            resources[0]['c7n:InlinePolicies'][0],
             "Access-Key-and-Read-Only-Access")
 
     def test_iam_group_has_inline_policy2(self):
@@ -660,7 +660,7 @@ class IamInlinePolicyUsage(BaseTest):
         resources = p.run()
         self.assertEqual(len(resources), 1)
         self.assertEqual(
-            resources[0]['InlinePolicies'][0],
+            resources[0]['c7n:InlinePolicies'][0],
             "Access-Key-and-Read-Only-Access")
 
     def test_iam_group_no_inline_policy(self):
@@ -676,7 +676,7 @@ class IamInlinePolicyUsage(BaseTest):
         )
         resources = p.run()
         self.assertEqual(len(resources), 2)
-        self.assertFalse(resources[0]["InlinePolicies"])
+        self.assertFalse(resources[0]["c7n:InlinePolicies"])
 
 
 class KMSCrossAccount(BaseTest):

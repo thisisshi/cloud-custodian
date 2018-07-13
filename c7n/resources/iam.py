@@ -378,7 +378,7 @@ class IamRoleInlinePolicy(Filter):
     def _inline_policies(self, client, resource):
         policies = client.list_role_policies(
             RoleName=resource['RoleName'])['PolicyNames']
-        resource['InlinePolicies'] = policies
+        resource['c7n:InlinePolicies'] = policies
         return resource
 
     def process(self, resources, event=None):
@@ -387,9 +387,9 @@ class IamRoleInlinePolicy(Filter):
         value = self.data.get('value', True)
         for r in resources:
             r = self._inline_policies(c, r)
-            if len(r['InlinePolicies']) > 0 and value:
+            if len(r['c7n:InlinePolicies']) > 0 and value:
                 res.append(r)
-            if len(r['InlinePolicies']) == 0 and not value:
+            if len(r['c7n:InlinePolicies']) == 0 and not value:
                 res.append(r)
         return res
 
@@ -893,7 +893,7 @@ class IamUserInlinePolicy(Filter):
     permissions = ('iam:ListUserPolicies',)
 
     def _inline_policies(self, client, resource):
-        resource['InlinePolicies'] = client.list_user_policies(
+        resource['c7n:InlinePolicies'] = client.list_user_policies(
             UserName=resource['UserName'])['PolicyNames']
         return resource
 
@@ -903,9 +903,9 @@ class IamUserInlinePolicy(Filter):
         res = []
         for r in resources:
             r = self._inline_policies(c, r)
-            if len(r['InlinePolicies']) > 0 and value:
+            if len(r['c7n:InlinePolicies']) > 0 and value:
                 res.append(r)
-            if len(r['InlinePolicies']) == 0 and not value:
+            if len(r['c7n:InlinePolicies']) == 0 and not value:
                 res.append(r)
         return res
 
@@ -1437,7 +1437,7 @@ class IamGroupInlinePolicy(Filter):
     permissions = ('iam:ListGroupPolicies',)
 
     def _inline_policies(self, client, resource):
-        resource['InlinePolicies'] = client.list_group_policies(
+        resource['c7n:InlinePolicies'] = client.list_group_policies(
             GroupName=resource['GroupName'])['PolicyNames']
         return resource
 
@@ -1447,8 +1447,8 @@ class IamGroupInlinePolicy(Filter):
         res = []
         for r in resources:
             r = self._inline_policies(c, r)
-            if len(r['InlinePolicies']) > 0 and value:
+            if len(r['c7n:InlinePolicies']) > 0 and value:
                 res.append(r)
-            if len(r['InlinePolicies']) == 0 and not value:
+            if len(r['c7n:InlinePolicies']) == 0 and not value:
                 res.append(r)
         return res
