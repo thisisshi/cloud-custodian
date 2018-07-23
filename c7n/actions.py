@@ -418,7 +418,12 @@ class Notify(BaseNotify):
     extraction, batch periods, etc.
 
     For expedience and flexibility then, we instead send the data to
-    an sqs queue, for processing. ie. actual communications is DIY atm.
+    an sqs queue, for processing. ie. actual communications can be enabled
+    with the c7n-mailer tool, found under tools/c7n_mailer.
+
+    Attaching additional string message attributes are supported on the SNS
+    transport, with the exception of the ``mtype`` attribute, which is a
+    reserved attribute used by Cloud Custodian.
 
     Example::
 
@@ -442,6 +447,28 @@ class Notify(BaseNotify):
                type: sqs
                region: us-east-1
                queue: xyz
+
+        - name: ec2-notify-with-attributes
+          resource: ec2
+          filters:
+           - Name: bad-instance
+          actions:
+           - type: notify
+             to:
+              - event-user
+              - resource-creator
+              - email@address
+             owner_absent_contact:
+              - other_email@address
+             # which template for the email should we use
+             template: policy-template
+             transport:
+               type: sns
+               region: us-east-1
+               topic: your-notify-topic
+               attributes:
+                 - attribute_key: attribute_value
+                 - attribute_key_2: attribute_value_2
     """
 
     C7N_DATA_MESSAGE = "maidmsg/1.0"
@@ -474,6 +501,7 @@ class Notify(BaseNotify):
                      'properties': {
                          'topic': {'type': 'string'},
                          'type': {'enum': ['sns']},
+                         'attributes': {'type': 'object'},
                      }}]
             },
             'assume_role': {'type': 'boolean'}
@@ -517,6 +545,7 @@ class Notify(BaseNotify):
 
     def send_sns(self, message):
         topic = self.data['transport']['topic'].format(**message)
+        user_attributes = self.data['transport'].get('attributes')
         if topic.startswith('arn:aws:sns'):
             region = region = topic.split(':', 5)[3]
             topic_arn = topic
@@ -532,6 +561,10 @@ class Notify(BaseNotify):
                 'StringValue': self.C7N_DATA_MESSAGE,
             },
         }
+        if user_attributes:
+            for k, v in user_attributes.items():
+                if k != 'mtype':
+                    attrs[k] = {'DataType': 'String', 'StringValue': v}
         client.publish(
             TopicArn=topic_arn,
             Message=self.pack(message),
