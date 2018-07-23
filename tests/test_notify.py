@@ -21,6 +21,8 @@ import time
 import tempfile
 import zlib
 
+from c7n.exceptions import PolicyValidationError
+
 
 class NotifyTest(BaseTest):
 
@@ -115,6 +117,28 @@ class NotifyTest(BaseTest):
         )
         resources = policy.run()
         self.assertEqual(len(resources), 1)
+
+        policy = {
+            "name": "notify-sns-with-attr",
+            "resource": "sns",
+            "actions": [
+                {
+                    "type": "notify",
+                    "to": ["noone@example.com"],
+                    "transport": {
+                        "type": "sns",
+                        "topic": topic,
+                        "attributes": {"mtype": "test"}
+                    },
+                }
+            ],
+        }
+
+        self.assertRaises(PolicyValidationError, self.load_policy, policy)
+
+        policy['actions'][0]['transport']['attributes'] = {'good-attr': 'value'}
+
+        self.assertTrue(self.load_policy(policy, validate=True))
 
     def test_notify(self):
         session_factory = self.replay_flight_data("test_notify_action", zdata=True)
