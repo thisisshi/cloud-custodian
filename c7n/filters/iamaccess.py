@@ -269,8 +269,8 @@ class CrossAccountAccessFilter(Filter):
         # white list accounts
         whitelist_from=ValuesFrom.schema,
         whitelist={'type': 'array', 'items': {'type': 'string'}},
-        whitelist_orgid_from=ValuesFrom.schema,
-        whitelist_orgid={'type': 'array', 'items': {'type': 'string'}},
+        whitelist_orgids_from=ValuesFrom.schema,
+        whitelist_orgids={'type': 'array', 'items': {'type': 'string'}},
         whitelist_vpce_from=ValuesFrom.schema,
         whitelist_vpce={'type': 'array', 'items': {'type': 'string'}},
         whitelist_vpc_from=ValuesFrom.schema,
@@ -327,9 +327,9 @@ class CrossAccountAccessFilter(Filter):
         return vpce
 
     def get_orgids(self):
-        org_ids = set(self.data.get('whitelist_orgid', ()))
-        if 'whitelist_orgid_from' in self.data:
-            values = ValuesFrom(self.data['whitelist_orgid_from'], self.manager)
+        org_ids = set(self.data.get('whitelist_orgids', ()))
+        if 'whitelist_orgids_from' in self.data:
+            values = ValuesFrom(self.data['whitelist_orgids_from'], self.manager)
             org_ids = org_ids.union(values.get_values())
         return org_ids
 
