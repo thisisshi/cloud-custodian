@@ -157,7 +157,7 @@ class NotifyTest(BaseTest):
             TopicArn=topic)['Subscriptions'][0]['Endpoint']
         self.assertEqual(subscription, 'arn:aws:sqs:us-east-1:644160558196:test-queue')
 
-        self.load_policy(policy).run()
+        self.load_policy(policy, session_factory=session_factory).run()
         if self.recording:
             time.sleep(20)
 
