@@ -161,11 +161,11 @@ class NotifyTest(BaseTest):
         if self.recording:
             time.sleep(20)
 
-        message_body = sqs.receive_message(
+        message_body = json.loads(sqs.receive_message(
             QueueUrl='https://sqs.us-east-1.amazonaws.com/644160558196/test-queue'
-        ).get('Messages')[0]['Body']
-        self.assertTrue('mtype' in message_body)
-        self.assertTrue('good-attr' in message_body)
+        ).get('Messages')[0]['Body'])
+        self.assertTrue('mtype' in message_body['MessageAttributes'])
+        self.assertTrue('good-attr' in message_body['MessageAttributes'])
 
     def test_notify(self):
         session_factory = self.replay_flight_data("test_notify_action", zdata=True)
