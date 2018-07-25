@@ -134,10 +134,6 @@ class SecurityGroupFilter(
             group_ids.update(cfg.get('SecurityGroups', ()))
         return group_ids
 
-    def process(self, asgs, event=None):
-        self.initialize(asgs)
-        return super(SecurityGroupFilter, self).process(asgs, event)
-
 
 @filters.register('subnet')
 class SubnetFilter(net_filters.SubnetFilter):

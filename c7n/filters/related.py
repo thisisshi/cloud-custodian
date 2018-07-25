@@ -49,6 +49,8 @@ class RelatedResourceFilter(ValueFilter):
             "[].%s" % self.RelatedIdsExpression, resources))
 
     def get_related(self, resources):
+        if hasattr(self, 'initialize'):
+            self.initialize(resources)
         resource_manager = self.get_resource_manager()
         related_ids = self.get_related_ids(resources)
         model = resource_manager.get_model()
