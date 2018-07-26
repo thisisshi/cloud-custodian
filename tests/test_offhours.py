@@ -530,12 +530,19 @@ class OffHoursFilterTest(BaseTest):
     def test_tz_long_form_resolve(self):
         pacific = zoneinfo.gettz("America/Los_Angeles")
         nzt = zoneinfo.gettz("Pacific/Auckland")
+        gmt = zoneinfo.gettz("Etc/GMT")
         self.assertEqual(
             OnHour({}).get_tz('america/los_angeles'),
             pacific)
         self.assertEqual(
+            OnHour({}).get_tz('pst'),
+            pacific)
+        self.assertEqual(
             OnHour({}).get_tz('pacific/auckland'),
             nzt)
+        self.assertEqual(
+            OnHour({}).get_tz('gmt'),
+            gmt)
 
     def test_empty_tag(self):
         t = datetime.datetime.now(zoneinfo.gettz("America/New_York"))

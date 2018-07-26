@@ -459,7 +459,15 @@ class Time(Filter):
     def get_tz(cls, tz):
         found = cls.TZ_ALIASES.get(tz)
         if found:
-            tz = found
+            found_tz = found
+            # special case for these as the timezone is Etc/GMT or
+            # Etc/UTC, not Etc/Utc and Etc/Gmt
+            if tz in ('gmt', 'gt', 'utc'):
+                return zoneinfo.gettz(found_tz)
+            else:
+                tz = found_tz
+        # if the timezone wasn't found in c7n's list of aliases, try to resolve
+        # the timezone using the user's input by automatically titlecasing it
         return zoneinfo.gettz(tz.title())
 
     def get_default_schedule(self):
