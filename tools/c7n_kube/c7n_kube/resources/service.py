@@ -28,7 +28,31 @@ class Service(QueryResourceManager):
 @Service.action_registry.register('label')
 class LabelService(LabelNamespacedResource):
     """
-    label a namespaced service
+    Label a namespaced service
+
+    .. code-block:: yaml
+      policies:
+        - name: label-namespace
+          resource: kube.service
+          actions:
+            - type: label
+              labels:
+                label1: value1
+                label2: value2
+
+    To remove a label from a namespace, provide the label with the value ``null``
+
+    .. code-block:: yaml
+      policies:
+        - name: remove-label-from-service
+          resource: kube.service
+          filters:
+            - 'metadata.labels.label1': present
+          actions:
+            - type: label
+              labels:
+                label1: null
+
     """
     permissions = ('PatchNamespacedService',)
     method_spec = {'op': 'patch_namespaced_service'}

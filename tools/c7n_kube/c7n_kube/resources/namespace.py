@@ -66,8 +66,8 @@ class LabelNamespace(LabelResource):
           actions:
             - type: label
               labels:
-                - label1: value1
-                - label2: value2
+                label1: value1
+                label2: value2
 
     To remove a label from a namespace, provide the label with the value ``null``
 
@@ -76,11 +76,11 @@ class LabelNamespace(LabelResource):
         - name: remove-label-from-namespace
           resource: kube.namespace
           filters:
-            - 'metadata.name': 'test-namespace'
+            - 'metadata.labels.label1': present
           actions:
             - type: label
               labels:
-                - label1: null
+                label1: null
 
     """
 
