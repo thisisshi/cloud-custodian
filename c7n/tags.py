@@ -82,14 +82,10 @@ def universal_augment(self, resources):
 
     # For global resources, tags don't populate in the get_resources call
     # unless the call is being made to us-east-1
-    if hasattr(self.resource_type, 'global_resource') \
-       and self.resource_type.global_resource:
-        region = 'us-east-1'
-    else:
-        region = self.region
+    region = getattr(self.resource_type, 'global_resource', None) and 'us-east-1' or self.region
 
     client = utils.local_session(
-        self.session_factory).client('resourcegroupstaggingapi', region)
+        self.session_factory).client('resourcegroupstaggingapi', region_name=region)
 
     paginator = client.get_paginator('get_resources')
     resource_type = getattr(self.get_model(), 'resource_type', None)
