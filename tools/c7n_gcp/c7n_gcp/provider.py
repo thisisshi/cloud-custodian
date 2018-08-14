@@ -31,7 +31,7 @@ class GoogleCloud(Provider):
     def initialize_policies(self, policy_collection, options):
         return policy_collection
 
-    def get_session_factory(self, options):
+    def get_session_factory(self, options, policy_name=None):
         """Get a credential/session factory for api usage."""
         return partial(Session, project_id=options.account_id)
 

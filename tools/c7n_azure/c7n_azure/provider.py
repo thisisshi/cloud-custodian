@@ -31,7 +31,7 @@ class Azure(Provider):
     def initialize_policies(self, policy_collection, options):
         return policy_collection
 
-    def get_session_factory(self, options):
+    def get_session_factory(self, options, policy_name=None):
         return partial(Session,
                        subscription_id=options.account_id,
                        authorization_file=options.authorization_file)

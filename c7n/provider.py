@@ -50,7 +50,7 @@ class Provider(object):
         """
 
     @abc.abstractmethod
-    def get_session_factory(self, options):
+    def get_session_factory(self, options, policy_name):
         """Get a credential/session factory for api usage."""
 
 
