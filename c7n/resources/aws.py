@@ -92,12 +92,13 @@ class AWS(object):
         _default_account_id(options)
         return options
 
-    def get_session_factory(self, options):
+    def get_session_factory(self, options, policy_name):
         return SessionFactory(
             options.region,
             options.profile,
             options.assume_role,
-            options.external_id)
+            options.external_id,
+            policy_name)
 
     def initialize_policies(self, policy_collection, options):
         """Return a set of policies targetted to the given regions.

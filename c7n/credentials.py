@@ -28,11 +28,12 @@ from c7n.utils import get_retry
 
 class SessionFactory(object):
 
-    def __init__(self, region, profile=None, assume_role=None, external_id=None):
+    def __init__(self, region, profile=None, assume_role=None, external_id=None, policy_name=None):
         self.region = region
         self.profile = profile
         self.assume_role = assume_role
         self.external_id = external_id
+        self.user_agent_name = "CloudCustodian(%s)" % policy_name
         self.session_name = "CloudCustodian"
         if 'C7N_SESSION_SUFFIX' in os.environ:
             self.session_name = "%s@%s" % (
@@ -48,7 +49,7 @@ class SessionFactory(object):
             session = Session(
                 region_name=region or self.region, profile_name=self.profile)
 
-        session._session.user_agent_name = "CloudCustodian"
+        session._session.user_agent_name = self.user_agent_name
         session._session.user_agent_version = version
         return session
 
