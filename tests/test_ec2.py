@@ -1324,7 +1324,7 @@ class TestModifySecurityGroupAction(BaseTest):
                 "actions": [
                     {
                         "type": "modify-security-groups",
-                        "remove": "launch-wizard-2",
+                        "remove": ["launch-wizard-2"],
                         "add": "launch-wizard-1"
                     }
                 ]
