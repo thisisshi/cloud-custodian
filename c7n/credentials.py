@@ -35,7 +35,7 @@ class SessionFactory(object):
         self.external_id = external_id
         self.user_agent_name = "CloudCustodian"
         if policy_name:
-            self.user_agent_name.append("(%s)" % policy_name)
+            self.user_agent_name + ("(%s)" % policy_name)
         self.session_name = "CloudCustodian"
         if 'C7N_SESSION_SUFFIX' in os.environ:
             self.session_name = "%s@%s" % (
