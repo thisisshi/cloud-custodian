@@ -121,7 +121,7 @@ class LdapLookup(object):
         email_key = ldap_user_metadata.get(self.email_key, None)
         uid_key = ldap_user_metadata.get(self.uid_key, None)
 
-        if email_key in (None, '') or uid_key in (None, ''):
+        if not email_key or not uid_key:
             return {}
         else:
             ldap_user_metadata['self.email_key'] = email_key.lower()
