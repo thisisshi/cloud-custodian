@@ -186,25 +186,44 @@ class ModifyVpcSecurityGroupsAction(Action):
         'properties': {
             'type': {'enum': ['modify-security-groups']},
             'add': {'oneOf': [
-                {'type': 'string', 'pattern': '^sg-*'},
+                {'type': 'string'},
                 {'type': 'array', 'items': {
-                    'pattern': '^sg-*',
                     'type': 'string'}}]},
             'remove': {'oneOf': [
                 {'type': 'array', 'items': {
-                    'type': 'string', 'pattern': '^sg-*'}},
+                    'type': 'string'}},
                 {'enum': [
                     'matched', 'network-location', 'all',
-                    {'type': 'string', 'pattern': '^sg-*'}]}]},
+                    {'type': 'string'}]}]},
             'isolation-group': {'oneOf': [
-                {'type': 'string', 'pattern': '^sg-*'},
+                {'type': 'string'},
                 {'type': 'array', 'items': {
-                    'type': 'string', 'pattern': '^sg-*'}}]}},
+                    'type': 'string'}}]}},
         'anyOf': [
             {'required': ['isolation-group', 'remove', 'type']},
             {'required': ['add', 'remove', 'type']},
             {'required': ['add', 'type']}]
     }
+
+    def resolve_security_group_names(self, group_names):
+        """
+        Resolves Security Group names to Ids.
+        Returns an empty list if no matches
+        """
+        client = utils.local_session(
+            self.manager.session_factory).client('ec2')
+        filtered_sgs = client.describe_security_groups(
+            Filters=[
+                {
+                    'Name': 'group-name',
+                    'Values': group_names
+                }
+            ]
+        )['SecurityGroups']
+        filtered_ids = [a['GroupId'] for a in filtered_sgs]
+        if not filtered_ids:
+            self.log.warning("No Security Groups found for: %s" % group_names)
+        return filtered_ids
 
     def get_groups(self, resources, metadata_key=None):
         """Parse policies to get lists of security groups to attach to each resource
@@ -239,8 +258,10 @@ class ModifyVpcSecurityGroupsAction(Action):
         remove_target_group_ids = self.data.get('remove', None)
         isolation_group = self.data.get('isolation-group')
         add_groups = []
+        add_names = []
         remove_groups = []
         return_groups = []
+        remove_names = []
 
         for idx, r in enumerate(resources):
             if r.get('Groups'):
@@ -283,15 +304,28 @@ class ModifyVpcSecurityGroupsAction(Action):
             elif remove_target_group_ids == 'all':
                 remove_groups = rgroups
             elif isinstance(remove_target_group_ids, list):
-                remove_groups = remove_target_group_ids
+                remove_groups = [r for r in remove_target_group_ids if r.startswith('sg-')]
+                remove_names = [r for r in remove_target_group_ids if not r.startswith('sg-')]
             elif isinstance(remove_target_group_ids, six.string_types):
-                remove_groups = [remove_target_group_ids]
+                if remove_target_group_ids.startswith('sg-'):
+                    remove_groups = [remove_target_group_ids]
+                else:
+                    remove_names = [remove_target_group_ids]
 
             # Parse add_groups
             if isinstance(add_target_group_ids, list):
-                add_groups = add_target_group_ids
+                add_groups = [a for a in add_target_group_ids if a.startswith('sg-')]
+                add_names = [a for a in add_target_group_ids if not a.startswith('sg-')]
             elif isinstance(add_target_group_ids, six.string_types):
-                add_groups = [add_target_group_ids]
+                if add_target_group_ids.startswith('sg-'):
+                    add_groups = [add_target_group_ids]
+                else:
+                    add_names = [add_target_group_ids]
+
+            if add_names:
+                add_groups += self.resolve_security_group_names(add_names)
+            if remove_names:
+                remove_groups += self.resolve_security_group_names(remove_names)
 
             # seems extraneous with list?
             # if not remove_groups and not add_groups:
@@ -304,9 +338,17 @@ class ModifyVpcSecurityGroupsAction(Action):
             for g in add_groups:
                 if g not in rgroups:
                     rgroups.append(g)
-
             if not rgroups:
-                rgroups.append(isolation_group)
+                if isinstance(isolation_group, six.string_types):
+                    if isolation_group.startswith('sg-'):
+                        rgroups.append(isolation_group)
+                    else:
+                        rgroups += self.resolve_security_group_names([isolation_group])
+                elif isinstance(isolation_group, list):
+                    isolation_group_ids = [i for i in isolation_group if i.startswith('sg-')]
+                    isolation_group_names = [i for i in isolation_group if not i.startswith('sg-')]
+                    rgroups += self.resolve_security_group_names(isolation_group_names)
+                    rgroups += isolation_group_ids
 
             return_groups.append(rgroups)
 
