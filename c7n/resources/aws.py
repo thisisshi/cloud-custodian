@@ -93,12 +93,11 @@ class AWS(object):
         return options
 
     def get_session_factory(self, options):
-        session = SessionFactory(
+        return SessionFactory(
             options.region,
             options.profile,
             options.assume_role,
             options.external_id)
-        return session
 
     def initialize_policies(self, policy_collection, options):
         """Return a set of policies targetted to the given regions.
