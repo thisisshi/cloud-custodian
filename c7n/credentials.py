@@ -41,6 +41,11 @@ class SessionFactory(object):
             self.session_name = "%s@%s" % (
                 self.session_name, os.environ['C7N_SESSION_SUFFIX'])
 
+    def _set_policy_name(self, name):
+        self.user_agent_name = ("CloudCustodian %s" % name).strip()
+
+    policy_name = property(None, _set_policy_name)
+
     def __call__(self, assume=True, region=None):
         if self.assume_role and assume:
             session = Session(profile_name=self.profile)

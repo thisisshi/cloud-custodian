@@ -699,10 +699,7 @@ class Policy(object):
         self.options = options
         assert "name" in self.data
         if session_factory is None:
-            session_factory = \
-                clouds[self.provider_name]().get_session_factory(
-                    options, self.data['name']
-                )
+            session_factory = clouds[self.provider_name]().get_session_factory(options)
         self.session_factory = session_factory
         self.ctx = ExecutionContext(self.session_factory, self, self.options)
         self.resource_manager = self.get_resource_manager()
@@ -809,6 +806,7 @@ class Policy(object):
     def __call__(self):
         """Run policy in default mode"""
         mode = self.get_execution_mode()
+        self.session_factory.policy_name = self.name
         if self.options.dryrun:
             resources = PullMode(self).run()
         elif isinstance(mode, ServerlessExecutionMode):
