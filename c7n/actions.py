@@ -272,13 +272,14 @@ class ModifyVpcSecurityGroupsAction(Action):
         if action == 'remove':
             # Parse remove_groups
             if target_group_ids == 'matched':
-                groups = r.get('c7n:matched-security-groups', ())
+                return r.get('c7n:matched-security-groups', ())
             elif target_group_ids == 'network-location':
                 for reason in r.get('c7n:NetworkLocation', ()):
                     if reason['reason'] == 'SecurityGroupMismatch':
                         groups = list(reason['security-groups'])
+                return groups
             elif target_group_ids == 'all':
-                groups = rgroups
+                return rgroups
 
         if isinstance(target_group_ids, list):
             groups = [r for r in target_group_ids if r.startswith('sg-')]
