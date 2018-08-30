@@ -225,6 +225,75 @@ class ModifyVpcSecurityGroupsAction(Action):
             self.log.warning("No Security Groups found for: %s" % group_names)
         return filtered_ids
 
+    def get_resource_security_groups(self, r, metadata_key=None):
+        """
+        Returns Security Groups based for a variety of vpc attached resources
+        """
+        if r.get('Groups'):
+            if metadata_key and isinstance(r['Groups'][0], dict):
+                rgroups = [g[metadata_key] for g in r['SecurityGroups']]
+            else:
+                rgroups = [g['GroupId'] for g in r['Groups']]
+        elif r.get('SecurityGroups'):
+            # elb, ec2, elasticache, efs, dax vpc resource security groups
+            if metadata_key and isinstance(r['SecurityGroups'][0], dict):
+                rgroups = [g[metadata_key] for g in r['SecurityGroups']]
+            else:
+                rgroups = [g for g in r['SecurityGroups']]
+        elif r.get('VpcSecurityGroups'):
+            # rds resource security groups
+            if metadata_key and isinstance(r['VpcSecurityGroups'][0], dict):
+                rgroups = [g[metadata_key] for g in r['VpcSecurityGroups']]
+            else:
+                rgroups = [g for g in r['VpcSecurityGroups']]
+        elif r.get('VPCOptions', {}).get('SecurityGroupIds', []):
+            # elasticsearch resource security groups
+            if metadata_key and isinstance(
+                    r['VPCOptions']['SecurityGroupIds'][0], dict):
+                rgroups = [g[metadata_key] for g in r[
+                    'VPCOptions']['SecurityGroupIds']]
+            else:
+                rgroups = [g for g in r['VPCOptions']['SecurityGroupIds']]
+        # use as substitution for 'Groups' or '[Vpc]SecurityGroups'
+        # unsure if necessary - defer to coverage report
+        elif metadata_key and r.get(metadata_key):
+            rgroups = [g for g in r[metadata_key]]
+
+        return rgroups
+
+    def parse_groups(self, r, target_group_ids, rgroups, action):
+        """
+        Parse user-provided groups in policy and resolves security groups
+        from either names or whitelisted names (matched, network-location, all)
+        """
+        groups = []
+        names = []
+
+        if action == 'remove':
+            # Parse remove_groups
+            if target_group_ids == 'matched':
+                groups = r.get('c7n:matched-security-groups', ())
+            elif target_group_ids == 'network-location':
+                for reason in r.get('c7n:NetworkLocation', ()):
+                    if reason['reason'] == 'SecurityGroupMismatch':
+                        groups = list(reason['security-groups'])
+            elif target_group_ids == 'all':
+                groups = rgroups
+
+        if isinstance(target_group_ids, list):
+            groups = [r for r in target_group_ids if r.startswith('sg-')]
+            names = [r for r in target_group_ids if not r.startswith('sg-')]
+        elif isinstance(target_group_ids, six.string_types):
+            if target_group_ids.startswith('sg-'):
+                groups = [target_group_ids]
+            else:
+                names = [target_group_ids]
+
+        if names:
+            groups += self.resolve_security_group_names(names)
+
+        return groups
+
     def get_groups(self, resources, metadata_key=None):
         """Parse policies to get lists of security groups to attach to each resource
 
@@ -257,75 +326,13 @@ class ModifyVpcSecurityGroupsAction(Action):
         add_target_group_ids = self.data.get('add', None)
         remove_target_group_ids = self.data.get('remove', None)
         isolation_group = self.data.get('isolation-group')
-        add_groups = []
-        add_names = []
-        remove_groups = []
+
         return_groups = []
-        remove_names = []
 
         for idx, r in enumerate(resources):
-            if r.get('Groups'):
-                if metadata_key and isinstance(r['Groups'][0], dict):
-                    rgroups = [g[metadata_key] for g in r['SecurityGroups']]
-                else:
-                    rgroups = [g['GroupId'] for g in r['Groups']]
-            elif r.get('SecurityGroups'):
-                # elb, ec2, elasticache, efs, dax vpc resource security groups
-                if metadata_key and isinstance(r['SecurityGroups'][0], dict):
-                    rgroups = [g[metadata_key] for g in r['SecurityGroups']]
-                else:
-                    rgroups = [g for g in r['SecurityGroups']]
-            elif r.get('VpcSecurityGroups'):
-                # rds resource security groups
-                if metadata_key and isinstance(r['VpcSecurityGroups'][0], dict):
-                    rgroups = [g[metadata_key] for g in r['VpcSecurityGroups']]
-                else:
-                    rgroups = [g for g in r['VpcSecurityGroups']]
-            elif r.get('VPCOptions', {}).get('SecurityGroupIds', []):
-                # elasticsearch resource security groups
-                if metadata_key and isinstance(
-                        r['VPCOptions']['SecurityGroupIds'][0], dict):
-                    rgroups = [g[metadata_key] for g in r[
-                        'VPCOptions']['SecurityGroupIds']]
-                else:
-                    rgroups = [g for g in r['VPCOptions']['SecurityGroupIds']]
-            # use as substitution for 'Groups' or '[Vpc]SecurityGroups'
-            # unsure if necessary - defer to coverage report
-            elif metadata_key and r.get(metadata_key):
-                rgroups = [g for g in r[metadata_key]]
-
-            # Parse remove_groups
-            if remove_target_group_ids == 'matched':
-                remove_groups = r.get('c7n:matched-security-groups', ())
-            elif remove_target_group_ids == 'network-location':
-                for reason in r.get('c7n:NetworkLocation', ()):
-                    if reason['reason'] == 'SecurityGroupMismatch':
-                        remove_groups = list(reason['security-groups'])
-            elif remove_target_group_ids == 'all':
-                remove_groups = rgroups
-            elif isinstance(remove_target_group_ids, list):
-                remove_groups = [r for r in remove_target_group_ids if r.startswith('sg-')]
-                remove_names = [r for r in remove_target_group_ids if not r.startswith('sg-')]
-            elif isinstance(remove_target_group_ids, six.string_types):
-                if remove_target_group_ids.startswith('sg-'):
-                    remove_groups = [remove_target_group_ids]
-                else:
-                    remove_names = [remove_target_group_ids]
-
-            # Parse add_groups
-            if isinstance(add_target_group_ids, list):
-                add_groups = [a for a in add_target_group_ids if a.startswith('sg-')]
-                add_names = [a for a in add_target_group_ids if not a.startswith('sg-')]
-            elif isinstance(add_target_group_ids, six.string_types):
-                if add_target_group_ids.startswith('sg-'):
-                    add_groups = [add_target_group_ids]
-                else:
-                    add_names = [add_target_group_ids]
-
-            if add_names:
-                add_groups += self.resolve_security_group_names(add_names)
-            if remove_names:
-                remove_groups += self.resolve_security_group_names(remove_names)
+            rgroups = self.get_resource_security_groups(r, metadata_key)
+            add_groups = self.parse_groups(r, add_target_group_ids, rgroups, "add")
+            remove_groups = self.parse_groups(r, remove_target_group_ids, rgroups, "remove")
 
             # seems extraneous with list?
             # if not remove_groups and not add_groups:
@@ -334,21 +341,12 @@ class ModifyVpcSecurityGroupsAction(Action):
             for g in remove_groups:
                 if g in rgroups:
                     rgroups.remove(g)
-
             for g in add_groups:
                 if g not in rgroups:
                     rgroups.append(g)
+
             if not rgroups:
-                if isinstance(isolation_group, six.string_types):
-                    if isolation_group.startswith('sg-'):
-                        rgroups.append(isolation_group)
-                    else:
-                        rgroups += self.resolve_security_group_names([isolation_group])
-                elif isinstance(isolation_group, list):
-                    isolation_group_ids = [i for i in isolation_group if i.startswith('sg-')]
-                    isolation_group_names = [i for i in isolation_group if not i.startswith('sg-')]
-                    rgroups += self.resolve_security_group_names(isolation_group_names)
-                    rgroups += isolation_group_ids
+                rgroups = self.parse_groups(r, isolation_group, rgroups, "isolation")
 
             return_groups.append(rgroups)
 
