@@ -40,7 +40,7 @@ class SessionFactory(object):
                 self.session_name, os.environ['C7N_SESSION_SUFFIX'])
 
     def _set_policy_name(self, name):
-        self.user_agent_name = ("CloudCustodian %s" % name).strip()
+        self.user_agent_name = ("CloudCustodian(%s)" % name).strip()
 
     policy_name = property(None, _set_policy_name)
 
