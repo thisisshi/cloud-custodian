@@ -282,8 +282,8 @@ class ModifyVpcSecurityGroupsAction(Action):
                 return rgroups
 
         if isinstance(target_group_ids, list):
-            groups = [r for r in target_group_ids if r.startswith('sg-')]
-            names = [r for r in target_group_ids if not r.startswith('sg-')]
+            groups = [sg_id for sg_id in target_group_ids if sg_id.startswith('sg-')]
+            names = [name for name in target_group_ids if not name.startswith('sg-')]
         elif isinstance(target_group_ids, six.string_types):
             if target_group_ids.startswith('sg-'):
                 groups = [target_group_ids]
