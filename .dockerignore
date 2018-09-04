@@ -1,0 +1,13 @@
+*/docs*
+*/bin*
+*/.tox*
+*/.hypothesis*
+*/.pytest_cache*
+*/.tox*
+*/.vscode*
+*/c7n-out*
+*/coverage*
+*/output*
+*/tests*
+*/.git
+*.pyc
