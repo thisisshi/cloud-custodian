@@ -499,6 +499,26 @@ class TestPolicy(BaseTest):
         self.assertEqual(
             p.ctx.metrics.buf[0]['MetricName'], 'ResourceLimitExceeded')
 
+    def test_policy_resource_limits_count(self):
+        session_factory = self.replay_flight_data(
+            "test_policy_resource_count")
+        p = self.load_policy(
+            {
+                "name": "ecs-cluster-resource-count",
+                "resource": "ecs",
+                "max-resources": 1
+            },
+            session_factory=session_factory)
+        self.assertRaises(ResourceLimitExceeded, p.run)
+        p = self.load_policy(
+            {
+                "name": "ecs-cluster-resource-count",
+                "resource": "ecs",
+                "max-resources": 0
+            },
+            session_factory=session_factory)
+        self.assertRaises(ResourceLimitExceeded, p.run)
+
     def test_policy_metrics(self):
         session_factory = self.replay_flight_data("test_policy_metrics")
         p = self.load_policy(
