@@ -510,15 +510,19 @@ class TestPolicy(BaseTest):
             },
             session_factory=session_factory)
         self.assertRaises(ResourceLimitExceeded, p.run)
-        p = self.load_policy(
-            {
-                "name": "ecs-cluster-resource-count",
-                "resource": "ecs",
-                "max-resources": 0
-            },
-            Config.empty(validate=True),
-            session_factory=session_factory)
-        self.assertRaises(Exception, p.run)
+        policy = {
+            "name": "ecs-cluster-resource-count",
+            "resource": "ecs",
+            "max-resources": 0
+        }
+        config = Config.empty(validate=True)
+        self.assertRaises(
+            Exception,
+            self.load_policy,
+            policy,
+            config=config,
+            session_factory=session_factory
+        )
 
     def test_policy_metrics(self):
         session_factory = self.replay_flight_data("test_policy_metrics")
