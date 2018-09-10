@@ -516,8 +516,9 @@ class TestPolicy(BaseTest):
                 "resource": "ecs",
                 "max-resources": 0
             },
+            Config.empty(validate=True),
             session_factory=session_factory)
-        self.assertRaises(ResourceLimitExceeded, p.run)
+        self.assertRaises(Exception, p.run)
 
     def test_policy_metrics(self):
         session_factory = self.replay_flight_data("test_policy_metrics")
