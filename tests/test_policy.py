@@ -530,7 +530,7 @@ class TestPolicy(BaseTest):
             "test_policy_resource_count_with_filter")
         p = self.load_policy(
             {
-                "name": "asg--with-image-age-resource-count",
+                "name": "asg-with-image-age-resource-count",
                 "resource": "asg",
                 "max-resources": 1,
                 "filters": [{
