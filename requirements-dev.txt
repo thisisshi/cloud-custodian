@@ -15,6 +15,8 @@ pytest>=3.2.1
 pytest-xdist>=1.2.0
 pytest-cov
 tox
+psutil
+aws_xray_sdk
 
 # Local package required for Sphinx docs
 -e tools/c7n_sphinxext
@@ -24,6 +26,8 @@ tox
 -e tools/c7n_azure
 # Local package required for c7n_gcp tests
 -e tools/c7n_gcp
+# Local package required for c7n_kube tests
+-e tools/c7n_kube
 
 # requires pandoc, fails on ci server, only used for pypi metadata
 # setuptools-markdown==0.2

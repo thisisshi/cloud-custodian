@@ -22,14 +22,13 @@ import logging
 import os
 import time
 
-
 import jmespath
 import six
 
 from c7n.actions import EventAction
 from c7n.cwe import CloudWatchEvents
 from c7n.ctx import ExecutionContext
-from c7n.exceptions import PolicyValidationError, ClientError
+from c7n.exceptions import PolicyValidationError, ClientError, ResourceLimitExceeded
 from c7n.output import DEFAULT_NAMESPACE
 from c7n.resources import load_resources
 from c7n.registry import PluginRegistry
@@ -238,7 +237,14 @@ class PullMode(PolicyExecutionMode):
                 version)
 
             s = time.time()
-            resources = self.policy.resource_manager.resources()
+            try:
+                resources = self.policy.resource_manager.resources()
+            except ResourceLimitExceeded as e:
+                self.policy.log.error(str(e))
+                self.policy.ctx.metrics.put_metric(
+                    'ResourceLimitExceeded', e.selection_count, "Count")
+                raise
+
             rt = time.time() - s
             self.policy.log.info(
                 "policy: %s resource:%s region:%s count:%d time:%0.2f" % (
@@ -255,13 +261,6 @@ class PullMode(PolicyExecutionMode):
 
             if not resources:
                 return []
-            elif (self.policy.max_resources is not None and
-                  len(resources) > self.policy.max_resources):
-                msg = "policy %s matched %d resources max resources %s" % (
-                    self.policy.name, len(resources),
-                    self.policy.max_resources)
-                self.policy.log.warning(msg)
-                raise RuntimeError(msg)
 
             if self.policy.options.dryrun:
                 self.policy.log.debug("dryrun: skipping actions")
@@ -270,7 +269,8 @@ class PullMode(PolicyExecutionMode):
             at = time.time()
             for a in self.policy.resource_manager.actions:
                 s = time.time()
-                results = a.process(resources)
+                with self.policy.ctx.tracer.subsegment('action:%s' % a.type):
+                    results = a.process(resources)
                 self.policy.log.info(
                     "policy: %s action: %s"
                     " resources: %d"
@@ -736,8 +736,15 @@ class Policy(object):
         return self.data.get('max-resources')
 
     @property
+    def max_resources_percent(self):
+        return self.data.get('max-resources-percent')
+
+    @property
     def tags(self):
         return self.data.get('tags', ())
+
+    def get_cache(self):
+        return self.resource_manager._cache
 
     def get_execution_mode(self):
         exec_mode_type = self.data.get('mode', {'type': 'pull'}).get('type')
