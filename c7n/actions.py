@@ -25,7 +25,7 @@ import zlib
 
 import six
 
-from c7n.exceptions import PolicyValidationError, ClientError
+from c7n.exceptions import PolicyValidationError, ClientError, PolicyExecutionError
 from c7n.executor import ThreadPoolExecutor
 from c7n.manager import resources
 from c7n.registry import PluginRegistry
@@ -208,10 +208,11 @@ class ModifyVpcSecurityGroupsAction(Action):
     def resolve_security_group_names(self, group_names):
         """
         Resolves Security Group names to Ids.
-        Returns an empty list if no matches
+        Raises PolicyExecutionError if group names are not found
         """
         client = utils.local_session(
             self.manager.session_factory).client('ec2')
+
         filtered_sgs = client.describe_security_groups(
             Filters=[
                 {
@@ -220,9 +221,13 @@ class ModifyVpcSecurityGroupsAction(Action):
                 }
             ]
         )['SecurityGroups']
+
         filtered_ids = [a['GroupId'] for a in filtered_sgs]
-        if not filtered_ids:
-            self.log.warning("No Security Groups found for: %s" % group_names)
+
+        if not filtered_ids or len(filtered_ids) != len(group_names):
+            raise PolicyExecutionError(
+                "Security Groups not found: requested: %s, found: %s" %
+                (group_names, filtered_ids))
         return filtered_ids
 
     def get_resource_security_groups(self, r, metadata_key=None):
@@ -267,7 +272,6 @@ class ModifyVpcSecurityGroupsAction(Action):
         from either names or whitelisted names (matched, network-location, all)
         """
         groups = []
-        names = []
 
         if action == 'remove':
             # Parse remove_groups
@@ -283,15 +287,9 @@ class ModifyVpcSecurityGroupsAction(Action):
 
         if isinstance(target_group_ids, list):
             groups = [sg_id for sg_id in target_group_ids if sg_id.startswith('sg-')]
-            names = [name for name in target_group_ids if not name.startswith('sg-')]
         elif isinstance(target_group_ids, six.string_types):
             if target_group_ids.startswith('sg-'):
                 groups = [target_group_ids]
-            else:
-                names = [target_group_ids]
-
-        if names:
-            groups += self.resolve_security_group_names(names)
 
         return groups
 
@@ -329,6 +327,12 @@ class ModifyVpcSecurityGroupsAction(Action):
         isolation_group = self.data.get('isolation-group')
 
         return_groups = []
+
+        add_names = [name for name in add_target_group_ids if not name.startswith('sg-')]
+        remove_names = [name for name in remove_target_group_ids if not name.startswith('sg-')]
+
+        add_target_group_ids += self.resolve_security_group_names(add_names)
+        remove_target_group_ids += self.resolve_security_group_names(remove_names)
 
         for idx, r in enumerate(resources):
             rgroups = self.get_resource_security_groups(r, metadata_key)
