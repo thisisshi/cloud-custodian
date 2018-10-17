@@ -210,25 +210,27 @@ class ModifyVpcSecurityGroupsAction(Action):
         Resolves Security Group names to Ids.
         Raises PolicyExecutionError if group names are not found
         """
-        client = utils.local_session(
-            self.manager.session_factory).client('ec2')
+        if group_names:
+            client = utils.local_session(
+                self.manager.session_factory).client('ec2')
 
-        filtered_sgs = client.describe_security_groups(
-            Filters=[
-                {
-                    'Name': 'group-name',
-                    'Values': group_names
-                }
-            ]
-        )['SecurityGroups']
+            filtered_sgs = client.describe_security_groups(
+                Filters=[
+                    {
+                        'Name': 'group-name',
+                        'Values': group_names
+                    }
+                ]
+            )['SecurityGroups']
 
-        filtered_ids = [a['GroupId'] for a in filtered_sgs]
+            filtered_ids = [a['GroupId'] for a in filtered_sgs]
 
-        if not filtered_ids or len(filtered_ids) != len(group_names):
-            raise PolicyExecutionError(
-                "Security Groups not found: requested: %s, found: %s" %
-                (group_names, filtered_ids))
-        return filtered_ids
+            if not filtered_ids or len(filtered_ids) != len(group_names):
+                raise PolicyExecutionError(
+                    "Security Groups not found: requested: %s, found: %s" %
+                    (group_names, filtered_ids))
+            return filtered_ids
+        return []
 
     def get_resource_security_groups(self, r, metadata_key=None):
         """
@@ -328,11 +330,22 @@ class ModifyVpcSecurityGroupsAction(Action):
 
         return_groups = []
 
-        add_names = [name for name in add_target_group_ids if not name.startswith('sg-')]
-        remove_names = [name for name in remove_target_group_ids if not name.startswith('sg-')]
+        if isinstance(add_target_group_ids, list):
+            add_names = [name for name in add_target_group_ids if not name.startswith('sg-')]
+            add_target_group_ids += self.resolve_security_group_names(add_names)
+        elif isinstance(add_target_group_ids, str) and not add_target_group_ids.startswith('sg-'):
+            # Can assume sg's won't start with 'sg-'
+            #
+            # The name of the security group.
+            #    Constraints: Up to 255 characters in length. Cannot start with sg- .
+            #
+            # https://docs.aws.amazon.com/cli/latest/reference/ec2/create-security-group.html
 
-        add_target_group_ids += self.resolve_security_group_names(add_names)
-        remove_target_group_ids += self.resolve_security_group_names(remove_names)
+            add_target_group_ids = self.resolve_security_group_names([add_target_group_ids])
+
+        if isinstance(remove_target_group_ids, list):
+            remove_names = [name for name in remove_target_group_ids if not name.startswith('sg-')]
+            remove_target_group_ids += self.resolve_security_group_names(remove_names)
 
         for idx, r in enumerate(resources):
             rgroups = self.get_resource_security_groups(r, metadata_key)
