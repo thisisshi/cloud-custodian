@@ -1007,20 +1007,12 @@ class XrayEncrypted(Filter):
     def process(self, resources, event=None):
         client = self.manager.session_factory().client('xray')
         gec_result = client.get_encryption_config()['EncryptionConfig']
-
-        if resources:
-            resources[0]['c7n:XrayEncryptionConfig'] = gec_result
-        else:
-            return []
+        resources[0]['c7n:XrayEncryptionConfig'] = gec_result
 
         k = self.data.get('key')
         if k not in ['default', 'kms']:
             kmsclient = self.manager.session_factory().client('kms')
-            try:
-                keyid = kmsclient.describe_key(KeyId=k)['KeyMetadata']['Arn']
-            except kmsclient.exceptions.NotFoundException:
-                self.log.warning("Key: %s not found" % k)
-                return []
+            keyid = kmsclient.describe_key(KeyId=k)['KeyMetadata']['Arn']
             rc = resources if (gec_result['KeyId'] == keyid) else []
         else:
             kv = 'KMS' if self.data.get('key') == 'kms' else 'NONE'
