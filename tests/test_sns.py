@@ -502,7 +502,7 @@ class TestSNS(BaseTest):
         self.assertEqual(aliases['Aliases'][0]['AliasName'], 'alias/skunk/trails')
 
     def test_set_sns_topic_encryption(self):
-        session_factory = self.record_flight_data('test_sns_set_encryption')
+        session_factory = self.replay_flight_data('test_sns_set_encryption')
         topic = 'arn:aws:sns:us-west-1:644160558196:test'
 
         # default case, no key specified
