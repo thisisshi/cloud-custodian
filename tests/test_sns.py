@@ -500,3 +500,88 @@ class TestSNS(BaseTest):
         self.assertTrue(len(resources), 1)
         aliases = kms.list_aliases(KeyId=resources[0]['KmsMasterKeyId'])
         self.assertEqual(aliases['Aliases'][0]['AliasName'], 'alias/skunk/trails')
+
+    def test_set_sns_topic_encryption(self):
+        session_factory = self.record_flight_data('test_sns_set_encryption')
+        topic = 'arn:aws:sns:us-west-1:644160558196:test'
+
+        # default case, no key specified
+        p = self.load_policy(
+            {
+                'name': 'test-sns-kms-related-filter',
+                'resource': 'sns',
+                'filters': [
+                    {
+                        'TopicArn': topic
+                    },
+                    {
+                        'KmsMasterKeyId': 'absent'
+                    }
+                ],
+                'actions': [
+                    {
+                        'type': 'set-encryption'
+                    }
+                ]
+            },
+            session_factory=session_factory
+        )
+        resources = p.run()
+        self.assertEquals(len(resources), 1)
+
+        # disable encryption
+        p = self.load_policy(
+            {
+                'name': 'test-sns-kms-related-filter',
+                'resource': 'sns',
+                'filters': [
+                    {
+                        'TopicArn': topic
+                    },
+                    {
+                        'KmsMasterKeyId': 'alias/aws/sns'
+                    }
+                ],
+                'actions': [
+                    {
+                        'type': 'set-encryption',
+                        'enabled': False
+                    }
+                ]
+            },
+            session_factory=session_factory
+        )
+
+        resources = p.run()
+
+        self.assertEqual(len(resources), 1)
+
+        sns = session_factory().client('sns')
+        attributes = sns.get_topic_attributes(TopicArn=topic)['Attributes']
+        self.assertFalse(attributes.get('KmsMasterKeyId'))
+
+        p = self.load_policy(
+            {
+                'name': 'test-sns-kms-related-filter',
+                'resource': 'sns',
+                'filters': [
+                    {
+                        'TopicArn': topic
+                    },
+                    {
+                        'KmsMasterKeyId': 'absent'
+                    }
+                ],
+                'actions': [
+                    {
+                        'type': 'set-encryption',
+                        'key': 'alias/skunk/trails'
+                    }
+                ]
+            },
+            session_factory=session_factory
+        )
+        resources = p.run()
+        self.assertEquals(len(resources), 1)
+        attributes = sns.get_topic_attributes(TopicArn=topic)['Attributes']
+        self.assertEqual(attributes.get('KmsMasterKeyId'), 'alias/skunk/trails')

@@ -15,8 +15,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import json
 
+from botocore.exceptions import ClientError
 
-from c7n.actions import RemovePolicyBase, ModifyPolicyBase
+from c7n.actions import RemovePolicyBase, ModifyPolicyBase, BaseAction
 from c7n.filters import CrossAccountAccessFilter, PolicyChecker
 from c7n.filters.kms import KmsRelatedFilter
 from c7n.manager import resources
@@ -259,3 +260,52 @@ class ModifyPolicyStatement(ModifyPolicyBase):
 class KmsFilter(KmsRelatedFilter):
 
     RelatedIdsExpression = 'KmsMasterKeyId'
+
+
+@SNS.action_registry.register('set-encryption')
+class SetEncryption(BaseAction):
+    """
+    Set Encryption on SNS Topics
+
+    By default if no key is specified, alias/aws/sns is used
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+            - name: set-sns-topic-encryption
+              resource: sns
+              actions:
+                - type: set-encryption
+                  key: alias/cmk/key
+                  enabled: True
+
+    """
+    schema = type_schema(
+        'set-encryption',
+        enabled={'type': 'boolean'},
+        key={'type': 'string'}
+    )
+
+    permissions = ('sns:SetTopicAttributes',)
+
+    def process(self, resources):
+        sns = local_session(self.manager.session_factory).client('sns')
+
+        if self.data.get('enabled', True):
+            key = self.data.get('key', 'alias/aws/sns')
+        else:
+            key = ''
+
+        for r in resources:
+            try:
+                sns.set_topic_attributes(
+                    TopicArn=r['TopicArn'],
+                    AttributeName='KmsMasterKeyId',
+                    AttributeValue=key
+                )
+            except ClientError as e:
+                self.log.warning(
+                    'Unable to set Topic Attributes for topic: %s - %s' % (r['TopicArn'], e))
+        return resources
