@@ -128,7 +128,7 @@ class BackupFileSystem(BaseAction):
 
     :example:
 
-    ..code-block: yaml
+    .. code-block: yaml
 
         policies:
             - name: backup-fsx-resource
