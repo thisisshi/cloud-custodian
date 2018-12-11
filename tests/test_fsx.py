@@ -205,7 +205,7 @@ class TestFSx(BaseTest):
         self.assertEqual(len(backups['Backups']), 0)
 
     def test_fsx_create_backup(self):
-        session_factory = self.record_flight_data('test_fsx_create_backup')
+        session_factory = self.replay_flight_data('test_fsx_create_backup')
         p = self.load_policy(
             {
                 'name': 'test-update-fsx-configuration',
