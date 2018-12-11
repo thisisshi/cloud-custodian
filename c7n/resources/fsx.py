@@ -31,7 +31,7 @@ class FSx(QueryResourceManager):
     class resource_type(object):
         service = 'fsx'
         enum_spec = ('describe_file_systems', 'FileSystems', None)
-        id = 'FileSystemId'
+        name = id = 'FileSystemId'
         date = 'CreationTime'
         dimension = None
         filter_name = None
