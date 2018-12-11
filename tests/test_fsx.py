@@ -117,3 +117,135 @@ class TestFSx(BaseTest):
         tags = client.list_tags_for_resource(ResourceARN=resources[0]['ResourceARN'])
 
         self.assertTrue([t for t in tags['Tags'] if t['Key'] == 'maid_status'])
+
+    def test_fsx_update_configuration(self):
+        session_factory = self.replay_flight_data('test_fsx_update_configuration')
+        p = self.load_policy(
+            {
+                'name': 'test-update-fsx-configuration',
+                'resource': 'fsx',
+                'filters': [
+                    {
+                        'WindowsConfiguration.AutomaticBackupRetentionDays': 1
+                    }
+                ],
+                'actions': [
+                    {
+                        'type': 'update',
+                        'WindowsConfiguration': {
+                            'AutomaticBackupRetentionDays': 3
+                        }
+                    }
+                ]
+            },
+            session_factory=session_factory
+        )
+        resources = p.run()
+
+        self.assertEqual(len(resources), 1)
+
+        p = self.load_policy(
+            {
+                'name': 'test-update-fsx-configuration',
+                'resource': 'fsx',
+                'filters': [
+                    {
+                        'WindowsConfiguration.AutomaticBackupRetentionDays': 3
+                    }
+                ]
+            },
+            session_factory=session_factory
+        )
+
+        new_resources = p.run()
+        self.assertEqual(new_resources[0]['FileSystemId'], resources[0]['FileSystemId'])
+        self.assertEqual(
+            new_resources[0]['WindowsConfiguration']['AutomaticBackupRetentionDays'], 3)
+
+    def test_fsx_create_bad_backup(self):
+        session_factory = self.replay_flight_data('test_fsx_create_backup_with_errors')
+        p = self.load_policy(
+            {
+                'name': 'test-update-fsx-configuration',
+                'resource': 'fsx',
+                'filters': [
+                    {
+                        'FileSystemId': 'fs-0bc98cbfb6b356896'
+                    }
+                ],
+                'actions': [
+                    {
+                        'type': 'backup',
+                        'tags': {
+                            'test-tag': 'backup-tag'
+                        }
+                    }
+                ]
+            },
+            session_factory=session_factory
+        )
+        resources = p.run()
+
+        self.assertEqual(len(resources), 1)
+
+        client = session_factory().client('fsx')
+
+        backups = client.describe_backups(
+            Filters=[
+                {
+                    'Name': 'file-system-id',
+                    'Values': ['fs-0bc98cbfb6b356896']
+                },
+                {
+                    'Name': 'backup-type',
+                    'Values': ['USER_INITIATED']
+                }
+            ]
+        )
+        self.assertEqual(len(backups['Backups']), 0)
+
+    def test_fsx_create_backup(self):
+        session_factory = self.record_flight_data('test_fsx_create_backup')
+        p = self.load_policy(
+            {
+                'name': 'test-update-fsx-configuration',
+                'resource': 'fsx',
+                'filters': [
+                    {
+                        'FileSystemId': 'fs-0bc98cbfb6b356896'
+                    }
+                ],
+                'actions': [
+                    {
+                        'type': 'backup',
+                        'tags': {
+                            'test-tag': 'backup-tag'
+                        }
+                    }
+                ]
+            },
+            session_factory=session_factory
+        )
+        resources = p.run()
+
+        self.assertEqual(len(resources), 1)
+
+        client = session_factory().client('fsx')
+
+        if self.recording:
+            import time
+            time.sleep(30)
+
+        backups = client.describe_backups(
+            Filters=[
+                {
+                    'Name': 'file-system-id',
+                    'Values': ['fs-0bc98cbfb6b356896']
+                },
+                {
+                    'Name': 'backup-type',
+                    'Values': ['USER_INITIATED']
+                }
+            ]
+        )
+        self.assertEqual(len(backups['Backups']), 1)
