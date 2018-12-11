@@ -14,10 +14,10 @@
 
 from c7n.manager import resources
 from c7n.query import QueryResourceManager
-from c7n.actions import ActionRegistry
+from c7n.actions import ActionRegistry, BaseAction
 from c7n.filters import FilterRegistry
 from c7n.tags import Tag, TagDelayedAction, RemoveTag
-from c7n.utils import local_session
+from c7n.utils import local_session, type_schema
 
 
 @resources.register('fsx')
@@ -76,3 +76,80 @@ class UnTagFileSystem(RemoveTag):
         client = local_session(self.manager.session_factory).client('fsx')
         for r in resources:
             client.untag_resource(ResourceARN=r['ResourceARN'], TagKeys=tag_keys)
+
+
+@FSx.action_registry.register('update')
+class UpdateFileSystem(BaseAction):
+    """
+    Update FSx resource configurations
+
+    :example:
+
+    .. code-block: yaml
+
+        policies:
+            - name: update-fsx-resource
+              resource: fsx
+              actions:
+                - type: update
+                  WindowsConfiguration:
+                    AutomaticBackupRetentionDays: 1
+                    DailyAutomaticBackupStartTime: '04:30'
+                    WeeklyMaintenanceStartTime: '04:30'
+                  LustreConfiguration:
+                    WeeklyMaintenanceStartTime: '04:30'
+
+    Reference: https://docs.aws.amazon.com/fsx/latest/APIReference/API_UpdateFileSystem.html
+    """
+    permissions = ('fsx:UpdateFileSystem',)
+
+    schema = type_schema(
+        'update',
+        WindowsConfiguration={'type': 'object'},
+        LustreConfiguration={'type': 'object'}
+    )
+
+    def process(self, resources):
+        client = local_session(self.manager.session_factory).client('fsx')
+        for r in resources:
+            client.update_file_system(
+                FileSystemId=r['FileSystemId'],
+                WindowsConfiguration=self.data.get('WindowsConfiguration', {}),
+                LustreConfiguration=self.data.get('LustreConfiguration', {})
+            )
+
+
+@FSx.action_registry.register('backup')
+class BackupFileSystem(BaseAction):
+    """
+    Create Backups of File Systems
+
+    :example:
+
+    ..code-block: yaml
+
+        policies:
+            - name: backup-fsx-resource
+              resource: fsx
+              actions:
+                - type: backup
+                  tags:
+                    some-key: some-value
+    """
+    permissions = ('fsx:CreateBackup',)
+
+    schema = type_schema(
+        'backup',
+        **{'tags': {'type': 'object'}}
+    )
+
+    def process(self, resources):
+        client = local_session(self.manager.session_factory).client('fsx')
+        tags = [{'Key': k, 'Value': v} for k, v in self.data.get('tags', {}).items()]
+
+        for r in resources:
+            r['Tags'].extend(tags)
+            client.create_backup(
+                FileSystemId=r['FileSystemId'],
+                Tags=r['Tags']
+            )
