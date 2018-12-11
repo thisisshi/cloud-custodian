@@ -479,8 +479,6 @@ class TestSNS(BaseTest):
     def test_sns_topic_encryption(self):
         session_factory = self.replay_flight_data('test_sns_kms_related_filter_test')
         kms = session_factory().client('kms')
-        aliases = kms.list_aliases()
-        aliases['Aliases']
         p = self.load_policy(
             {
                 'name': 'test-sns-kms-related-filter',
