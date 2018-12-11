@@ -475,3 +475,30 @@ class TestSNS(BaseTest):
         self.assertTrue("AddMe" in statement_ids)
         self.assertTrue("RemoveMe" not in statement_ids)
         self.assertTrue("SpecificAllow" in statement_ids)
+
+    def test_sns_topic_encryption(self):
+        session_factory = self.replay_flight_data('test_sns_kms_related_filter_test')
+        kms = session_factory().client('kms')
+        aliases = kms.list_aliases()
+        aliases['Aliases']
+        p = self.load_policy(
+            {
+                'name': 'test-sns-kms-related-filter',
+                'resource': 'sns',
+                'filters': [
+                    {
+                        'TopicArn': 'arn:aws:sns:us-east-1:644160558196:test'
+                    },
+                    {
+                        'type': 'kms-key',
+                        'key': 'c7n:AliasName',
+                        'value': 'alias/skunk/trails'
+                    }
+                ]
+            },
+            session_factory=session_factory
+        )
+        resources = p.run()
+        self.assertTrue(len(resources), 1)
+        aliases = kms.list_aliases(KeyId=resources[0]['KmsMasterKeyId'])
+        self.assertEqual(aliases['Aliases'][0]['AliasName'], 'alias/skunk/trails')
