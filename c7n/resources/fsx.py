@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from botocore.exceptions import ClientError
-
 from c7n.manager import resources
 from c7n.query import QueryResourceManager
 from c7n.actions import ActionRegistry, BaseAction
@@ -150,7 +148,7 @@ class BackupFileSystem(BaseAction):
         tags = [{'Key': k, 'Value': v} for k, v in self.data.get('tags', {}).items()]
 
         for r in resources:
-            r['Tags'].extend(tags)
+            tags.extend(r['Tags'])
             try:
                 client.create_backup(
                     FileSystemId=r['FileSystemId'],

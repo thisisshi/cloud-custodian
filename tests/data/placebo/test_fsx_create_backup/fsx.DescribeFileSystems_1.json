@@ -8,26 +8,26 @@
                     "__class__": "datetime",
                     "year": 2018,
                     "month": 12,
-                    "day": 11,
-                    "hour": 14,
-                    "minute": 24,
-                    "second": 27,
-                    "microsecond": 838000
+                    "day": 12,
+                    "hour": 11,
+                    "minute": 2,
+                    "second": 21,
+                    "microsecond": 226000
                 },
-                "FileSystemId": "fs-0bc98cbfb6b356896",
+                "FileSystemId": "fs-002ccbccdcf032728",
                 "FileSystemType": "WINDOWS",
                 "Lifecycle": "AVAILABLE",
                 "StorageCapacity": 300,
                 "VpcId": "vpc-d2d616b5",
                 "SubnetIds": [
-                    "subnet-3a334610"
+                    "subnet-efbcccb7"
                 ],
                 "NetworkInterfaceIds": [
-                    "eni-0316083e722388ce3"
+                    "eni-0ac89988005b84072"
                 ],
-                "DNSName": "fs-0bc98cbfb6b356896.test.com",
+                "DNSName": "fs-002ccbccdcf032728.test.com",
                 "KmsKeyId": "arn:aws:kms:us-east-1:644160558196:key/7d30a034-2787-478a-85e7-1a2b85205fbc",
-                "ResourceARN": "arn:aws:fsx:us-east-1:644160558196:file-system/fs-0bc98cbfb6b356896",
+                "ResourceARN": "arn:aws:fsx:us-east-1:644160558196:file-system/fs-002ccbccdcf032728",
                 "Tags": [
                     {
                         "Key": "Name",
@@ -35,22 +35,22 @@
                     }
                 ],
                 "WindowsConfiguration": {
-                    "ActiveDirectoryId": "d-90671463e5",
+                    "ActiveDirectoryId": "d-9067141d9e",
                     "ThroughputCapacity": 8,
-                    "WeeklyMaintenanceStartTime": "3:08:30",
-                    "DailyAutomaticBackupStartTime": "04:32",
-                    "AutomaticBackupRetentionDays": 3,
+                    "WeeklyMaintenanceStartTime": "4:10:30",
+                    "DailyAutomaticBackupStartTime": "04:00",
+                    "AutomaticBackupRetentionDays": 7,
                     "CopyTagsToBackups": false
                 }
             }
         ],
         "ResponseMetadata": {
-            "RequestId": "fed6ac81-0122-4ffa-8a16-da45d8e58ba2",
+            "RequestId": "bfaf2fd6-a497-4a20-a67b-1e6eadcafe0c",
             "HTTPStatusCode": 200,
             "HTTPHeaders": {
                 "content-type": "application/x-amz-json-1.1",
-                "date": "Tue, 11 Dec 2018 20:24:37 GMT",
-                "x-amzn-requestid": "fed6ac81-0122-4ffa-8a16-da45d8e58ba2",
+                "date": "Wed, 12 Dec 2018 16:26:05 GMT",
+                "x-amzn-requestid": "bfaf2fd6-a497-4a20-a67b-1e6eadcafe0c",
                 "content-length": "765",
                 "connection": "keep-alive"
             },

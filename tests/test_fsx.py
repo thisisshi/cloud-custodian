@@ -203,7 +203,7 @@ class TestFSx(BaseTest):
                 'resource': 'fsx',
                 'filters': [
                     {
-                        'FileSystemId': 'fs-0bc98cbfb6b356896'
+                        'FileSystemId': 'fs-002ccbccdcf032728'
                     }
                 ],
                 'actions': [
@@ -225,13 +225,13 @@ class TestFSx(BaseTest):
 
         if self.recording:
             import time
-            time.sleep(30)
+            time.sleep(500)
 
         backups = client.describe_backups(
             Filters=[
                 {
                     'Name': 'file-system-id',
-                    'Values': ['fs-0bc98cbfb6b356896']
+                    'Values': ['fs-002ccbccdcf032728']
                 },
                 {
                     'Name': 'backup-type',
