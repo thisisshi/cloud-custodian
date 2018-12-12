@@ -17,8 +17,6 @@ import json
 
 from .common import BaseTest, functional
 
-from c7n.exceptions import PolicyExecutionError
-
 
 class TestSNS(BaseTest):
 
@@ -568,11 +566,11 @@ class TestSNS(BaseTest):
     def test_sns_set_encryption_custom_key(self):
         session_factory = self.replay_flight_data('test_sns_set_encryption_custom_key')
         topic = 'arn:aws:sns:us-west-1:644160558196:test'
-        key = 'alias/alias/test/key'
+        key_alias = 'alias/alias/test/key'
         sns = session_factory().client('sns')
         p = self.load_policy(
             {
-                'name': 'test-sns-kms-related-filter',
+                'name': 'test-sns-kms-related-filter-alias',
                 'resource': 'sns',
                 'filters': [
                     {
@@ -585,7 +583,7 @@ class TestSNS(BaseTest):
                 'actions': [
                     {
                         'type': 'set-encryption',
-                        'key': 'alias/alias/test/key'
+                        'key': key_alias
                     }
                 ]
             },
@@ -594,32 +592,4 @@ class TestSNS(BaseTest):
         resources = p.run()
         self.assertEquals(len(resources), 1)
         attributes = sns.get_topic_attributes(TopicArn=topic)['Attributes']
-        kms = session_factory().client('kms')
-        key_arn = kms.describe_key(KeyId=key)['KeyMetadata']['Arn']
-        self.assertEqual(attributes.get('KmsMasterKeyId'), key_arn)
-
-    def test_sns_set_encryption_custom_not_found_key(self):
-        session_factory = self.replay_flight_data('test_sns_set_encryption_custom_key_not_found')
-        kms = session_factory().client('kms')
-        key = 'alias/not/found'
-
-        try:
-            kms.describe_key(KeyId=key)
-        except kms.exceptions.NotFoundException as e:
-            self.assertTrue(e)
-
-        p = self.load_policy(
-            {
-                'name': 'test-sns-kms-related-filter',
-                'resource': 'sns',
-                'actions': [
-                    {
-                        'type': 'set-encryption',
-                        'key': 'alias/not/found'
-                    }
-                ]
-            },
-            session_factory=session_factory
-        )
-        with self.assertRaises(PolicyExecutionError):
-            p.run()
+        self.assertEqual(attributes.get('KmsMasterKeyId'), key_alias)

@@ -15,8 +15,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import json
 
-from botocore.exceptions import ClientError
-
 from c7n.actions import RemovePolicyBase, ModifyPolicyBase, BaseAction
 from c7n.filters import CrossAccountAccessFilter, PolicyChecker
 from c7n.filters.kms import KmsRelatedFilter
@@ -24,7 +22,6 @@ from c7n.manager import resources
 from c7n.query import QueryResourceManager
 from c7n.resolver import ValuesFrom
 from c7n.utils import local_session, type_schema
-from c7n.exceptions import PolicyExecutionError
 
 
 @resources.register('sns')
@@ -270,8 +267,7 @@ class SetEncryption(BaseAction):
 
     By default if no key is specified, alias/aws/sns is used
 
-    key can either be a KMS key ARN or an alias, when using aliases
-    prefix the key with 'alias/', i.e.: 'alias/custom/key'.
+    key can either be a KMS key ARN, key id, or an alias
 
     :example:
 
@@ -285,7 +281,21 @@ class SetEncryption(BaseAction):
                   key: alias/cmk/key
                   enabled: True
 
+            - name: set-sns-topic-encryption-with-id
+              resource: sns
+              actions:
+                - type: set-encryption
+                  key: abcdefgh-1234-1234-1234-123456789012
+                  enabled: True
+
+            - name: set-sns-topic-encryption-with-arn
+              resource: sns
+              actions:
+                - type: set-encryption
+                  key: arn:aws:kms:us-west-1:123456789012:key/abcdefgh-1234-1234-1234-123456789012
+                  enabled: True
     """
+
     schema = type_schema(
         'set-encryption',
         enabled={'type': 'boolean'},
@@ -299,25 +309,13 @@ class SetEncryption(BaseAction):
 
         if self.data.get('enabled', True):
             key = self.data.get('key', 'alias/aws/sns')
-            if key != 'alias/aws/sns':
-                kms = local_session(self.manager.session_factory).client('kms')
-                try:
-                    key = kms.describe_key(KeyId=key)
-                except kms.exceptions.NotFoundException:
-                    raise PolicyExecutionError(
-                        "Error when running policy, key: %s not found" % key)
-                key = key.get('KeyMetadata').get('Arn')
         else:
             key = ''
 
         for r in resources:
-            try:
-                sns.set_topic_attributes(
-                    TopicArn=r['TopicArn'],
-                    AttributeName='KmsMasterKeyId',
-                    AttributeValue=key
-                )
-            except ClientError as e:
-                self.log.warning(
-                    'Unable to set Topic Attributes for topic: %s - %s' % (r['TopicArn'], e))
+            sns.set_topic_attributes(
+                TopicArn=r['TopicArn'],
+                AttributeName='KmsMasterKeyId',
+                AttributeValue=key
+            )
         return resources
