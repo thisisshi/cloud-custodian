@@ -143,22 +143,13 @@ class TestFSx(BaseTest):
         resources = p.run()
 
         self.assertEqual(len(resources), 1)
-
-        p = self.load_policy(
-            {
-                'name': 'test-update-fsx-configuration',
-                'resource': 'fsx',
-                'filters': [
-                    {
-                        'WindowsConfiguration.AutomaticBackupRetentionDays': 3
-                    }
-                ]
-            },
-            session_factory=session_factory
+        client = session_factory().client('fsx')
+        new_resources = client.describe_file_systems()['FileSystems']
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(
+            new_resources[0]['FileSystemId'],
+            resources[0]['FileSystemId']
         )
-
-        new_resources = p.run()
-        self.assertEqual(new_resources[0]['FileSystemId'], resources[0]['FileSystemId'])
         self.assertEqual(
             new_resources[0]['WindowsConfiguration']['AutomaticBackupRetentionDays'], 3)
 

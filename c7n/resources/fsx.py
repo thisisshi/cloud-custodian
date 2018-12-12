@@ -154,6 +154,8 @@ class BackupFileSystem(BaseAction):
             try:
                 client.create_backup(
                     FileSystemId=r['FileSystemId'],
+                    Tags=tags
                 )
-            except ClientError as e:
-                self.log.warning('Unable to create backup for: %s - %s' % (r['FileSystemId'], e))
+            except client.exceptions.BackupInProgress as e:
+                self.log.warning(
+                    'Unable to create backup for: %s - %s' % (r['FileSystemId'], e))
