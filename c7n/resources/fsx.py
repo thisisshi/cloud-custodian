@@ -34,13 +34,6 @@ class FSx(QueryResourceManager):
         dimension = None
         filter_name = None
 
-    def get_tags(self, resources):
-        client = local_session(self.session_factory).client('fsx')
-        for r in resources:
-            r['Tags'] = client.list_tags_for_resource(
-                ResourceArn=r['ResourceARN'])['Tags']
-        return resources
-
 
 @FSx.action_registry.register('mark-for-op')
 class MarkForOpFileSystem(TagDelayedAction):
