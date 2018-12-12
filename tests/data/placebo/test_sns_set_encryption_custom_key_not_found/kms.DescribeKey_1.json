@@ -1,0 +1,19 @@
+{
+    "status_code": 400,
+    "data": {
+        "Error": {
+            "Message": "Alias arn:aws:kms:us-west-1:644160558196:alias/not/found is not found.",
+            "Code": "NotFoundException"
+        },
+        "ResponseMetadata": {
+            "RequestId": "2f7d75b4-3d97-40d0-8f34-16a6f6fbd3aa",
+            "HTTPStatusCode": 400,
+            "HTTPHeaders": {
+                "x-amzn-requestid": "2f7d75b4-3d97-40d0-8f34-16a6f6fbd3aa",
+                "content-type": "application/x-amz-json-1.1",
+                "content-length": "113"
+            },
+            "RetryAttempts": 0
+        }
+    }
+}

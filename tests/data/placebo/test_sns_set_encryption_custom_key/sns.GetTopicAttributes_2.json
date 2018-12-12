@@ -5,6 +5,7 @@
             "Policy": "{\"Version\":\"2008-10-17\",\"Id\":\"__default_policy_ID\",\"Statement\":[{\"Sid\":\"__default_statement_ID\",\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"*\"},\"Action\":[\"SNS:GetTopicAttributes\",\"SNS:SetTopicAttributes\",\"SNS:AddPermission\",\"SNS:RemovePermission\",\"SNS:DeleteTopic\",\"SNS:Subscribe\",\"SNS:ListSubscriptionsByTopic\",\"SNS:Publish\",\"SNS:Receive\"],\"Resource\":\"arn:aws:sns:us-west-1:644160558196:test\",\"Condition\":{\"StringEquals\":{\"AWS:SourceOwner\":\"644160558196\"}}}]}",
             "Owner": "644160558196",
             "SubscriptionsPending": "0",
+            "KmsMasterKeyId": "arn:aws:kms:us-west-1:644160558196:key/d3f0e662-e99b-4b6d-8674-935afc968f4b",
             "TopicArn": "arn:aws:sns:us-west-1:644160558196:test",
             "EffectiveDeliveryPolicy": "{\"http\":{\"defaultHealthyRetryPolicy\":{\"minDelayTarget\":20,\"maxDelayTarget\":20,\"numRetries\":3,\"numMaxDelayRetries\":0,\"numNoDelayRetries\":0,\"numMinDelayRetries\":0,\"backoffFunction\":\"linear\"},\"disableSubscriptionOverrides\":false}}",
             "SubscriptionsConfirmed": "0",
@@ -12,14 +13,14 @@
             "SubscriptionsDeleted": "0"
         },
         "ResponseMetadata": {
-            "RequestId": "f84a2bb8-3af5-56d6-894e-7f31d108002a",
+            "RequestId": "e1e93d25-b1ee-58b9-a6f5-69ae99777129",
             "HTTPStatusCode": 200,
             "HTTPHeaders": {
-                "x-amzn-requestid": "f84a2bb8-3af5-56d6-894e-7f31d108002a",
+                "x-amzn-requestid": "e1e93d25-b1ee-58b9-a6f5-69ae99777129",
                 "content-type": "text/xml",
-                "content-length": "2125",
+                "content-length": "2287",
                 "vary": "Accept-Encoding",
-                "date": "Tue, 11 Dec 2018 16:45:48 GMT"
+                "date": "Wed, 12 Dec 2018 15:16:40 GMT"
             },
             "RetryAttempts": 0
         }

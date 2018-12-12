@@ -17,6 +17,8 @@ import json
 
 from .common import BaseTest, functional
 
+from c7n.exceptions import PolicyExecutionError
+
 
 class TestSNS(BaseTest):
 
@@ -504,8 +506,6 @@ class TestSNS(BaseTest):
     def test_set_sns_topic_encryption(self):
         session_factory = self.replay_flight_data('test_sns_set_encryption')
         topic = 'arn:aws:sns:us-west-1:644160558196:test'
-
-        # default case, no key specified
         p = self.load_policy(
             {
                 'name': 'test-sns-kms-related-filter',
@@ -528,8 +528,13 @@ class TestSNS(BaseTest):
         )
         resources = p.run()
         self.assertEquals(len(resources), 1)
+        sns = session_factory().client('sns')
+        attributes = sns.get_topic_attributes(TopicArn=topic)
+        self.assertTrue(attributes['Attributes']['KmsMasterKeyId'], 'alias/aws/sns')
 
-        # disable encryption
+    def test_sns_disable_encryption(self):
+        session_factory = self.replay_flight_data('test_sns_unset_encryption')
+        topic = 'arn:aws:sns:us-west-1:644160558196:test'
         p = self.load_policy(
             {
                 'name': 'test-sns-kms-related-filter',
@@ -560,6 +565,11 @@ class TestSNS(BaseTest):
         attributes = sns.get_topic_attributes(TopicArn=topic)['Attributes']
         self.assertFalse(attributes.get('KmsMasterKeyId'))
 
+    def test_sns_set_encryption_custom_key(self):
+        session_factory = self.replay_flight_data('test_sns_set_encryption_custom_key')
+        topic = 'arn:aws:sns:us-west-1:644160558196:test'
+        key = 'alias/alias/test/key'
+        sns = session_factory().client('sns')
         p = self.load_policy(
             {
                 'name': 'test-sns-kms-related-filter',
@@ -575,7 +585,7 @@ class TestSNS(BaseTest):
                 'actions': [
                     {
                         'type': 'set-encryption',
-                        'key': 'alias/skunk/trails'
+                        'key': 'alias/alias/test/key'
                     }
                 ]
             },
@@ -584,4 +594,32 @@ class TestSNS(BaseTest):
         resources = p.run()
         self.assertEquals(len(resources), 1)
         attributes = sns.get_topic_attributes(TopicArn=topic)['Attributes']
-        self.assertEqual(attributes.get('KmsMasterKeyId'), 'alias/skunk/trails')
+        kms = session_factory().client('kms')
+        key_arn = kms.describe_key(KeyId=key)['KeyMetadata']['Arn']
+        self.assertEqual(attributes.get('KmsMasterKeyId'), key_arn)
+
+    def test_sns_set_encryption_custom_not_found_key(self):
+        session_factory = self.replay_flight_data('test_sns_set_encryption_custom_key_not_found')
+        kms = session_factory().client('kms')
+        key = 'alias/not/found'
+
+        try:
+            kms.describe_key(KeyId=key)
+        except kms.exceptions.NotFoundException as e:
+            self.assertTrue(e)
+
+        p = self.load_policy(
+            {
+                'name': 'test-sns-kms-related-filter',
+                'resource': 'sns',
+                'actions': [
+                    {
+                        'type': 'set-encryption',
+                        'key': 'alias/not/found'
+                    }
+                ]
+            },
+            session_factory=session_factory
+        )
+        with self.assertRaises(PolicyExecutionError):
+            p.run()

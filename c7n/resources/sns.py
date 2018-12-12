@@ -24,6 +24,7 @@ from c7n.manager import resources
 from c7n.query import QueryResourceManager
 from c7n.resolver import ValuesFrom
 from c7n.utils import local_session, type_schema
+from c7n.exceptions import PolicyExecutionError
 
 
 @resources.register('sns')
@@ -269,6 +270,9 @@ class SetEncryption(BaseAction):
 
     By default if no key is specified, alias/aws/sns is used
 
+    key can either be a KMS key ARN or an alias, when using aliases
+    prefix the key with 'alias/', i.e.: 'alias/custom/key'.
+
     :example:
 
     .. code-block:: yaml
@@ -288,13 +292,21 @@ class SetEncryption(BaseAction):
         key={'type': 'string'}
     )
 
-    permissions = ('sns:SetTopicAttributes',)
+    permissions = ('sns:SetTopicAttributes', 'kms:DescribeKey',)
 
     def process(self, resources):
         sns = local_session(self.manager.session_factory).client('sns')
 
         if self.data.get('enabled', True):
             key = self.data.get('key', 'alias/aws/sns')
+            if key != 'alias/aws/sns':
+                kms = local_session(self.manager.session_factory).client('kms')
+                try:
+                    key = kms.describe_key(KeyId=key)
+                except kms.exceptions.NotFoundException:
+                    raise PolicyExecutionError(
+                        "Error when running policy, key: %s not found" % key)
+                key = key.get('KeyMetadata').get('Arn')
         else:
             key = ''
 
