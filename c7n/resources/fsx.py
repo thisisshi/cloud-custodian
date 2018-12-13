@@ -117,6 +117,14 @@ class BackupFileSystem(BaseAction):
     """
     Create Backups of File Systems
 
+    To copy all tags from the file system, use the value: C7N_ALL_TAGS
+    in the copy-tags array.
+
+    To copy specific tags from the file system, specify the
+    tag keys in the copy-tags array.
+
+    Tags are specified in key value pairs, e.g.: BackupSource: Custodian
+
     :example:
 
     .. code-block: yaml
@@ -126,26 +134,54 @@ class BackupFileSystem(BaseAction):
               resource: fsx
               actions:
                 - type: backup
+                  # copy specific tags from file system
+                  copy-tags:
+                    - Application
+                    - Owner
                   tags:
-                    some-key: some-value
+                    BackupSource: CloudCustodian
+
+            - name: backup-fsx-resource-with-all-tags
+              resource: fsx
+              actions:
+                - type: backup
+                  # copy specific tags from file system
+                  copy-tags:
+                    - C7N_ALL_TAGS
+                  tags:
+                    BackupSource: CloudCustodian
     """
+
     permissions = ('fsx:CreateBackup',)
 
     schema = type_schema(
         'backup',
-        **{'tags': {'type': 'object'}}
+        **{
+            'tags': {
+                'type': 'object'
+            },
+            'copy-tags': {
+                'type': 'array'
+            }
+        }
     )
 
     def process(self, resources):
         client = local_session(self.manager.session_factory).client('fsx')
         tags = [{'Key': k, 'Value': v} for k, v in self.data.get('tags', {}).items()]
-
+        copy_tags = self.data.get('copy-tags')
         for r in resources:
-            tags.extend(r['Tags'])
+            new_tags = tags
+            if copy_tags:
+                if 'C7N_ALL_TAGS' in copy_tags:
+                    new_tags.extend(r['Tags'])
+                else:
+                    found_tags = [{'Key': t['Key'], 'Value': t['Value']} for t in r['Tags'] if t['Key'] in copy_tags] # noqa
+                    new_tags.extend(found_tags)
             try:
                 client.create_backup(
                     FileSystemId=r['FileSystemId'],
-                    Tags=tags
+                    Tags=new_tags
                 )
             except client.exceptions.BackupInProgress as e:
                 self.log.warning(

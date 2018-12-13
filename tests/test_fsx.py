@@ -209,6 +209,9 @@ class TestFSx(BaseTest):
                 'actions': [
                     {
                         'type': 'backup',
+                        'copy-tags': [
+                            'C7N_ALL_TAGS'
+                        ],
                         'tags': {
                             'test-tag': 'backup-tag'
                         }
