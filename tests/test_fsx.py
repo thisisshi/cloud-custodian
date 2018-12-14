@@ -209,9 +209,7 @@ class TestFSx(BaseTest):
                 'actions': [
                     {
                         'type': 'backup',
-                        'copy-tags': [
-                            'C7N_ALL_TAGS'
-                        ],
+                        'copy-tags': True,
                         'tags': {
                             'test-tag': 'backup-tag'
                         }
@@ -242,4 +240,60 @@ class TestFSx(BaseTest):
                 }
             ]
         )
+
         self.assertEqual(len(backups['Backups']), 1)
+
+        expected_tags = resources[0]['Tags']
+
+        expected_tags.append({'Key': 'test-tag', 'Value': 'backup-tag'})
+        expected_tag_map = {t['Key']: t['Value'] for t in expected_tags}
+        final_tag_map = {t['Key']: t['Value'] for t in backups['Backups'][0]['Tags']}
+
+        self.assertEqual(expected_tag_map, final_tag_map)
+
+    def test_fsx_create_backup_without_copy_tags(self):
+        session_factory = self.replay_flight_data('test_fsx_create_backup_without_copy_tags')
+        p = self.load_policy(
+            {
+                'name': 'test-update-fsx-configuration',
+                'resource': 'fsx',
+                'filters': [
+                    {
+                        'FileSystemId': 'fs-002ccbccdcf032728'
+                    }
+                ],
+                'actions': [
+                    {
+                        'type': 'backup',
+                        'copy-tags': False,
+                        'tags': {
+                            'test-tag': 'backup-tag'
+                        }
+                    }
+                ]
+            },
+            session_factory=session_factory
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+
+        if self.recording:
+            import time
+            time.sleep(500)
+
+        client = session_factory().client('fsx')
+        backups = client.describe_backups(
+            Filters=[
+                {
+                    'Name': 'file-system-id',
+                    'Values': ['fs-002ccbccdcf032728']
+                },
+                {
+                    'Name': 'backup-type',
+                    'Values': ['USER_INITIATED']
+                }
+            ]
+        )
+        self.assertEqual(len(backups['Backups']), 1)
+        expected_tags = [{'Key': 'test-tag', 'Value': 'backup-tag'}]
+        self.assertEqual(expected_tags, backups['Backups'][0]['Tags'])
