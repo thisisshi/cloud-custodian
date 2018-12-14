@@ -1707,6 +1707,13 @@ class VpcEndpoint(query.QueryResourceManager):
         id_prefix = "vpce-"
 
 
+@VpcEndpoint.filter_registry.register('cross-account')
+class EndpointCrossAccountFilter(CrossAccountAccessFilter):
+
+    policy_attribute = 'PolicyDocument'
+    annotation_key = 'c7n:CrossAccountViolations'
+
+
 @VpcEndpoint.filter_registry.register('security-group')
 class EndpointSecurityGroupFilter(net_filters.SecurityGroupFilter):
 
