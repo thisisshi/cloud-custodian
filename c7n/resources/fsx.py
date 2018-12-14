@@ -69,6 +69,8 @@ class DeleteBackup(BaseAction):
               actions:
                 - type: delete
     """
+    permissions = ('fsx:DeleteBackup',)
+    schema = type_schema('delete')
 
     def process(self, resources):
         client = local_session(self.manager.session_factory).client('fsx')
