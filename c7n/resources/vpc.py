@@ -1712,6 +1712,7 @@ class EndpointCrossAccountFilter(CrossAccountAccessFilter):
 
     policy_attribute = 'PolicyDocument'
     annotation_key = 'c7n:CrossAccountViolations'
+    permissions = ('ec2:DescribeVpcEndpoints',)
 
 
 @VpcEndpoint.filter_registry.register('security-group')
