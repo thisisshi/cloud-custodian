@@ -300,18 +300,6 @@ class TestFSx(BaseTest):
 
 
 class TestFSxBackup(BaseTest):
-    def test_fsx_backup_resource(self):
-        session_factory = self.replay_flight_data('test_fsx_backup_resource')
-        p = self.load_policy(
-            {
-                'name': 'fsx-backup-resource',
-                'resource': 'fsx-backup'
-            },
-            session_factory=session_factory
-        )
-        resources = p.run()
-        self.assertTrue(resources)
-
     def test_fsx_backup_delete(self):
         session_factory = self.replay_flight_data('test_fsx_backup_delete')
         backup_id = 'backup-0d1fb25003287b260'

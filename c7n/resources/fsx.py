@@ -79,7 +79,8 @@ class DeleteBackup(BaseAction):
                 client.delete_backup(BackupId=r['BackupId'])
             except client.exceptions.BackupRestoring as e:
                 self.log.warning(
-                    'Unable to delete backup for: %s - %s' % (r['FileSystemId'], e))
+                    'Unable to delete backup for: %s - %s - %s' % (
+                        r['FileSystemId'], r['BackupId'], e))
 
 
 @FSxBackup.action_registry.register('mark-for-op')
