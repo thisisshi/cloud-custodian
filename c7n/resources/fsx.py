@@ -1,5 +1,4 @@
-# Copyright 2018 Capital One Services, LLC
-#
+# Copyright 2018 Capital One Services, LLC #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -217,3 +216,63 @@ class BackupFileSystem(BaseAction):
             except client.exceptions.BackupInProgress as e:
                 self.log.warning(
                     'Unable to create backup for: %s - %s' % (r['FileSystemId'], e))
+
+
+@FSx.action_registry.register('delete')
+class DeleteFileSystem(BaseAction):
+    """
+    Delete Filesystems
+
+    :example:
+
+    .. code-block: yaml
+
+        policies:
+            - name: delete-fsx-instance-with-snapshot
+              resource: fsx
+              filters:
+                - FileSystemId: fs-1234567890123
+              actions:
+                - type: delete
+                  tags:
+                    DeletedBy: CloudCustodian
+
+            - name: delete-fsx-instance-skip-snapshot
+              resource: fsx
+              filters:
+                - FileSystemId: fs-1234567890123
+              actions:
+                - type: delete
+                  skip-snapshot: True
+
+    """
+
+    permissions = ('fsx:DeleteFileSystem',)
+
+    schema = type_schema(
+        'delete',
+        **{
+            'skip-snapshot': {'type': 'boolean'},
+            'tags': {'type': 'object'}
+        }
+    )
+
+    def process(self, resources):
+        client = local_session(self.manager.session_factory).client('fsx')
+
+        skip_snapshot = self.data.get('skip-snapshot', False)
+        tags = self.data.get('tags', {})
+        config = {}
+
+        config['SkipFinalBackup'] = skip_snapshot
+        if tags and not skip_snapshot:
+            config['FinalBackupTags'] = [{'Key': k, 'Value': v} for k, v in tags.items()]
+
+        for r in resources:
+            try:
+                client.delete_file_system(
+                    FileSystemId=r['FileSystemId'],
+                    WindowsConfiguration=config
+                )
+            except client.exceptions.BadRequest as e:
+                self.log.warning('Unable to delete: %s - %s' % (r['FileSystemId'], e))
