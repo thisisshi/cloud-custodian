@@ -24,7 +24,7 @@ from concurrent.futures import as_completed
 from dateutil.parser import parse as parse_date
 
 from c7n.actions import ActionRegistry, BaseAction
-from c7n.exceptions import PolicyValidationError
+from c7n.exceptions import PolicyValidationError, PolicyExecutionError
 from c7n.filters import (
     CrossAccountAccessFilter, Filter, FilterRegistry, AgeFilter, ValueFilter,
     ANNOTATION_KEY, OPERATORS)
@@ -216,6 +216,70 @@ class SnapshotSkipAmiSnapshots(Filter):
     def process(self, snapshots, event=None):
         resources = _filter_ami_snapshots(self, snapshots)
         return resources
+
+
+@Snapshot.action_registry.register('copy-volume-tags')
+class SnapshotCopyVolumeTags(BaseAction):
+    """
+    Copy EBS Volume tags to snapshots
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: ebs-snapshot-copy-vol-tags
+            resource: ebs-snapshot
+            actions:
+              - type: copy-volume-taags
+                tags:
+                    - Application
+                    - Owner
+    """
+
+    permissions = ()
+    schema = type_schema(
+        'copy-volume-tags',
+        required=['tags'],
+        tags={'type': 'array', 'items': {'type': 'string'}}
+    )
+
+    def process(self, resources):
+        client = local_session(self.manager.session_factory).client('ec2')
+        tag_keys = self.data.get('tags', [])
+        volume_ids = [r['VolumeId'] for r in resources]
+
+        while volume_ids:
+            try:
+                vols = client.describe_volumes(VolumeIds=volume_ids)
+                break
+            except ClientError as e:
+                if e.response['Error']['Code'] == 'InvalidVolume.NotFound':
+                    # e.response['Error']['Message'] = "The volume 'vol-00001234' does not exist."
+                    missing_vol = e.response['Error']['Message'].split("'")[1]
+                    volume_ids.remove(missing_vol)
+                else:
+                    raise PolicyExecutionError("Error when describing volumes: %s" % e)
+
+        if not volume_ids:
+            self.log.warning('No volumes found')
+            return
+
+        for r in resources:
+            if r['VolumeId'] in volume_ids:
+                volume = [v for v in vols['Volumes'] if v['VolumeId'] == r['VolumeId']][0]
+                vol_tags = volume.get('Tags', [])
+                if vol_tags:
+                    add_tags = [{'Key': t['Key'], 'Value': t['Value']} for t in vol_tags if t['Key'] in tag_keys] # noqa
+                else:
+                    continue
+                vol_tags.extend(add_tags)
+                client.create_tags(
+                    Resources=[r['SnapshotId']], Tags=vol_tags)
+            else:
+                self.log.warning(
+                    'Unable to find volume: %s for snapshot: %s' % (r['VolumeId'], r['SnapshotId']))
+                continue
 
 
 @Snapshot.action_registry.register('delete')
