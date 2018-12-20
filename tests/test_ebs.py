@@ -26,6 +26,7 @@ from c7n.resources.ebs import (
     Delete,
 )
 from c7n.executor import MainThreadExecutor
+from c7n.exceptions import PolicyExecutionError
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -482,3 +483,82 @@ class HealthEventsFilterTest(BaseTest):
                 ("c7n:HealthEvent" in r) and
                 ("Description" in e for e in r["c7n:HealthEvent"])
             )
+
+
+class CopyVolumeTagsTest(BaseTest):
+    def test_copy_volume_tags(self):
+        session_factory = self.replay_flight_data('test_ebs_snapshot_copy_vol_tags')
+        vol = 'vol-0b2b3e20a9db7969d'
+        p = self.load_policy(
+            {
+                'name': 'copy-ebs-vol-tags-to-snap',
+                'resource': 'ebs-snapshot',
+                'filters': [
+                    {'VolumeId': vol},
+                    {'Tags': 'empty'}
+                ],
+                'actions': [
+                    {
+                        'type': 'copy-volume-tags',
+                        'tags': ['test']
+                    }
+                ]
+            },
+            session_factory=session_factory,
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        client = session_factory().client('ec2')
+        vols = client.describe_volumes(VolumeIds=[vol])['Volumes']
+        snaps = client.describe_snapshots(SnapshotIds=[resources[0]['SnapshotId']])['Snapshots']
+        self.assertEqual(snaps[0]['Tags'], vols[0]['Tags'])
+
+    def test_copy_volume_tags_skip_missing_volume(self):
+        session_factory = self.replay_flight_data('test_ebs_snapshot_copy_vol_tags_missing_volume')
+        p = self.load_policy(
+            {
+                'name': 'copy-ebs-vol-tags-to-snap',
+                'resource': 'ebs-snapshot',
+                'actions': [
+                    {
+                        'type': 'copy-volume-tags',
+                        'skip-missing-volumes': False,
+                        'tags': ['test']
+                    }
+                ]
+            },
+            session_factory=session_factory,
+        )
+        with self.assertRaises(PolicyExecutionError):
+            p.run()
+
+    def test_copy_volume_tags_missing_volume(self):
+        session_factory = self.replay_flight_data('test_ebs_snapshot_copy_vol_tags_skip_missing')
+        vol = 'vol-ffffffff'
+        p = self.load_policy(
+            {
+                'name': 'copy-ebs-vol-tags-to-snap',
+                'resource': 'ebs-snapshot',
+                'filters': [
+                    {'VolumeId': vol}
+                ],
+                'actions': [
+                    {
+                        'type': 'copy-volume-tags',
+                        'skip-missing-volume': True,
+                        'tags': ['test']
+                    }
+                ]
+            },
+            session_factory=session_factory
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        self.assertTrue(resources[0]['Tags'])
+        client = session_factory().client('ec2')
+        with self.assertRaises(ClientError) as e:
+            client.describe_volumes(VolumeIds=[vol])
+            self.assertEqual(e.response['Error']['Code'], 'InvalidVolume.NotFound')
+        post_policy_tags = client.describe_snapshots(
+            SnapshotIds=[resources[0]['SnapshotId']])['Snapshots'][0]['Tags']
+        self.assertEqual(post_policy_tags, resources[0]['Tags'])

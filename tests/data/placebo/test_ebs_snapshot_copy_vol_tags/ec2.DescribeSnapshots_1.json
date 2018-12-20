@@ -1,0 +1,59 @@
+{
+    "status_code": 200,
+    "data": {
+        "Snapshots": [
+            {
+                "Description": "",
+                "Encrypted": false,
+                "OwnerId": "644160558196",
+                "Progress": "100%",
+                "SnapshotId": "snap-0765b3ac3eec04d2b",
+                "StartTime": {
+                    "__class__": "datetime",
+                    "year": 2018,
+                    "month": 12,
+                    "day": 20,
+                    "hour": 19,
+                    "minute": 5,
+                    "second": 51,
+                    "microsecond": 0
+                },
+                "State": "completed",
+                "VolumeId": "vol-0b2b3e20a9db7969d",
+                "VolumeSize": 1
+            },
+            {
+                "Description": "Copied for DestinationAmi ami-0515ff4f8f9dbeb31 from SourceAmi ami-3073884d for SourceSnapshot snap-03df3468e22d8d20a. Task created on 1,541,312,685,382.",
+                "Encrypted": true,
+                "KmsKeyId": "arn:aws:kms:us-east-1:644160558196:key/798bc4bb-3079-4a9a-bc27-2c7f2b6c91d0",
+                "OwnerId": "644160558196",
+                "Progress": "100%",
+                "SnapshotId": "snap-0d16416527e67c663",
+                "StartTime": {
+                    "__class__": "datetime",
+                    "year": 2018,
+                    "month": 11,
+                    "day": 4,
+                    "hour": 6,
+                    "minute": 24,
+                    "second": 46,
+                    "microsecond": 0
+                },
+                "State": "completed",
+                "VolumeId": "vol-ffffffff",
+                "VolumeSize": 8
+            }
+        ],
+        "ResponseMetadata": {
+            "RequestId": "4eeb65ee-32cc-426a-b241-de89ecd97d68",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+                "content-type": "text/xml;charset=UTF-8",
+                "content-length": "1378",
+                "date": "Thu, 20 Dec 2018 19:39:37 GMT",
+                "server": "AmazonEC2"
+            },
+            "RetryAttempts": 0
+        }
+    }
+}

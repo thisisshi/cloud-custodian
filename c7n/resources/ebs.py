@@ -223,6 +223,10 @@ class SnapshotCopyVolumeTags(BaseAction):
     """
     Copy EBS Volume tags to snapshots
 
+    By default, skip-missing-volumes is True. To break
+    policy execution if a volume is not found, set
+    skip-missing-volumes to False
+
     :example:
 
     .. code-block:: yaml
@@ -232,16 +236,20 @@ class SnapshotCopyVolumeTags(BaseAction):
             resource: ebs-snapshot
             actions:
               - type: copy-volume-taags
+                skip-missing-volumes: True
                 tags:
                     - Application
                     - Owner
     """
 
-    permissions = ()
+    permissions = ('ec2:DescribeVolumes', 'ec2:CreateTags')
     schema = type_schema(
         'copy-volume-tags',
         required=['tags'],
-        tags={'type': 'array', 'items': {'type': 'string'}}
+        **{
+            'skip-missing-volumes': {'type': 'boolean'},
+            'tags': {'type': 'array', 'items': {'type': 'string'}}
+        }
     )
 
     def process(self, resources):
@@ -255,6 +263,8 @@ class SnapshotCopyVolumeTags(BaseAction):
                 break
             except ClientError as e:
                 if e.response['Error']['Code'] == 'InvalidVolume.NotFound':
+                    if not self.data.get('skip-missing-volumes', True):
+                        raise PolicyExecutionError("Snapshots not found: %s" % e)
                     # e.response['Error']['Message'] = "The volume 'vol-00001234' does not exist."
                     missing_vol = e.response['Error']['Message'].split("'")[1]
                     volume_ids.remove(missing_vol)
@@ -279,7 +289,6 @@ class SnapshotCopyVolumeTags(BaseAction):
             else:
                 self.log.warning(
                     'Unable to find volume: %s for snapshot: %s' % (r['VolumeId'], r['SnapshotId']))
-                continue
 
 
 @Snapshot.action_registry.register('delete')
