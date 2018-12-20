@@ -545,7 +545,7 @@ class CopyVolumeTagsTest(BaseTest):
                 'actions': [
                     {
                         'type': 'copy-volume-tags',
-                        'skip-missing-volume': True,
+                        'skip-missing-volumes': True,
                         'tags': ['test']
                     }
                 ]
