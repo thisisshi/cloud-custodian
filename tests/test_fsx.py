@@ -298,7 +298,7 @@ class TestFSx(BaseTest):
         self.assertEqual(expected_tags, backups['Backups'][0]['Tags'])
 
     def test_fsx_delete_file_system_skip_snapshot(self):
-        session_factory = self.record_flight_data('test_fsx_delete_file_system_skip_snapshot')
+        session_factory = self.replay_flight_data('test_fsx_delete_file_system_skip_snapshot')
         p = self.load_policy(
             {
                 'name': 'fsx-delete-file-system',
