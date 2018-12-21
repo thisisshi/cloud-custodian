@@ -260,44 +260,32 @@ class SnapshotCopyVolumeTags(BaseAction):
         volume_tag_map = self.get_volume_tag_map(volume_ids)
 
         for r in resources:
-            if r['VolumeId'] in volume_tag_map:
-                vol_tags = volume_tag_map[r['VolumeId']]
-                if vol_tags:
-                    add_tags = [{'Key': t['Key'], 'Value': t['Value']} for t in vol_tags if t['Key'] in tag_keys] # noqa
-                else:
-                    continue
+            if r['VolumeId'] not in volume_tag_map:
+                self.log.warning(
+                    'Unable to find volume: %s for snapshot: %s' % (r['VolumeId'], r['SnapshotId']))
+                continue
+            vol_tags = volume_tag_map[r['VolumeId']]
+            if vol_tags:
+                add_tags = [{'Key': t['Key'], 'Value': t['Value']} for t in vol_tags if t['Key'] in tag_keys] # noqa
+            else:
+                continue
+            if add_tags:
                 vol_tags.extend(add_tags)
                 client.create_tags(
                     Resources=[r['SnapshotId']], Tags=vol_tags)
-            else:
-                self.log.warning(
-                    'Unable to find volume: %s for snapshot: %s' % (r['VolumeId'], r['SnapshotId']))
 
     def get_volume_tag_map(self, volume_ids):
         """
         Returns a mapping of {VolumeIds: [Tags]}
         """
-        client = local_session(self.manager.session_factory).client('ec2')
-        while volume_ids:
-            try:
-                vols = client.describe_volumes(VolumeIds=volume_ids)
-                break
-            except ClientError as e:
-                if e.response['Error']['Code'] == 'InvalidVolume.NotFound':
-                    if not self.data.get('skip-missing-volumes', True):
-                        raise PolicyExecutionError(
-                            "Unable to find all volumes associated with snapshots: %s" % e)
-                    # e.response['Error']['Message'] = "The volume 'vol-00001234' does not exist." # noqa
-                    missing_vol = e.response['Error']['Message'].split("'")[1]
-                    volume_ids.remove(missing_vol)
-                else:
-                    raise PolicyExecutionError("Error when describing volumes: %s" % e)
+        manager = self.manager.get_resource_manager('ebs')
+        vols = manager.get_resources(volume_ids)
+        if not self.data.get('skip-missing-volumes', True):
+            if volume_ids not in [v['VolumeId'] for v in vols]:
+                raise PolicyExecutionError(
+                    "Unable to find all volumes associated with snapshots")
 
-        if not volume_ids:
-            self.log.warning('No volumes found')
-            return {}
-
-        volume_tag_map = {v['VolumeId']: v.get('Tags', []) for v in vols['Volumes']}
+        volume_tag_map = {v['VolumeId']: v.get('Tags', []) for v in vols}
         return volume_tag_map
 
 
