@@ -957,14 +957,14 @@ def universal_retry(method, ResourceARNList, **kw):
 def coalesce_copy_user_tags(resource, copy_tags, user_tags):
     """
     Returns a list of tags from resource and user supplied in
-    the format: [{'Key': key, 'Value': value}]
+    the format: [{'Key': 'key', 'Value': 'value'}]
 
     Due to drift on implementation on copy-tags/tags used throughout
     the code base, the following options are supported:
 
         copy_tags (Tags to copy from the resource):
           - list of str, e.g. ['key1', 'key2', '*']
-          - Boolean
+          - bool
 
         user_tags (User supplied tags to apply):
           - dict of key-value pairs, e.g. {Key: Value, Key2: Value}
