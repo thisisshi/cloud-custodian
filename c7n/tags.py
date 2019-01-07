@@ -978,24 +978,24 @@ def coalesce_copy_user_tags(resource, copy_tags, user_tags):
     to copy all tags from the resource.
     """
 
-    assert type(copy_tags) == bool or type(copy_tags) == list
-    assert type(user_tags) == dict or type(user_tags) == list
+    assert isinstance(copy_tags, bool) or isinstance(copy_tags, list)
+    assert isinstance(user_tags, dict) or isinstance(user_tags, list)
 
     r_tags = resource.get('Tags', [])
 
-    if type(copy_tags) == list:
+    if isinstance(copy_tags, list):
         if '*' in copy_tags:
             copy_keys = set([t['Key'] for t in r_tags])
         else:
             copy_keys = set(copy_tags)
 
-    if type(copy_tags) == bool:
+    if isinstance(copy_tags, bool):
         if copy_tags is True:
             copy_keys = set([t['Key'] for t in r_tags])
         else:
             copy_keys = set()
 
-    if type(user_tags) == dict:
+    if isinstance(user_tags, dict):
         user_tags = [{'Key': k, 'Value': v} for k, v in user_tags.items()]
 
     user_keys = set([t['Key'] for t in user_tags])
