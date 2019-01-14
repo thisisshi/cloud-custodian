@@ -114,7 +114,6 @@ class RDS(QueryResourceManager):
     filter_registry = filters
     action_registry = actions
     _generate_arn = None
-    retry = staticmethod(get_retry(('Throttled',)))
 
     def __init__(self, data, options):
         super(RDS, self).__init__(data, options)
@@ -301,6 +300,12 @@ class SecurityGroupFilter(net_filters.SecurityGroupFilter):
 class SubnetFilter(net_filters.SubnetFilter):
 
     RelatedIdsExpression = "DBSubnetGroup.Subnets[].SubnetIdentifier"
+
+
+@filters.register('vpc')
+class VpcFilter(net_filters.VpcFilter):
+
+    RelatedIdsExpression = "DBSubnetGroup.Subnets[].VpcId"
 
 
 filters.register('network-location', net_filters.NetworkLocation)
@@ -1371,7 +1376,7 @@ class RDSModifyVpcSecurityGroups(ModifyVpcSecurityGroupsAction):
         replication_group_map = {}
         client = local_session(self.manager.session_factory).client('rds')
         groups = super(RDSModifyVpcSecurityGroups, self).get_groups(
-            rds_instances, metadata_key='VpcSecurityGroupId')
+            rds_instances)
 
         # either build map for DB cluster or modify DB instance directly
         for idx, i in enumerate(rds_instances):
