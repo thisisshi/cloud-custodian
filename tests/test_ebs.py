@@ -26,7 +26,6 @@ from c7n.resources.ebs import (
     Delete,
 )
 from c7n.executor import MainThreadExecutor
-from c7n.exceptions import PolicyExecutionError
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -483,5 +482,3 @@ class HealthEventsFilterTest(BaseTest):
                 ("c7n:HealthEvent" in r) and
                 ("Description" in e for e in r["c7n:HealthEvent"])
             )
-
-
