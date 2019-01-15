@@ -24,7 +24,7 @@ from concurrent.futures import as_completed
 from dateutil.parser import parse as parse_date
 
 from c7n.actions import ActionRegistry, BaseAction
-from c7n.exceptions import PolicyValidationError, PolicyExecutionError
+from c7n.exceptions import PolicyValidationError
 from c7n.filters import (
     CrossAccountAccessFilter, Filter, FilterRegistry, AgeFilter, ValueFilter,
     ANNOTATION_KEY, OPERATORS)
@@ -43,6 +43,7 @@ from c7n.utils import (
     worker,
 )
 from c7n.resources.ami import AMI
+from c7n.tags import CopyRelatedResourceTag
 
 log = logging.getLogger('custodian.ebs')
 
@@ -216,77 +217,6 @@ class SnapshotSkipAmiSnapshots(Filter):
     def process(self, snapshots, event=None):
         resources = _filter_ami_snapshots(self, snapshots)
         return resources
-
-
-@Snapshot.action_registry.register('copy-volume-tags')
-class SnapshotCopyVolumeTags(BaseAction):
-    """
-    Copy EBS Volume tags to snapshots
-
-    By default, skip-missing-volumes is True. To break
-    policy execution if a volume is not found, set
-    skip-missing-volumes to False
-
-    :example:
-
-    .. code-block:: yaml
-
-        policies:
-          - name: ebs-snapshot-copy-vol-tags
-            resource: ebs-snapshot
-            actions:
-              - type: copy-volume-taags
-                skip-missing-volumes: True
-                tags:
-                    - Application
-                    - Owner
-    """
-
-    permissions = ('ec2:DescribeVolumes', 'ec2:CreateTags')
-    schema = type_schema(
-        'copy-volume-tags',
-        required=['tags'],
-        **{
-            'skip-missing-volumes': {'type': 'boolean'},
-            'tags': {'type': 'array', 'items': {'type': 'string'}}
-        }
-    )
-
-    def process(self, resources):
-        client = local_session(self.manager.session_factory).client('ec2')
-        tag_keys = self.data.get('tags', [])
-        volume_ids = [r['VolumeId'] for r in resources]
-
-        volume_tag_map = self.get_volume_tag_map(volume_ids)
-
-        for r in resources:
-            if r['VolumeId'] not in volume_tag_map:
-                self.log.warning(
-                    'Unable to find volume: %s for snapshot: %s' % (r['VolumeId'], r['SnapshotId']))
-                continue
-            vol_tags = volume_tag_map[r['VolumeId']]
-            if vol_tags:
-                add_tags = [{'Key': t['Key'], 'Value': t['Value']} for t in vol_tags if t['Key'] in tag_keys] # noqa
-            else:
-                continue
-            if add_tags:
-                vol_tags.extend(add_tags)
-                client.create_tags(
-                    Resources=[r['SnapshotId']], Tags=vol_tags)
-
-    def get_volume_tag_map(self, volume_ids):
-        """
-        Returns a mapping of {VolumeIds: [Tags]}
-        """
-        manager = self.manager.get_resource_manager('ebs')
-        vols = manager.get_resources(volume_ids)
-        if not self.data.get('skip-missing-volumes', True):
-            if volume_ids not in [v['VolumeId'] for v in vols]:
-                raise PolicyExecutionError(
-                    "Unable to find all volumes associated with snapshots")
-
-        volume_tag_map = {v['VolumeId']: v.get('Tags', []) for v in vols}
-        return volume_tag_map
 
 
 @Snapshot.action_registry.register('delete')
@@ -1352,3 +1282,6 @@ class ModifyVolume(BaseAction):
             if vtype:
                 params['VolumeType'] = vtype
             self.manager.retry(client.modify_volume, **params)
+
+
+Snapshot.action_registry.register('copy-related-resource-tag', CopyRelatedResourceTag)

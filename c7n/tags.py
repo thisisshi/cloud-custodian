@@ -29,9 +29,10 @@ from dateutil.parser import parse
 
 import itertools
 import time
+import jmespath
 
 from c7n.actions import BaseAction as Action, AutoTagUser
-from c7n.exceptions import PolicyValidationError
+from c7n.exceptions import PolicyValidationError, PolicyExecutionError
 from c7n.filters import Filter, OPERATORS
 from c7n.filters.offhours import Time
 from c7n import utils
@@ -912,6 +913,105 @@ class UniversalTagDelayedAction(TagDelayedAction):
         arns = self.manager.get_arns(resource_set)
         return universal_retry(
             client.tag_resources, ResourceARNList=arns, Tags=tags)
+
+
+class CopyRelatedResourceTag(Tag):
+    """
+    Copy a related resource tag to another resource
+
+    :example:
+
+      .. code-block :: yaml
+
+        policies:
+          - name: copy-tags-from-ebs-volume-to-snapshot
+            resource: ebs-snapshot
+            actions:
+              - type: copy-related-resource-tag
+                resource: ebs
+                skip_missing: True
+                key: VolumeId
+                tags:
+                  - *
+    """
+
+    schema = utils.type_schema(
+        'copy-related-resource-tag',
+        resource={'type': 'string'},
+        skip_missing={'type': 'bool'},
+        key={'type': 'string'},
+        copy_tags={'type': 'array'},
+    )
+    permissions = ()
+
+    def validate(self):
+        related_resource = self.data['resource']
+        resource_manager = self.manager.get_resource_manager(related_resource)
+        if resource_manager is {}:
+            raise PolicyValidationError(
+                "Error: Invalid resource type selected: %s" % related_resource
+            )
+        if self.manager.action_registry.get('tag') is None:
+            raise PolicyValidationError(
+                "Error: Tag action missing on resource"
+            )
+
+    def process(self, resources):
+        tag_keys = self.data['copy_tags']
+        related_resource_key = self.data['key']
+
+        path = jmespath.compile(related_resource_key)
+        related_resource_ids = [path.search(r) for r in resources]
+
+        resource_tag_map = self.get_resource_tag_map(related_resource_ids)
+
+        for r in resources:
+            related_resource_id = path.search(r)
+            if resource_tag_map.get(related_resource_id, []) == []:
+                self.log.warning(
+                    'Tags not found for resource:%s, skipping' % related_resource_id
+                )
+                continue
+
+            related_resource_tags = {
+                t['Key']: t['Value'] for t in resource_tag_map[related_resource_id]
+            }
+
+            final_tags = {}
+
+            if '*' in tag_keys:
+                final_tags = related_resource_tags
+            else:
+                for t in tag_keys:
+                    if t in related_resource_tags:
+                        final_tags[t] = related_resource_tags[t]
+
+            self.data['tags'] = final_tags
+
+            # rely on resource manager tag action implementation as
+            # it can differ from resource to resource
+            #
+            # since the resulting tag set will be different for each
+            # individual resource, we have to invoke the tag action
+            # n times where n in the number of resources
+
+            tag_action = self.manager.action_registry.get('tag')
+            tag_action.process(self, resources=[r])
+
+    def get_resource_tag_map(self, resource_ids):
+        manager = self.manager.get_resource_manager(self.data['resource'])
+        resources = manager.get_resources(resource_ids)
+
+        resource_id = manager.resource_type.id
+
+        if not self.data.get('skip_missing', True):
+            if resource_ids not in [r[resource_id] for r in resources]:
+                raise PolicyExecutionError(
+                    "Unable to find all %s resources associated with %s"
+                    % self.data['resource'], resource_ids)
+
+        resource_tag_map = {r[resource_id]: r.get('Tags', []) for r in resources}
+        return resource_tag_map
 
 
 def universal_retry(method, ResourceARNList, **kw):
