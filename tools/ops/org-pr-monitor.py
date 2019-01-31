@@ -19,7 +19,6 @@ from dateutil.tz import tzutc
 import jmespath
 import logging
 import requests
-import os
 
 from c7n.config import Bag
 from c7n.credentials import SessionFactory
@@ -91,10 +90,7 @@ class RepoMetrics(MetricsOutput):
         return d
 
     def get_timestamp(self):
-        if os.getenv("C7N_METRICS_TZ", 'TRUE').upper() in ('TRUE', ''):
-            return datetime.utcnow()
-        else:
-            return datetime.now()
+        return datetime.utcnow()
 
 
 def process_commit(c, r, metrics, stats, since, now):
