@@ -77,6 +77,20 @@ class VpcTest(BaseTest):
         resources = p.run()
         self.assertEqual(len(resources), 1)
 
+    def test_flow_logs_s3_destination(self):
+        factory = self.replay_flight_data('test_vpc_flow_log_s3_dest')
+        p = self.load_policy({
+            'name': 'flow-s3',
+            'resource': 'vpc',
+            'filters': [{
+                'type': 'flow-logs',
+                'enabled': True,
+                'destination': 'arn:aws:s3:::c7n-vpc-flow-logs'}]},
+            session_factory=factory)
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(resources[0]['VpcId'], 'vpc-d2d616b5')
+
     def test_flow_logs_absent(self):
         # Test that ONLY vpcs with no flow logs are retained
         #
@@ -1653,6 +1667,46 @@ class SecurityGroupTest(BaseTest):
                 "VpcId": "vpc-1234abcd",
             }
         ]
+        manager = p.load_resource_manager()
+        self.assertEqual(len(manager.filter_resources(resources)), 1)
+
+    def test_description_ingress(self):
+        p = self.load_policy(
+            {
+                "name": "ingress-access",
+                "resource": "security-group",
+                "filters": [
+                    {"type": "ingress",
+                     "Description": {
+                         "value": "Approved",
+                         "op": "not-equal",
+                     },
+                     "Cidr": {"value": "0.0.0.0/0"}, "Ports": [22]}
+                ],
+            }
+        )
+
+        resources = [{
+            "Description": "allows inbound 0.0.0.0/0:22",
+            "GroupName": "ssh",
+            "IpPermissions": [
+                {
+                    "FromPort": 22,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0",
+                            "Description": "ssh",
+                        }
+                    ],
+                    "Ipv6Ranges": []
+                }
+            ],
+            "OwnerId": "644160558196",
+            "GroupId": "sg-0b090df1c1f95bc13",
+            "IpPermissionsEgress": [],
+            "VpcId": "vpc-f1516b97"
+        }]
         manager = p.load_resource_manager()
         self.assertEqual(len(manager.filter_resources(resources)), 1)
 
