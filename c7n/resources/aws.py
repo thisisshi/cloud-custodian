@@ -138,7 +138,7 @@ class MetricsOutput(Metrics):
     permissions = ("cloudWatch:PutMetricData",)
     retry = staticmethod(utils.get_retry(('Throttling',)))
 
-    def __init__(self, ctx, config=None):
+    def __init__(self, ctx, config={}):
         super(MetricsOutput, self).__init__(ctx, config)
         self.namespace = self.config.get('namespace', DEFAULT_NAMESPACE)
 

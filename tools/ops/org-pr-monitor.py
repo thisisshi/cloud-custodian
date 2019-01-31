@@ -19,10 +19,11 @@ from dateutil.tz import tzutc
 import jmespath
 import logging
 import requests
+import os
 
 from c7n.config import Bag
 from c7n.credentials import SessionFactory
-from c7n.output import MetricsOutput
+from c7n.resources.aws import MetricsOutput
 from c7n.utils import dumps
 
 log = logging.getLogger('c7nops.cimetrics')
@@ -88,6 +89,12 @@ class RepoMetrics(MetricsOutput):
         for k, v in dimensions.items():
             d['Dimensions'].append({"Name": k, "Value": v})
         return d
+
+    def get_timestamp(self):
+        if os.getenv("C7N_METRICS_TZ", 'TRUE').upper() in ('TRUE', ''):
+            return datetime.utcnow()
+        else:
+            return datetime.now()
 
 
 def process_commit(c, r, metrics, stats, since, now):
