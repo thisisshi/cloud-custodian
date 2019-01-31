@@ -27,6 +27,7 @@ from datetime import datetime, timedelta
 from dateutil import tz as tzutil
 from dateutil.parser import parse
 
+import copy
 import itertools
 import time
 import jmespath
@@ -934,14 +935,14 @@ class CopyRelatedResourceTag(Tag):
                 resource: ebs
                 skip_missing: True
                 key: VolumeId
-                tags:
+                copy_tags:
                   - *
     """
 
     schema = utils.type_schema(
         'copy-related-resource-tag',
         resource={'type': 'string'},
-        skip_missing={'type': 'bool'},
+        skip_missing={'type': 'boolean'},
         key={'type': 'string'},
         copy_tags={'type': 'array'},
     )
@@ -961,60 +962,52 @@ class CopyRelatedResourceTag(Tag):
 
     def process(self, resources):
         tag_keys = self.data['copy_tags']
-        related_resource_key = self.data['key']
+        related_key = self.data['key']
+        related_type = self.data['resource']
 
-        path = jmespath.compile(related_resource_key)
-        related_resource_ids = [path.search(r) for r in resources]
+        related_resource_tuple = list(
+            zip(jmespath.search('[].%s' % related_key, resources), resources))
 
-        resource_tag_map = self.get_resource_tag_map(related_resource_ids)
+        related_ids = [r[0] for r in related_resource_tuple]
+        related_tag_map = self.get_resource_tag_map(related_type, related_ids)
+        missing_related_tags = list(set(related_ids).difference(related_tag_map.keys()))
 
-        for r in resources:
-            related_resource_id = path.search(r)
-            if resource_tag_map.get(related_resource_id, []) == []:
+        if not self.data.get('skip_missing', True) and missing_related_tags:
+            raise PolicyExecutionError(
+                "Unable to find all %s resources associated with %s" % (related_type, related_ids))
+
+        for related, r in related_resource_tuple:
+            if related in missing_related_tags:
                 self.log.warning(
-                    'Tags not found for resource:%s, skipping' % related_resource_id
-                )
+                    'Tags not found for related resource: %s, skipping %s' % (related, r))
                 continue
+            related_tags = related_tag_map[related]
+            self.process_resource(r, related_tags, tag_keys)
 
-            related_resource_tags = {
-                t['Key']: t['Value'] for t in resource_tag_map[related_resource_id]
-            }
+    def process_resource(self, r, related_tags, tag_keys):
+        related_resource_tags = {t['Key']: t['Value'] for t in related_tags}
+        add_tags = {}
+        if '*' in tag_keys:
+            add_tags = related_resource_tags
+        else:
+            for t in tag_keys:
+                if t in related_resource_tags:
+                    add_tags[t] = related_resource_tags[t]
+        tagger = copy.deepcopy(self)
+        tagger['tags'] = add_tags
+        # rely on resource manager tag action implementation as it can differ between resources
+        tag_action = self.manager.action_registry.get('tag')
+        self.log.info('Adding related tags: %s to resource: %s' % (add_tags, r))
+        tag_action.process(tagger, resources=[r])
 
-            final_tags = {}
-
-            if '*' in tag_keys:
-                final_tags = related_resource_tags
-            else:
-                for t in tag_keys:
-                    if t in related_resource_tags:
-                        final_tags[t] = related_resource_tags[t]
-
-            self.data['tags'] = final_tags
-
-            # rely on resource manager tag action implementation as
-            # it can differ from resource to resource
-            #
-            # since the resulting tag set will be different for each
-            # individual resource, we have to invoke the tag action
-            # n times where n in the number of resources
-
-            tag_action = self.manager.action_registry.get('tag')
-            tag_action.process(self, resources=[r])
-
-    def get_resource_tag_map(self, resource_ids):
-        manager = self.manager.get_resource_manager(self.data['resource'])
-        resources = manager.get_resources(resource_ids)
-
-        resource_id = manager.resource_type.id
-
-        if not self.data.get('skip_missing', True):
-            if resource_ids not in [r[resource_id] for r in resources]:
-                raise PolicyExecutionError(
-                    "Unable to find all %s resources associated with %s"
-                    % self.data['resource'], resource_ids)
-
-        resource_tag_map = {r[resource_id]: r.get('Tags', []) for r in resources}
-        return resource_tag_map
+    def get_resource_tag_map(self, r_type, ids):
+        """
+        Returns a mapping of {resource_id: resource['Tags']}
+        """
+        manager = self.manager.get_resource_manager(r_type)
+        resources = manager.get_resources([])
+        r_id = manager.resource_type.id
+        return {r[r_id]: r.get('Tags', []) for r in resources if r[r_id] in ids}
 
 
 def universal_retry(method, ResourceARNList, **kw):
