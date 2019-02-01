@@ -944,16 +944,16 @@ class CopyRelatedResourceTag(Tag):
 
         .. code-block :: yaml
 
-        policies:
-          - name: copy-tags-from-ebs-volume-to-snapshot
-            resource: ebs-snapshot
-            actions:
-              - type: copy-related-resource-tag
-                resource: ebs
-                skip_missing: True
-                key: VolumeId
-                tags:
-                  - *
+            policies:
+                - name: copy-tags-from-ebs-volume-to-snapshot
+                  resource: ebs-snapshot
+                  actions:
+                    - type: copy-related-resource-tag
+                      resource: ebs
+                      skip_missing: True
+                      key: VolumeId
+                      tags:
+                        - *
     """
 
     schema = utils.type_schema(
@@ -1011,14 +1011,16 @@ class CopyRelatedResourceTag(Tag):
 
     def process_resource(self, r, related_tags, tag_keys, tag_action):
         tags = {}
+        resource_tags = {t['Key']: t['Value'] for t in r.get('Tags', [])}
         if '*' in tag_keys:
             tags = related_tags
         else:
-            tags = {k: v for k, v in related_tags.items() if k in tag_keys}
+            tags = {k: v for k, v in related_tags.items()
+                    if k in tag_keys and resource_tags.get(k) != v}
         if not tags:
             return
         tags = [{'Key': k, 'Value': v} for k, v in tags.items()]
-        self.log.info('Adding related tags: %s to resource: %s' % (tags, r))
+        self.log.info('Adding related tags: %s to resource: %s' % (tags, r[tag_action.id_key]))
         tag_action.process_resource_set(resource_set=[r], tags=tags)
 
     def get_resource_tag_map(self, r_type, ids):
