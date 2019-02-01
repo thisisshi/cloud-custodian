@@ -27,11 +27,11 @@ from datetime import datetime, timedelta
 from dateutil import tz as tzutil
 from dateutil.parser import parse
 
-import copy
 import itertools
 import time
 import jmespath
 
+from c7n.manager import resources as all_resources
 from c7n.actions import BaseAction as Action, AutoTagUser
 from c7n.exceptions import PolicyValidationError, PolicyExecutionError
 from c7n.filters import Filter, OPERATORS
@@ -923,6 +923,23 @@ class CopyRelatedResourceTag(Tag):
     """
     Copy a related resource tag to another resource
 
+    In some scenarios, resource tags from a related resource should be applied
+    to its child resource. For example, EBS Volume tags propogating to their
+    snapshots. To use this action, specify the resource type that contains the
+    tags that are to be copied, which can be found by using the
+    ``custodian schema`` command.
+
+    Then, specify the key on the resource that references the related resource.
+    In the case of ebs-snapshot, the VolumeId attribute would be the key that
+    identifies the related resource, ebs.
+
+    Finally, specify a list of tag keys to copy from the related resource onto
+    the original resource. The special character "*" can be used to signify that
+    all tags from the related resource should be copied to the original resource.
+
+    To raise an error when related resources cannot be found, use the
+    ``skip_missing`` option. By default, this is set to True.
+
     :example:
 
       .. code-block :: yaml
@@ -945,20 +962,25 @@ class CopyRelatedResourceTag(Tag):
         skip_missing={'type': 'boolean'},
         key={'type': 'string'},
         copy_tags={'type': 'array'},
+        required=['copy_tags', 'key', 'resource']
     )
-    permissions = ()
+
+    def get_permissions(self):
+        return self.manager.action_registry.get('tag').permissions
 
     def validate(self):
         related_resource = self.data['resource']
-        resource_manager = self.manager.get_resource_manager(related_resource)
-        if resource_manager is {}:
+        if related_resource not in all_resources.keys():
             raise PolicyValidationError(
                 "Error: Invalid resource type selected: %s" % related_resource
             )
+        # ideally should never raise here since we shouldn't be applying this
+        # action to a resource if it doesn't have a tag action implemented
         if self.manager.action_registry.get('tag') is None:
             raise PolicyValidationError(
                 "Error: Tag action missing on resource"
             )
+        return self
 
     def process(self, resources):
         tag_keys = self.data['copy_tags']
@@ -977,28 +999,28 @@ class CopyRelatedResourceTag(Tag):
                 "Unable to find all %s resources associated with %s" % (related_type, related_ids))
 
         for related, r in related_resource_tuple:
-            if related in missing_related_tags:
+            if related in missing_related_tags or not related_tag_map[related]:
                 self.log.warning(
                     'Tags not found for related resource: %s, skipping %s' % (related, r))
                 continue
-            related_tags = related_tag_map[related]
+            related_tags = self.format_tags(related_tag_map[related])
             self.process_resource(r, related_tags, tag_keys)
 
     def process_resource(self, r, related_tags, tag_keys):
-        related_resource_tags = {t['Key']: t['Value'] for t in related_tags}
         add_tags = {}
         if '*' in tag_keys:
-            add_tags = related_resource_tags
+            add_tags = related_tags
         else:
             for t in tag_keys:
-                if t in related_resource_tags:
-                    add_tags[t] = related_resource_tags[t]
-        tagger = copy.deepcopy(self)
-        tagger['tags'] = add_tags
+                if t in related_tags:
+                    add_tags[t] = related_tags[t]
+        if not add_tags:
+            return
+        self.data['tags'] = add_tags
         # rely on resource manager tag action implementation as it can differ between resources
         tag_action = self.manager.action_registry.get('tag')
         self.log.info('Adding related tags: %s to resource: %s' % (add_tags, r))
-        tag_action.process(tagger, resources=[r])
+        tag_action.process(self, resources=[r])
 
     def get_resource_tag_map(self, r_type, ids):
         """
@@ -1008,6 +1030,12 @@ class CopyRelatedResourceTag(Tag):
         resources = manager.get_resources([])
         r_id = manager.resource_type.id
         return {r[r_id]: r.get('Tags', []) for r in resources if r[r_id] in ids}
+
+    def format_tags(self, tags):
+        """
+        Formats tags into tag action format: {key: value}
+        """
+        return {t['Key']: t['Value'] for t in tags}
 
 
 def universal_retry(method, ResourceARNList, **kw):
