@@ -1003,8 +1003,7 @@ class CopyRelatedResourceTag(Tag):
                 self.log.warning(
                     'Tags not found for related resource: %s, skipping %s' % (related, r))
                 continue
-            related_tags = self.format_tags(related_tag_map[related])
-            self.process_resource(r, related_tags, tag_keys)
+            self.process_resource(r, related_tag_map[related], tag_keys)
 
     def process_resource(self, r, related_tags, tag_keys):
         add_tags = {}
@@ -1029,7 +1028,7 @@ class CopyRelatedResourceTag(Tag):
         manager = self.manager.get_resource_manager(r_type)
         resources = manager.get_resources([])
         r_id = manager.resource_type.id
-        return {r[r_id]: r.get('Tags', []) for r in resources if r[r_id] in ids}
+        return {r[r_id]: self.format_tags(r.get('Tags', [])) for r in resources if r[r_id] in ids}
 
     def format_tags(self, tags):
         """
