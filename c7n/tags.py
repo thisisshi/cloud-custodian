@@ -942,7 +942,7 @@ class CopyRelatedResourceTag(Tag):
 
     :example:
 
-      .. code-block :: yaml
+      .. code-block:: yaml
 
         policies:
           - name: copy-tags-from-ebs-volume-to-snapshot
