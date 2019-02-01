@@ -1016,11 +1016,11 @@ class CopyRelatedResourceTag(Tag):
                     add_tags[t] = related_tags[t]
         if not add_tags:
             return
-        self.data['tags'] = add_tags
         # rely on resource manager tag action implementation as it can differ between resources
-        tag_action = self.manager.action_registry.get('tag')
+        data = {'type': 'tag', 'tags': add_tags}
+        tag_action = self.manager.action_registry.get('tag')(data, self.manager)
         self.log.info('Adding related tags: %s to resource: %s' % (add_tags, r))
-        tag_action.process(self, resources=[r])
+        tag_action.process(resources=[r])
 
     def get_resource_tag_map(self, r_type, ids):
         """
