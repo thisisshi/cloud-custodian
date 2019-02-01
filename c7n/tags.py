@@ -927,7 +927,7 @@ class CopyRelatedResourceTag(Tag):
     to its child resource. For example, EBS Volume tags propogating to their
     snapshots. To use this action, specify the resource type that contains the
     tags that are to be copied, which can be found by using the
-    ``custodian schema`` command.
+    `custodian schema` command.
 
     Then, specify the key on the resource that references the related resource.
     In the case of ebs-snapshot, the VolumeId attribute would be the key that
@@ -938,7 +938,7 @@ class CopyRelatedResourceTag(Tag):
     all tags from the related resource should be copied to the original resource.
 
     To raise an error when related resources cannot be found, use the
-    ``skip_missing`` option. By default, this is set to True.
+    `skip_missing` option. By default, this is set to True.
 
     :example:
 
@@ -1023,7 +1023,7 @@ class CopyRelatedResourceTag(Tag):
 
     def get_resource_tag_map(self, r_type, ids):
         """
-        Returns a mapping of {resource_id: resource['Tags']}
+        Returns a mapping of {resource_id: {tagkey: tagvalue}}
         """
         manager = self.manager.get_resource_manager(r_type)
         resources = manager.get_resources([])
