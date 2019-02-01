@@ -176,7 +176,7 @@ class CopyRelatedResourceTag(BaseTest):
                         "type": "copy-related-resource-tag",
                         "resource": "ebs",
                         "key": "VolumeId",
-                        "tags": ["*"]
+                        "tags": "*"
                     }
                 ]
             },

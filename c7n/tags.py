@@ -28,8 +28,9 @@ from dateutil import tz as tzutil
 from dateutil.parser import parse
 
 import itertools
-import time
 import jmespath
+import six
+import time
 
 from c7n.manager import resources as all_resources
 from c7n.actions import BaseAction as Action, AutoTagUser
@@ -942,7 +943,7 @@ class CopyRelatedResourceTag(Tag):
 
     :example:
 
-        .. code-block :: yaml
+    .. code-block:: yaml
 
             policies:
                 - name: copy-tags-from-ebs-volume-to-snapshot
@@ -952,8 +953,7 @@ class CopyRelatedResourceTag(Tag):
                       resource: ebs
                       skip_missing: True
                       key: VolumeId
-                      tags:
-                        - *
+                      tags: '*'
     """
 
     schema = utils.type_schema(
@@ -961,7 +961,10 @@ class CopyRelatedResourceTag(Tag):
         resource={'type': 'string'},
         skip_missing={'type': 'boolean'},
         key={'type': 'string'},
-        tags={'type': 'array'},
+        tags={'oneOf': [
+            {'enum': ['*']},
+            {'type': 'array'}
+        ]},
         required=['tags', 'key', 'resource']
     )
 
@@ -984,6 +987,8 @@ class CopyRelatedResourceTag(Tag):
 
     def process(self, resources):
         tag_keys = self.data['tags']
+        if isinstance(tag_keys, six.string_types):
+            tag_keys = ['*']
         related_key = self.data['key']
         related_type = self.data['resource']
 
