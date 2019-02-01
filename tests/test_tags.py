@@ -176,7 +176,7 @@ class CopyRelatedResourceTag(BaseTest):
                         "type": "copy-related-resource-tag",
                         "resource": "ebs",
                         "key": "VolumeId",
-                        "copy_tags": ["*"]
+                        "tags": ["*"]
                     }
                 ]
             },
@@ -188,9 +188,6 @@ class CopyRelatedResourceTag(BaseTest):
 
         snap = client.describe_snapshots(SnapshotIds=[resources[0]['SnapshotId']])['Snapshots']
         vol = client.describe_volumes(VolumeIds=[resources[0]['VolumeId']])['Volumes']
-
-        self.assertEqual(len(snap), 1)
-        self.assertEqual(len(vol), 1)
 
         self.assertEqual(snap[0]['Tags'], vol[0]['Tags'])
 
@@ -210,7 +207,7 @@ class CopyRelatedResourceTag(BaseTest):
                         "type": "copy-related-resource-tag",
                         "resource": "ebs",
                         "key": "VolumeId",
-                        "copy_tags": [
+                        "tags": [
                             "tag1",
                             "tag3"
                         ]
@@ -225,9 +222,6 @@ class CopyRelatedResourceTag(BaseTest):
 
         snap = client.describe_snapshots(SnapshotIds=[resources[0]['SnapshotId']])['Snapshots']
         vol = client.describe_volumes(VolumeIds=[resources[0]['VolumeId']])['Volumes']
-
-        self.assertEqual(len(snap), 1)
-        self.assertEqual(len(vol), 1)
 
         vol_tags = {t['Key']: t['Value'] for t in vol[0]['Tags']}
         snap_tags = {t['Key']: t['Value'] for t in snap[0]['Tags']}
@@ -252,7 +246,7 @@ class CopyRelatedResourceTag(BaseTest):
                         "resource": "ebs",
                         "key": "VolumeId",
                         "skip_missing": False,
-                        "copy_tags": [
+                        "tags": [
                             "*"
                         ]
                     }
@@ -275,7 +269,7 @@ class CopyRelatedResourceTag(BaseTest):
                         "resource": "ebs",
                         "key": "VolumeId",
                         "skip_missing": False,
-                        "copy_tags": [
+                        "tags": [
                             "*"
                         ]
                     }
@@ -293,7 +287,7 @@ class CopyRelatedResourceTag(BaseTest):
                     "resource": "not-a-resource",
                     "key": "VolumeId",
                     "skip_missing": False,
-                    "copy_tags": [
+                    "tags": [
                         "*"
                     ]
                 }

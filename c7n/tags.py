@@ -573,7 +573,7 @@ class TagDelayedAction(Action):
 
     .. code-block :: yaml
 
-      - policies:
+      policies:
         - name: ec2-mark-for-stop-in-future
           resource: ec2
           filters:
@@ -942,7 +942,7 @@ class CopyRelatedResourceTag(Tag):
 
     :example:
 
-      .. code-block:: yaml
+        .. code-block :: yaml
 
         policies:
           - name: copy-tags-from-ebs-volume-to-snapshot
@@ -952,7 +952,7 @@ class CopyRelatedResourceTag(Tag):
                 resource: ebs
                 skip_missing: True
                 key: VolumeId
-                copy_tags:
+                tags:
                   - *
     """
 
@@ -961,8 +961,8 @@ class CopyRelatedResourceTag(Tag):
         resource={'type': 'string'},
         skip_missing={'type': 'boolean'},
         key={'type': 'string'},
-        copy_tags={'type': 'array'},
-        required=['copy_tags', 'key', 'resource']
+        tags={'type': 'array'},
+        required=['tags', 'key', 'resource']
     )
 
     def get_permissions(self):
@@ -983,7 +983,7 @@ class CopyRelatedResourceTag(Tag):
         return self
 
     def process(self, resources):
-        tag_keys = self.data['copy_tags']
+        tag_keys = self.data['tags']
         related_key = self.data['key']
         related_type = self.data['resource']
 
@@ -998,28 +998,28 @@ class CopyRelatedResourceTag(Tag):
             raise PolicyExecutionError(
                 "Unable to find all %s resources associated with %s" % (related_type, related_ids))
 
+        # rely on resource manager tag action implementation as it can differ between resources
+        tag_action = self.manager.action_registry.get('tag')({}, self.manager)
+        tag_action.id_key = tag_action.manager.get_model().id
+
         for related, r in related_resource_tuple:
             if related in missing_related_tags or not related_tag_map[related]:
                 self.log.warning(
                     'Tags not found for related resource: %s, skipping %s' % (related, r))
                 continue
-            self.process_resource(r, related_tag_map[related], tag_keys)
+            self.process_resource(r, related_tag_map[related], tag_keys, tag_action)
 
-    def process_resource(self, r, related_tags, tag_keys):
-        add_tags = {}
+    def process_resource(self, r, related_tags, tag_keys, tag_action):
+        tags = {}
         if '*' in tag_keys:
-            add_tags = related_tags
+            tags = related_tags
         else:
-            for t in tag_keys:
-                if t in related_tags:
-                    add_tags[t] = related_tags[t]
-        if not add_tags:
+            tags = {k: v for k, v in related_tags.items() if k in tag_keys}
+        if not tags:
             return
-        # rely on resource manager tag action implementation as it can differ between resources
-        data = {'type': 'tag', 'tags': add_tags}
-        tag_action = self.manager.action_registry.get('tag')(data, self.manager)
-        self.log.info('Adding related tags: %s to resource: %s' % (add_tags, r))
-        tag_action.process(resources=[r])
+        tags = [{'Key': k, 'Value': v} for k, v in tags.items()]
+        self.log.info('Adding related tags: %s to resource: %s' % (tags, r))
+        tag_action.process_resource_set(resource_set=[r], tags=tags)
 
     def get_resource_tag_map(self, r_type, ids):
         """
@@ -1028,13 +1028,10 @@ class CopyRelatedResourceTag(Tag):
         manager = self.manager.get_resource_manager(r_type)
         resources = manager.get_resources([])
         r_id = manager.resource_type.id
-        return {r[r_id]: self.format_tags(r.get('Tags', [])) for r in resources if r[r_id] in ids}
-
-    def format_tags(self, tags):
-        """
-        Formats tags into tag action format: {key: value}
-        """
-        return {t['Key']: t['Value'] for t in tags}
+        return {
+            r[r_id]: {t['Key']: t['Value'] for t in r.get('Tags', [])}
+            for r in resources if r[r_id] in ids
+        }
 
 
 def universal_retry(method, ResourceARNList, **kw):
