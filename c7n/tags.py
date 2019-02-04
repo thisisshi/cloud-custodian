@@ -21,6 +21,7 @@ snapshots).
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from collections import Counter
 from concurrent.futures import as_completed
 
 from datetime import datetime, timedelta
@@ -32,7 +33,7 @@ import jmespath
 import six
 import time
 
-from c7n.manager import resources as all_resources
+from c7n.manager import resources as aws_resources
 from c7n.actions import BaseAction as Action, AutoTagUser
 from c7n.exceptions import PolicyValidationError, PolicyExecutionError
 from c7n.filters import Filter, OPERATORS
@@ -973,7 +974,7 @@ class CopyRelatedResourceTag(Tag):
 
     def validate(self):
         related_resource = self.data['resource']
-        if related_resource not in all_resources.keys():
+        if related_resource not in aws_resources.keys():
             raise PolicyValidationError(
                 "Error: Invalid resource type selected: %s" % related_resource
             )
@@ -986,64 +987,62 @@ class CopyRelatedResourceTag(Tag):
         return self
 
     def process(self, resources):
-        tag_keys = self.data['tags']
-        if isinstance(tag_keys, six.string_types):
-            tag_keys = ['*']
-        related_key = self.data['key']
-        related_type = self.data['resource']
+        related_resources = dict(
+            zip(jmespath.search('[].%s' % self.data['key'], resources), resources))
+        related_ids = set(related_resources)
+        related_tag_map = self.get_resource_tag_map(self.data['resource'], related_ids)
 
-        related_resource_tuple = list(
-            zip(jmespath.search('[].%s' % related_key, resources), resources))
-
-        related_ids = [r[0] for r in related_resource_tuple]
-        related_tag_map = self.get_resource_tag_map(related_type, related_ids)
-        missing_related_tags = list(set(related_ids).difference(related_tag_map.keys()))
-
+        missing_related_tags = related_ids.difference(related_tag_map.keys())
         if not self.data.get('skip_missing', True) and missing_related_tags:
             raise PolicyExecutionError(
-                "Unable to find all %s resources associated with %s" % (related_type, related_ids))
+                "Unable to find all %s resources associated with %s" % (
+                    self.data['resource'], related_ids))
 
         # rely on resource manager tag action implementation as it can differ between resources
         tag_action = self.manager.action_registry.get('tag')({}, self.manager)
         tag_action.id_key = tag_action.manager.get_model().id
 
-        total = 0
+        stats = Counter()
 
-        for related, r in related_resource_tuple:
+        for related, r in related_resources.items():
             if related in missing_related_tags or not related_tag_map[related]:
-                self.log.warning(
-                    'Tags not found for related resource: %s, skipping %s' %
-                    (related, r[tag_action.id_key]))
-                continue
-            if self.process_resource(r, related_tag_map[related], tag_keys, tag_action):
-                total += 1
+                stats['missing'] += 1
+            elif self.process_resource(
+                    r, related_tag_map[related], self.data['tags'], tag_action):
+                stats['tagged'] += 1
+            else:
+                stats['unchanged'] += 1
 
-        self.log.info('Tagged %s resource(s)' % total)
+        self.log.info(
+            'Tagged %d resources from related, missing-skipped %d unchanged %d',
+            stats['tagged'], stats['missing'], stats['unchanged'])
 
     def process_resource(self, r, related_tags, tag_keys, tag_action):
         tags = {}
         resource_tags = {t['Key']: t['Value'] for t in r.get('Tags', [])}
-        if '*' in tag_keys:
-            tags = related_tags
+        if tag_keys == '*':
+            tags = {k: v for k, v in related_tags.items()
+                    if resource_tags.get(k) != v}
         else:
             tags = {k: v for k, v in related_tags.items()
                     if k in tag_keys and resource_tags.get(k) != v}
         if not tags:
             return
-        tags = [{'Key': k, 'Value': v} for k, v in tags.items()]
-        tag_action.process_resource_set(resource_set=[r], tags=tags)
-        return r
+        tag_action.process_resource_set(
+            resource_set=[r],
+            tags=[{'Key': k, 'Value': v} for k, v in tags.items()])
+        return True
 
     def get_resource_tag_map(self, r_type, ids):
         """
         Returns a mapping of {resource_id: {tagkey: tagvalue}}
         """
         manager = self.manager.get_resource_manager(r_type)
-        resources = manager.get_resources([])
         r_id = manager.resource_type.id
+        # TODO only fetch resource with the given ids.
         return {
             r[r_id]: {t['Key']: t['Value'] for t in r.get('Tags', [])}
-            for r in resources if r[r_id] in ids
+            for r in manager.resources() if r[r_id] in ids
         }
 
 
