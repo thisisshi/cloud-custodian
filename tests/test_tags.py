@@ -173,7 +173,7 @@ class CopyRelatedResourceTag(BaseTest):
                 ],
                 "actions": [
                     {
-                        "type": "copy-related-resource-tag",
+                        "type": "copy-related-tag",
                         "resource": "ebs",
                         "key": "VolumeId",
                         "tags": "*"
@@ -204,7 +204,7 @@ class CopyRelatedResourceTag(BaseTest):
                 ],
                 "actions": [
                     {
-                        "type": "copy-related-resource-tag",
+                        "type": "copy-related-tag",
                         "resource": "ebs",
                         "key": "VolumeId",
                         "tags": [
@@ -242,7 +242,7 @@ class CopyRelatedResourceTag(BaseTest):
                 "resource": "ebs-snapshot",
                 "actions": [
                     {
-                        "type": "copy-related-resource-tag",
+                        "type": "copy-related-tag",
                         "resource": "ebs",
                         "key": "VolumeId",
                         "skip_missing": False,
@@ -265,7 +265,7 @@ class CopyRelatedResourceTag(BaseTest):
                 "resource": "ebs-snapshot",
                 "actions": [
                     {
-                        "type": "copy-related-resource-tag",
+                        "type": "copy-related-tag",
                         "resource": "ebs",
                         "key": "VolumeId",
                         "skip_missing": False,
@@ -283,7 +283,7 @@ class CopyRelatedResourceTag(BaseTest):
             "resource": "ebs-snapshot",
             "actions": [
                 {
-                    "type": "copy-related-resource-tag",
+                    "type": "copy-related-tag",
                     "resource": "not-a-resource",
                     "key": "VolumeId",
                     "skip_missing": False,

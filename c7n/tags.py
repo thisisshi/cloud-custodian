@@ -957,7 +957,7 @@ class CopyRelatedResourceTag(Tag):
     """
 
     schema = utils.type_schema(
-        'copy-related-resource-tag',
+        'copy-related-tag',
         resource={'type': 'string'},
         skip_missing={'type': 'boolean'},
         key={'type': 'string'},

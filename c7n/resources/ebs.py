@@ -1350,4 +1350,4 @@ class ModifyVolume(BaseAction):
             self.manager.retry(client.modify_volume, **params)
 
 
-Snapshot.action_registry.register('copy-related-resource-tag', CopyRelatedResourceTag)
+Snapshot.action_registry.register('copy-related-tag', CopyRelatedResourceTag)

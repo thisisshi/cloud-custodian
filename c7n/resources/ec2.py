@@ -1752,4 +1752,4 @@ class InstanceAttribute(ValueFilter):
                 keys[0]]
 
 
-EC2.action_registry.register('copy-related-resource-tag', CopyRelatedResourceTag)
+EC2.action_registry.register('copy-related-tag', CopyRelatedResourceTag)
