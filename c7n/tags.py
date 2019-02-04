@@ -1047,7 +1047,7 @@ class CopyRelatedResourceTag(Tag):
 
     @classmethod
     def register_resources(klass, registry, resource_class):
-        if not resource_class.actions.get('tag'):
+        if not resource_class.action_registry.get('tag'):
             return
         resource_class.action_registry.register('copy-related-tag', klass)
 
