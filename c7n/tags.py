@@ -995,8 +995,8 @@ class CopyRelatedResourceTag(Tag):
         missing_related_tags = related_ids.difference(related_tag_map.keys())
         if not self.data.get('skip_missing', True) and missing_related_tags:
             raise PolicyExecutionError(
-                "Unable to find all %s resources associated with %s" % (
-                    self.data['resource'], related_ids))
+                "Unable to find all %d %s related resources tags %d missing" % (
+                    len(related_ids), self.data['resource'], len(missing_related_tags)))
 
         # rely on resource manager tag action implementation as it can differ between resources
         tag_action = self.manager.action_registry.get('tag')({}, self.manager)
