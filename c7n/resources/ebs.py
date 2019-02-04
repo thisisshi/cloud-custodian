@@ -44,7 +44,6 @@ from c7n.utils import (
     worker,
 )
 from c7n.resources.ami import AMI
-from c7n.tags import CopyRelatedResourceTag
 
 log = logging.getLogger('custodian.ebs')
 
@@ -1348,6 +1347,3 @@ class ModifyVolume(BaseAction):
             if vtype:
                 params['VolumeType'] = vtype
             self.manager.retry(client.modify_volume, **params)
-
-
-Snapshot.action_registry.register('copy-related-tag', CopyRelatedResourceTag)

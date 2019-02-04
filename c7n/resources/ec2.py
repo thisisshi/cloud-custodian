@@ -42,7 +42,6 @@ from c7n import query
 
 from c7n import utils
 from c7n.utils import type_schema, filter_empty
-from c7n.tags import CopyRelatedResourceTag
 
 
 filters = FilterRegistry('ec2.filters')
@@ -1750,6 +1749,3 @@ class InstanceAttribute(ValueFilter):
             keys.remove('InstanceId')
             resource['c7n:attribute-%s' % attribute] = fetched_attribute[
                 keys[0]]
-
-
-EC2.action_registry.register('copy-related-tag', CopyRelatedResourceTag)

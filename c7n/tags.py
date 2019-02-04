@@ -922,7 +922,7 @@ class UniversalTagDelayedAction(TagDelayedAction):
 
 class CopyRelatedResourceTag(Tag):
     """
-    Copy a related resource tag to another resource
+    Copy a related resource tag to its associated resource
 
     In some scenarios, resource tags from a related resource should be applied
     to its child resource. For example, EBS Volume tags propogating to their
@@ -967,6 +967,7 @@ class CopyRelatedResourceTag(Tag):
         ]},
         required=['tags', 'key', 'resource']
     )
+    schema_alias = True
 
     def get_permissions(self):
         return self.manager.action_registry.get('tag').permissions
@@ -1043,6 +1044,16 @@ class CopyRelatedResourceTag(Tag):
             r[r_id]: {t['Key']: t['Value'] for t in r.get('Tags', [])}
             for r in manager.resources() if r[r_id] in ids
         }
+
+    @classmethod
+    def register_resources(klass, registry, resource_class):
+        if not resource_class.actions.get('tag'):
+            return
+        resource_class.action_registry.register('copy-related-tag', klass)
+
+
+aws_resources.subscribe(
+    aws_resources.EVENT_REGISTER, CopyRelatedResourceTag.register_resources)
 
 
 def universal_retry(method, ResourceARNList, **kw):
