@@ -1007,7 +1007,7 @@ class CopyRelatedResourceTag(Tag):
         tag_action = self.manager.action_registry.get('tag')({}, self.manager)
         tag_action.id_key = tag_action.manager.get_model().id
 
-        total = []
+        total = 0
 
         for related, r in related_resource_tuple:
             if related in missing_related_tags or not related_tag_map[related]:
@@ -1015,9 +1015,10 @@ class CopyRelatedResourceTag(Tag):
                     'Tags not found for related resource: %s, skipping %s' %
                     (related, r[tag_action.id_key]))
                 continue
-            total.append(self.process_resource(r, related_tag_map[related], tag_keys, tag_action))
+            if self.process_resource(r, related_tag_map[related], tag_keys, tag_action):
+                total += 1
 
-        self.log.info('Tagged %s resource(s): %s' % (len(total), total))
+        self.log.info('Tagged %s resource(s)' % total)
 
     def process_resource(self, r, related_tags, tag_keys, tag_action):
         tags = {}
@@ -1031,7 +1032,7 @@ class CopyRelatedResourceTag(Tag):
             return
         tags = [{'Key': k, 'Value': v} for k, v in tags.items()]
         tag_action.process_resource_set(resource_set=[r], tags=tags)
-        return r[tag_action.id_key]
+        return r
 
     def get_resource_tag_map(self, r_type, ids):
         """
