@@ -949,7 +949,7 @@ class CopyRelatedResourceTag(Tag):
                 - name: copy-tags-from-ebs-volume-to-snapshot
                   resource: ebs-snapshot
                   actions:
-                    - type: copy-related-resource-tag
+                    - type: copy-related-tag
                       resource: ebs
                       skip_missing: True
                       key: VolumeId
