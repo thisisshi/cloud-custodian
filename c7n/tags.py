@@ -30,7 +30,6 @@ from dateutil.parser import parse
 
 import itertools
 import jmespath
-import six
 import time
 
 from c7n.manager import resources as aws_resources
