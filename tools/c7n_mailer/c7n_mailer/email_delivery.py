@@ -277,6 +277,8 @@ class EmailDelivery(object):
         message = MIMEText(body, email_format, 'utf-8')
         message['From'] = from_addr
         message['To'] = ', '.join(to_addrs)
+        if sqs_message['action'].get('cc'):
+            message['Cc'] = ','.join(sqs_message['action']['cc'])
         message['Subject'] = subject
         priority_header = sqs_message['action'].get('priority_header', None)
         if priority_header and self.priority_header_is_valid(
