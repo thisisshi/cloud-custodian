@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import logging
 import time
 
 import requests
@@ -22,10 +23,10 @@ from c7n_mailer.utils_email import is_email
 
 class SlackDelivery(object):
 
-    def __init__(self, config, logger, email_handler):
+    def __init__(self, config, email_handler):
+        self.log = logging.getLogger(__name__)
         self.caching = self.cache_factory(config, config.get('cache_engine', None))
         self.config = config
-        self.logger = logger
         self.email_handler = email_handler
 
     def cache_factory(self, config, type):
@@ -57,38 +58,38 @@ class SlackDelivery(object):
                     for address, slack_target in resolved_addrs.items():
                         slack_messages[address] = get_rendered_jinja(
                             slack_target, sqs_message, resources,
-                            self.logger, 'slack_template', 'slack_default',
+                            self.log, 'slack_template', 'slack_default',
                             self.config['templates_folders'])
-                self.logger.debug(
+                self.log.debug(
                     "Generating messages for recipient list produced by resource owner resolution.")
             elif target.startswith('https://hooks.slack.com/'):
                 slack_messages[target] = get_rendered_jinja(
                     target, sqs_message,
                     resource_list,
-                    self.logger, 'slack_template', 'slack_default',
+                    self.log, 'slack_template', 'slack_default',
                     self.config['templates_folders'])
             elif target.startswith('slack://webhook/#') and self.config.get('slack_webhook'):
                 webhook_target = self.config.get('slack_webhook')
                 slack_messages[webhook_target] = get_rendered_jinja(
                     target.split('slack://webhook/#', 1)[1], sqs_message,
                     resource_list,
-                    self.logger, 'slack_template', 'slack_default',
+                    self.log, 'slack_template', 'slack_default',
                     self.config['templates_folders'])
-                self.logger.debug(
+                self.log.debug(
                     "Generating message for webhook %s." % self.config.get('slack_webhook'))
             elif target.startswith('slack://') and is_email(target.split('slack://', 1)[1]):
                 resolved_addrs = self.retrieve_user_im([target.split('slack://', 1)[1]])
                 for address, slack_target in resolved_addrs.items():
                     slack_messages[address] = get_rendered_jinja(
                         slack_target, sqs_message, resource_list,
-                        self.logger, 'slack_template', 'slack_default',
+                        self.log, 'slack_template', 'slack_default',
                         self.config['templates_folders'])
             elif target.startswith('slack://#'):
                 resolved_addrs = target.split('slack://#', 1)[1]
                 slack_messages[resolved_addrs] = get_rendered_jinja(
                     resolved_addrs, sqs_message,
                     resource_list,
-                    self.logger, 'slack_template', 'slack_default',
+                    self.log, 'slack_template', 'slack_default',
                     self.config['templates_folders'])
             elif target.startswith('slack://tag/') and 'tags' in resource:
                 tag_name = target.split('tag/', 1)[1]
@@ -97,14 +98,14 @@ class SlackDelivery(object):
                 slack_messages[resolved_addrs] = get_rendered_jinja(
                     resolved_addrs, sqs_message,
                     resource_list,
-                    self.logger, 'slack_template', 'slack_default',
+                    self.log, 'slack_template', 'slack_default',
                     self.config['templates_folders'])
-                self.logger.debug("Generating message for specified Slack channel.")
+                self.log.debug("Generating message for specified Slack channel.")
         return slack_messages
 
     def slack_handler(self, sqs_message, slack_messages):
         for key, payload in slack_messages.items():
-            self.logger.info("Sending account:%s policy:%s %s:%s slack:%s to %s" % (
+            self.log.info("Sending account:%s policy:%s %s:%s slack:%s to %s" % (
                 sqs_message.get('account', ''),
                 sqs_message['policy']['name'],
                 sqs_message['policy']['resource'],
@@ -119,11 +120,11 @@ class SlackDelivery(object):
         list = {}
 
         if not self.config['slack_token']:
-            self.logger.info("No Slack token found.")
+            self.log.info("No Slack token found.")
 
         for address in email_addresses:
             if self.caching and self.caching.get(address):
-                    self.logger.debug('Got Slack metadata from cache for: %s' % address)
+                    self.log.debug('Got Slack metadata from cache for: %s' % address)
                     list[address] = self.caching.get(address)
                     continue
 
@@ -135,7 +136,7 @@ class SlackDelivery(object):
 
             if not response["ok"]:
                 if "headers" in response.keys() and "Retry-After" in response["headers"]:
-                    self.logger.info(
+                    self.log.info(
                         "Slack API rate limiting. Waiting %d seconds",
                         int(response.headers['retry-after']))
                     time.sleep(int(response.headers['Retry-After']))
@@ -143,20 +144,20 @@ class SlackDelivery(object):
                 elif response["error"] == "invalid_auth":
                     raise Exception("Invalid Slack token.")
                 elif response["error"] == "users_not_found":
-                    self.logger.info("Slack user ID not found.")
+                    self.log.info("Slack user ID not found.")
                     if self.caching:
                         self.caching.set(address, {})
                     continue
                 else:
-                    self.logger.warning("Slack Response: {}".format(response))
+                    self.log.warning("Slack Response: {}".format(response))
             else:
                 slack_user_id = response['user']['id']
                 if 'enterprise_user' in response['user'].keys():
                     slack_user_id = response['user']['enterprise_user']['id']
-                self.logger.debug(
+                self.log.debug(
                     "Slack account %s found for user %s", slack_user_id, address)
                 if self.caching:
-                    self.logger.debug('Writing user: %s metadata to cache.', address)
+                    self.log.debug('Writing user: %s metadata to cache.', address)
                     self.caching.set(address, slack_user_id)
 
                 list[address] = slack_user_id
@@ -178,11 +179,11 @@ class SlackDelivery(object):
                          'Authorization': 'Bearer %s' % self.config.get('slack_token')})
 
         if response.status_code == 429 and "Retry-After" in response.headers:
-            self.logger.info(
+            self.log.info(
                 "Slack API rate limiting. Waiting %d seconds",
                 int(response.headers['retry-after']))
             time.sleep(int(response.headers['Retry-After']))
             return
         elif response.status_code != 200:
-            self.logger.info("Error in sending Slack message: %s" % response.json())
+            self.log.info("Error in sending Slack message: %s" % response.json())
             return

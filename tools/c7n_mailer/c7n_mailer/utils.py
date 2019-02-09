@@ -15,6 +15,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import base64
 import json
+import logging
 import os
 from datetime import datetime, timedelta
 
@@ -23,6 +24,8 @@ from botocore.exceptions import ClientError
 from dateutil import parser
 from dateutil.tz import gettz, tzutc
 from ruamel import yaml
+
+log = logging.getLogger(__name__)
 
 
 def get_jinja_env(template_folders):
@@ -40,7 +43,7 @@ def get_jinja_env(template_folders):
 
 
 def get_rendered_jinja(
-        target, sqs_message, resources, logger,
+        target, sqs_message, resources,
         specified_template, default_template, template_folders):
     env = get_jinja_env(template_folders)
     mail_template = sqs_message['action'].get(specified_template, default_template)
@@ -49,7 +52,7 @@ def get_rendered_jinja(
     try:
         template = env.get_template(mail_template)
     except Exception as error_msg:
-        logger.error("Invalid template reference %s\n%s" % (mail_template, error_msg))
+        log.error("Invalid template reference %s\n%s" % (mail_template, error_msg))
         return
     rendered_jinja = template.render(
         recipient=target,
@@ -63,10 +66,14 @@ def get_rendered_jinja(
     return rendered_jinja
 
 
-# eg, target_tag_keys could be resource-owners ['Owners', 'SupportTeam']
-# and this function would go through the resource and look for any tag keys
-# that match Owners or SupportTeam, and return those values as targets
 def get_resource_tag_targets(resource, target_tag_keys):
+    """
+    Returns a list of values that match the target_tag_keys
+
+    eg, target_tag_keys could be resource-owners ['Owners', 'SupportTeam']
+    and this function would go through the resource and look for any tag keys
+    that match Owners or SupportTeam, and return those values as targets
+    """
     if 'Tags' not in resource:
         return []
     tags = {tag['Key']: tag['Value'] for tag in resource['Tags']}
@@ -319,7 +326,7 @@ def resource_format(resource, resource_type):
         return "%s" % format_struct(resource)
 
 
-def kms_decrypt(config, logger, session, encrypted_field):
+def kms_decrypt(config, session, encrypted_field):
     if config.get(encrypted_field):
         try:
             kms = session.client('kms')
@@ -327,16 +334,16 @@ def kms_decrypt(config, logger, session, encrypted_field):
                 CiphertextBlob=base64.b64decode(config[encrypted_field]))[
                     'Plaintext']
         except (TypeError, base64.binascii.Error) as e:
-            logger.warning(
+            log.warning(
                 "Error: %s Unable to base64 decode %s, will assume plaintext." %
                 (e, encrypted_field))
         except ClientError as e:
             if e.response['Error']['Code'] != 'InvalidCiphertextException':
                 raise
-            logger.warning(
+            log.warning(
                 "Error: %s Unable to decrypt %s with kms, will assume plaintext." %
                 (e, encrypted_field))
         return config[encrypted_field]
     else:
-        logger.debug("No encrypted value to decrypt.")
+        log.debug("No encrypted value to decrypt.")
         return None

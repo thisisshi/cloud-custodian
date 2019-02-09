@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import logging
 import six
 from boto3 import Session
 
@@ -21,9 +21,9 @@ from .utils import (
 
 class SnsDelivery(object):
 
-    def __init__(self, config, session, logger):
+    def __init__(self, config, session):
+        self.log = logging.getLogger(__name__)
         self.config = config
-        self.logger = logger
         self.aws_sts = session.client('sts')
         self.sns_cache = {}
 
@@ -46,7 +46,7 @@ class SnsDelivery(object):
             policy_sns_address,
             sqs_message,
             resources,
-            self.logger,
+            self.log,
             'template',
             'default',
             self.config['templates_folders']
@@ -74,7 +74,7 @@ class SnsDelivery(object):
             )
 
         if sns_addrs_to_rendered_jinja_messages == []:
-            self.logger.debug('Found no sns addresses, delivering no messages.')
+            self.log.debug('Found no sns addresses, delivering no messages.')
         return sns_addrs_to_rendered_jinja_messages
 
     def get_sns_addrs_to_resources_map(self, sqs_message):
@@ -126,13 +126,13 @@ class SnsDelivery(object):
                         aws_session_token=creds['SessionToken'])
                 self.sns_cache[account] = sns = session.client('sns')
 
-            self.logger.info("Sending account:%s policy:%s sns:%s to %s" % (
+            self.log.info("Sending account:%s policy:%s sns:%s to %s" % (
                 sqs_message.get('account', ''),
                 sqs_message['policy']['name'],
                 sqs_message['action'].get('template', 'default'),
                 topic))
             sns.publish(TopicArn=topic, Subject=subject, Message=rendered_jinja_body)
         except Exception as e:
-            self.logger.warning(
+            self.log.warning(
                 "Error policy:%s account:%s sending sns to %s \n %s" % (
                     sqs_message['policy'], sqs_message.get('account', 'na'), topic, e))

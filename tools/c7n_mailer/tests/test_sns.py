@@ -17,13 +17,13 @@ import copy
 import unittest
 
 from c7n_mailer.sns_delivery import SnsDelivery
-from common import MAILER_CONFIG, RESOURCE_1, SQS_MESSAGE_1, logger
+from common import MAILER_CONFIG, RESOURCE_1, SQS_MESSAGE_1
 
 
 class SnsTest(unittest.TestCase):
 
     def setUp(self):
-        self.sns_delivery = SnsDelivery(MAILER_CONFIG, boto3.Session(), logger)
+        self.sns_delivery = SnsDelivery(MAILER_CONFIG, boto3.Session())
         self.sns_topic_example = 'arn:aws:sns:us-east-1:172519456306:cloud-custodian'
 
     def test_target_is_sns(self):

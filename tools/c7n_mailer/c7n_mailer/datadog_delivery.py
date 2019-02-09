@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import logging
 import time
 
 from datadog import api
@@ -23,9 +23,9 @@ class DataDogDelivery(object):
     DATADOG_API_KEY = 'datadog_api_key'
     DATADOG_APPLICATION_KEY = 'datadog_application_key'
 
-    def __init__(self, config, session, logger):
+    def __init__(self, config, session):
+        self.log = logging.getLogger(__name__)
         self.config = config
-        self.logger = logger
         self.session = session
         self.datadog_api_key = self.config.get(self.DATADOG_API_KEY, None)
         self.datadog_application_key = self.config.get(self.DATADOG_APPLICATION_KEY, None)
@@ -77,7 +77,7 @@ class DataDogDelivery(object):
 
     def deliver_datadog_messages(self, datadog_message_packages, sqs_message):
         if len(datadog_message_packages) > 0:
-            self.logger.info(
+            self.log.info(
                 "Sending account:{account} policy:{policy} {resource}:{quantity} to DataDog".
                 format(account=sqs_message.get('account', ''),
                        policy=sqs_message['policy']['name'],

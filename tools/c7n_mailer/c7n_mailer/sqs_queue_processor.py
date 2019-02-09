@@ -156,7 +156,7 @@ class MailerSqsQueueProcessor(object):
 
         # get the map of email_to_addresses to mimetext messages (with resources baked in)
         # and send any emails (to SES or SMTP) if there are email addresses found
-        email_delivery = EmailDelivery(self.config, self.session, self.logger)
+        email_delivery = EmailDelivery(self.config, self.session)
         to_addrs_to_email_messages_map = email_delivery.get_to_addrs_email_messages_map(sqs_message)
         for email_to_addrs, mimetext_msg in six.iteritems(to_addrs_to_email_messages_map):
             email_delivery.send_c7n_email(sqs_message, list(email_to_addrs), mimetext_msg)

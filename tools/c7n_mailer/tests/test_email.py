@@ -19,7 +19,7 @@ import unittest
 
 import six
 from c7n_mailer.email_delivery import EmailDelivery
-from common import logger, get_ldap_lookup
+from common import get_ldap_lookup
 from common import MAILER_CONFIG, RESOURCE_1, SQS_MESSAGE_1, SQS_MESSAGE_4
 from mock import patch, call
 
@@ -50,7 +50,7 @@ class EmailTest(unittest.TestCase):
 
     def setUp(self):
         self.aws_session = boto3.Session()
-        self.email_delivery = MockEmailDelivery(MAILER_CONFIG, self.aws_session, logger)
+        self.email_delivery = MockEmailDelivery(MAILER_CONFIG, self.aws_session)
         self.email_delivery.ldap_lookup.uid_regex = ''
         template_abs_filename = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                                              'example.jinja')
@@ -61,14 +61,6 @@ class EmailTest(unittest.TestCase):
         self.assertFalse(is_email('foo@bar'))
         self.assertFalse(is_email('slack://foo@bar.com'))
         self.assertTrue(is_email('foo@bar.com'))
-
-    def test_priority_header_is_valid(self):
-        self.assertFalse(self.email_delivery.priority_header_is_valid('0'))
-        self.assertFalse(self.email_delivery.priority_header_is_valid('-1'))
-        self.assertFalse(self.email_delivery.priority_header_is_valid('6'))
-        self.assertFalse(self.email_delivery.priority_header_is_valid('sd'))
-        self.assertTrue(self.email_delivery.priority_header_is_valid('1'))
-        self.assertTrue(self.email_delivery.priority_header_is_valid('5'))
 
     def test_get_valid_emails_from_list(self):
         list_1 = [
@@ -168,7 +160,6 @@ class EmailTest(unittest.TestCase):
             for email_addrs, mimetext_msg in six.iteritems(to_addrs_to_email_messages_map):
                 self.email_delivery.send_c7n_email(SQS_MESSAGE, list(email_addrs), mimetext_msg)
                 self.assertEqual(mimetext_msg.get('X-Priority'), None)
-                # self.assertEqual(mimetext_msg.get('X-Priority'), None)
             # Get instance of mocked SMTP object
             smtp_instance = mock_smtp.return_value
             # Checks the mock has been called at least one time

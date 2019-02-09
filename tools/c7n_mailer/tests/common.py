@@ -373,7 +373,7 @@ def get_ldap_lookup(cache_engine=None, uid_regex=None):
             }
         if uid_regex:
             config['ldap_uid_regex'] = uid_regex
-        ldap_lookup = MockLdapLookup(config, logger)
+        ldap_lookup = MockLdapLookup(config)
         michael_bolton = {
             'dn': 'CN=Michael Bolton,cn=users,dc=initech,dc=com',
             'mail': 'michael_bolton@initech.com',

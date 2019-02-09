@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import json
-
+import logging
 import re
 import redis
 
@@ -28,8 +28,8 @@ from ldap3.core.exceptions import LDAPSocketOpenError
 
 class LdapLookup(object):
 
-    def __init__(self, config, logger):
-        self.log = logger
+    def __init__(self, config):
+        self.log = logging.getLogger(__name__)
         self.connection = self.get_connection(
             config.get('ldap_uri'),
             config.get('ldap_bind_user', None),
@@ -49,7 +49,8 @@ class LdapLookup(object):
         elif self.cache_engine == 'sqlite':
             if not have_sqlite:
                 raise RuntimeError('No sqlite available: stackoverflow.com/q/44058239')
-            self.caching = LocalSqlite(config.get('ldap_cache_file', '/var/tmp/ldap.cache'), logger)
+            self.caching = LocalSqlite(
+                config.get('ldap_cache_file', '/var/tmp/ldap.cache'), self.log)
 
     def get_redis_connection(self, redis_host, redis_port):
         return Redis(redis_host=redis_host, redis_port=redis_port, db=0)
