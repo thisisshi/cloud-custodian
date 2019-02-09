@@ -275,4 +275,4 @@ class EmailTest(unittest.TestCase):
     def test_cc_email_functionality(self):
         email = self.email_delivery.get_mimetext_message(
             SQS_MESSAGE_4, SQS_MESSAGE_4['resources'], ['hello@example.com'])
-        self.assertEqual(email['Cc'], 'hello@example.com,cc@example.com')
+        self.assertEqual(email['Cc'], 'hello@example.com, cc@example.com')
