@@ -262,7 +262,7 @@ class EmailDelivery(object):
         smtp_connection.sendmail(message['From'], to_addrs, message.as_string())
         smtp_connection.quit()
 
-    def get_mimetext_with_headers(self, message, subject, from_addr, to_addrs, cc_addrs, priority):
+    def set_mimetext_headers(self, message, subject, from_addr, to_addrs, cc_addrs, priority):
         """Sets headers on Mimetext message"""
 
         message['Subject'] = subject
@@ -291,7 +291,7 @@ class EmailDelivery(object):
             email_format = sqs_message['action'].get(
                 'template', 'default').endswith('html') and 'html' or 'plain'
 
-        message = self.get_mimetext_with_headers(
+        message = self.set_mimetext_headers(
             message=MIMEText(body, email_format, 'utf-8'),
             subject=get_message_subject(sqs_message),
             from_addr=sqs_message['action'].get('from', self.config['from_address']),
