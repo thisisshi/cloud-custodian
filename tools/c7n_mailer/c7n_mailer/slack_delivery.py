@@ -22,10 +22,10 @@ from c7n_mailer.utils_email import is_email
 
 class SlackDelivery(object):
 
-    def __init__(self, slack_token, slack_webhook, templates_folders, cache_engine, email_handler):
+    def __init__(self, slack_token, slack_webhook, cache_engine, email_handler):
         self.log = logging.getLogger(__name__)
         self.caching = cache_engine
-        self.templates_folders = templates_folders
+        self.templates_folders = email_handler.templates_folders
         self.slack_token = slack_token
         self.slack_webhook = slack_webhook
         self.email_handler = email_handler
