@@ -86,7 +86,7 @@ class EmailDelivery(object):
         self.account_emails = self.config.get('account_emails')
         self.templates_folders = self.config.get('templates_folders')
         self.from_address = self.config.get('from_address')
-        self.ldap_uid_tag_keys = self.config.get('ldap_uid_tag_keys')
+        self.ldap_uid_tag_keys = self.config.get('ldap_uid_tags')
 
         self.smtp_server = self.config.get('smtp_server')
 
