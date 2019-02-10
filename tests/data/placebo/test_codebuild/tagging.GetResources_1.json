@@ -3,15 +3,6 @@
     "data": {
         "PaginationToken": "",
         "ResourceTagMappingList": [
-            {
-                "ResourceARN": "arn:aws:lambda:us-west-2:644160558196:function:CloudCustodian",
-                "Tags": [
-                    {
-                        "Key": "Env",
-                        "Value": "Dev"
-                    }
-                ]
-            }
         ],
         "ResponseMetadata": {
             "RequestId": "f14cb243-2bae-11e9-bb23-75ffe186ed69",
