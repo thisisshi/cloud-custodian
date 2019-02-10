@@ -15,7 +15,7 @@ import fakeredis
 import logging
 import os
 
-from c7n_mailer.ldap_lookup import LdapLookup, Redis
+from c7n_mailer.ldap_lookup import LdapLookup, Redis, LocalSqlite
 from ldap3 import Server, Connection, MOCK_SYNC
 from ldap3.strategy import mockBase
 
@@ -366,14 +366,30 @@ def get_ldap_lookup(cache_engine=None, uid_regex=None):
                 'cache_engine': 'sqlite',
                 'ldap_cache_file': ':memory:'
             }
+            cache_engine = MockLocalSqlite(config['ldap_cache_file'])
         elif cache_engine == 'redis':
             config = {
                 'cache_engine': 'redis',
                 'redis_host': 'localhost'
             }
+            cache_engine = MockRedisLookup(
+                redis_host=config['redis_host'], redis_port=config.get('redis_port', 6379))
         if uid_regex:
             config['ldap_uid_regex'] = uid_regex
-        ldap_lookup = MockLdapLookup(config)
+
+        ldap_lookup = MockLdapLookup(
+            ldap_uri=MAILER_CONFIG['ldap_uri'],
+            ldap_bind_user='',
+            ldap_bind_password='',
+            ldap_bind_dn='cn=users,dc=initech,dc=com',
+            ldap_email_key='',
+            ldap_manager_attribute='',
+            ldap_uid_attribute='uid',
+            ldap_uid_regex=uid_regex,
+            ldap_cache_file='',
+            cache_engine=cache_engine
+        )
+
         michael_bolton = {
             'dn': 'CN=Michael Bolton,cn=users,dc=initech,dc=com',
             'mail': 'michael_bolton@initech.com',
@@ -393,8 +409,6 @@ def get_ldap_lookup(cache_engine=None, uid_regex=None):
             'manager': 'CN=Bob Slydell,cn=users,dc=initech,dc=com',
             'displayName': 'Bob Porter'
         }
-        ldap_lookup.base_dn = 'cn=users,dc=initech,dc=com'
-        ldap_lookup.uid_key = 'uid'
         ldap_lookup.attributes.append('uid')
         ldap_lookup.caching.set('michael_bolton', michael_bolton)
         ldap_lookup.caching.set(bob_porter['dn'], bob_porter)
@@ -405,10 +419,6 @@ def get_ldap_lookup(cache_engine=None, uid_regex=None):
 
 class MockLdapLookup(LdapLookup):
 
-    # allows us to instantiate this object and not need a redis daemon
-    def get_redis_connection(self, redis_host, redis_port):
-        return MockRedisLookup()
-
     # us to instantiate this object and not have ldap3 try to connect
     # to anything or raise exception in unit tests, we replace connection with a mock
     def get_connection(self, ignore, these, params):
@@ -416,5 +426,9 @@ class MockLdapLookup(LdapLookup):
 
 
 class MockRedisLookup(Redis):
-    def __init__(self):
+    def __init__(self, redis_host, redis_port):
         self.connection = fakeredis.FakeStrictRedis()
+
+
+class MockLocalSqlite(LocalSqlite):
+    pass

@@ -50,8 +50,8 @@ class EmailTest(unittest.TestCase):
 
     def setUp(self):
         self.aws_session = boto3.Session()
-        self.email_delivery = MockEmailDelivery(MAILER_CONFIG, self.aws_session)
-        self.email_delivery.ldap_lookup.uid_regex = ''
+        ldap_lookup = get_ldap_lookup(cache_engine='redis')
+        self.email_delivery = MockEmailDelivery(MAILER_CONFIG, self.aws_session, ldap_lookup)
         template_abs_filename = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                                              'example.jinja')
         SQS_MESSAGE_1['action']['template'] = template_abs_filename
@@ -61,17 +61,6 @@ class EmailTest(unittest.TestCase):
         self.assertFalse(is_email('foo@bar'))
         self.assertFalse(is_email('slack://foo@bar.com'))
         self.assertTrue(is_email('foo@bar.com'))
-
-    def test_get_valid_emails_from_list(self):
-        list_1 = [
-            'michael_bolton@initech.com',
-            'lsdk',
-            'resource-owner',
-            'event-owner',
-            'bill@initech.com'
-        ]
-        valid_emails = self.email_delivery.get_valid_emails_from_list(list_1)
-        self.assertEqual(valid_emails, ['michael_bolton@initech.com', 'bill@initech.com'])
 
     def test_event_owner_ldap_flow(self):
         targets = ['event-owner']

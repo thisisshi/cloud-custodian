@@ -20,11 +20,10 @@ from smtplib import SMTPHeloError, SMTPException, SMTPAuthenticationError
 from email.mime.text import MIMEText
 from itertools import chain
 
-from .ldap_lookup import LdapLookup
 from c7n_mailer.utils_email import is_email
 from .utils import (
     format_struct, get_message_subject, get_resource_tag_targets,
-    get_rendered_jinja, kms_decrypt)
+    get_rendered_jinja)
 
 
 class EmailDelivery(object):
@@ -75,34 +74,32 @@ class EmailDelivery(object):
         }
     }
 
-    def __init__(self, config, session):
+    def __init__(self, config, session, ldap_lookup):
         self.log = logging.getLogger(__name__)
         self.config = config
         self.session = session
-        if not self.config.get('smtp_server'):
+
+        self.ldap_lookup = ldap_lookup
+
+        self.org_domain = self.config.get('org_domain')
+        self.contact_tags = self.config.get('contact_tags')
+        self.account_emails = self.config.get('account_emails')
+        self.templates_folders = self.config.get('templates_folders')
+        self.from_address = self.config.get('from_address')
+        self.ldap_uid_tag_keys = self.config.get('ldap_uid_tag_keys')
+
+        self.smtp_server = self.config.get('smtp_server')
+
+        if not self.smtp_server:
             # only insantiate a new client if mailer is sending via SES
             # this should allow for compatibility with other cloud providers
             # to send email via SMTP
             self.aws_ses = session.client('ses', region_name=config.get('ses_region'))
-
-        self.ldap_lookup = self.get_ldap_connection()
-
-    def get_ldap_connection(self):
-        """
-        Returns a new LDAP Connection if ldap_bind_password is specified
-        in the configuration file
-        """
-        if self.config.get('ldap_uri'):
-            self.config['ldap_bind_password'] = kms_decrypt(
-                self.config, self.session, 'ldap_bind_password')
-            return LdapLookup(self.config)
-        return None
-
-    def get_valid_emails_from_list(self, targets):
-        """
-        Returns a list of valid emails from targets
-        """
-        return [t for t in targets if is_email(t)]
+        else:
+            self.smtp_port = self.config.get('smtp_port', 25)
+            self.smtp_ssl = self.config.get('smtp_ssl', True)
+            self.smtp_username = self.config.get('smtp_username')
+            self.smtp_password = self.config.get('smtp_password')
 
     def get_event_owner_email(self, targets, event):
         """
@@ -118,15 +115,14 @@ class EmailDelivery(object):
             if is_email(aws_username):
                 # is using SSO, the target might already be an email
                 return [aws_username]
-            elif self.config.get('ldap_uri', False):
+            elif self.ldap_lookup:
                 # if the LDAP config is set, lookup in ldap
                 return self.ldap_lookup.get_email_to_addrs_from_uid(aws_username)
-            elif self.config.get('org_domain', False):
+            elif self.org_domain:
                 # the org_domain setting is configured, append the org_domain
                 # to the username from AWS
-                org_domain = self.config.get('org_domain', False)
-                self.log.info('adding email %s to targets.', aws_username + '@' + org_domain)
-                return [aws_username + '@' + org_domain]
+                self.log.info('adding email %s to targets.', aws_username + '@' + self.org_domain)
+                return [aws_username + '@' + self.org_domain]
             else:
                 self.log.warning(
                     'Unable to lookup event owner email. Please configure LDAP or org_domain')
@@ -140,14 +136,12 @@ class EmailDelivery(object):
         Return a list of ldap emails from resource
         """
 
-        ldap_uid_tag_keys = self.config.get('ldap_uid_tags', [])
-
-        if not self.ldap_lookup or not ldap_uid_tag_keys:
+        if not self.ldap_lookup or not self.ldap_uid_tag_keys:
             return []
 
         # this whole section grabs any ldap uids (including manager emails if option is on)
         # and gets the emails for them and returns an array with all the emails
-        ldap_uid_tag_values = get_resource_tag_targets(resource, ldap_uid_tag_keys)
+        ldap_uid_tag_values = get_resource_tag_targets(resource, self.ldap_uid_tag_keys)
         email_manager = sqs_message['action'].get('email_ldap_username_manager', False)
         ldap_uid_emails = []
         # some types of resources, like iam-user have 'Username' in the resource, if the policy
@@ -169,9 +163,9 @@ class EmailDelivery(object):
         if 'resource-owner' not in sqs_message['action']['to']:
             return []
 
-        resource_owner_tag_keys = self.config.get('contact_tags', [])
+        resource_owner_tag_keys = self.contact_tags
         resource_owner_tag_values = get_resource_tag_targets(resource, resource_owner_tag_keys)
-        explicit_emails = self.get_valid_emails_from_list(resource_owner_tag_values)
+        explicit_emails = [e for e in resource_owner_tag_values if is_email(e)]
 
         # resolve the contact info from ldap
         non_email_ids = list(set(resource_owner_tag_values).difference(explicit_emails))
@@ -197,13 +191,12 @@ class EmailDelivery(object):
         self.log.debug('get_account_emails for account_id: %s.', account_id)
 
         if account_id is not None:
-            account_email_mapping = self.config.get('account_emails', {})
             self.log.debug(
-                'get_account_emails account_email_mapping: %s.', account_email_mapping)
-            email_list = account_email_mapping.get(account_id, [])
+                'get_account_emails account_email_mapping: %s.', self.account_emails)
+            email_list = self.account_emails.get(account_id, [])
             self.log.debug('get_account_emails email_list: %s.', email_list)
 
-        return self.get_valid_emails_from_list(email_list)
+        return [e for e in email_list if is_email(e)]
 
     def get_email_to_addrs_to_resources_map(self, sqs_message):
         """
@@ -219,11 +212,11 @@ class EmailDelivery(object):
         email_to_addrs_to_resources_map = {}
 
         targets = sqs_message['action']['to'] + sqs_message['action'].get('cc', [])
-        no_owner_targets = self.get_valid_emails_from_list(
-            sqs_message['action'].get('owner_absent_contact', []))
+        no_owner_targets = [e for e in
+            sqs_message['action'].get('owner_absent_contact', []) if is_email(e)]
 
         # static_emails: emails from the 'to' or 'cc' section in the notify action
-        static_emails = self.get_valid_emails_from_list(targets)
+        static_emails = [e for e in targets if is_email(e)]
         event_owner_email = self.get_event_owner_email(targets, sqs_message['event'])
         account_emails = self.get_account_emails(sqs_message)
 
@@ -275,8 +268,7 @@ class EmailDelivery(object):
 
         return to_addrs_to_mimetext_map
 
-    def send_smtp_email(self, server, port, ssl, username, password,
-            message, to_addrs, *args, **kwargs):
+    def send_smtp_email(self, message, to_addrs):
         """
         Send mail via SMTP
 
@@ -289,9 +281,9 @@ class EmailDelivery(object):
         smtp_password
         """
 
-        connection = smtplib.SMTP(server, port)
+        connection = smtplib.SMTP(self.smtp_server, self.smtp_port)
 
-        if ssl:
+        if self.smtp_ssl:
             try:
                 # HELO is sent on smtp connection instantiation with starttls
                 connection.starttls()
@@ -300,11 +292,11 @@ class EmailDelivery(object):
                     'Unable to initialize SSL connection with SMTP Server: %s' % e)
                 raise e
 
-        if username or password:
+        if self.smtp_username or self.smtp_password:
             try:
-                connection.login(username, password)
+                connection.login(self.smtp_username, self.smtp_password)
             except (SMTPAuthenticationError, SMTPHeloError) as e:
-                self.log.error('Unable to login to SMTP server: %s - %s' % (server, e))
+                self.log.error('Unable to login to SMTP server: %s - %s' % (self.smtp_server, e))
                 raise e
 
         connection.sendmail(message['From'], to_addrs, message.as_string())
@@ -334,8 +326,7 @@ class EmailDelivery(object):
         """
 
         body = get_rendered_jinja(
-            to_addrs, sqs_message, resources, 'template',
-            'default', self.config['templates_folders'])
+            to_addrs, sqs_message, resources, 'template', 'default', self.templates_folders)
 
         if not body:
             return None
@@ -348,7 +339,7 @@ class EmailDelivery(object):
         message = self.set_mimetext_headers(
             message=MIMEText(body, email_format, 'utf-8'),
             subject=get_message_subject(sqs_message),
-            from_addr=sqs_message['action'].get('from', self.config['from_address']),
+            from_addr=sqs_message['action'].get('from', self.from_address),
             to_addrs=to_addrs,
             cc_addrs=sqs_message['action'].get('cc', []),
             priority=sqs_message['action'].get('priority_header', None),
@@ -373,15 +364,8 @@ class EmailDelivery(object):
             except Exception as e:
                 error = e
         else:
-            smtp_kwargs = {
-                'server': self.config.get('smtp_server'),
-                'port': int(self.config.get('smtp_port', 25)),
-                'ssl': bool(self.config.get('smtp_ssl', True)),
-                'username': self.config.get('smtp_username'),
-                'password': self.config.get('smtp_password'),
-            }
             try:
-                self.send_smtp_email(message=mimetext_msg, to_addrs=email_to_addrs, **smtp_kwargs)
+                self.send_smtp_email(message=mimetext_msg, to_addrs=email_to_addrs)
             except (SMTPAuthenticationError, SMTPException) as e:
                 self.log.error('SMTP Server does not support TLS or Unable to authenticate to SMTP Server, exiting') # noqa
                 raise e

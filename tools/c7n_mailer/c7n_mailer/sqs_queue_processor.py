@@ -19,11 +19,13 @@ SQS Message Processing
 import base64
 import json
 import logging
+import six
 import traceback
 import zlib
 
-import six
+from contextlib import ContextDecorator
 
+from .ldap_lookup import LdapLookup, Redis, LocalSqlite
 from .email_delivery import EmailDelivery
 from .sns_delivery import SnsDelivery
 
@@ -32,19 +34,64 @@ from c7n_mailer.utils import kms_decrypt
 DATA_MESSAGE = "maidmsg/1.0"
 
 
+class ParallelSQSProcessor(ContextDecorator):
+    def __init__(self, parallel, sqs_messages):
+        self.log = logging.getLogger(__name__)
+        self.sqs_messages = sqs_messages
+        self.parallel = parallel
+
+    def __call__(self, f):
+        def call(*args, **kwargs):
+            sqs_message = kwargs['sqs_message']
+            self.log.debug("Message id: %s received %s" % (sqs_message['MessageId'],
+                    sqs_message.get('MessageAttributes', '')))
+            msg_kind = sqs_message.get('MessageAttributes', {}).get('mtype', {})
+            if not msg_kind.get('StringValue') == DATA_MESSAGE:
+                warning_msg = 'Unknown sqs_message or sns format %s' % (
+                    sqs_message['Body'][:50])
+                self.log.warning(warning_msg)
+            else:
+                self.process_sqs_message(encoded_sqs_message=sqs_message)
+            self.log.debug('Processed sqs_message')
+
+            if self.parallel:
+                self.process_pool.apply_async(f, **kwargs)
+            else:
+                f(**kwargs)
+
+            self.log.debug('Processed sqs_message')
+            self.sqs_messages.ack(sqs_message)
+
+        return call
+
+    def __enter__(self):
+        # lambda doesn't support multiprocessing, so we don't instantiate any mp stuff
+        # unless it's being run from CLI on a normal system with SHM
+        if self.parallel:
+            import multiprocessing
+            self.process_pool = multiprocessing.Pool(processes=self.max_num_processes)
+        return self
+
+    def __exit__(self, *exc):
+        self.log.info('No sqs_messages left on the queue, exiting c7n_mailer.')
+
+        if self.parallel:
+            self.process_pool.close()
+            self.process_pool.join()
+
+
 class MailerSqsQueueIterator(object):
     # Copied from custodian to avoid runtime library dependency
     msg_attributes = ['sequence_id', 'op', 'ser']
 
-    def __init__(self, aws_sqs, queue_url, logger, limit=0, timeout=10):
+    def __init__(self, aws_sqs, queue_url, limit=0, timeout=10):
+        self.log = logging.getLogger('__name__')
         self.aws_sqs = aws_sqs
         self.queue_url = queue_url
         self.limit = limit
-        self.logger = logger
         self.timeout = timeout
         self.messages = []
 
-    # this and the next function make this object iterable with a for loop
     def __iter__(self):
         return self
 
@@ -58,7 +105,7 @@ class MailerSqsQueueIterator(object):
             MessageAttributeNames=self.msg_attributes)
 
         msgs = response.get('Messages', [])
-        self.logger.debug('Messages received %d', len(msgs))
+        self.log.debug('Messages received %d', len(msgs))
         for m in msgs:
             self.messages.append(m)
         if self.messages:
@@ -75,123 +122,138 @@ class MailerSqsQueueIterator(object):
 
 class MailerSqsQueueProcessor(object):
 
-    def __init__(self, config, session, logger, max_num_processes=16):
+    def __init__(self, config, session, max_num_processes=16):
+        self.log = logging.getLogger(__name__)
+        self.sqs = self.session.client('sqs')
         self.config = config
-        self.logger = logger
         self.session = session
         self.max_num_processes = max_num_processes
         self.receive_queue = self.config['queue_url']
         if self.config.get('debug', False):
-            self.logger.debug('debug logging is turned on from mailer config file.')
-            logger.setLevel(logging.DEBUG)
+            self.log.debug('debug logging is turned on from mailer config file.')
+            self.log.setLevel(logging.DEBUG)
 
-    """
-    Cases
-    - aws resource is tagged CreatorName: 'milton', ldap_tag_uids has CreatorName,
-        we do an ldap lookup, get milton's email and send him an email
-    - you put an email in the to: field of the notify of your policy, we send an email
-        for all resources enforce by that policy
-    - you put an sns topic in the to: field of the notify of your policy, we send an sns
-        message for all resources enforce by that policy
-    - an lambda enforces a policy based on an event, we lookup the event aws username, get their
-        ldap email and send them an email about a policy enforcement (from lambda) for the event
-    - resource-owners has a list of tags, SupportEmail, OwnerEmail, if your resources
-        include those tags with valid emails, we'll send an email for those resources
-        any others
-    - resource-owners has a list of tags, SnSTopic, we'll deliver an sns message for
-        any resources with SnSTopic set with a value that is a valid sns topic.
-    """
+        # set up cache engine, ldap lookup etc.
+        if self.config.get('cache_engine') == 'redis':
+            redis_host = self.config.get('redis_host')
+            redis_port = self.config.get('redis_port')
+            self.cache_engine = Redis(redis_host=redis_host, redis_port=redis_port, db=-1)
+        elif self.config.get('cache_engine') == 'sqlite':
+            try:
+                import sqlite3 # noqa
+            except ImportError:
+                raise RuntimeError('No sqlite available: stackoverflow.com/q/44058239')
+            self.cache_engine = LocalSqlite(
+                self.config.get('ldap_cache_file', '/var/tmp/ldap.cache'))
+        else:
+            self.cache_engine = None
+
+        if self.config.get('ldap_uri'):
+            ldap_uri = self.config.get('ldap_uri')
+            ldap_bind_user = self.config.get('ldap_bind_user', None)
+            ldap_bind_password = kms_decrypt(self.config, self.session, 'ldap_bind_password')
+            ldap_bind_dn = self.config.get('ldap_bind_dn')
+            ldap_email_key = self.config.get('ldap_email_key', 'mail')
+            ldap_manager_attr = self.config.get('ldap_manager_attr', 'manager')
+            ldap_uid_attr = self.config.get('ldap_uid_attribute', 'sAMAccountName')
+            ldap_uid_regex = self.config.get('ldap_uid_regex', None)
+
+            self.ldap_lookup = LdapLookup(ldap_uri, ldap_bind_user, ldap_bind_password,
+                ldap_bind_dn, ldap_email_key, ldap_manager_attr, ldap_uid_attr,
+                ldap_uid_regex, self.cache_engine)
+        else:
+            self.ldap_lookup = None
+
     def run(self, parallel=False):
-        self.logger.info("Downloading messages from the SQS queue.")
-        aws_sqs = self.session.client('sqs')
-        sqs_messages = MailerSqsQueueIterator(aws_sqs, self.receive_queue, self.logger)
+        """
+        Cases
+        - aws resource is tagged CreatorName: 'milton', ldap_tag_uids has CreatorName,
+            we do an ldap lookup, get milton's email and send him an email
+        - you put an email in the to: field of the notify of your policy, we send an email
+            for all resources enforce by that policy
+        - you put an sns topic in the to: field of the notify of your policy, we send an sns
+            message for all resources enforce by that policy
+        - an lambda enforces a policy based on an event, we lookup the event aws username, get their
+            ldap email and send them an email about a policy enforcement (from lambda) for the event
+        - resource-owners has a list of tags, SupportEmail, OwnerEmail, if your resources
+            include those tags with valid emails, we'll send an email for those resources
+            any others
+        - resource-owners has a list of tags, SnSTopic, we'll deliver an sns message for
+            any resources with SnSTopic set with a value that is a valid sns topic.
+        """
 
+        self.log.info("Downloading messages from the SQS queue.")
+
+        sqs_messages = MailerSqsQueueIterator(self.sqs, self.receive_queue)
         sqs_messages.msg_attributes = ['mtype', 'recipient']
-        # lambda doesn't support multiprocessing, so we don't instantiate any mp stuff
-        # unless it's being run from CLI on a normal system with SHM
-        if parallel:
-            import multiprocessing
-            process_pool = multiprocessing.Pool(processes=self.max_num_processes)
-        for sqs_message in sqs_messages:
-            self.logger.debug(
-                "Message id: %s received %s" % (
-                    sqs_message['MessageId'], sqs_message.get('MessageAttributes', '')))
-            msg_kind = sqs_message.get('MessageAttributes', {}).get('mtype')
-            if msg_kind:
-                msg_kind = msg_kind['StringValue']
-            if not msg_kind == DATA_MESSAGE:
-                warning_msg = 'Unknown sqs_message or sns format %s' % (sqs_message['Body'][:50])
-                self.logger.warning(warning_msg)
-            if parallel:
-                process_pool.apply_async(self.process_sqs_message, args=sqs_message)
-            else:
-                self.process_sqs_message(sqs_message)
-            self.logger.debug('Processed sqs_message')
-            sqs_messages.ack(sqs_message)
-        if parallel:
-            process_pool.close()
-            process_pool.join()
-        self.logger.info('No sqs_messages left on the queue, exiting c7n_mailer.')
+
+        with ParallelSQSProcessor(parallel, sqs_messages) as ParallelProcessor:
+            for sqs_message in sqs_messages:
+                self.process_sqs_message(encoded_sqs_message=sqs_message)
         return
 
-    # This function when processing sqs messages will only deliver messages over email or sns
-    # If you explicitly declare which tags are aws_usernames (synonymous with ldap uids)
-    # in the ldap_uid_tags section of your mailer.yml, we'll do a lookup of those emails
-    # (and their manager if that option is on) and also send emails there.
-    def process_sqs_message(self, encoded_sqs_message):
-        body = encoded_sqs_message['Body']
-        try:
-            body = json.dumps(json.loads(body)['Message'])
-        except ValueError:
-            pass
-        sqs_message = json.loads(zlib.decompress(base64.b64decode(body)))
+        @ParallelProcessor
+        def process_sqs_message(self, encoded_sqs_message):
+            """
+            This function when processing sqs messages will only deliver messages over email or sns
+            If you explicitly declare which tags are aws_usernames (synonymous with ldap uids)
+            in the ldap_uid_tags section of your mailer.yml, we'll do a lookup of those emails
+            (and their manager if that option is on) and also send emails there.
+            """
 
-        self.logger.debug("Got account:%s message:%s %s:%d policy:%s recipients:%s" % (
-            sqs_message.get('account', 'na'),
-            encoded_sqs_message['MessageId'],
-            sqs_message['policy']['resource'],
-            len(sqs_message['resources']),
-            sqs_message['policy']['name'],
-            ', '.join(sqs_message['action'].get('to'))))
-
-        # get the map of email_to_addresses to mimetext messages (with resources baked in)
-        # and send any emails (to SES or SMTP) if there are email addresses found
-        email_delivery = EmailDelivery(self.config, self.session)
-        to_addrs_to_email_messages_map = email_delivery.get_to_addrs_email_messages_map(sqs_message)
-        for email_to_addrs, mimetext_msg in six.iteritems(to_addrs_to_email_messages_map):
-            email_delivery.send_c7n_email(sqs_message, list(email_to_addrs), mimetext_msg)
-
-        # this sections gets the map of sns_to_addresses to rendered_jinja messages
-        # (with resources baked in) and delivers the message to each sns topic
-        sns_delivery = SnsDelivery(self.config, self.session, self.logger)
-        sns_message_packages = sns_delivery.get_sns_message_packages(sqs_message)
-        sns_delivery.deliver_sns_messages(sns_message_packages, sqs_message)
-
-        # this section sends a notification to the resource owner via Slack
-        if any(e.startswith('slack') or e.startswith('https://hooks.slack.com/')
-                for e in sqs_message.get('action', ()).get('to')):
-            from .slack_delivery import SlackDelivery
-
-            if self.config.get('slack_token'):
-                self.config['slack_token'] = \
-                    kms_decrypt(self.config, self.logger, self.session, 'slack_token')
-
-            slack_delivery = SlackDelivery(self.config, self.logger, email_delivery)
-            slack_messages = slack_delivery.get_to_addrs_slack_messages_map(sqs_message)
+            body = encoded_sqs_message['Body']
             try:
-                slack_delivery.slack_handler(sqs_message, slack_messages)
-            except Exception:
-                traceback.print_exc()
+                body = json.dumps(json.loads(body)['Message'])
+            except ValueError:
                 pass
+            sqs_message = json.loads(zlib.decompress(base64.b64decode(body)))
 
-        # this section gets the map of metrics to send to datadog and delivers it
-        if any(e.startswith('datadog') for e in sqs_message.get('action', ()).get('to')):
-            from .datadog_delivery import DataDogDelivery
-            datadog_delivery = DataDogDelivery(self.config, self.session, self.logger)
-            datadog_message_packages = datadog_delivery.get_datadog_message_packages(sqs_message)
+            self.log.debug("Got account:%s message:%s %s:%d policy:%s recipients:%s" % (
+                sqs_message.get('account', 'na'),
+                encoded_sqs_message['MessageId'],
+                sqs_message['policy']['resource'],
+                len(sqs_message['resources']),
+                sqs_message['policy']['name'],
+                ', '.join(sqs_message['action'].get('to'))))
 
-            try:
-                datadog_delivery.deliver_datadog_messages(datadog_message_packages, sqs_message)
-            except Exception:
-                traceback.print_exc()
-                pass
+            # get the map of email_to_addresses to mimetext messages (with resources baked in)
+            # and send any emails (to SES or SMTP) if there are email addresses found
+            email_delivery = EmailDelivery(self.config, self.session, self.ldap_lookup)
+            to_addrs_to_email_messages_map = email_delivery.get_to_addrs_email_messages_map(sqs_message) # noqa
+            for email_to_addrs, mimetext_msg in six.iteritems(to_addrs_to_email_messages_map):
+                email_delivery.send_c7n_email(sqs_message, list(email_to_addrs), mimetext_msg)
+
+            # this sections gets the map of sns_to_addresses to rendered_jinja messages
+            # (with resources baked in) and delivers the message to each sns topic
+            sns_delivery = SnsDelivery(self.config, self.session, self.log)
+            sns_message_packages = sns_delivery.get_sns_message_packages(sqs_message)
+            sns_delivery.deliver_sns_messages(sns_message_packages, sqs_message)
+
+            # this section sends a notification to the resource owner via Slack
+            if any(e.startswith('slack') or e.startswith('https://hooks.slack.com/')
+                    for e in sqs_message.get('action', ()).get('to')):
+                from .slack_delivery import SlackDelivery
+
+                if self.config.get('slack_token'):
+                    self.config['slack_token'] = \
+                        kms_decrypt(self.config, self.session, 'slack_token')
+
+                slack_delivery = SlackDelivery(self.config, self.log, email_delivery)
+                slack_messages = slack_delivery.get_to_addrs_slack_messages_map(sqs_message)
+                try:
+                    slack_delivery.slack_handler(sqs_message, slack_messages)
+                except Exception:
+                    traceback.print_exc()
+                    pass
+
+            # this section gets the map of metrics to send to datadog and delivers it
+            if any(e.startswith('datadog') for e in sqs_message.get('action', ()).get('to')):
+                from .datadog_delivery import DataDogDelivery
+                datadog_delivery = DataDogDelivery(self.config, self.session, self.log)
+                datadog_message_packages = datadog_delivery.get_datadog_message_packages(sqs_message) # noqa
+
+                try:
+                    datadog_delivery.deliver_datadog_messages(datadog_message_packages, sqs_message)
+                except Exception:
+                    traceback.print_exc()
+                    pass
