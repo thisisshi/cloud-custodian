@@ -16,25 +16,19 @@ import time
 
 import requests
 import six
-from c7n_mailer.ldap_lookup import Redis
 from c7n_mailer.utils import get_rendered_jinja
 from c7n_mailer.utils_email import is_email
 
 
 class SlackDelivery(object):
 
-    def __init__(self, config, email_handler):
+    def __init__(self, slack_token, slack_webhook, templates_folders, cache_engine, email_handler):
         self.log = logging.getLogger(__name__)
-        self.caching = self.cache_factory(config, config.get('cache_engine', None))
-        self.config = config
+        self.caching = cache_engine
+        self.templates_folders = templates_folders
+        self.slack_token = slack_token
+        self.slack_webhook = slack_webhook
         self.email_handler = email_handler
-
-    def cache_factory(self, config, type):
-        if type == 'redis':
-            return Redis(redis_host=config.get('redis_host'),
-                         redis_port=int(config.get('redis_port', 6379)), db=0)
-        else:
-            return None
 
     def get_to_addrs_slack_messages_map(self, sqs_message):
         resource_list = []
@@ -49,57 +43,39 @@ class SlackDelivery(object):
                 to_addrs_to_resources_map = \
                     self.email_handler.get_email_to_addrs_to_resources_map(sqs_message)
                 for to_addrs, resources in six.iteritems(to_addrs_to_resources_map):
-
                     resolved_addrs = self.retrieve_user_im(list(to_addrs))
-
                     if not resolved_addrs:
                         continue
-
                     for address, slack_target in resolved_addrs.items():
                         slack_messages[address] = get_rendered_jinja(
                             slack_target, sqs_message, resources,
-                            self.log, 'slack_template', 'slack_default',
-                            self.config['templates_folders'])
+                            'slack_template', 'slack_default', self.templates_folders)
                 self.log.debug(
                     "Generating messages for recipient list produced by resource owner resolution.")
             elif target.startswith('https://hooks.slack.com/'):
                 slack_messages[target] = get_rendered_jinja(
-                    target, sqs_message,
-                    resource_list,
-                    self.log, 'slack_template', 'slack_default',
-                    self.config['templates_folders'])
-            elif target.startswith('slack://webhook/#') and self.config.get('slack_webhook'):
-                webhook_target = self.config.get('slack_webhook')
-                slack_messages[webhook_target] = get_rendered_jinja(
+                    target, sqs_message, resource_list, 'slack_template',
+                    'slack_default', self.templates_folders)
+            elif target.startswith('slack://webhook/#') and self.slack_webhook:
+                slack_messages[self.slack_webhook] = get_rendered_jinja(
                     target.split('slack://webhook/#', 1)[1], sqs_message,
-                    resource_list,
-                    self.log, 'slack_template', 'slack_default',
-                    self.config['templates_folders'])
-                self.log.debug(
-                    "Generating message for webhook %s." % self.config.get('slack_webhook'))
+                    resource_list, 'slack_template', 'slack_default', self.templates_folders)
+                self.log.debug("Generating message for webhook %s." % self.slack_webhook)
             elif target.startswith('slack://') and is_email(target.split('slack://', 1)[1]):
                 resolved_addrs = self.retrieve_user_im([target.split('slack://', 1)[1]])
                 for address, slack_target in resolved_addrs.items():
-                    slack_messages[address] = get_rendered_jinja(
-                        slack_target, sqs_message, resource_list,
-                        self.log, 'slack_template', 'slack_default',
-                        self.config['templates_folders'])
+                    slack_messages[address] = get_rendered_jinja(slack_target, sqs_message,
+                        resource_list, 'slack_template', 'slack_default', self.templates_folders)
             elif target.startswith('slack://#'):
                 resolved_addrs = target.split('slack://#', 1)[1]
-                slack_messages[resolved_addrs] = get_rendered_jinja(
-                    resolved_addrs, sqs_message,
-                    resource_list,
-                    self.log, 'slack_template', 'slack_default',
-                    self.config['templates_folders'])
+                slack_messages[resolved_addrs] = get_rendered_jinja(resolved_addrs, sqs_message,
+                resource_list, 'slack_template', 'slack_default', self.templates_folders)
             elif target.startswith('slack://tag/') and 'tags' in resource:
                 tag_name = target.split('tag/', 1)[1]
                 result = resource.get('tags', {}).get(tag_name, None)
                 resolved_addrs = result
-                slack_messages[resolved_addrs] = get_rendered_jinja(
-                    resolved_addrs, sqs_message,
-                    resource_list,
-                    self.log, 'slack_template', 'slack_default',
-                    self.config['templates_folders'])
+                slack_messages[resolved_addrs] = get_rendered_jinja(resolved_addrs, sqs_message,
+                    resource_list, 'slack_template', 'slack_default', self.templates_folders)
                 self.log.debug("Generating message for specified Slack channel.")
         return slack_messages
 
@@ -119,7 +95,7 @@ class SlackDelivery(object):
     def retrieve_user_im(self, email_addresses):
         list = {}
 
-        if not self.config['slack_token']:
+        if not self.slack_token:
             self.log.info("No Slack token found.")
 
         for address in email_addresses:
@@ -132,7 +108,7 @@ class SlackDelivery(object):
                 url='https://slack.com/api/users.lookupByEmail',
                 data={'email': address},
                 headers={'Content-Type': 'application/x-www-form-urlencoded',
-                         'Authorization': 'Bearer %s' % self.config.get('slack_token')}).json()
+                         'Authorization': 'Bearer %s' % self.slack_token}).json()
 
             if not response["ok"]:
                 if "headers" in response.keys() and "Retry-After" in response["headers"]:
@@ -176,7 +152,7 @@ class SlackDelivery(object):
                 url='https://slack.com/api/chat.postMessage',
                 data=message_payload,
                 headers={'Content-Type': 'application/json;charset=utf-8',
-                         'Authorization': 'Bearer %s' % self.config.get('slack_token')})
+                         'Authorization': 'Bearer %s' % self.slack_token})
 
         if response.status_code == 429 and "Retry-After" in response.headers:
             self.log.info(

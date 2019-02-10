@@ -23,7 +23,12 @@ from common import MAILER_CONFIG, RESOURCE_1, SQS_MESSAGE_1
 class SnsTest(unittest.TestCase):
 
     def setUp(self):
-        self.sns_delivery = SnsDelivery(MAILER_CONFIG, boto3.Session())
+        self.sns_delivery = SnsDelivery(
+            cross_accounts=MAILER_CONFIG.get('cross_accounts', []),
+            contact_tags=MAILER_CONFIG.get('contact_tags', []),
+            templates_folders=MAILER_CONFIG.get('templates_folders'),
+            session=boto3.Session()
+        )
         self.sns_topic_example = 'arn:aws:sns:us-east-1:172519456306:cloud-custodian'
 
     def test_target_is_sns(self):

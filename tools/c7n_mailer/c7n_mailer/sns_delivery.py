@@ -21,9 +21,12 @@ from .utils import (
 
 class SnsDelivery(object):
 
-    def __init__(self, config, session):
+    def __init__(self, cross_accounts, contact_tags, templates_folders, session, *args, **kwargs):
         self.log = logging.getLogger(__name__)
-        self.config = config
+
+        self.cross_accounts = cross_accounts
+        self.contact_tags = contact_tags
+        self.templates_folders = templates_folders
         self.aws_sts = session.client('sts')
         self.sns_cache = {}
 
@@ -49,7 +52,7 @@ class SnsDelivery(object):
             self.log,
             'template',
             'default',
-            self.config['templates_folders']
+            self.templates_folders
         )
         return {
             'topic': policy_sns_address,
@@ -85,10 +88,9 @@ class SnsDelivery(object):
             sns_addrs_to_resources_map[policy_sns_address] = sqs_message['resources']
         # get sns topics / messages inside resource-owners tags
         for resource in sqs_message['resources']:
-            resource_owner_tag_keys = self.config.get('contact_tags', [])
             possible_sns_tag_values = get_resource_tag_targets(
                 resource,
-                resource_owner_tag_keys
+                self.contact_tags
             )
             sns_tag_values = self.get_valid_sns_from_list(possible_sns_tag_values)
             # for each resource, get any valid sns topics, and add them to the map
@@ -114,11 +116,11 @@ class SnsDelivery(object):
                 sns = self.sns_cache[account]
             else:
                 # if cross_accounts isn't set, we'll try using the current credentials
-                if account not in self.config.get('cross_accounts', []):
+                if account not in self.cross_accounts:
                     session = Session()
                 else:
                     creds = self.aws_sts.assume_role(
-                        RoleArn=self.config['cross_accounts'][account],
+                        RoleArn=self.cross_accounts[account],
                         RoleSessionName="CustodianNotification")['Credentials']
                     session = Session(
                         aws_access_key_id=creds['AccessKeyId'],

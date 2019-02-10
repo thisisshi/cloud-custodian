@@ -51,7 +51,22 @@ class EmailTest(unittest.TestCase):
     def setUp(self):
         self.aws_session = boto3.Session()
         ldap_lookup = get_ldap_lookup(cache_engine='redis')
-        self.email_delivery = MockEmailDelivery(MAILER_CONFIG, self.aws_session, ldap_lookup)
+        self.email_delivery = EmailDelivery(
+            session=self.aws_session,
+            ldap_lookup=ldap_lookup,
+            org_domain=MAILER_CONFIG.get('org_domain'),
+            contact_tags=MAILER_CONFIG.get('contact_tags'),
+            account_emails=MAILER_CONFIG.get('account_emails'),
+            templates_folders=MAILER_CONFIG.get('templates_folders'),
+            from_address=MAILER_CONFIG.get('from_address'),
+            ldap_uid_tag_keys=MAILER_CONFIG.get('ldap_uid_tags'),
+            smtp_server=MAILER_CONFIG.get('smtp_server'),
+            smtp_port=MAILER_CONFIG.get('smtp_port', 25),
+            smtp_ssl=MAILER_CONFIG.get('smtp_ssl', True),
+            smtp_username=MAILER_CONFIG.get('smtp_username'),
+            smtp_password=MAILER_CONFIG.get('smtp_password'),
+            ses_region=MAILER_CONFIG.get('ssl_region')
+        )
         template_abs_filename = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                                              'example.jinja')
         SQS_MESSAGE_1['action']['template'] = template_abs_filename

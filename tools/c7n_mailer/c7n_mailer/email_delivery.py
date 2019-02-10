@@ -74,32 +74,33 @@ class EmailDelivery(object):
         }
     }
 
-    def __init__(self, config, session, ldap_lookup):
+    def __init__(self, session, ldap_lookup, org_domain, contact_tags, account_emails,
+            templates_folders, from_address, ldap_uid_tag_keys, smtp_server,
+            smtp_port, smtp_ssl, smtp_username, smtp_password, ses_region, *args, **kwargs):
         self.log = logging.getLogger(__name__)
-        self.config = config
         self.session = session
 
         self.ldap_lookup = ldap_lookup
 
-        self.org_domain = self.config.get('org_domain')
-        self.contact_tags = self.config.get('contact_tags')
-        self.account_emails = self.config.get('account_emails')
-        self.templates_folders = self.config.get('templates_folders')
-        self.from_address = self.config.get('from_address')
-        self.ldap_uid_tag_keys = self.config.get('ldap_uid_tags')
+        self.org_domain = org_domain
+        self.contact_tags = contact_tags
+        self.account_emails = account_emails
+        self.templates_folders = templates_folders
+        self.from_address = from_address
+        self.ldap_uid_tag_keys = ldap_uid_tag_keys
 
-        self.smtp_server = self.config.get('smtp_server')
+        self.smtp_server = smtp_server
 
         if not self.smtp_server:
             # only insantiate a new client if mailer is sending via SES
             # this should allow for compatibility with other cloud providers
             # to send email via SMTP
-            self.aws_ses = session.client('ses', region_name=config.get('ses_region'))
+            self.aws_ses = session.client('ses', region_name=ses_region)
         else:
-            self.smtp_port = self.config.get('smtp_port', 25)
-            self.smtp_ssl = self.config.get('smtp_ssl', True)
-            self.smtp_username = self.config.get('smtp_username')
-            self.smtp_password = self.config.get('smtp_password')
+            self.smtp_port = smtp_port
+            self.smtp_ssl = smtp_ssl
+            self.smtp_username = smtp_username
+            self.smtp_password = smtp_password
 
     def get_event_owner_email(self, targets, event):
         """
@@ -374,12 +375,11 @@ class EmailDelivery(object):
 
         if error:
             self.log.warning(
-                "Error policy:%s account:%s sending to:%s \n\n error: %s\n\n mailer.yml: %s" % (
+                "Error policy:%s account:%s sending to:%s \n\n error: %s\n\n mailer.yml" % (
                     sqs_message['policy'],
                     sqs_message.get('account', ''),
                     email_to_addrs,
-                    error,
-                    self.config
+                    error
                 )
             )
         else:

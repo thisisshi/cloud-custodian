@@ -20,15 +20,13 @@ from six.moves.urllib.parse import urlparse, parse_qsl
 
 
 class DataDogDelivery(object):
-    DATADOG_API_KEY = 'datadog_api_key'
-    DATADOG_APPLICATION_KEY = 'datadog_application_key'
+    datadog_application_key = 'datadog_application_key'
+    datadog_api_key = 'datadog_api_key'
 
-    def __init__(self, config, session):
+    def __init__(self, datadog_api_key, datadog_app_key):
         self.log = logging.getLogger(__name__)
-        self.config = config
-        self.session = session
-        self.datadog_api_key = self.config.get(self.DATADOG_API_KEY, None)
-        self.datadog_application_key = self.config.get(self.DATADOG_APPLICATION_KEY, None)
+        self.datadog_api_key = datadog_api_key
+        self.datadog_app_key = datadog_app_key
 
         # Initialize datadog
         if self.datadog_api_key and self.datadog_application_key:
