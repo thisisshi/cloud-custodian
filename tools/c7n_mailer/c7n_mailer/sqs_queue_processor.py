@@ -30,15 +30,15 @@ from .email_delivery import EmailDelivery
 from .sns_delivery import SnsDelivery
 
 from c7n_mailer.utils import kms_decrypt
-
 DATA_MESSAGE = "maidmsg/1.0"
 
 
 class ParallelSQSProcessor(ContextDecorator):
-    def __init__(self, parallel, sqs_messages):
+    def __init__(self, parallel, max_num_processes, sqs_messages, *args, **kwargs):
         self.log = logging.getLogger(__name__)
-        self.sqs_messages = sqs_messages
         self.parallel = parallel
+        self.max_num_processes = max_num_processes
+        self.sqs_messages = sqs_messages
 
     def __call__(self, f):
         def call(*args, **kwargs):
@@ -69,7 +69,10 @@ class ParallelSQSProcessor(ContextDecorator):
         # unless it's being run from CLI on a normal system with SHM
         if self.parallel:
             import multiprocessing
+            self.multiprocessing = True
             self.process_pool = multiprocessing.Pool(processes=self.max_num_processes)
+        else:
+            self.multiprocessing = False
         return self
 
     def __exit__(self, *exc):
@@ -84,7 +87,7 @@ class MailerSqsQueueIterator(object):
     # Copied from custodian to avoid runtime library dependency
     msg_attributes = ['sequence_id', 'op', 'ser']
 
-    def __init__(self, aws_sqs, queue_url, limit=0, timeout=10):
+    def __init__(self, aws_sqs, queue_url, limit=0, timeout=10, *args, **kwargs):
         self.log = logging.getLogger('__name__')
         self.aws_sqs = aws_sqs
         self.queue_url = queue_url
@@ -128,9 +131,9 @@ class MailerSqsQueueProcessor(object):
         """
 
         self.log = logging.getLogger(__name__)
-        self.sqs = self.session.client('sqs')
-        self.config = config
         self.session = session
+        self.config = config
+        self.sqs = self.session.client('sqs')
         self.max_num_processes = max_num_processes
         self.receive_queue = self.config['queue_url']
         self.cache_engine = self.get_cache_engine(
@@ -326,7 +329,8 @@ class MailerSqsQueueProcessor(object):
         sqs_messages = MailerSqsQueueIterator(self.sqs, self.receive_queue)
         sqs_messages.msg_attributes = ['mtype', 'recipient']
 
-        with ParallelSQSProcessor(parallel, sqs_messages) as ParallelProcessor:
+        with ParallelSQSProcessor(
+                parallel, self.max_num_processes, sqs_messages) as ParallelProcessor:
             for sqs_message in sqs_messages:
                 ParallelProcessor(self.process_sqs_message(encoded_sqs_message=sqs_message))
         return
