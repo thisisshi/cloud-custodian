@@ -184,16 +184,15 @@ class MailerSqsQueueProcessor(object):
     def get_cache_engine(self, cache_engine, redis_host, redis_port, ldap_cache_file):
         # set up cache engine, ldap lookup etc.
         if cache_engine == 'redis':
-            caching = Redis(redis_host=redis_host, redis_port=redis_port, db=-1)
+            return Redis(redis_host=redis_host, redis_port=redis_port, db=-1)
         elif cache_engine == 'sqlite':
             try:
                 import sqlite3 # noqa
             except ImportError:
                 raise RuntimeError('No sqlite available: stackoverflow.com/q/44058239')
-            caching = LocalSqlite(ldap_cache_file)
+            return LocalSqlite(ldap_cache_file)
         else:
-            caching = None
-        return caching
+            return None
 
     def get_ldap_lookup(self, ldap_uri, ldap_bind_user, ldap_bind_password, ldap_bind_dn,
             ldap_email_key, ldap_manager_attr, ldap_uid_attr, ldap_uid_regex):
