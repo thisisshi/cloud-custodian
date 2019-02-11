@@ -1,4 +1,5 @@
 import boto3
+import six
 
 from c7n_mailer.slack_delivery import SlackDelivery
 
@@ -67,7 +68,7 @@ class SlackDeliveryTest(EmailTest):
         self.assertTrue(isinstance(results[email], list))
         self.assertTrue(len(results[email]))
         for m in results[email]:
-            self.assertTrue(isinstance(m, str))
+            self.assertTrue(isinstance(m, six.string_types))
 
     @MailerVcr.use_cassette()
     def test_slack_send_message(self):
