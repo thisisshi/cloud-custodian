@@ -42,26 +42,23 @@ class ParallelSQSProcessor(ContextDecorator):
 
     def __call__(self, f):
         def call(*args, **kwargs):
-            sqs_message = kwargs['sqs_message']
-            self.log.debug("Message id: %s received %s" % (sqs_message['MessageId'],
+            sqs_message = kwargs['encoded_sqs_message']
+            self.log.info("Message id: %s received %s" % (sqs_message['MessageId'],
                     sqs_message.get('MessageAttributes', '')))
             msg_kind = sqs_message.get('MessageAttributes', {}).get('mtype', {})
+
             if not msg_kind.get('StringValue') == DATA_MESSAGE:
                 warning_msg = 'Unknown sqs_message or sns format %s' % (
                     sqs_message['Body'][:50])
                 self.log.warning(warning_msg)
-            else:
-                self.process_sqs_message(encoded_sqs_message=sqs_message)
-            self.log.debug('Processed sqs_message')
 
             if self.parallel:
                 self.process_pool.apply_async(f, **kwargs)
             else:
                 f(**kwargs)
 
-            self.log.debug('Processed sqs_message')
+            self.log.info('Processed sqs_message')
             self.sqs_messages.ack(sqs_message)
-
         return call
 
     def __enter__(self):
@@ -77,7 +74,6 @@ class ParallelSQSProcessor(ContextDecorator):
 
     def __exit__(self, *exc):
         self.log.info('No sqs_messages left on the queue, exiting c7n_mailer.')
-
         if self.parallel:
             self.process_pool.close()
             self.process_pool.join()
@@ -118,6 +114,7 @@ class MailerSqsQueueIterator(object):
     next = __next__  # python2.7
 
     def ack(self, m):
+        self.log.info('Acking message: %s' % m['MessageId'])
         self.aws_sqs.delete_message(
             QueueUrl=self.queue_url,
             ReceiptHandle=m['ReceiptHandle'])
@@ -181,8 +178,8 @@ class MailerSqsQueueProcessor(object):
         )
 
         if self.config.get('debug', False):
-            self.log.debug('debug logging is turned on from mailer config file.')
             self.log.setLevel(logging.DEBUG)
+            self.log.debug('debug logging is turned on from mailer config file.')
 
     def get_cache_engine(self, cache_engine, redis_host, redis_port, ldap_cache_file):
         # set up cache engine, ldap lookup etc.
@@ -256,6 +253,8 @@ class MailerSqsQueueProcessor(object):
         # Datadog
         if any(e.startswith('datadog') for e in sqs_message.get('action', ()).get('to')):
             self.handle_datadog_notifications(sqs_message)
+
+        return True
 
     def handle_slack_notifications(self, sqs_message):
         """
@@ -332,5 +331,6 @@ class MailerSqsQueueProcessor(object):
         with ParallelSQSProcessor(
                 parallel, self.max_num_processes, sqs_messages) as ParallelProcessor:
             for sqs_message in sqs_messages:
-                ParallelProcessor(self.process_sqs_message(encoded_sqs_message=sqs_message))
-        return
+                ParallelProcessor(self.process_sqs_message)(encoded_sqs_message=sqs_message)
+
+        return True
