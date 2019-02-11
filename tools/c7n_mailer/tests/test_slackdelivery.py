@@ -1,16 +1,23 @@
 import logging
+import boto3
 
 from c7n_mailer.slack_delivery import SlackDelivery
-from c7n_mailer.sqs_queue_processor import MailerSqsQueueProcessor
 
-from common import SAMPLE_SLACK_SQS_MESSAGE
+from common import SAMPLE_SLACK_SQS_MESSAGE, MAILER_REAL_QUEUE_CONFIG
 from test_email import EmailTest
+from test_sqs_processor import MockMailerSqsQueueProcessor
 
 
 class SlackDeliveryTest(EmailTest):
     def test_slack_get_to_addrs_sans_user_retrieval(self):
-        sqs_message = MailerSqsQueueProcessor.unpack_sqs_message(
-            MockClass(), SAMPLE_SLACK_SQS_MESSAGE)
+
+        processor = MockMailerSqsQueueProcessor(
+            config=MAILER_REAL_QUEUE_CONFIG,
+            session=boto3.Session(),
+            max_num_processes=4
+        )
+
+        sqs_message = processor.unpack_sqs_message(SAMPLE_SLACK_SQS_MESSAGE)
 
         slack_delivery = SlackDelivery('faketoken', 'fakewebhook', None, self.email_delivery)
         results = slack_delivery.get_to_addrs_slack_messages_map(sqs_message)
