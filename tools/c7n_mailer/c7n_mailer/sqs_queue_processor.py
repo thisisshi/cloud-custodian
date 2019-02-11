@@ -23,8 +23,6 @@ import six
 import traceback
 import zlib
 
-from contextlib import ContextDecorator
-
 from .ldap_lookup import LdapLookup, Redis, LocalSqlite
 from .email_delivery import EmailDelivery
 from .sns_delivery import SnsDelivery
@@ -33,7 +31,7 @@ from c7n_mailer.utils import kms_decrypt
 DATA_MESSAGE = "maidmsg/1.0"
 
 
-class ParallelSQSProcessor(ContextDecorator):
+class ParallelSQSProcessor(object):
     def __init__(self, parallel, max_num_processes, sqs_messages, *args, **kwargs):
         self.log = logging.getLogger(__name__)
         self.parallel = parallel
