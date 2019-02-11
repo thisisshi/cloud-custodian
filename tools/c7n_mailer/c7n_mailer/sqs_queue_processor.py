@@ -277,8 +277,16 @@ class MailerSqsQueueProcessor(object):
                 cache_engine=self.cache_engine
             )
         slack_messages = self.slack_delivery.get_to_addrs_slack_messages_map(sqs_message)
+        self.log.info("Sending account:%s policy:%s %s:%s slack:%s to %s" % (
+            sqs_message.get('account', ''),
+            sqs_message['policy']['name'],
+            sqs_message['policy']['resource'],
+            str(len(sqs_message['resources'])),
+            sqs_message['action'].get('slack_template', 'slack_default'),
+            slack_messages.keys())
+        )
         try:
-            self.slack_delivery.slack_handler(sqs_message, slack_messages)
+            self.slack_delivery.slack_handler(slack_messages)
         except Exception:
             traceback.print_exc()
 

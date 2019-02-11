@@ -1,0 +1,186 @@
+interactions:
+- request:
+    body: email=hello%40example.com
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['25']
+      Content-Type: [application/x-www-form-urlencoded]
+      User-Agent: [python-requests/2.21.0]
+    method: POST
+    uri: https://slack.com/api/users.lookupByEmail
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA6tWys9WskpLzClO1VFKLSrKL1KyUiotTi0qjs/LL4lPyy/NS1GqBQCsPcQfJgAA
+        AA==
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: ['private, no-cache, no-store, must-revalidate']
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Length: ['58']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 11 Feb 2019 08:40:53 GMT']
+      Expires: ['Mon, 26 Jul 1997 05:00:00 GMT']
+      Pragma: [no-cache]
+      Referrer-Policy: [no-referrer]
+      Server: [Apache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains; preload]
+      Vary: [Accept-Encoding]
+      Via: [1.1 e7c0b31d9821e117355a6a7a216eac86.cloudfront.net (CloudFront)]
+      X-Accepted-OAuth-Scopes: ['users:read.email']
+      X-Amz-Cf-Id: [UwuxJG2AKu3NdLiLe1MK8p0UKzqtzPsKaSqjtP5KGxPQqd-DNaiTtg==]
+      X-Cache: [Miss from cloudfront]
+      X-Content-Type-Options: [nosniff]
+      X-OAuth-Scopes: ['identify,incoming-webhook,users:read,users:read.email,chat:write:user,chat:write:bot,im:write']
+      X-Slack-Req-Id: [f34dfe6a-e5e3-44de-b9dc-cccc7088db25]
+      X-Via: [haproxy-www-lg69]
+      X-XSS-Protection: ['0']
+    status: {code: 200, message: OK}
+- request:
+    body: email=theli%40outlook.com
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['25']
+      Content-Type: [application/x-www-form-urlencoded]
+      User-Agent: [python-requests/2.21.0]
+    method: POST
+    uri: https://slack.com/api/users.lookupByEmail
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA61V24rbMBD9lUWwfcrFlp2LDUsbaDeFhX3p9qElICbW2NFGtowkd2/k3zvOrfG2
+        fTMYPHNm5uiMHo7emNmy1NsGB6xxaFn6xpRkKfu+jBdJ9PX+jg2YRyjFHn1Y8rufn5e3LVpBiQT5
+        DWpFqUSNHqkpB+2ILTPaEB1L8mmCM2qwCFqchtD5lviV4kWJVmWwGt/jk/hh7HZfEBrWqKn8BZxH
+        W11981BJsPLqQRHFvsXkuUPP0mE4D4JgwGprcqWx3cEr3waMGuuNqY6h277Ux/Afas6QqIwtQavX
+        dp1TVSpXa3g5zbxDuiPtUR5844THZ98BsDSPqos818qCV6ZiKS0Bv8CDFRtwG2orMA/iicwxTKY0
+        giUofbr0T6bx2pjtKDMl1XJlnX+3koY/EKWqhAIFjynbeF+7dDVejR1mjcVRYQ8nt2yr8SFejS+O
+        n0xyKbMsDGTE55hLiKfTaPRYFx/dDY8/yJs95XW0uOa39MHIaci2Q5QFtpwEBcF6GtFflUXbsD/C
+        HSIRBJwPeTyqq+IsNOK9C414L0Ij3hEaz3sXGs97ERrPO0Jn/d/orJ8bnXVvNEz6V0qcvUglno7W
+        Sdi/VuLsRSvxHLVeGJLIoDIVea4+2ELr7x1z39FqToAsVXV6HCg3T1X7QJzz2tL+9uUv3JL3kKNf
+        PgaENtpb+E9tbfxlCnUtDo/REWtqCfuRcBIn82nEEzJKckjBczg27Xa/Adm/GS/LBgAA
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: ['private, no-cache, no-store, must-revalidate']
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Length: ['564']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 11 Feb 2019 08:40:53 GMT']
+      Expires: ['Mon, 26 Jul 1997 05:00:00 GMT']
+      Pragma: [no-cache]
+      Referrer-Policy: [no-referrer]
+      Server: [Apache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains; preload]
+      Vary: [Accept-Encoding]
+      Via: [1.1 d9adada028fe3a04aed64f9ed9d80dd2.cloudfront.net (CloudFront)]
+      X-Accepted-OAuth-Scopes: ['users:read.email']
+      X-Amz-Cf-Id: [zJ-YjllayPqp7YG2NJqqRkYJLmMw-Rr9c-5dp3ZNPnsTxS5muLDehQ==]
+      X-Cache: [Miss from cloudfront]
+      X-Content-Type-Options: [nosniff]
+      X-OAuth-Scopes: ['identify,incoming-webhook,users:read,users:read.email,chat:write:user,chat:write:bot,im:write']
+      X-Slack-Req-Id: [3eb6541d-c506-4056-909f-403a20da24fc]
+      X-Via: [haproxy-www-s5h9]
+      X-XSS-Protection: ['0']
+    status: {code: 200, message: OK}
+- request:
+    body: email=theli%40outlook.com
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['25']
+      Content-Type: [application/x-www-form-urlencoded]
+      User-Agent: [python-requests/2.21.0]
+    method: POST
+    uri: https://slack.com/api/users.lookupByEmail
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA61V24rbMBD9lUWwfcrFlp2LDUsbaDeFhX3p9qElICbW2NFGtowkd2/k3zvOrfG2
+        fTMYPHNm5uiMHo7emNmy1NsGB6xxaFn6xpRkKfu+jBdJ9PX+jg2YRyjFHn1Y8rufn5e3LVpBiQT5
+        DWpFqUSNHqkpB+2ILTPaEB1L8mmCM2qwCFqchtD5lviV4kWJVmWwGt/jk/hh7HZfEBrWqKn8BZxH
+        W11981BJsPLqQRHFvsXkuUPP0mE4D4JgwGprcqWx3cEr3waMGuuNqY6h277Ux/Afas6QqIwtQavX
+        dp1TVSpXa3g5zbxDuiPtUR5844THZ98BsDSPqos818qCV6ZiKS0Bv8CDFRtwG2orMA/iicwxTKY0
+        giUofbr0T6bx2pjtKDMl1XJlnX+3koY/EKWqhAIFjynbeF+7dDVejR1mjcVRYQ8nt2yr8SFejS+O
+        n0xyKbMsDGTE55hLiKfTaPRYFx/dDY8/yJs95XW0uOa39MHIaci2Q5QFtpwEBcF6GtFflUXbsD/C
+        HSIRBJwPeTyqq+IsNOK9C414L0Ij3hEaz3sXGs97ERrPO0Jn/d/orJ8bnXVvNEz6V0qcvUglno7W
+        Sdi/VuLsRSvxHLVeGJLIoDIVea4+2ELr7x1z39FqToAsVXV6HCg3T1X7QJzz2tL+9uUv3JL3kKNf
+        PgaENtpb+E9tbfxlCnUtDo/REWtqCfuRcBIn82nEEzJKckjBczg27Xa/Adm/GS/LBgAA
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: ['private, no-cache, no-store, must-revalidate']
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Length: ['564']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 11 Feb 2019 08:40:53 GMT']
+      Expires: ['Mon, 26 Jul 1997 05:00:00 GMT']
+      Pragma: [no-cache]
+      Referrer-Policy: [no-referrer]
+      Server: [Apache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains; preload]
+      Vary: [Accept-Encoding]
+      Via: [1.1 5bcdd10adb8173f9bf0594b52ccef3a8.cloudfront.net (CloudFront)]
+      X-Accepted-OAuth-Scopes: ['users:read.email']
+      X-Amz-Cf-Id: [GGauh3nABklTajT9sa5o5vviY9lrOM5x5OvL4rEOv2K3TfocEvuz8Q==]
+      X-Cache: [Miss from cloudfront]
+      X-Content-Type-Options: [nosniff]
+      X-OAuth-Scopes: ['identify,incoming-webhook,users:read,users:read.email,chat:write:user,chat:write:bot,im:write']
+      X-Slack-Req-Id: [15d65db1-5921-483b-926c-dca44edf62f6]
+      X-Via: [haproxy-www-yvvv]
+      X-XSS-Protection: ['0']
+    status: {code: 200, message: OK}
+- request:
+    body: email=theli%40outlook.com
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['25']
+      Content-Type: [application/x-www-form-urlencoded]
+      User-Agent: [python-requests/2.21.0]
+    method: POST
+    uri: https://slack.com/api/users.lookupByEmail
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA61V24rbMBD9lUWwfcrFlp2LDUsbaDeFhX3p9qElICbW2NFGtowkd2/k3zvOrfG2
+        fTMYPHNm5uiMHo7emNmy1NsGB6xxaFn6xpRkKfu+jBdJ9PX+jg2YRyjFHn1Y8rufn5e3LVpBiQT5
+        DWpFqUSNHqkpB+2ILTPaEB1L8mmCM2qwCFqchtD5lviV4kWJVmWwGt/jk/hh7HZfEBrWqKn8BZxH
+        W11981BJsPLqQRHFvsXkuUPP0mE4D4JgwGprcqWx3cEr3waMGuuNqY6h277Ux/Afas6QqIwtQavX
+        dp1TVSpXa3g5zbxDuiPtUR5844THZ98BsDSPqos818qCV6ZiKS0Bv8CDFRtwG2orMA/iicwxTKY0
+        giUofbr0T6bx2pjtKDMl1XJlnX+3koY/EKWqhAIFjynbeF+7dDVejR1mjcVRYQ8nt2yr8SFejS+O
+        n0xyKbMsDGTE55hLiKfTaPRYFx/dDY8/yJs95XW0uOa39MHIaci2Q5QFtpwEBcF6GtFflUXbsD/C
+        HSIRBJwPeTyqq+IsNOK9C414L0Ij3hEaz3sXGs97ERrPO0Jn/d/orJ8bnXVvNEz6V0qcvUglno7W
+        Sdi/VuLsRSvxHLVeGJLIoDIVea4+2ELr7x1z39FqToAsVXV6HCg3T1X7QJzz2tL+9uUv3JL3kKNf
+        PgaENtpb+E9tbfxlCnUtDo/REWtqCfuRcBIn82nEEzJKckjBczg27Xa/Adm/GS/LBgAA
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: ['private, no-cache, no-store, must-revalidate']
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Length: ['564']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 11 Feb 2019 08:40:53 GMT']
+      Expires: ['Mon, 26 Jul 1997 05:00:00 GMT']
+      Pragma: [no-cache]
+      Referrer-Policy: [no-referrer]
+      Server: [Apache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains; preload]
+      Vary: [Accept-Encoding]
+      Via: [1.1 b01831623dd4f0e4e4bccb0793c852ec.cloudfront.net (CloudFront)]
+      X-Accepted-OAuth-Scopes: ['users:read.email']
+      X-Amz-Cf-Id: [KZ71oOC7z-HWkIErDYqowno00avkgj6bXa9Jx-QA97vnZPWG9z2gSA==]
+      X-Cache: [Miss from cloudfront]
+      X-Content-Type-Options: [nosniff]
+      X-OAuth-Scopes: ['identify,incoming-webhook,users:read,users:read.email,chat:write:user,chat:write:bot,im:write']
+      X-Slack-Req-Id: [e66f3af3-5a51-4531-9841-01e218120da4]
+      X-Via: [haproxy-www-vqqw]
+      X-XSS-Protection: ['0']
+    status: {code: 200, message: OK}
+version: 1

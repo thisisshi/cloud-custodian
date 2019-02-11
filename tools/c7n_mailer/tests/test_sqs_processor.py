@@ -1,5 +1,4 @@
 import boto3
-import os
 import placebo
 
 from mock import patch
@@ -13,9 +12,7 @@ from c7n_mailer.sqs_queue_processor import ParallelSQSProcessor, \
 
 from common import MAILER_CONFIG, MAILER_REDIS_CONFIG, MAILER_NO_CACHE_CONFIG, \
     MAILER_REAL_QUEUE_CONFIG, get_fake_ldap_connection, MockRedisLookup, \
-    MockLocalSqlite, SAMPLE_SQS_MESSAGE
-
-DIR_NAME = os.path.dirname(os.path.realpath(__file__))
+    MockLocalSqlite, SAMPLE_SQS_MESSAGE, DIR_NAME
 
 
 class TestParallelSqsProcessor(TestCase):

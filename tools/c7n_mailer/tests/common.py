@@ -14,12 +14,15 @@
 import fakeredis
 import logging
 import os
+import vcr
 
 from c7n_mailer.ldap_lookup import LdapLookup, Redis, LocalSqlite
 from ldap3 import Server, Connection, MOCK_SYNC
 from ldap3.strategy import mockBase
 
 logger = logging.getLogger('custodian.mailer')
+
+DIR_NAME = os.path.dirname(os.path.realpath(__file__))
 
 SAMPLE_SQS_MESSAGE = {
     'MessageId': '859a51c2-047e-43d6-951b-f0cd226ecb1a',
@@ -33,6 +36,14 @@ SAMPLE_SLACK_SQS_MESSAGE = {
     'ReceiptHandle': 'AQEBa+wVhkQnEmaeqc3pBtayA2thJzNTK8k3D6TsnLa7VQEcP2b06umHtR+I5U+3rbkW1U6CrXBZQt2t12jKqzRKr4mSIwEcUitPvKg4aLxXDKIxvVejk7BkIAogMNFBimYoE2mb1tS4GYV2RLLeOEw+59ukz3PUzEYP7WqIMVDwMOAj1uOMAa7kX75NelJz1yMP309yA1DXw+wwNeA2D0dZGkypCGia6AjqTGVXXwwN2aFPvogMrhOZas0IDdHdNxn4zD+5ItquAPJ8+/w9htuS3MfnLYNONp5BQv1X7BxuzYuguSg2ooEKpL7vUauMwrCkhiqpHEXgHXuouCCekvLK8UD74MaX26bX7mhgi4i+5M6hxUoSOsp1sq1mlm1FsRtXKf0AaE/yoY1vuVsbo334gw==', # noqa
     'MD5OfBody': '771643921fb11b23fe33b64005822c97',
     'Body': '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'} # noqa
+
+SAMPLE_SLACK_SQS_MESSAGE_WITH_LOOKUP = {
+    'MessageId': '86d5589c-ee53-482e-aea8-c32ecdef0b8d',
+    'ReceiptHandle': 'AQEBY8NB4TrwxGMESvugA6nhzeVp7sQlnQIotpwktMV2XtvojMmZr1v3w577TS5IhRx5ng7D5BnbquWqPib90soW3unByVb0LXL2lNr2UFMgqoz7L5MXD3beuU5iIl8fFdeyCaoJm2h0L7cwxVrOLX4Ck0G/LjaUdui2vFsy7ag+qGP8NxNGVBgju7l/wfAu4h3B+cDjUcnizmj1LBjNRu1KrxnzzCeqhicJ+Ju2gjPGJFgxYCOiuVT+cF2OtzGhOTB2ksbonu2ZaEvhCwsoOFcmN62ZzZJiEGW9UtllW66IjhAU6Z2IZ122d4mprrUhXor14OnWWiCdGCWIhMrP8qQ0QWRBvhrkNNiO4h5DRZUhuJumBdqXROL7xL8vsYqA5xgedSsqQLPvlWjAjta8uUOsEA==', # noqa
+    'MD5OfBody': 'e718f45dd95998843d776c824bd12956',
+    'Body': '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' # noqa
+}
+SAMPLE_SLACK_TO_ADDR_MESSAGE_MAP = {'theli@outlook.com': ['{\n   "attachments":[\n      {\n         "fallback":"Cloud Custodian Policy Violation",\n         "author_name":"Cloud Custodian",\n         "title": "Policy Name: s3",\n         "color":"danger",\n         "fields":[\n            {\n               "title":"Account",\n               "value":"custodian-skunk-works",\n               "short":"True"\n            },\n            {\n               "title":"Region",\n               "value":"us-east-1",\n               "short":"True"\n            },{\n               "title":"Resources",\n               "value":"c7n-sagemaker-test\n"\n            }\n         ]\n      }\n   ],   "channel":"UG4A93HNK","username":"Cloud Custodian"\n}', '{\n   "attachments":[\n      {\n         "fallback":"Cloud Custodian Policy Violation",\n         "author_name":"Cloud Custodian",\n         "title": "Policy Name: s3",\n         "color":"danger",\n         "fields":[\n            {\n               "title":"Account",\n               "value":"custodian-skunk-works",\n               "short":"True"\n            },\n            {\n               "title":"Region",\n               "value":"us-east-1",\n               "short":"True"\n            },{\n               "title":"Resources",\n               "value":"aws-codestar-us-east-1-644160558196-c7n-test-pipe\nc7n-codebuild\nc7n-s3-orgid\nc7n-sagemaker-test\nc7n-ssm\nc7n-ssm-build\nc7n-test-bucket\nc7n-test-public-bucket\nc7n-test-s3-public-bucket\nc7n-vpc-flow-logs\ncf-templates-9c4kee3xbart-us-east-1\ncognito-vue\nconfig-bucket-644160558196\ncustodian-skunk-trails\nelasticbeanstalk-us-east-1-644160558196\ntest-for-global-accelerator-bucket\n"\n            }\n         ]\n      }\n   ],   "channel":"UG4A93HNK","username":"Cloud Custodian"\n}']} # noqa
 
 PETER = (
     'uid=peter,cn=users,dc=initech,dc=com',
@@ -479,3 +490,15 @@ class MockRedisLookup(Redis):
 
 class MockLocalSqlite(LocalSqlite):
     pass
+
+
+def append_yaml(path):
+    breakpoint()
+
+
+MailerVcr = vcr.VCR(
+    cassette_library_dir=DIR_NAME + '/data/cassettes/',
+    match_on=['uri', 'method'],
+    filter_headers=['authorization'],
+    path_transformer=vcr.VCR.ensure_suffix('.yaml')
+)

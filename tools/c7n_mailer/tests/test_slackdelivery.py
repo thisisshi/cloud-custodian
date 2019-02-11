@@ -1,23 +1,28 @@
-import logging
 import boto3
 
 from c7n_mailer.slack_delivery import SlackDelivery
 
-from common import SAMPLE_SLACK_SQS_MESSAGE, MAILER_REAL_QUEUE_CONFIG
+from common import SAMPLE_SLACK_SQS_MESSAGE, MAILER_REAL_QUEUE_CONFIG, \
+    SAMPLE_SLACK_SQS_MESSAGE_WITH_LOOKUP, SAMPLE_SLACK_TO_ADDR_MESSAGE_MAP, \
+    MailerVcr
+
 from test_email import EmailTest
 from test_sqs_processor import MockMailerSqsQueueProcessor
 
 
+def unpack_message(message):
+    processor = MockMailerSqsQueueProcessor(
+        config=MAILER_REAL_QUEUE_CONFIG,
+        session=boto3.Session(),
+        max_num_processes=4
+    )
+    sqs_message = processor.unpack_sqs_message(message)
+    return sqs_message
+
+
 class SlackDeliveryTest(EmailTest):
     def test_slack_get_to_addrs_sans_user_retrieval(self):
-
-        processor = MockMailerSqsQueueProcessor(
-            config=MAILER_REAL_QUEUE_CONFIG,
-            session=boto3.Session(),
-            max_num_processes=4
-        )
-
-        sqs_message = processor.unpack_sqs_message(SAMPLE_SLACK_SQS_MESSAGE)
+        sqs_message = unpack_message(SAMPLE_SLACK_SQS_MESSAGE)
 
         slack_delivery = SlackDelivery('faketoken', 'fakewebhook', None, self.email_delivery)
         results = slack_delivery.get_to_addrs_slack_messages_map(sqs_message)
@@ -48,7 +53,26 @@ class SlackDeliveryTest(EmailTest):
         self.assertTrue(results['foo'])
         self.assertTrue(results['https://hooks.slack.com/foo'])
 
+    @MailerVcr.use_cassette()
+    def test_slack_get_to_addrs_with_user_lookup(self):
+        sqs_message = unpack_message(SAMPLE_SLACK_SQS_MESSAGE_WITH_LOOKUP)
+        slack_delivery = SlackDelivery('faketoken', 'fakewebhook', None, self.email_delivery)
+        results = slack_delivery.get_to_addrs_slack_messages_map(sqs_message)
+        self.assertTrue(results)
 
-class MockClass(object):
-    def __init__(self):
-        self.log = logging.getLogger('foo')
+    @MailerVcr.use_cassette()
+    def test_slack_send_message(self):
+        slack_delivery = SlackDelivery('faketoken', 'fakewebhook', None, self.email_delivery)
+        responses = []
+
+        for k, v in SAMPLE_SLACK_TO_ADDR_MESSAGE_MAP.items():
+            for m in v:
+                resp = slack_delivery.send_slack_msg(k, m)
+                if resp:
+                    responses.append(resp)
+
+    @MailerVcr.use_cassette()
+    def test_slack_handler(self):
+        slack_delivery = SlackDelivery('faketoken', 'fakewebhook', None, self.email_delivery)
+        result = slack_delivery.slack_handler(SAMPLE_SLACK_TO_ADDR_MESSAGE_MAP)
+        self.assertTrue(result)

@@ -1,0 +1,109 @@
+interactions:
+- request:
+    body: "{\n   \"attachments\":[\n      {\n         \"fallback\":\"Cloud Custodian
+      Policy Violation\",\n         \"author_name\":\"Cloud Custodian\",\n         \"title\":
+      \"Policy Name: s3\",\n         \"color\":\"danger\",\n         \"fields\":[\n
+      \           {\n               \"title\":\"Account\",\n               \"value\":\"custodian-skunk-works\",\n
+      \              \"short\":\"True\"\n            },\n            {\n               \"title\":\"Region\",\n
+      \              \"value\":\"us-east-1\",\n               \"short\":\"True\"\n
+      \           },{\n               \"title\":\"Resources\",\n               \"value\":\"c7n-sagemaker-test\n\"\n
+      \           }\n         ]\n      }\n   ],   \"channel\":\"UG4A93HNK\",\"username\":\"Cloud
+      Custodian\"\n}"
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['655']
+      Content-Type: [application/json;charset=utf-8]
+      User-Agent: [python-requests/2.21.0]
+    method: POST
+    uri: https://slack.com/api/chat.postMessage
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA32RQUsDMRCF/8qS865k7Urr3rRCL1ZEURGVMs2mbdhsIpmJWkr/uxO2tYJYcgi8
+        N/PNy2QjfCtqClHnQq3AOW1FLa4m1fV9+fzwJHJByEJ5Vp2PhtVQlidSVqdSstFpRFhqUW8Erd/5
+        /lFygXG+0+aeZged9BexeAwbUQcHXeodWx+bbByRfGPAsZlopmHrclJN5Wh6PmYRiECtOu0S82Uj
+        INLKh9m/kAVYOwfV/jWzW2+NWmePxlsg41M1GbKJs7NumFpnOGAnBSl5bd76wAUwkP0LFkbbpo+y
+        b75QykdHbH6AjUlR+5kFttG1xacPLabNcXTqf2SbHwB3etnH2fdHLDQgFeWxHvQxKI2/xw55IP9F
+        B60OBWmkV3cg8GZQb9/4bL8BH1kwnBkCAAA=
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: ['private, no-cache, no-store, must-revalidate']
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Length: ['311']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 11 Feb 2019 08:45:01 GMT']
+      Expires: ['Mon, 26 Jul 1997 05:00:00 GMT']
+      Pragma: [no-cache]
+      Referrer-Policy: [no-referrer]
+      Server: [Apache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains; preload]
+      Vary: [Accept-Encoding]
+      Via: [1.1 d9adada028fe3a04aed64f9ed9d80dd2.cloudfront.net (CloudFront)]
+      X-Accepted-OAuth-Scopes: ['chat:write:bot']
+      X-Amz-Cf-Id: [UQo8Gok7fROoGXR_R_54l2JY3WXXH6uCuTqxH2qtlHjvVF-UGjX7iQ==]
+      X-Cache: [Miss from cloudfront]
+      X-Content-Type-Options: [nosniff]
+      X-OAuth-Scopes: ['identify,incoming-webhook,users:read,users:read.email,chat:write:user,chat:write:bot,im:write']
+      X-Slack-Req-Id: [9b2cfeec-723c-480e-9ee4-1cef373588db]
+      X-Via: [haproxy-www-ts1h]
+      X-XSS-Protection: ['0']
+    status: {code: 200, message: OK}
+- request:
+    body: "{\n   \"attachments\":[\n      {\n         \"fallback\":\"Cloud Custodian
+      Policy Violation\",\n         \"author_name\":\"Cloud Custodian\",\n         \"title\":
+      \"Policy Name: s3\",\n         \"color\":\"danger\",\n         \"fields\":[\n
+      \           {\n               \"title\":\"Account\",\n               \"value\":\"custodian-skunk-works\",\n
+      \              \"short\":\"True\"\n            },\n            {\n               \"title\":\"Region\",\n
+      \              \"value\":\"us-east-1\",\n               \"short\":\"True\"\n
+      \           },{\n               \"title\":\"Resources\",\n               \"value\":\"aws-codestar-us-east-1-644160558196-c7n-test-pipe\nc7n-codebuild\nc7n-s3-orgid\nc7n-sagemaker-test\nc7n-ssm\nc7n-ssm-build\nc7n-test-bucket\nc7n-test-public-bucket\nc7n-test-s3-public-bucket\nc7n-vpc-flow-logs\ncf-templates-9c4kee3xbart-us-east-1\ncognito-vue\nconfig-bucket-644160558196\ncustodian-skunk-trails\nelasticbeanstalk-us-east-1-644160558196\ntest-for-global-accelerator-bucket\n\"\n
+      \           }\n         ]\n      }\n   ],   \"channel\":\"UG4A93HNK\",\"username\":\"Cloud
+      Custodian\"\n}"
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['1010']
+      Content-Type: [application/json;charset=utf-8]
+      User-Agent: [python-requests/2.21.0]
+    method: POST
+    uri: https://slack.com/api/chat.postMessage
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA31Sy27bMBD8FYNns5Bi+XlrXSCXpihatEXRFAFFrWRCFFcgl3YCw//epd9NmkAH
+        aWd2Zl/aCmzFgnyEodAr5RxYsRAfb4tP3/Jf33+KoaDAQD4u5rNpMc3yd1lWjLKMiQ5CUA2IxVbQ
+        U8/vMzIUIZZHrER6uOAEj8TgW7YxgHeqS9qlxVgNljEQVkY5JpObqZj6cFvcZbO7+ZJBRaT0qgOX
+        PH9vhYq0Qv/wqkmtrC2Vbl+Sgy9ojX4a/DBoFRlM2WTIJp8j9ZldF4MwYiY1kvPa0KLnBDXKbvYT
+        1AZsdWjlJH6vNUZHTK6VjQnRp5oytNG1coO+DWlz3DodLrIbXgy+QnNo56SPQYIKJPO3NAGj1xCu
+        ZGoTpMYKAikvzx5yUhT5JBuPZ/l8IvXUSeIM2Zse7l0Kk6SMxlaHMIwk+sacIr5tp1rwe9URC935
+        Q14p975l1C3QFdDHkpf7Euc6/6HWvZa1xY202ASGak7uej4YBDnXRQsweiyVp8t8nISNM4RyHdNE
+        6GrTHD3/mZ25Z3chr4zlKmDZyegSlOPd2faV5d27feM1etlYLJWVSmuw4BUxdJricjP+FwPs/vCz
+        +wuzORWHiwMAAA==
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: ['private, no-cache, no-store, must-revalidate']
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Length: ['466']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 11 Feb 2019 08:45:01 GMT']
+      Expires: ['Mon, 26 Jul 1997 05:00:00 GMT']
+      Pragma: [no-cache]
+      Referrer-Policy: [no-referrer]
+      Server: [Apache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains; preload]
+      Vary: [Accept-Encoding]
+      Via: [1.1 5bcdd10adb8173f9bf0594b52ccef3a8.cloudfront.net (CloudFront)]
+      X-Accepted-OAuth-Scopes: ['chat:write:bot']
+      X-Amz-Cf-Id: [MdxUa_VIjG9xXQp8aHUJuJkGFjTNoDLa02oZODbo6ANhbDOijLJt8g==]
+      X-Cache: [Miss from cloudfront]
+      X-Content-Type-Options: [nosniff]
+      X-OAuth-Scopes: ['identify,incoming-webhook,users:read,users:read.email,chat:write:user,chat:write:bot,im:write']
+      X-Slack-Req-Id: [bbaddf70-bf64-47b4-a33c-12545878f1ce]
+      X-Via: [haproxy-www-v5u4]
+      X-XSS-Protection: ['0']
+    status: {code: 200, message: OK}
+version: 1

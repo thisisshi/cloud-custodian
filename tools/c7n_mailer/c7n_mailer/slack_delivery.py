@@ -23,6 +23,7 @@ from c7n_mailer.utils_email import is_email
 class SlackDelivery(object):
 
     def __init__(self, slack_token, slack_webhook, cache_engine, email_handler):
+        # TODO: get rid of email_handler dep
         self.log = logging.getLogger(__name__)
         self.caching = cache_engine
         self.templates_folders = email_handler.templates_folders
@@ -31,74 +32,132 @@ class SlackDelivery(object):
         self.email_handler = email_handler
 
     def get_to_addrs_slack_messages_map(self, sqs_message):
+        """
+        Returns a mapping of slack identities to a list of rendered
+        request bodies for use when delivering slack notifications.
+
+        i.e. {'slackuser': ['requestbody']}
+
+        Supports the following formats:
+        - slack://owners
+            `owners` are specified by the mailer configuration file when
+            initialized and are looked up via the resource's tag value.
+
+        - slack://tag/{user-specified-tag}
+            Users can specify a tag to query from, e.g.:
+                slack://tag/notify-channel
+                slack://tag/slack-email
+            if the tag value is an email address, this function will do
+            a lookup against Slack's users to find the id and return
+            a template with the proper user id. Otherwise, it will assume
+            the value is a channel name
+
+        - slack://{email@address.com}
+            Users can specify an email address to receive slack notifications.
+            this function will performm a lookup against Slack's users to
+            find  the user's id and return the rendered template.
+
+        - slack://#{channel}
+            Users can specify a channel to send notifications. This requires
+            the use of a Slack token in the configuration file.
+
+        - slack://webhook/#{channel}
+            Users can specify a channel to send notifications. This requires
+            the use of a Slack Webhook in the configuration file.
+
+        - https://hooks.slack.com/...
+            Users can specify a direct webhook from which to receive Slack
+            notifications from.
+        """
         resource_list = []
-        for resource in sqs_message['resources']:
-            resource_list.append(resource)
+        resource_list.extend(sqs_message['resources'])
 
         slack_messages = {}
 
-        # Check for Slack targets in 'to' action and render appropriate template.
         for target in sqs_message.get('action', ()).get('to'):
             if target == 'slack://owners':
                 to_addrs_to_resources_map = \
                     self.email_handler.get_email_to_addrs_to_resources_map(sqs_message)
                 for to_addrs, resources in six.iteritems(to_addrs_to_resources_map):
                     resolved_addrs = self.retrieve_user_im(list(to_addrs))
+
                     if not resolved_addrs:
                         continue
+
                     for address, slack_target in resolved_addrs.items():
-                        slack_messages[address] = get_rendered_jinja(
-                            slack_target, sqs_message, resources,
-                            'slack_template', 'slack_default', self.templates_folders)
-                self.log.debug(
-                    "Generating messages for recipient list produced by resource owner resolution.")
+                        slack_messages.setdefault(address, []).append(
+                            get_rendered_jinja(slack_target, sqs_message, resources,
+                            'slack_template', 'slack_default', self.templates_folders))
+
+                continue
+            elif target.startswith('slack://tag/'):
+                for r in resource_list:
+                    if 'Tags' not in r:
+                        continue
+
+                    tag_name = target.split('tag/', 1)[1]
+                    tag_map = {t['Key']: t['Value'] for t in r.get('Tags', {})}
+                    tag = tag_map.get(tag_name, None)
+
+                    if not tag:
+                        continue
+
+                    if is_email(tag):
+                        address = list(self.retrieve_user_im([tag]).keys())[0]
+                        slack_target = list(self.retrieve_user_im([tag]).values())[0]
+                    else:  # assume tag is a channel name
+                        address = tag
+                        slack_target = tag
+
+                    slack_messages.setdefault(address, []).append(
+                        get_rendered_jinja(slack_target, sqs_message, [r],
+                        'slack_template', 'slack_default', self.templates_folders))
+                continue
             elif target.startswith('https://hooks.slack.com/'):
-                slack_messages[target] = get_rendered_jinja(
-                    target, sqs_message, resource_list, 'slack_template',
-                    'slack_default', self.templates_folders)
+                address = target
+                slack_target = target
             elif target.startswith('slack://webhook/#') and self.slack_webhook:
-                slack_messages[self.slack_webhook] = get_rendered_jinja(
-                    target.split('slack://webhook/#', 1)[1], sqs_message,
-                    resource_list, 'slack_template', 'slack_default', self.templates_folders)
-                self.log.debug("Generating message for webhook %s." % self.slack_webhook)
+                address = self.slack_webhook
+                slack_target = target.split('slack://webhook/#', 1)[1]
             elif target.startswith('slack://') and is_email(target.split('slack://', 1)[1]):
                 resolved_addrs = self.retrieve_user_im([target.split('slack://', 1)[1]])
-                for address, slack_target in resolved_addrs.items():
-                    slack_messages[address] = get_rendered_jinja(slack_target, sqs_message,
-                        resource_list, 'slack_template', 'slack_default', self.templates_folders)
+                address = list(resolved_addrs.keys())[0]
+                slack_target = list(resolved_addrs.values())[0]
             elif target.startswith('slack://#'):
-                resolved_addrs = target.split('slack://#', 1)[1]
-                slack_messages[resolved_addrs] = get_rendered_jinja(resolved_addrs, sqs_message,
-                resource_list, 'slack_template', 'slack_default', self.templates_folders)
-            elif target.startswith('slack://tag/') and 'Tags' in resource:
-                tag_name = target.split('tag/', 1)[1]
-                result = resource.get('Tags', {}).get(tag_name, None)
-                resolved_addrs = result
-                slack_messages[resolved_addrs] = get_rendered_jinja(resolved_addrs, sqs_message,
-                    resource_list, 'slack_template', 'slack_default', self.templates_folders)
-                self.log.debug("Generating message for specified Slack channel.")
+                address = target.split('slack://#', 1)[1]
+                slack_target = address
+            else:
+                continue
+            slack_messages.setdefault(address, []).append(
+                get_rendered_jinja(slack_target, sqs_message, resource_list,
+                'slack_template', 'slack_default', self.templates_folders))
         return slack_messages
 
-    def slack_handler(self, sqs_message, slack_messages):
+    def slack_handler(self, slack_messages):
+        """
+        Entry point for delivering Slack Messages
+        """
         for key, payload in slack_messages.items():
-            self.log.info("Sending account:%s policy:%s %s:%s slack:%s to %s" % (
-                sqs_message.get('account', ''),
-                sqs_message['policy']['name'],
-                sqs_message['policy']['resource'],
-                str(len(sqs_message['resources'])),
-                sqs_message['action'].get('slack_template', 'slack_default'),
-                key)
-            )
-            self.send_slack_msg(key, payload)
+            for p in payload:
+                self.send_slack_msg(key, p)
+        return True
 
     def retrieve_user_im(self, email_addresses):
-        list = {}
+        """
+        Retrieves Slack user ID from email address
+
+        This requires the following permissions in Slack:
+
+        users:read
+        users:read_email
+        """
+        email_to_id_map = {}
         if not self.slack_token:
             self.log.info("No Slack token found.")
         for address in email_addresses:
             if self.caching and self.caching.get(address):
                 self.log.debug('Got Slack metadata from cache for: %s' % address)
-                list[address] = self.caching.get(address)
+                email_to_id_map[address] = self.caching.get(address)
                 continue
             response = requests.post(
                 url='https://slack.com/api/users.lookupByEmail',
@@ -113,9 +172,9 @@ class SlackDelivery(object):
                     time.sleep(int(response.headers['Retry-After']))
                     continue
                 elif response["error"] == "invalid_auth":
-                    raise Exception("Invalid Slack token.")
+                    self.log.error('Invalid Slack token')
                 elif response["error"] == "users_not_found":
-                    self.log.info("Slack user ID not found.")
+                    self.log.info("Slack user ID not found: %s" % address)
                     if self.caching:
                         self.caching.set(address, {})
                     continue
@@ -130,10 +189,20 @@ class SlackDelivery(object):
                 if self.caching:
                     self.log.debug('Writing user: %s metadata to cache.', address)
                     self.caching.set(address, slack_user_id)
-                list[address] = slack_user_id
-        return list
+                email_to_id_map[address] = slack_user_id
+        return email_to_id_map
 
     def send_slack_msg(self, key, message_payload):
+        """
+        Send Slack Messages
+
+        If key is a Slack webhook, send directly to the webhook
+        Othwerwise, we use the API (/api/chat.postMessage)
+
+        This requires the following permissions in Slack:
+        im:write
+        chat:write:bot
+        """
         if key.startswith('https://hooks.slack.com/'):
             response = requests.post(
                 url=key,
@@ -147,11 +216,12 @@ class SlackDelivery(object):
                          'Authorization': 'Bearer %s' % self.slack_token})
 
         if response.status_code == 429 and "Retry-After" in response.headers:
-            self.log.info(
-                "Slack API rate limiting. Waiting %d seconds",
+            self.log.info("Slack API rate limiting. Waiting %d seconds",
                 int(response.headers['retry-after']))
             time.sleep(int(response.headers['Retry-After']))
             return
         elif response.status_code != 200:
             self.log.info("Error in sending Slack message: %s" % response.json())
             return
+
+        return response

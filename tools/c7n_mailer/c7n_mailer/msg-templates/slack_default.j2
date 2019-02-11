@@ -2,30 +2,37 @@
    "attachments":[
       {
          "fallback":"Cloud Custodian Policy Violation",
-         "title":"Custodian",
+         "author_name":"Cloud Custodian",
+         "title": "{{ "Policy Name: " + policy['name'] }}",
          "color":"danger",
          "fields":[
             {
-               "title":"Resources",
-               "value":"{%- for resource in resources -%}
-                        {{ format_resource(resource, policy['resource']) | replace('\\"', '"') | replace('"', '\\"') }}
-                        {%- endfor -%}"
-            },
-            {
                "title":"Account",
-               "value":"{{ account }}"
+               "value":"{{ account }}",
+               "short":"True"
             },
             {
                "title":"Region",
-               "value":"{{ region }}"
+               "value":"{{ region }}",
+               "short":"True"
             },
-            {
-               "title":"Violation Description",
-               "value":"{{ action['violation_desc'] }}"
-            },
+            {%- if action.get('violation_desc') -%}
+              {
+                 "title":"Violation Description",
+                 "value":"{{ action.get['violation_desc'] }}"
+              },
+            {%- endif -%}
+            {%- if action.get('violation_desc') -%}
             {
                "title":"Action Description",
-               "value":"{{ action['action_desc'] }}"
+               "value":"{{ action['action_desc']}}"
+            },
+            {%- endif -%}
+            {
+               "title":"Resources",
+               "value":"{%- for resource in resources -%}
+                        {{ format_resource(resource, policy['resource']) | replace('\\"', '"') | replace('"', '\\"') + "\n"}}  
+                        {%- endfor -%}"
             }
          ]
       }
@@ -33,5 +40,5 @@
    {%- if not recipient.startswith('https://') %}
    "channel":"{{ recipient }}",
    {%- endif -%}
-   "username":"Custodian"
+   "username":"Cloud Custodian"
 }
