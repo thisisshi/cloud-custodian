@@ -40,7 +40,6 @@ class SlackDeliveryTest(EmailTest):
         self.assertTrue(results['fakewebhook'])
         self.assertTrue(results['foo'])
         self.assertTrue(results['https://hooks.slack.com/foo'])
-        breakpoint()
 
 
 class MockClass(object):
