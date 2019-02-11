@@ -65,11 +65,22 @@ class SlackDeliveryTest(EmailTest):
         slack_delivery = SlackDelivery('faketoken', 'fakewebhook', None, self.email_delivery)
         responses = []
 
+        counter = 0
+
+        for k, v in SAMPLE_SLACK_TO_ADDR_MESSAGE_MAP.items():
+            for m in v:
+                counter += 1
+
         for k, v in SAMPLE_SLACK_TO_ADDR_MESSAGE_MAP.items():
             for m in v:
                 resp = slack_delivery.send_slack_msg(k, m)
                 if resp:
                     responses.append(resp)
+
+        self.assertTrue(responses)
+        self.assertEqual(len(responses), counter)
+        for r in responses:
+            self.assertEqual(resp.status_code, 200)
 
     @MailerVcr.use_cassette()
     def test_slack_handler(self):
