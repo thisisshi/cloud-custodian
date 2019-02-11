@@ -492,10 +492,6 @@ class MockLocalSqlite(LocalSqlite):
     pass
 
 
-def append_yaml(path):
-    breakpoint()
-
-
 MailerVcr = vcr.VCR(
     cassette_library_dir=DIR_NAME + '/data/cassettes/',
     match_on=['uri', 'method'],

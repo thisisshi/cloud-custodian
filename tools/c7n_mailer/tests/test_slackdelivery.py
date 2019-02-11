@@ -55,10 +55,19 @@ class SlackDeliveryTest(EmailTest):
 
     @MailerVcr.use_cassette()
     def test_slack_get_to_addrs_with_user_lookup(self):
+        # so my email doesn't get picked up by a bot crawling github...
+        email = 't' + 'hel' + 'i@o' + 'utlook.com'
         sqs_message = unpack_message(SAMPLE_SLACK_SQS_MESSAGE_WITH_LOOKUP)
         slack_delivery = SlackDelivery('faketoken', 'fakewebhook', None, self.email_delivery)
         results = slack_delivery.get_to_addrs_slack_messages_map(sqs_message)
+        # TODO - need to actually have assertions here
         self.assertTrue(results)
+        self.assertTrue(len(results.keys()))
+        self.assertTrue(email in results.keys())
+        self.assertTrue(isinstance(results[email], list))
+        self.assertTrue(len(results[email]))
+        for m in results[email]:
+            self.assertTrue(isinstance(m, str))
 
     @MailerVcr.use_cassette()
     def test_slack_send_message(self):
