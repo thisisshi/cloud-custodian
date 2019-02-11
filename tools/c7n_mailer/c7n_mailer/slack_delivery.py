@@ -70,9 +70,9 @@ class SlackDelivery(object):
                 resolved_addrs = target.split('slack://#', 1)[1]
                 slack_messages[resolved_addrs] = get_rendered_jinja(resolved_addrs, sqs_message,
                 resource_list, 'slack_template', 'slack_default', self.templates_folders)
-            elif target.startswith('slack://tag/') and 'tags' in resource:
+            elif target.startswith('slack://tag/') and 'Tags' in resource:
                 tag_name = target.split('tag/', 1)[1]
-                result = resource.get('tags', {}).get(tag_name, None)
+                result = resource.get('Tags', {}).get(tag_name, None)
                 resolved_addrs = result
                 slack_messages[resolved_addrs] = get_rendered_jinja(resolved_addrs, sqs_message,
                     resource_list, 'slack_template', 'slack_default', self.templates_folders)
@@ -89,27 +89,22 @@ class SlackDelivery(object):
                 sqs_message['action'].get('slack_template', 'slack_default'),
                 key)
             )
-
             self.send_slack_msg(key, payload)
 
     def retrieve_user_im(self, email_addresses):
         list = {}
-
         if not self.slack_token:
             self.log.info("No Slack token found.")
-
         for address in email_addresses:
             if self.caching and self.caching.get(address):
-                    self.log.debug('Got Slack metadata from cache for: %s' % address)
-                    list[address] = self.caching.get(address)
-                    continue
-
+                self.log.debug('Got Slack metadata from cache for: %s' % address)
+                list[address] = self.caching.get(address)
+                continue
             response = requests.post(
                 url='https://slack.com/api/users.lookupByEmail',
                 data={'email': address},
                 headers={'Content-Type': 'application/x-www-form-urlencoded',
                          'Authorization': 'Bearer %s' % self.slack_token}).json()
-
             if not response["ok"]:
                 if "headers" in response.keys() and "Retry-After" in response["headers"]:
                     self.log.info(
@@ -135,13 +130,10 @@ class SlackDelivery(object):
                 if self.caching:
                     self.log.debug('Writing user: %s metadata to cache.', address)
                     self.caching.set(address, slack_user_id)
-
                 list[address] = slack_user_id
-
         return list
 
     def send_slack_msg(self, key, message_payload):
-
         if key.startswith('https://hooks.slack.com/'):
             response = requests.post(
                 url=key,
