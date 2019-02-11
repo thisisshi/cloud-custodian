@@ -49,7 +49,6 @@ class SnsDelivery(object):
             policy_sns_address,
             sqs_message,
             resources,
-            self.log,
             'template',
             'default',
             self.templates_folders
