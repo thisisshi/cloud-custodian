@@ -23,7 +23,8 @@ import six
 import traceback
 import zlib
 
-from .ldap_lookup import LdapLookup, Redis, LocalSqlite
+from c7n_mailer.ldap import LdapLookup
+from c7n_mailer.cache.cache import CacheEngine
 from .email_delivery import EmailDelivery
 from .sns_delivery import SnsDelivery
 
@@ -131,22 +132,21 @@ class MailerSqsQueueProcessor(object):
         self.sqs = self.session.client('sqs')
         self.max_num_processes = max_num_processes
         self.receive_queue = self.config['queue_url']
-        self.cache_engine = self.get_cache_engine(
-            cache_engine=self.config.get('cache_engine'),
-            redis_host=self.config.get('redis_host'),
-            redis_port=self.config.get('redis_port', 6379),
-            ldap_cache_file=self.config.get('ldap_cache_file', '/var/tmp/ldap.cache')
+        self.cache_engine = CacheEngine().get_engine(
+            self.config.get('cache_engine'),
+            self.config
         )
         if self.config.get('ldap_uri', False):
-            self.ldap_lookup = self.get_ldap_lookup(
-                ldap_uri=self.config.get('ldap_uri'),
-                ldap_bind_user=self.config.get('ldap_bind_user', None),
-                ldap_bind_password=kms_decrypt(self.config, self.session, 'ldap_bind_password'),
-                ldap_bind_dn=self.config.get('ldap_bind_dn'),
-                ldap_email_key=self.config.get('ldap_email_key', 'mail'),
-                ldap_manager_attr=self.config.get('ldap_manager_attr', 'manager'),
-                ldap_uid_attr=self.config.get('ldap_uid_attribute', 'sAMAccountName'),
-                ldap_uid_regex=self.config.get('ldap_uid_regex', None)
+            self.ldap_lookup = LdapLookup(
+                uri=self.config.get('ldap_uri'),
+                user=self.config.get('ldap_bind_user', None),
+                password=kms_decrypt(self.config, self.session, 'ldap_bind_password'),
+                dn=self.config.get('ldap_bind_dn'),
+                email_key=self.config.get('ldap_email_key', 'mail'),
+                manager_key=self.config.get('ldap_manager_attr', 'manager'),
+                uid_key=self.config.get('ldap_uid_attribute', 'sAMAccountName'),
+                uid_regex=self.config.get('ldap_uid_regex', None),
+                cache=self.cache_engine
             )
         else:
             self.ldap_lookup = None
@@ -178,19 +178,6 @@ class MailerSqsQueueProcessor(object):
         if self.config.get('debug', False):
             self.log.setLevel(logging.DEBUG)
             self.log.debug('debug logging is turned on from mailer config file.')
-
-    def get_cache_engine(self, cache_engine, redis_host, redis_port, ldap_cache_file):
-        # set up cache engine, ldap lookup etc.
-        if cache_engine == 'redis':
-            return Redis(redis_host=redis_host, redis_port=redis_port, db=-1)
-        elif cache_engine == 'sqlite':
-            try:
-                import sqlite3 # noqa
-            except ImportError:
-                raise RuntimeError('No sqlite available: stackoverflow.com/q/44058239')
-            return LocalSqlite(ldap_cache_file)
-        else:
-            return None
 
     def get_ldap_lookup(self, ldap_uri, ldap_bind_user, ldap_bind_password, ldap_bind_dn,
             ldap_email_key, ldap_manager_attr, ldap_uid_attr, ldap_uid_regex):

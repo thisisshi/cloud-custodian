@@ -79,21 +79,13 @@ class LdapLookup(object):
 
     # eg, dn = uid=bill_lumbergh,cn=users,dc=initech,dc=com
     def get_metadata_from_dn(self, user_dn):
-        if self.caching:
-            cache_result = self.caching.get(user_dn)
-            if cache_result:
-                cache_msg = 'Got ldap metadata from local cache for: %s' % user_dn
-                self.log.debug(cache_msg)
-                return cache_result
-        ldap_filter = '(%s=*)' % self.uid_key
-        ldap_results = self.search_ldap(user_dn, ldap_filter, attributes=self.attributes)
-        if ldap_results:
-            ldap_user_metadata = self.get_dict_from_ldap_object(self.connection.entries[0])
-        else:
-            self.caching.set(user_dn, {})
-            return {}
-        if self.caching:
-            self.log.debug('Writing user: %s metadata to cache engine.' % user_dn)
+        with self.caching(user_dn) as result:
+            if result:
+                return result
+            ldap_filter = '(%s=*)' % self.uid_key
+            ldap_results = self.search_ldap(user_dn, ldap_filter, attributes=self.attributes)
+            if ldap_results:
+                ldap_user_metadata = self.get_dict_from_ldap_object(self.connection.entries[0])
             self.caching.set(user_dn, ldap_user_metadata)
             self.caching.set(ldap_user_metadata[self.uid_key], ldap_user_metadata)
         return ldap_user_metadata
