@@ -1092,7 +1092,8 @@ class CreateSnapshot(BaseAction):
             client.create_snapshot(VolumeId=volume)
         except ClientError as e:
             if e.response['Error']['Code'] == 'InvalidVolume.NotFound':
-                pass
+                return
+            raise e
 
 
 @actions.register('delete')
