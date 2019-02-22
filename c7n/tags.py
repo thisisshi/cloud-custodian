@@ -678,7 +678,12 @@ class TagDelayedAction(Action):
 
         tags = [{'Key': tag, 'Value': msg}]
 
-        batch_size = self.data.get('batch_size', self.batch_size)
+        if hasattr(self.manager.action_registry.get('tag'), 'batch_size'):
+            # if the tag implementation has a specified batch size, it's typically
+            # due to some restraint on the api so we defer to that.
+            batch_size = self.manager.action_registry.get('tag').batch_size
+        else:
+            batch_size = self.data.get('batch_size', self.batch_size)
 
         client = self.get_client()
         _common_tag_processer(

@@ -139,8 +139,6 @@ class TagDelayedAction(tags.TagDelayedAction):
                     days: 7
     """
 
-    batch_size = 1
-
 
 @actions.register('tag')
 class Tag(tags.Tag):
