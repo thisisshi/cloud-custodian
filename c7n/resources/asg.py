@@ -298,7 +298,7 @@ class ConfigValidFilter(Filter):
     def get_snapshots(self):
         snaps = set()
         for cid, cfg in self.launch_info.items():
-            for bd in cfg['BlockDeviceMappings']:
+            for bd in cfg.get('BlockDeviceMappings', ()):
                 if 'Ebs' not in bd or 'SnapshotId' not in bd['Ebs']:
                     continue
                 snaps.add(bd['Ebs']['SnapshotId'].strip())
@@ -508,7 +508,7 @@ class NotEncryptedFilter(Filter):
                     image['BlockDeviceMappings'] if 'Ebs' in bd}
             else:
                 image_block_devs = set()
-            for bd in c['BlockDeviceMappings']:
+            for bd in c.get('BlockDeviceMappings', ()):
                 if 'Ebs' not in bd:
                     continue
                 # Launch configs can shadow image devices, images have
