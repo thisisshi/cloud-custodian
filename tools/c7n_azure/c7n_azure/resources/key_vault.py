@@ -106,11 +106,14 @@ class WhiteListFilter(Filter):
         # GraphHelper.get_principal_dictionary returns empty AADObject if not found with graph
         # or if graph is not available.
         principal_dics = GraphHelper.get_principal_dictionary(self.graph_client, object_ids)
-
+        remove = []
         for policy in access_policies:
             aad_object = principal_dics[policy['objectId']]
+            if aad_object.object_id is None:
+                remove.append(policy)
+                continue
             policy['displayName'] = aad_object.display_name
             policy['aadType'] = aad_object.object_type
             policy['principalName'] = GraphHelper.get_principal_name(aad_object)
 
-        return access_policies
+        return [a for a in access_policies if a not in remove]
