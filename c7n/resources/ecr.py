@@ -16,7 +16,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import json
 
 from c7n.actions import RemovePolicyBase, Action
-from c7n.exceptions import PolicyValidationError, ClientError
+from c7n.exceptions import PolicyValidationError
 from c7n.filters import CrossAccountAccessFilter, Filter, ValueFilter
 from c7n.manager import resources
 from c7n.query import QueryResourceManager
@@ -111,13 +111,6 @@ class ECRCrossAccountAccessFilter(CrossAccountAccessFilter):
                     repositoryName=r['repositoryName'])['policyText']
             except client.exceptions.RepositoryPolicyNotFoundException:
                 return None
-            except ClientError as e:
-                if e.response['Error']['Code'] == 'AccessDeniedException':
-                    self.log.warning('Access Denied on GetRepositoryPolicy for repository: %s' %
-                        r['repositoryName'])
-                    return None
-                else:
-                    raise
             return r
 
         self.log.debug("fetching policy for %d repos" % len(resources))
@@ -220,13 +213,6 @@ class LifecycleRule(Filter):
                             'lifecyclePolicyText', ''))
             except client.exceptions.LifecyclePolicyNotFoundException:
                 r[self.policy_annotation] = {}
-            except ClientError as e:
-                if e.response['Error']['Code'] == 'AccessDeniedException':
-                    self.log.warning('Access Denied on GetLifecyclePolicy for repository: %s' %
-                        r['repositoryName'])
-                    r[self.policy_annotation] = {}
-                else:
-                    raise
 
         state = self.data.get('state', False)
         matchers = []
@@ -334,13 +320,6 @@ class RemovePolicyStatement(RemovePolicyBase):
                     repositoryName=resource['repositoryName'])['policyText']
             except client.exceptions.RepositoryPolicyNotFoundException:
                 return
-            except ClientError as e:
-                if e.response['Error']['Code'] == 'AccessDeniedException':
-                    self.log.warning('Access Denied on GetRepositoryPolicy for repository: %s' %
-                        resource['repositoryName'])
-                    return None
-                else:
-                    raise
 
         p = json.loads(resource['Policy'])
         statements, found = self.process_policy(
