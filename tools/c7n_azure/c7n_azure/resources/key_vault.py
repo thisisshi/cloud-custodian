@@ -110,6 +110,7 @@ class WhiteListFilter(Filter):
         for policy in access_policies:
             aad_object = principal_dics[policy['objectId']]
             if aad_object.object_id is None:
+                self.log.debug('Unable to find principal for %s' % policy['objectId'])
                 unknown_principals.append(policy)
                 continue
             policy['displayName'] = aad_object.display_name
@@ -118,6 +119,5 @@ class WhiteListFilter(Filter):
 
         if unknown_principals:
             self.log.warning('%s Principals not found' % len(unknown_principals))
-            access_policies = list(set(access_policies).difference(set(unknown_principals)))
-
+            access_policies = [a for a in access_policies if a not in unknown_principals]
         return access_policies
