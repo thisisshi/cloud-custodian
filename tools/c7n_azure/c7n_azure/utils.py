@@ -28,6 +28,7 @@ from c7n_azure import constants
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.tools import parse_resource_id
 
+from c7n.exceptions import PolicyExecutionError
 from c7n.utils import chunks
 
 from c7n.utils import local_session
@@ -204,9 +205,9 @@ class GraphHelper(object):
             for aad_object in aad_objects:
                 principal_dics[aad_object.object_id] = aad_object
         except CloudError:
-            GraphHelper.log.warning(
-                'Credentials not authorized for access to read from Microsoft Graph. \n '
-                'Can not query on principalName, displayName, or aadType. \n')
+            raise PolicyExecutionError(
+                'Credentials not authorized for access to read from Microsoft Graph. ' +
+                'Can not query on principalName, displayName, or aadType.')
 
         return principal_dics
 

@@ -69,7 +69,11 @@ class WhiteListFilter(Filter):
                     }
                 })
             # Enhance access policies with displayName, aadType and principalName
-            i['accessPolicies'] = self.enhance_policies(access_policies)
+            augment = self.enhance_policies(access_policies)
+            if augment:
+                i['accessPolicies'] = augment
+            else:
+                return False
 
         # Ensure each policy is
         #   - User is whitelisted
