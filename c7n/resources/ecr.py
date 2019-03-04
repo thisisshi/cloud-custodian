@@ -104,8 +104,6 @@ class ECRCrossAccountAccessFilter(CrossAccountAccessFilter):
         client = local_session(self.manager.session_factory).client('ecr')
 
         def _augment(r):
-            if 'Policy' in r:
-                return r
             try:
                 r['Policy'] = client.get_repository_policy(
                     repositoryName=r['repositoryName'])['policyText']
