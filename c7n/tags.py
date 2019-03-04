@@ -110,15 +110,10 @@ def universal_augment(self, resources):
     resource_tag_map = {
         r['ResourceARN']: r['Tags'] for r in resource_tag_map_list}
 
-    all_arns = set(self.get_arns(resources))
-    tagged_arns = set(resource_tag_map.keys())
-    missing_tags = all_arns.difference(tagged_arns)
-
-    for arn, r in zip(all_arns, resources):
-        if arn in resource_tag_map:
-            r['Tags'] = resource_tag_map[arn]
-        elif arn in missing_tags:
-            r['Tags'] = []
+    for arn, r in zip(self.get_arns(resources), resources):
+        if 'Tags' in r:
+            continue
+        r['Tags'] = resource_tag_map.get(arn, [])
 
     return resources
 
