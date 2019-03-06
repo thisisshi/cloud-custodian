@@ -30,6 +30,7 @@ from c7n.actions import Action
 from c7n.exceptions import PolicyValidationError
 from c7n.filters import ValueFilter, AgeFilter, Filter, OPERATORS
 from c7n.filters.offhours import OffHour, OnHour, Time
+from c7n.filters.related import RelatedResourceFilter
 import c7n.filters.vpc as net_filters
 
 from c7n.manager import resources
@@ -1640,6 +1641,28 @@ class LaunchConfig(query.QueryResourceManager):
         filter_name = 'LaunchConfigurationNames'
         filter_type = 'list'
         config_type = 'AWS::AutoScaling::LaunchConfiguration'
+
+
+@LaunchConfig.filter_registry.register('missing-ami')
+class LaunchConfigAMIFilter(RelatedResourceFilter):
+    RelatedResource = "c7n.resources.ami.AMI"
+    RelatedIdsExpression = "ImageId"
+    AnnotationKey = "c7n:AMI"
+
+    def process_resource(self, resource, related):
+        related_ids = self.get_related_ids([resource])
+        model = self.manager.get_model()
+        for rid in related_ids:
+            robj = related.get(rid, None)
+            if robj is None:
+                self.log.warning(
+                    "Resource %s:%s references non existant %s: %s",
+                    model.type,
+                    resource[model.id],
+                    self.RelatedResource.rsplit('.', 1)[-1],
+                    rid)
+                resource['missing-ami'] = True
+                return True
 
 
 @LaunchConfig.filter_registry.register('age')
