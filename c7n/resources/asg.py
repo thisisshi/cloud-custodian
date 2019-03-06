@@ -315,53 +315,53 @@ class ConfigValidFilter(Filter):
 
     def get_asg_errors(self, asg):
         errors = []
-        subnets = asg.get('VPCZoneIdentifier', '').split(',')
-
-        for subnet in subnets:
-            subnet = subnet.strip()
-            if subnet not in self.subnets:
-                errors.append(('invalid-subnet', subnet))
-
-        for elb in asg['LoadBalancerNames']:
-            elb = elb.strip()
-            if elb not in self.elbs:
-                errors.append(('invalid-elb', elb))
-
-        for appelb_target in asg.get('TargetGroupARNs', []):
-            appelb_target = appelb_target.strip()
-            if appelb_target not in self.appelb_target_groups:
-                errors.append(('invalid-appelb-target-group', appelb_target))
+#        subnets = asg.get('VPCZoneIdentifier', '').split(',')
+# 
+#         for subnet in subnets:
+#             subnet = subnet.strip()
+#             if subnet not in self.subnets:
+#                 errors.append(('invalid-subnet', subnet))
+# 
+#         for elb in asg['LoadBalancerNames']:
+#             elb = elb.strip()
+#             if elb not in self.elbs:
+#                 errors.append(('invalid-elb', elb))
+# 
+#         for appelb_target in asg.get('TargetGroupARNs', []):
+#             appelb_target = appelb_target.strip()
+#             if appelb_target not in self.appelb_target_groups:
+#                 errors.append(('invalid-appelb-target-group', appelb_target))
 
         cfg_id = self.launch_info.get_launch_id(asg)
         cfg = self.launch_info.get(asg)
-
-        if cfg is None:
-            errors.append(('invalid-config', cfg_id))
-            self.log.debug(
-                "asg:%s no launch config or template found" % asg['AutoScalingGroupName'])
-            asg['Invalid'] = errors
-            return True
-
-        for sg in itertools.chain(*(
-                cfg.get('SecurityGroups', ()), cfg.get('SecurityGroupIds', ()))):
-            sg = sg.strip()
-            if sg not in self.security_groups:
-                errors.append(('invalid-security-group', sg))
-
-        if cfg.get('KeyName') and cfg['KeyName'].strip() not in self.key_pairs:
-            errors.append(('invalid-key-pair', cfg['KeyName']))
+# 
+#         if cfg is None:
+#             errors.append(('invalid-config', cfg_id))
+#             self.log.debug(
+#                 "asg:%s no launch config or template found" % asg['AutoScalingGroupName'])
+#             asg['Invalid'] = errors
+#             return True
+# 
+#         for sg in itertools.chain(*(
+#                 cfg.get('SecurityGroups', ()), cfg.get('SecurityGroupIds', ()))):
+#             sg = sg.strip()
+#             if sg not in self.security_groups:
+#                 errors.append(('invalid-security-group', sg))
+# 
+#         if cfg.get('KeyName') and cfg['KeyName'].strip() not in self.key_pairs:
+#             errors.append(('invalid-key-pair', cfg['KeyName']))
 
         if cfg.get('ImageId') and cfg['ImageId'].strip() not in self.images:
             errors.append(('invalid-image', cfg['ImageId']))
 
-        for bd in cfg.get('BlockDeviceMappings', ()):
-            if 'Ebs' not in bd or 'SnapshotId' not in bd['Ebs']:
-                continue
-            snapshot_id = bd['Ebs']['SnapshotId'].strip()
-            if snapshot_id in self.image_snaps:
-                continue
-            if snapshot_id not in self.snapshots:
-                errors.append(('invalid-snapshot', bd['Ebs']['SnapshotId']))
+#         for bd in cfg.get('BlockDeviceMappings', ()):
+#             if 'Ebs' not in bd or 'SnapshotId' not in bd['Ebs']:
+#                 continue
+#             snapshot_id = bd['Ebs']['SnapshotId'].strip()
+#             if snapshot_id in self.image_snaps:
+#                 continue
+#             if snapshot_id not in self.snapshots:
+#                 errors.append(('invalid-snapshot', bd['Ebs']['SnapshotId']))
         return errors
 
 
