@@ -177,6 +177,8 @@ def permissions(options, policies):
 
     for p in policies:
         perms = p.get_permissions()
+        perms = list(perms)
+        perms.sort()
         policy_perms[p.name] = list(perms)
 
     with open('permissions.json', 'w') as f:

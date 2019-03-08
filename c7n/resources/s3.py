@@ -116,7 +116,7 @@ class S3(query.QueryResourceManager):
     @classmethod
     def get_permissions(cls):
         perms = ["s3:ListAllMyBuckets"]
-        perms.extend([n[0] for n in S3_AUGMENT_TABLE])
+        perms.extend([n[4] for n in S3_AUGMENT_TABLE])
         return perms
 
 
@@ -389,16 +389,16 @@ S3_CONFIG_SUPPLEMENT_NULL_MAP = {
 }
 
 S3_AUGMENT_TABLE = (
-    ('get_bucket_location', 'Location', None, None),
-    ('get_bucket_tagging', 'Tags', [], 'TagSet'),
-    ('get_bucket_policy', 'Policy', None, 'Policy'),
-    ('get_bucket_acl', 'Acl', None, None),
-    ('get_bucket_replication', 'Replication', None, None),
-    ('get_bucket_versioning', 'Versioning', None, None),
-    ('get_bucket_website', 'Website', None, None),
-    ('get_bucket_logging', 'Logging', None, 'LoggingEnabled'),
-    ('get_bucket_notification_configuration', 'Notification', None, None),
-    ('get_bucket_lifecycle_configuration', 'Lifecycle', None, None),
+    ('get_bucket_location', 'Location', None, None, 's3:GetBucketLocation'),
+    ('get_bucket_tagging', 'Tags', [], 'TagSet', 's3:GetBucketTagging'),
+    ('get_bucket_policy', 'Policy', None, 'Policy', 's3:GetBucketPolicy'),
+    ('get_bucket_acl', 'Acl', None, None, 's3:GetBucketAcl'),
+    ('get_bucket_replication', 'Replication', None, None, 's3:GetBucketReplication'),
+    ('get_bucket_versioning', 'Versioning', None, None, 's3:GetBucketVersioning'),
+    ('get_bucket_website', 'Website', None, None, 's3:GetBucketWebsite'),
+    ('get_bucket_logging', 'Logging', None, 'LoggingEnabled', 's3:GetBucketLogging'),
+    ('get_bucket_notification_configuration', 'Notification', None, None, 's3:GetBucketNotificationConfiguration'), # noqa
+    ('get_bucket_lifecycle_configuration', 'Lifecycle', None, None, 's3:GetBucketLifecycleConfiguration'), # noqa
     #        ('get_bucket_cors', 'Cors'),
 )
 
