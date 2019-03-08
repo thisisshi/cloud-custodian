@@ -171,6 +171,18 @@ def _print_no_policies_warning(options, policies):
         log.warning('Empty policy file(s).  Nothing to do.')
 
 
+@policy_command
+def permissions(options, policies):
+    policy_perms = {}
+
+    for p in policies:
+        perms = p.get_permissions()
+        policy_perms[p.name] = list(perms)
+
+    with open('permissions.json', 'w') as f:
+        f.write(json.dumps(policy_perms, indent=2))
+
+
 def validate(options):
     from c7n import schema
     load_resources()

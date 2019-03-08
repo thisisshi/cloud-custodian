@@ -303,6 +303,19 @@ def setup_parser():
     validate.add_argument("-q", "--quiet", action="count", help="Less logging (repeatable)")
     validate.add_argument("--debug", default=False, help=argparse.SUPPRESS)
 
+    permissions_desc = "Get Permissions"
+    permission = subs.add_parser(
+        "permissions", description=permissions_desc, help=permissions_desc)
+    permission.set_defaults(command="c7n.commands.permissions")
+    permission.add_argument(
+        "-c", "--config", help=argparse.SUPPRESS)
+    permission.add_argument("configs", nargs='*',
+                          help="Policy Configuration File(s)")
+    permission.add_argument("--debug", default=False, help=argparse.SUPPRESS)
+    permission.add_argument("-v", "--verbose", action="count", help="Verbose Logging")
+    permission.add_argument("-q", "--quiet", action="count", help="Less logging (repeatable)")
+    permission.set_defaults(vars=None, skip_validation=True)
+
     return parser
 
 
