@@ -57,19 +57,14 @@ class LabelAction(MethodAction):
     )
 
     def process_resource_set(self, client, model, resources):
-        if self.manager.get_model().namespaced:
-            self.label_namespaced_resources(client, model, resources)
-        else:
-            self.label_resources(client, model, resources)
-
-    def label_resources(self, client, model, resources):
-        op_name = self.method_spec['op']
         body = {'metadata': {'labels': self.data.get('labels', {})}}
-        for r in resources:
-            r = getattr(client, op_name)(r['metadata']['name'], body)
+        op = getattr(client, self.method_spec['op'])
 
-    def label_namespaced_resources(self, client, model, resources):
-        op_name = self.method_spec['op']
-        body = {'metadata': {'labels': self.data.get('labels', {})}}
         for r in resources:
-            r = getattr(client, op_name)(r['metadata']['name'], r['metadata']['namespace'], body)
+            kwargs = {
+                'name': r['metadata']['name'],
+                'body': body
+            }
+            if model.namespaced:
+                kwargs['namespace'] = r['metadata']['namespace']
+            r = op(**kwargs)
