@@ -29,5 +29,5 @@ class DaemonSet(QueryResourceManager):
 @DaemonSet.action_registry.register('label')
 class LabelDaemonSet(LabelAction):
     __doc__ = LabelAction.__doc__.format(resource='daemon-set')
-    permisisons = ('PatchNamepacedDaemonSst',)
+    permisisons = ('PatchNamepacedDaemonSet',)
     method_spec = {'op': 'patch_namespaced_daemon_set'}
