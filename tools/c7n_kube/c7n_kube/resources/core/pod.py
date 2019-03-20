@@ -14,7 +14,6 @@
 #
 from c7n_kube.query import QueryResourceManager, TypeInfo
 from c7n_kube.provider import resources
-
 from c7n_kube.labels import LabelNamespacedResource
 
 
