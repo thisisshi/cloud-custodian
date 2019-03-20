@@ -14,7 +14,6 @@
 #
 from c7n_kube.query import QueryResourceManager, TypeInfo
 from c7n_kube.provider import resources
-from c7n_kube.labels import LabelAction
 
 
 @resources.register('volume')
@@ -23,14 +22,9 @@ class PersistentVolume(QueryResourceManager):
         group = 'Core'
         version = 'V1'
         namespaced = False
+        patch = 'patch_persistent_volume'
+        delete = 'delete_persistent_volume'
         enum_spec = ('list_persistent_volume', 'items', None)
-
-
-@PersistentVolume.action_registry.register('label')
-class LabelPersistentVolume(LabelAction):
-    __doc__ = LabelAction.__doc__.format(resource='volume')
-    permissions = ('PatchPersistentVolume',)
-    method_spec = {'op': 'patch_persistent_volume'}
 
 
 @resources.register('volume-claim')
@@ -39,11 +33,6 @@ class PersistentVolumeClaim(QueryResourceManager):
         group = 'Core'
         version = 'V1'
         namespaced = True
+        patch = 'patch_namespaced_persistent_volume_claim'
+        delete = 'delete_namespaced_persistent_volume_claim'
         enum_spec = ('list_persistent_volume_claim_for_all_namespaces', 'items', None)
-
-
-@PersistentVolumeClaim.action_registry.register('label')
-class LabelPersistentVolumeClaim(LabelAction):
-    __doc__ = LabelAction.__doc__.format(resource='volume-claim')
-    permissions = ('PatchNamespacedPersistentVolumeClaim',)
-    method_spec = {'op': 'patch_namespaced_persistent_volume_claim'}

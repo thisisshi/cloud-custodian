@@ -14,7 +14,6 @@
 #
 from c7n_kube.query import QueryResourceManager, TypeInfo
 from c7n_kube.provider import resources
-from c7n_kube.labels import LabelAction
 
 
 @resources.register('replication-controller')
@@ -24,11 +23,6 @@ class ReplicationController(QueryResourceManager):
         group = 'Core'
         version = 'V1'
         namespaced = True
+        patch = 'patch_namespaced_replication_controller'
+        delete = 'delete_namespaced_replication_controller'
         enum_spec = ('list_replication_controller_for_all_namespaces', 'items', None)
-
-
-@ReplicationController.action_registry.register('label')
-class LabelReplicationController(LabelAction):
-    __doc__ = LabelAction.__doc__.format(resource='replication-controller')
-    permissions = ('PatchNamespacedReplicationController',)
-    method_spec = {'op': 'patch_namespaced_replication_controller'}

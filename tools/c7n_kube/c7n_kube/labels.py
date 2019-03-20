@@ -14,13 +14,13 @@
 
 import logging
 
-from c7n_kube.actions import MethodAction
+from c7n_kube.actions import PatchAction
+from c7n_kube.provider import resources as kube_resources
 from c7n.utils import type_schema
-
 log = logging.getLogger('custodian.k8s.labels')
 
 
-class LabelAction(MethodAction):
+class LabelAction(PatchAction):
     """
     Labels a resource
 
@@ -58,11 +58,15 @@ class LabelAction(MethodAction):
 
     def process_resource_set(self, client, model, resources):
         body = {'metadata': {'labels': self.data.get('labels', {})}}
-        op = getattr(client, self.method_spec['op'])
-        kwargs = {'body': body}
+        op = getattr(client, model.patch)
+        patch_args = {'body': body}
+        self.patch_resources(op, patch_args, model.namespaced, resources)
 
-        for r in resources:
-            kwargs['name']: r['metadata']['name']
-            if model.namespaced:
-                kwargs['namespace'] = r['metadata']['namespace']
-            r = op(**kwargs)
+    @classmethod
+    def register_resources(klass, registry, resource_class):
+        resource_type = resource_class.resource_type
+        if hasattr(resource_type, 'patch') and hasattr(resource_type, 'namespaced'):
+            resource_class.action_registry.register('label', klass)
+
+
+kube_resources.subscribe(kube_resources.EVENT_REGISTER, LabelAction.register_resources)

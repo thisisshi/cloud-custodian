@@ -14,7 +14,6 @@
 #
 from c7n_kube.query import QueryResourceManager, TypeInfo
 from c7n_kube.provider import resources
-from c7n_kube.labels import LabelAction
 
 
 @resources.register('node')
@@ -24,11 +23,6 @@ class Node(QueryResourceManager):
         group = 'Core'
         version = 'V1'
         namespaced = False
+        patch = 'patch_node'
+        delete = 'delete_node'
         enum_spec = ('list_node', 'items', None)
-
-
-@Node.action_registry.register('label')
-class LabelNode(LabelAction):
-    __doc__ = LabelAction.__doc__.format(resource='node')
-    permissions = ('PatchNode',)
-    method_spec = {'op': 'patch_node'}

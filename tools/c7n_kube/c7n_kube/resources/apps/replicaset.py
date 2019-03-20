@@ -14,7 +14,6 @@
 #
 from c7n_kube.query import QueryResourceManager, TypeInfo
 from c7n_kube.provider import resources
-from c7n_kube.labels import LabelAction
 
 
 @resources.register('replica-set')
@@ -24,11 +23,6 @@ class ReplicaSet(QueryResourceManager):
         group = 'Apps'
         version = 'V1'
         namespaced = True
+        patch = 'patch_namespaced_replica_set'
+        delete = 'delete_namespaced_replica_set'
         enum_spec = ('list_replica_set_for_all_namespaces', 'items', None)
-
-
-@ReplicaSet.action_registry.register('label')
-class LabelReplicaSet(LabelAction):
-    __doc__ = LabelAction.__doc__.format(resource='replica-set')
-    permisisons = ('PatchNamespacedReplicaSet',)
-    method_spec = {'op': 'patch_namespaced_replica_set'}

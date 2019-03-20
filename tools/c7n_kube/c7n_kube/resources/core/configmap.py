@@ -14,7 +14,6 @@
 #
 from c7n_kube.query import QueryResourceManager, TypeInfo
 from c7n_kube.provider import resources
-from c7n_kube.labels import LabelAction
 
 
 @resources.register('config-map')
@@ -23,11 +22,6 @@ class ConfigMap(QueryResourceManager):
         group = 'Core'
         version = 'V1'
         namespaced = True
+        patch = 'patch_namespaced_config_map'
+        delete = 'delete_namespaced_config_map'
         enum_spec = ('list_config_map_for_all_namespaces', 'items', None)
-
-
-@ConfigMap.action_registry.register('label')
-class LabelConfigMap(LabelAction):
-    __doc__ = LabelAction.__doc__.format(resource='config-map')
-    permissions = ('PatchNamespacedConfigMap',)
-    method_spec = {'op': 'patch_namespaced_config_map'}

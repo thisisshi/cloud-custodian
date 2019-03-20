@@ -15,7 +15,6 @@
 
 from c7n_kube.query import QueryResourceManager, TypeInfo
 from c7n_kube.provider import resources
-from c7n_kube.labels import LabelAction
 
 
 @resources.register('secret')
@@ -24,11 +23,6 @@ class Secret(QueryResourceManager):
         group = 'Core'
         version = 'V1'
         namespaced = True
+        patch = 'patch_namespaced_secret'
+        delete = 'delete_namespaced_secret'
         enum_spec = ('list_secret_for_all_namespaces', 'items', None)
-
-
-@Secret.action_registry.register('label')
-class LabelSecret(LabelAction):
-    __doc__ = LabelAction.__doc__.format(resource='secret')
-    permissions = ('PatchNamespacedSecret',)
-    method_spec = {'op': 'patch_namespaced_secret'}
