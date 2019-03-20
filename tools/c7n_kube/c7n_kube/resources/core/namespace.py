@@ -14,7 +14,7 @@
 #
 from c7n.utils import type_schema
 from c7n_kube.actions import MethodAction
-from c7n_kube.labels import LabelResource
+from c7n_kube.labels import LabelAction
 from c7n_kube.query import QueryResourceManager, TypeInfo
 from c7n_kube.provider import resources
 
@@ -26,6 +26,7 @@ class Namespace(QueryResourceManager):
     class resource_type(TypeInfo):
         group = 'Core'
         version = 'V1'
+        namespaced = False
         enum_spec = ('list_namespace', 'items', None)
 
 
@@ -53,7 +54,7 @@ class Delete(MethodAction):
 
 
 @Namespace.action_registry.register('label')
-class LabelNamespace(LabelResource):
-    __doc__ = LabelResource.__doc__.format(resource='namespace')
+class LabelNamespace(LabelAction):
+    __doc__ = LabelAction.__doc__.format(resource='namespace')
     permissions = ('PatchNamespace',)
     method_spec = {'op': 'patch_namespace'}

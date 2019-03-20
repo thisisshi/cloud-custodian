@@ -14,7 +14,7 @@
 #
 from c7n_kube.query import QueryResourceManager, TypeInfo
 from c7n_kube.provider import resources
-from c7n_kube.labels import LabelNamespacedResource
+from c7n_kube.labels import LabelAction
 
 
 @resources.register('daemon-set')
@@ -22,11 +22,12 @@ class DaemonSet(QueryResourceManager):
     class resource_type(TypeInfo):
         group = 'Apps'
         version = 'V1'
+        namespaced = True
         enum_spec = ('list_daemon_set_for_all_namespaces', 'items', None)
 
 
 @DaemonSet.action_registry.register('label')
-class LabelDaemonSet(LabelNamespacedResource):
-    __doc__ = LabelNamespacedResource.__doc__.format(resource='daemon-set')
+class LabelDaemonSet(LabelAction):
+    __doc__ = LabelAction.__doc__.format(resource='daemon-set')
     permisisons = ('PatchNamepacedDaemonSst',)
     method_spec = {'op': 'patch_namespaced_daemon_set'}

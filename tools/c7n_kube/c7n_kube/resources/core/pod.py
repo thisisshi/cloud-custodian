@@ -14,7 +14,7 @@
 #
 from c7n_kube.query import QueryResourceManager, TypeInfo
 from c7n_kube.provider import resources
-from c7n_kube.labels import LabelNamespacedResource
+from c7n_kube.labels import LabelAction
 
 
 @resources.register('pod')
@@ -23,11 +23,12 @@ class Pod(QueryResourceManager):
     class resource_type(TypeInfo):
         group = 'Core'
         version = 'V1'
+        namespaced = True
         enum_spec = ('list_pod_for_all_namespaces', 'items', None)
 
 
 @Pod.action_registry.register('label')
-class LabelPod(LabelNamespacedResource):
-    __doc__ = LabelNamespacedResource.__doc__.format(resource='pod')
+class LabelPod(LabelAction):
+    __doc__ = LabelAction.__doc__.format(resource='pod')
     permisisons = ('PatchNamespacedPod',)
     method_spec = {'op': 'patch_namespaced_pod'}

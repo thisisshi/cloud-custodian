@@ -20,7 +20,7 @@ from c7n.utils import type_schema
 log = logging.getLogger('custodian.k8s.labels')
 
 
-class LabelResource(MethodAction):
+class LabelAction(MethodAction):
     """
     Labels a resource
 
@@ -57,49 +57,18 @@ class LabelResource(MethodAction):
     )
 
     def process_resource_set(self, client, model, resources):
+        if self.manager.get_model().namespaced:
+            self.label_namespaced_resources(client, model, resources)
+        else:
+            self.label_resources(client, model, resources)
+
+    def label_resources(self, client, model, resources):
         op_name = self.method_spec['op']
         body = {'metadata': {'labels': self.data.get('labels', {})}}
         for r in resources:
             r = getattr(client, op_name)(r['metadata']['name'], body)
 
-
-class LabelNamespacedResource(MethodAction):
-    """
-    Labels a Namespaced resource
-
-    .. code-block:: yaml
-      policies:
-        - name: label-{resource}
-          resource: k8s.{resource}
-          filters:
-            - 'metadata.name': 'name'
-          actions:
-            - type: label
-              labels:
-                label1: value1
-                label2: value2
-
-    To remove a label from a namespaced resource, provide the label with the value ``null``
-
-    .. code-block:: yaml
-      policies:
-        - name: remove-label-from-{resource}
-          resource: k8s.{resource}
-          filters:
-            - 'metadata.labels.label1': present
-          actions:
-            - type: label
-              labels:
-                label1: null
-
-    """
-
-    schema = type_schema(
-        'label',
-        labels={'type': 'object'}
-    )
-
-    def process_resource_set(self, client, model, resources):
+    def label_namespaced_resources(self, client, model, resources):
         op_name = self.method_spec['op']
         body = {'metadata': {'labels': self.data.get('labels', {})}}
         for r in resources:

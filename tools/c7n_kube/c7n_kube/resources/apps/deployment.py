@@ -14,7 +14,7 @@
 #
 from c7n_kube.query import QueryResourceManager, TypeInfo
 from c7n_kube.provider import resources
-from c7n_kube.labels import LabelNamespacedResource
+from c7n_kube.labels import LabelAction
 
 
 @resources.register('deployment')
@@ -23,11 +23,12 @@ class Deployment(QueryResourceManager):
     class resource_type(TypeInfo):
         group = 'Apps'
         version = 'V1'
+        namespaced = True
         enum_spec = ('list_deployment_for_all_namespaces', 'items', None)
 
 
 @Deployment.action_registry.register('label')
-class LabelDeployment(LabelNamespacedResource):
-    __doc__ = LabelNamespacedResource.__doc__.format(resource='deployment')
+class LabelDeployment(LabelAction):
+    __doc__ = LabelAction.__doc__.format(resource='deployment')
     permisisons = ('PatchNamespacedDeployment',)
     method_spec = {'op': 'patch_namespaced_deployment'}

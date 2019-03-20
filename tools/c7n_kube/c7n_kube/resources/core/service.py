@@ -14,7 +14,7 @@
 #
 from c7n_kube.query import QueryResourceManager, TypeInfo
 from c7n_kube.provider import resources
-from c7n_kube.labels import LabelNamespacedResource
+from c7n_kube.labels import LabelAction
 
 
 @resources.register('service')
@@ -22,11 +22,12 @@ class Service(QueryResourceManager):
     class resource_type(TypeInfo):
         group = 'Core'
         version = 'V1'
+        namespaced = True
         enum_spec = ('list_service_for_all_namespaces', 'items', None)
 
 
 @Service.action_registry.register('label')
-class LabelService(LabelNamespacedResource):
-    __doc__ = LabelNamespacedResource.__doc__.format(resource='service')
+class LabelService(LabelAction):
+    __doc__ = LabelAction.__doc__.format(resource='service')
     permissions = ('PatchNamespacedService',)
     method_spec = {'op': 'patch_namespaced_service'}
