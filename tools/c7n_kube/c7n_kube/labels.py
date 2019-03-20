@@ -59,12 +59,10 @@ class LabelAction(MethodAction):
     def process_resource_set(self, client, model, resources):
         body = {'metadata': {'labels': self.data.get('labels', {})}}
         op = getattr(client, self.method_spec['op'])
+        kwargs = {'body': body}
 
         for r in resources:
-            kwargs = {
-                'name': r['metadata']['name'],
-                'body': body
-            }
+            kwargs['name']: r['metadata']['name']
             if model.namespaced:
                 kwargs['namespace'] = r['metadata']['namespace']
             r = op(**kwargs)
