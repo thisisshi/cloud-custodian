@@ -22,7 +22,33 @@ log = logging.getLogger('custodian.k8s.labels')
 
 class LabelResource(MethodAction):
     """
-    label a k8s resource
+    Labels a resource
+
+    .. code-block:: yaml
+      policies:
+        - name: label-{resource}
+          resource: k8s.{resource}
+          filters:
+            - 'metadata.name': 'name'
+          actions:
+            - type: label
+              labels:
+                label1: value1
+                label2: value2
+
+    To remove a label from a resource, provide the label with the value ``null``
+
+    .. code-block:: yaml
+      policies:
+        - name: remove-label-from-{resource}
+          resource: k8s.{resource}
+          filters:
+            - 'metadata.labels.label1': present
+          actions:
+            - type: label
+              labels:
+                label1: null
+
     """
 
     schema = type_schema(
@@ -39,7 +65,33 @@ class LabelResource(MethodAction):
 
 class LabelNamespacedResource(MethodAction):
     """
-    label a k8s namespaced resource
+    Labels a Namespaced resource
+
+    .. code-block:: yaml
+      policies:
+        - name: label-{resource}
+          resource: k8s.{resource}
+          filters:
+            - 'metadata.name': 'name'
+          actions:
+            - type: label
+              labels:
+                label1: value1
+                label2: value2
+
+    To remove a label from a namespaced resource, provide the label with the value ``null``
+
+    .. code-block:: yaml
+      policies:
+        - name: remove-label-from-{resource}
+          resource: k8s.{resource}
+          filters:
+            - 'metadata.labels.label1': present
+          actions:
+            - type: label
+              labels:
+                label1: null
+
     """
 
     schema = type_schema(

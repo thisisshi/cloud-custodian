@@ -14,6 +14,7 @@
 #
 from c7n_kube.query import QueryResourceManager, TypeInfo
 from c7n_kube.provider import resources
+from c7n_kube.labels import LabelNamespacedResource
 
 
 @resources.register('stateful-set')
@@ -23,3 +24,10 @@ class StatefulSet(QueryResourceManager):
         group = 'Apps'
         version = 'V1'
         enum_spec = ('list_stateful_set_for_all_namespaces', 'items', None)
+
+
+@StatefulSet.action_registry.register('label')
+class LabelStatefulSet(LabelNamespacedResource):
+    __doc__ = LabelNamespacedResource.__doc__.format(resource='stateful-set')
+    permisisons = ('PatchNamespacedStatefulSet',)
+    method_spec = {'op': 'patch_namespaced_stateful_set'}

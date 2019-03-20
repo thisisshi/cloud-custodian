@@ -11,23 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-from c7n_kube.query import QueryResourceManager, TypeInfo
-from c7n_kube.provider import resources
-from c7n_kube.labels import LabelResource
+from common_kube import KubeTest
 
 
-@resources.register('node')
-class Node(QueryResourceManager):
+class LabelTest(KubeTest):
 
-    class resource_type(TypeInfo):
-        group = 'Core'
-        version = 'V1'
-        enum_spec = ('list_node', 'items', None)
+    def test_label_resource(self):
+        pass
 
-
-@Node.action_registry.register('label')
-class LabelNode(LabelResource):
-    __doc__ = LabelResource.__doc__.format(resource='node')
-    permissions = ('PatchNode',)
-    method_spec = {'op': 'patch_node'}
+    def test_label_namespaced_resource(self):
+        pass

@@ -37,7 +37,7 @@ class Delete(MethodAction):
     .. code-block:: yaml
       policies:
         - name: delete-namespace
-          resource: kube.namespace
+          resource: k8s.namespace
           filters:
             - 'metadata.name': 'test-namespace'
           actions:
@@ -49,40 +49,11 @@ class Delete(MethodAction):
     def process_resource_set(self, client, model, resources):
         op_name = self.method_spec['op']
         for r in resources:
-            getattr(client, op_name)(r['metadata']['name'], V1DeleteOptions())
+            getattr(client, op_name)(r['metadata']['name'], body=V1DeleteOptions())
 
 
 @Namespace.action_registry.register('label')
 class LabelNamespace(LabelResource):
-    """
-    Labels a Namespace
-
-    .. code-block:: yaml
-      policies:
-        - name: label-namespace
-          resource: kube.namespace
-          filters:
-            - 'metadata.name': 'test-namespace'
-          actions:
-            - type: label
-              labels:
-                label1: value1
-                label2: value2
-
-    To remove a label from a namespace, provide the label with the value ``null``
-
-    .. code-block:: yaml
-      policies:
-        - name: remove-label-from-namespace
-          resource: kube.namespace
-          filters:
-            - 'metadata.labels.label1': present
-          actions:
-            - type: label
-              labels:
-                label1: null
-
-    """
-
+    __doc__ = LabelResource.__doc__.format(resource='namespace')
     permissions = ('PatchNamespace',)
     method_spec = {'op': 'patch_namespace'}
