@@ -21,7 +21,6 @@ class ServiceAccount(QueryResourceManager):
     class resource_type(TypeInfo):
         group = 'Core'
         version = 'V1'
-        namespaced = True
         patch = 'patch_namespaced_service_account'
         delete = 'delete_namespaced_service_account'
         enum_spec = ('list_service_account_for_all_namespaces', 'items', None)

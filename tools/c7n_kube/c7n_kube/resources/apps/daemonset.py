@@ -21,7 +21,6 @@ class DaemonSet(QueryResourceManager):
     class resource_type(TypeInfo):
         group = 'Apps'
         version = 'V1'
-        namespaced = True
         patch = 'patch_namespaced_daemon_set'
         delete = 'delete_namespaced_daemon_set'
         enum_spec = ('list_daemon_set_for_all_namespaces', 'items', None)

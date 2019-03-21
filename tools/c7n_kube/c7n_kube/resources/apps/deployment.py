@@ -22,7 +22,6 @@ class Deployment(QueryResourceManager):
     class resource_type(TypeInfo):
         group = 'Apps'
         version = 'V1'
-        namespaced = True
         patch = 'patch_namespaced_deployment'
         delete = 'delete_namespaced_deployment'
         enum_spec = ('list_deployment_for_all_namespaces', 'items', None)

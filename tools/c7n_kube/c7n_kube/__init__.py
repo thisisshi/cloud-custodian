@@ -13,5 +13,4 @@
 # limitations under the License.
 #
 
-import c7n_kube.labels # noqa
-import c7n_kube.actions # noqa
+import c7n_kube.actions.shared # noqa

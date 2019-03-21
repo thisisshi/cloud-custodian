@@ -14,8 +14,9 @@
 
 import logging
 
+from copy import deepcopy
+
 from c7n.actions import Action as BaseAction
-from c7n_kube.provider import resources as kube_resources
 from c7n.utils import local_session, chunks, type_schema
 from c7n.exceptions import PolicyValidationError
 
@@ -38,13 +39,13 @@ class MethodAction(Action):
         return self
 
     def process(self, resources):
-        m = self.manager.get_model()
         session = local_session(self.manager.session_factory)
+        m = self.manager.get_model()
         client = session.client(m.group, m.version)
         for resource_set in chunks(resources, self.chunk_size):
-            self.process_resource_set(client, m, resource_set)
+            self.process_resource_set(client, resource_set)
 
-    def process_resource_set(self, client, model, resources):
+    def process_resource_set(self, client, resources):
         op_name = self.method_spec['op']
         for r in resources:
             log.info('%s %s' % (op_name, r))
@@ -66,10 +67,12 @@ class PatchAction(MethodAction):
         patch = self.manager.get_model().patch
         return ''.join([a.capitalize() for a in patch.split('_')])
 
-    def patch_resources(self, op, patch_args, namespaced, resources):
+    def patch_resources(self, client, patch_args_template, resources):
+        op = getattr(client, self.manager.get_model().patch)
+        patch_args = deepcopy(patch_args_template)
         for r in resources:
             patch_args['name'] = r['metadata']['name']
-            if namespaced:
+            if 'namespace' in patch_args_template:
                 patch_args['namespace'] = r['metadata']['namespace']
             op(**patch_args)
 
@@ -89,10 +92,12 @@ class DeleteAction(MethodAction):
         delete = self.manager.get_model().delete
         return ''.join([a.capitalize() for a in delete.split('_')])
 
-    def delete_resources(self, op, delete_args, namespaced, resources):
+    def delete_resources(self, client, delete_args_template, resources):
+        op = getattr(client, self.manager.get_model().delete)
+        delete_args = deepcopy(delete_args_template)
         for r in resources:
             delete_args['name'] = r['metadata']['name']
-            if namespaced:
+            if 'namespace' in delete_args_template:
                 delete_args['namespace'] = r['metadata']['namespace']
             op(**delete_args)
 
@@ -110,19 +115,22 @@ class DeleteResource(DeleteAction):
           actions:
             - delete
     """
-    schema = type_schema('delete')
+    schema = type_schema(
+        'delete',
+        grace_period_seconds={'type': 'integer'},
+    )
 
-    def process_resource_set(self, client, model, resources):
+    def process_resource_set(self, client, resources):
+        grace = self.data.get('grace_period_seconds', 30)
         body = V1DeleteOptions()
-        op = getattr(client, model.delete)
+        body.grace_period_seconds = grace
         delete_args = {'body': body}
-        self.delete_resources(op, delete_args, model.namespaced, resources)
+        if self.manager.get_model().namespaced:
+            delete_args.setdefault('namespace', None)
+        self.delete_resources(client, delete_args, resources)
 
     @classmethod
     def register_resources(klass, registry, resource_class):
-        resource_type = resource_class.resource_type
-        if hasattr(resource_type, 'delete') and hasattr(resource_type, 'namespaced'):
+        model = resource_class.resource_type
+        if hasattr(model, 'delete') and hasattr(model, 'namespaced'):
             resource_class.action_registry.register('delete', klass)
-
-
-kube_resources.subscribe(kube_resources.EVENT_REGISTER, DeleteResource.register_resources)

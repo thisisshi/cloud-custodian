@@ -131,3 +131,4 @@ class TypeInfo(object):
     group = None
     version = None
     enum_spec = ()
+    namespaced = True

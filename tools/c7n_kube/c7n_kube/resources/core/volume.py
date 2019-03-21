@@ -32,7 +32,6 @@ class PersistentVolumeClaim(QueryResourceManager):
     class resource_type(TypeInfo):
         group = 'Core'
         version = 'V1'
-        namespaced = True
         patch = 'patch_namespaced_persistent_volume_claim'
         delete = 'delete_namespaced_persistent_volume_claim'
         enum_spec = ('list_persistent_volume_claim_for_all_namespaces', 'items', None)

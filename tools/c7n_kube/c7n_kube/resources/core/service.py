@@ -21,7 +21,6 @@ class Service(QueryResourceManager):
     class resource_type(TypeInfo):
         group = 'Core'
         version = 'V1'
-        namespaced = True
         patch = 'patch_namespaced_service'
         delete = 'delete_namespaced_service'
         enum_spec = ('list_service_for_all_namespaces', 'items', None)
