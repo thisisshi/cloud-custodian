@@ -1,4 +1,4 @@
-# Copyright 2018 Capital One Services, LLC
+# Copyright 2018-2019 Capital One Services, LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,9 +45,9 @@ class MethodAction(Action):
 
     def process_resource_set(self, client, resources):
         op_name = self.method_spec['op']
+        op = getattr(client, op_name)
         for r in resources:
-            log.info('%s %s' % (op_name, r))
-        pass
+            op(name=r['metadata']['name'])
 
 
 class PatchAction(MethodAction):
