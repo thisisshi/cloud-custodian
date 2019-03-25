@@ -1,3 +1,5 @@
+from c7n.exceptions import PolicyValidationError
+
 from common_kube import KubeTest
 
 
@@ -41,3 +43,24 @@ class TestCustomResource(KubeTest):
 
         resources = policy.run()
         self.assertTrue(resources)
+
+    def test_custom_resource_validation(self):
+        with self.assertRaises(PolicyValidationError):
+            self.load_policy(
+                {
+                    'name': 'custom-resources',
+                    'resource': 'k8s.custom-namespaced-resource',
+                },
+            )
+
+        with self.assertRaises(PolicyValidationError):
+            self.load_policy(
+                {
+                    'name': 'custom-resources',
+                    'resource': 'k8s.custom-namespaced-resource',
+                    'query': [
+                        {'bad': 'value'}
+                    ]
+                },
+                validate=False
+            )

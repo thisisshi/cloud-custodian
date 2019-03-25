@@ -827,8 +827,8 @@ class Policy(object):
         m.validate()
         self.validate_policy_start_stop()
         # support validation on k8s custom resource types
-        if hasattr(self.resource_manager.get_model, 'validate'):
-            self.resource_manager.get_model().validate(self)
+        if hasattr(self.resource_manager, 'validate'):
+            self.resource_manager.validate()
         for f in self.resource_manager.filters:
             f.validate()
         for a in self.resource_manager.actions:

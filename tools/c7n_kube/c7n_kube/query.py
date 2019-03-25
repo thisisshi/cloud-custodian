@@ -132,6 +132,17 @@ class CustomResourceQueryManager(QueryResourceManager):
             'plural': custom_resource['plural']
         }
 
+    def validate(self):
+        if 'query' not in self.data:
+            raise PolicyValidationError(
+                "Custom resources require query in policy with only " +
+                "group, version, and plural attributes")
+        if list(self.data.get('query', [])[0].keys()) != ['group', 'version', 'plural']:
+            raise PolicyValidationError(
+                "Custom resources require query in policy with only " +
+                "group, version, and plural attributes")
+        return self
+
 
 class TypeMeta(type):
     def __repr__(cls):
@@ -153,18 +164,3 @@ class CustomTypeInfo(TypeInfo):
     group = 'CustomObjects'
     version = ''
     enum_spec = ('list_cluster_custom_object', 'items', None)
-
-    def validate(self):
-        if 'query' not in self.data:
-            raise PolicyValidationError(
-                "Custom resources require query in policy with only " +
-                "group, version, and plural attributes")
-        if not isinstance(self.data.get('query', [])[0], dict):
-            raise PolicyValidationError(
-                "Custom resources require query in policy with only " +
-                "group, version, and plural attributes")
-        if list(self.data.get('query', [])[0].keys()) != ['group', 'version', 'plural']:
-            raise PolicyValidationError(
-                "Custom resources require query in policy with only " +
-                "group, version, and plural attributes")
-        return self
