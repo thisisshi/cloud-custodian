@@ -49,6 +49,12 @@ class MethodAction(Action):
             log.info('%s %s' % (op_name, r))
         pass
 
+    def handle_custom_resource_action(self, args):
+        args['version'] = self.manager.data['query']['version']
+        args['plural'] = self.manager.data['query']['plural']
+        args['group'] = self.manager.data['query']['group']
+        return args
+
 
 class PatchAction(MethodAction):
     """
@@ -67,6 +73,9 @@ class PatchAction(MethodAction):
 
     def patch_resources(self, client, resources, **patch_args):
         op = getattr(client, self.manager.get_model().patch)
+        if self.manager.data.get('resource') in (
+                'k8s.custom-namespaced-resource', 'k8s.custom-cluster-resource'):
+            patch_args = self.handle_custom_resource_action(patch_args)
         for r in resources:
             patch_args['name'] = r['metadata']['name']
             if self.manager.get_model().namespaced:
@@ -91,6 +100,9 @@ class DeleteAction(MethodAction):
 
     def delete_resources(self, client, resources, **delete_args):
         op = getattr(client, self.manager.get_model().delete)
+        if self.manager.data.get('resource') in (
+                'k8s.custom-namespaced-resource', 'k8s.custom-cluster-resource'):
+            delete_args = self.handle_custom_resource_action(delete_args)
         for r in resources:
             delete_args['name'] = r['metadata']['name']
             if self.manager.get_model().namespaced:
@@ -121,6 +133,7 @@ class DeleteResource(DeleteAction):
         body = V1DeleteOptions()
         body.grace_period_seconds = grace
         delete_args = {'body': body}
+
         self.delete_resources(client, resources, **delete_args)
 
     @classmethod

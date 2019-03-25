@@ -31,9 +31,12 @@ from c7n_kube.resources.apps import (
     replicaset,
     statefulset)
 
+from c7n_kube.resources import crd
+
 log = logging.getLogger('custodian.k8s')
 
 ALL = [
+    crd,
     configmap,
     deployment,
     namespace,

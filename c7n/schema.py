@@ -213,8 +213,11 @@ def generate(resource_types=()):
                 # on a type specific basis
                 # https://stackoverflow.com/questions/22689900/json-schema-allof-with-additionalproperties
                 'query': {
-                    'type': 'array', 'items': {'type': 'object'}}
-
+                    'oneOf': [
+                        {'type': 'array', 'items': {'type': 'object'}},
+                        {'type': 'object'}
+                    ]
+                }
             },
         },
         'policy-mode': {
