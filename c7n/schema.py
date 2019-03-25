@@ -214,6 +214,7 @@ def generate(resource_types=()):
                 # https://stackoverflow.com/questions/22689900/json-schema-allof-with-additionalproperties
                 'query': {
                     'type': 'array', 'items': {'type': 'object'}}
+
             },
         },
         'policy-mode': {
