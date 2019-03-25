@@ -293,12 +293,14 @@ def logs(options, policies):
             e['message']))
 
 
-def _schema_get_docstring(starting_class):
+def _schema_get_docstring(starting_class, base_only=False):
     """ Given a class, return its docstring.
 
     If no docstring is present for the class, search base classes in MRO for a
     docstring.
     """
+    if base_only:
+        return inspect.getdoc(starting_class)
     for cls in inspect.getmro(starting_class):
         if inspect.getdoc(cls):
             return inspect.getdoc(cls)
@@ -409,7 +411,12 @@ def schema_cmd(options):
         sys.exit(1)
 
     if len(components) == 1:
+        docstring = _schema_get_docstring(
+            resource_mapping[resource]['classes']['resource'], base_only=True)
         del(resource_mapping[resource]['classes'])
+        if docstring:
+            print("\nHelp\n----\n")
+            print(docstring + '\n')
         output = {resource: resource_mapping[resource]}
         print(yaml.safe_dump(output))
         return
