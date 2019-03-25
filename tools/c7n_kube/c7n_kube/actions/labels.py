@@ -56,11 +56,8 @@ class LabelAction(PatchAction):
     )
 
     def process_resource_set(self, client, resources):
-        model = self.manager.get_model()
         body = {'metadata': {'labels': self.data.get('labels', {})}}
         patch_args = {'body': body}
-        if model.namespaced:
-            patch_args.setdefault('namespace', None)
         self.patch_resources(client, patch_args, resources)
 
     @classmethod

@@ -14,8 +14,6 @@
 
 import logging
 
-from copy import deepcopy
-
 from c7n.actions import Action as BaseAction
 from c7n.utils import local_session, chunks, type_schema
 from c7n.exceptions import PolicyValidationError
@@ -67,12 +65,11 @@ class PatchAction(MethodAction):
         patch = self.manager.get_model().patch
         return ''.join([a.capitalize() for a in patch.split('_')])
 
-    def patch_resources(self, client, patch_args_template, resources):
+    def patch_resources(self, client, resources, **patch_args):
         op = getattr(client, self.manager.get_model().patch)
-        patch_args = deepcopy(patch_args_template)
         for r in resources:
             patch_args['name'] = r['metadata']['name']
-            if 'namespace' in patch_args_template:
+            if self.manager.get_model().namespaced:
                 patch_args['namespace'] = r['metadata']['namespace']
             op(**patch_args)
 
@@ -92,12 +89,11 @@ class DeleteAction(MethodAction):
         delete = self.manager.get_model().delete
         return ''.join([a.capitalize() for a in delete.split('_')])
 
-    def delete_resources(self, client, delete_args_template, resources):
+    def delete_resources(self, client, resources, **delete_args):
         op = getattr(client, self.manager.get_model().delete)
-        delete_args = deepcopy(delete_args_template)
         for r in resources:
             delete_args['name'] = r['metadata']['name']
-            if 'namespace' in delete_args_template:
+            if self.manager.get_model().namespaced:
                 delete_args['namespace'] = r['metadata']['namespace']
             op(**delete_args)
 
@@ -125,9 +121,7 @@ class DeleteResource(DeleteAction):
         body = V1DeleteOptions()
         body.grace_period_seconds = grace
         delete_args = {'body': body}
-        if self.manager.get_model().namespaced:
-            delete_args.setdefault('namespace', None)
-        self.delete_resources(client, delete_args, resources)
+        self.delete_resources(client, resources, **delete_args)
 
     @classmethod
     def register_resources(klass, registry, resource_class):
