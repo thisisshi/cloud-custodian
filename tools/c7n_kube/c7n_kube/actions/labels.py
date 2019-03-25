@@ -58,7 +58,7 @@ class LabelAction(PatchAction):
     def process_resource_set(self, client, resources):
         body = {'metadata': {'labels': self.data.get('labels', {})}}
         patch_args = {'body': body}
-        self.patch_resources(client, patch_args, resources)
+        self.patch_resources(client, resources, **patch_args)
 
     @classmethod
     def register_resources(klass, registry, resource_class):
