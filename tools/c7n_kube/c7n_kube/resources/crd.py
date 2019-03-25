@@ -28,9 +28,9 @@ class CustomNamespacedResourceDefinition(CustomResourceQueryManager):
       - name: custom-resource
         resource: k8s.custom-namespaced-resource
         query:
-          group: stable.example.com
-          version: v1
-          plural: crontabs
+          - group: stable.example.com
+            version: v1
+            plural: crontabs
     """
     class resource_type(CustomTypeInfo):
         delete = "delete_namespaced_custom_object"
@@ -49,9 +49,9 @@ class CustomResourceDefinition(CustomResourceQueryManager):
       - name: custom-resource
         resource: k8s.custom-cluster-resource
         query:
-          group: stable.example.com
-          version: v1
-          plural: crontabs
+          - group: stable.example.com
+            version: v1
+            plural: crontabs
     """
     class resource_type(CustomTypeInfo):
         namespaced = False
