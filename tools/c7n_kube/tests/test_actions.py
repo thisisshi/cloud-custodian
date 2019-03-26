@@ -39,7 +39,7 @@ class TestDeleteAction(KubeTest):
         self.assertEqual(test_namespace['status']['phase'], 'Terminating')
 
     def test_delete_namespaced_resource(self):
-        factory = self.record_flight_data()
+        factory = self.replay_flight_data()
         p = self.load_policy(
             {
                 'name': 'delete-service',
