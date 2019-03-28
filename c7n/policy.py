@@ -826,7 +826,6 @@ class Policy(object):
                 "Invalid Execution mode in policy %s" % (self.data,))
         m.validate()
         self.validate_policy_start_stop()
-        # support validation on k8s custom resource types
         self.resource_manager.validate()
         for f in self.resource_manager.filters:
             f.validate()
