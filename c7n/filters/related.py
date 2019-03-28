@@ -56,8 +56,8 @@ class RelatedResourceFilter(ValueFilter):
             related = resource_manager.get_resources(list(related_ids))
         else:
             related = resource_manager.resources()
-        return {r[model.id]: r for r in related
-                if r[model.id] in related_ids}
+        expr = jmespath.compile(model.id)
+        return {expr.search(r): r for r in related if expr.search(r) in related_ids}
 
     def get_resource_manager(self):
         mod_path, class_name = self.RelatedResource.rsplit('.', 1)
@@ -87,7 +87,7 @@ class RelatedResourceFilter(ValueFilter):
                 self.log.warning(
                     "Resource %s:%s references non existant %s: %s",
                     model.type,
-                    resource[model.id],
+                    jmespath.search(model.id, resource),
                     self.RelatedResource.rsplit('.', 1)[-1],
                     rid)
                 continue

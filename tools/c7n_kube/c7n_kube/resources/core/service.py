@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from c7n.filters.core import ValueFilter
+from c7n.utils import type_schema
+
+from c7n_kube.filters.related import RelatedKubeResourceFilter
 from c7n_kube.query import QueryResourceManager, TypeInfo
 from c7n_kube.provider import resources
 
@@ -24,3 +28,13 @@ class Service(QueryResourceManager):
         patch = 'patch_namespaced_service'
         delete = 'delete_namespaced_service'
         enum_spec = ('list_service_for_all_namespaces', 'items', None)
+        type = 'service'
+
+
+@Service.filter_registry.register('deployment')
+class DeploymentFilter(RelatedKubeResourceFilter):
+    RelatedResource = 'c7n_kube.resources.apps.deployment.Deployment'
+    RelatedIdsExpression = 'spec.selector.app'
+    AnnotationId = 'c7n:Deployment'
+
+    schema = type_schema('deployment', rinherit=ValueFilter.schema)
