@@ -121,34 +121,11 @@ class QueryResourceManager(ResourceManager):
         self._cache.save(key, resources)
         return self.filter_resources(resources)
 
-    def _get_cached_resources(self, ids):
-        key = self.get_cache_key(None)
-        if self._cache.load():
-            resources = self._cache.get(key)
-            if resources is not None:
-                self.log.debug("Using cached results for get_resources")
-                id_set = set(ids)
-                expr = jmespath.compile(self.get_model().id)
-                breakpoint()
-                return [r for r in resources if expr.search(r) in id_set]
-        return None
-
-    def get_resources(self, ids, cache=True, augment=True):
-        if cache:
-            resources = self._get_cached_resources(ids)
-            if resources is not None:
-                return resources
-        try:
-            resources = self.source.get_resources(ids)
-            if augment:
-                resources = self.augment(resources)
-            return resources
-        except Exception as e:
-            self.log.warning("event ids not resolved: %s error:%s" % (ids, e))
-            return []
-
     def augment(self, resources):
         return resources
+
+    def get_resources(self, ids):
+        return self.source.get_resources(ids)
 
 
 class TypeMeta(type):

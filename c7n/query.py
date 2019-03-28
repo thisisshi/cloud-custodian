@@ -463,8 +463,9 @@ class QueryResourceManager(ResourceManager):
             if resources is not None:
                 self.log.debug("Using cached results for get_resources")
                 m = self.get_model()
+                expr = jmespath.compile(m.id)
                 id_set = set(ids)
-                return [r for r in resources if r[m.id] in id_set]
+                return [r for r in resources if expr.search(r) in id_set]
         return None
 
     def get_resources(self, ids, cache=True, augment=True):
