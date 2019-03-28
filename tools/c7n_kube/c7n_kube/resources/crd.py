@@ -56,4 +56,4 @@ class CustomResourceDefinition(CustomResourceQueryManager):
     class resource_type(CustomTypeInfo):
         namespaced = False
         delete = "delete_cluster_custom_object"
-        patch = "patch_clsuter_custom_object"
+        patch = "patch_cluster_custom_object"
