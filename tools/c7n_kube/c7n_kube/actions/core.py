@@ -81,7 +81,7 @@ class PatchResource(PatchAction):
     """
     schema = type_schema(
         'patch',
-        **{'options': {'type': 'object'}},
+        **{'options': {'type': 'object'}}
     )
 
     def process_resource_set(self, client, resources):
