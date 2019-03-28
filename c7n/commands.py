@@ -410,7 +410,7 @@ def schema_cmd(options):
 
     if len(components) == 1:
         docstring = _schema_get_docstring(
-            resource_mapping[resource]['classes']['resource'], base_only=True)
+            resource_mapping[resource]['classes']['resource'])
         del(resource_mapping[resource]['classes'])
         if docstring:
             print("\nHelp\n----\n")
