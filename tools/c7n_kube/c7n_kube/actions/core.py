@@ -67,9 +67,10 @@ class PatchAction(MethodAction):
 
     def patch_resources(self, client, resources, **patch_args):
         op = getattr(client, self.manager.get_model().patch)
+        namespaced = self.manager.get_model().namespaced
         for r in resources:
             patch_args['name'] = r['metadata']['name']
-            if self.manager.get_model().namespaced:
+            if namespaced:
                 patch_args['namespace'] = r['metadata']['namespace']
             op(**patch_args)
 
@@ -91,9 +92,10 @@ class DeleteAction(MethodAction):
 
     def delete_resources(self, client, resources, **delete_args):
         op = getattr(client, self.manager.get_model().delete)
+        namespaced = self.manager.get_model().namespaced
         for r in resources:
             delete_args['name'] = r['metadata']['name']
-            if self.manager.get_model().namespaced:
+            if namespaced:
                 delete_args['namespace'] = r['metadata']['namespace']
             op(**delete_args)
 
