@@ -30,6 +30,11 @@ from c7n.utils import dumps
 
 
 class ResourceManager(object):
+    """
+    A Cloud Custodian Resource
+
+    Applicable filters and actions below:
+    """
 
     filter_registry = None
     action_registry = None
