@@ -19,7 +19,7 @@ from c7n_kube.provider import resources
 @resources.register('custom-namespaced-resource')
 class CustomNamespacedResourceDefinition(CustomResourceQueryManager):
     """
-    Query Custom Resource Definitions
+    Query Custom Resources
 
     Custom resources require query to be defined with the group,
     version, and plural values from the resource definition
@@ -40,7 +40,7 @@ class CustomNamespacedResourceDefinition(CustomResourceQueryManager):
 @resources.register('custom-cluster-resource')
 class CustomResourceDefinition(CustomResourceQueryManager):
     """
-    Query Custom Resource Definitions
+    Query Custom Resources
 
     Custom resources require query to be defined with the group,
     version, and plural values from the resource definition
