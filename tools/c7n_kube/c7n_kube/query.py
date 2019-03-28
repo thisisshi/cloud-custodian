@@ -133,11 +133,12 @@ class CustomResourceQueryManager(QueryResourceManager):
         }
 
     def validate(self):
+        required_keys = set(['group', 'version', 'plural'])
         if 'query' not in self.data:
             raise PolicyValidationError(
                 "Custom resources require query in policy with only " +
                 "group, version, and plural attributes")
-        if list(self.data.get('query', [])[0].keys()) != ['group', 'version', 'plural']:
+        if set(list(self.data.get('query', [])[0].keys())) != required_keys:
             raise PolicyValidationError(
                 "Custom resources require query in policy with only " +
                 "group, version, and plural attributes")

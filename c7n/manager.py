@@ -131,3 +131,19 @@ class ResourceManager(object):
                 for gf in f.filters:
                     queue.appendleft(gf)
             yield f
+
+    def validate(self):
+        """
+        Validates resource definition, does NOT validate filters, actions, modes.
+
+        Example use case: A resource type that requires an additional query
+
+        policies:
+          - name: k8s-custom-resource
+            resource: k8s.custom-namespaced-resource
+            query:
+              - version: v1
+                group stable.example.com
+                plural: crontabs
+        """
+        pass
