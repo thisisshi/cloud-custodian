@@ -31,9 +31,7 @@ from c7n.utils import dumps
 
 class ResourceManager(object):
     """
-    A Cloud Custodian Resource
-
-    Applicable filters and actions below:
+    A Cloud Custodian resource
     """
 
     filter_registry = None
@@ -138,12 +136,16 @@ class ResourceManager(object):
 
         Example use case: A resource type that requires an additional query
 
-        policies:
-          - name: k8s-custom-resource
-            resource: k8s.custom-namespaced-resource
-            query:
-              - version: v1
-                group stable.example.com
-                plural: crontabs
+        :example:
+
+        .. code-block:: yaml
+
+            policies:
+              - name: k8s-custom-resource
+                resource: k8s.custom-namespaced-resource
+                query:
+                  - version: v1
+                    group stable.example.com
+                    plural: crontabs
         """
         pass
