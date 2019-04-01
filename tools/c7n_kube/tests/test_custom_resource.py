@@ -37,7 +37,9 @@ class TestCustomResource(KubeTest):
         )
 
         resources = policy.run()
-        self.assertTrue(resources)
+        self.assertTrue(len(resources), 1)
+        self.assertEqual(resources[0]['apiVersion'], 'stable.example.com/v1')
+        self.assertEqual(resources[0]['kind'], 'CronTabCluster')
 
     def test_custom_namespaced_resource_query(self):
         factory = self.replay_flight_data()
@@ -57,7 +59,9 @@ class TestCustomResource(KubeTest):
         )
 
         resources = policy.run()
-        self.assertTrue(resources)
+        self.assertTrue(len(resources), 1)
+        self.assertEqual(resources[0]['apiVersion'], 'stable.example.com/v1')
+        self.assertEqual(resources[0]['kind'], 'CronTab')
 
     def test_custom_resource_validation(self):
         self.assertRaises(PolicyValidationError,
