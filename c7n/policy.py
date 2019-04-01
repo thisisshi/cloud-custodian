@@ -940,7 +940,11 @@ class Policy(object):
         """Run policy in default mode"""
         mode = self.get_execution_mode()
         if self.options.dryrun:
-            resources = PullMode(self).run()
+            if self.ctx.policy.execution_mode == 'pull':
+                resources = PullMode(self).run()
+            else:
+                self.log.warning('Skipping dryrun for non-pull mode policy:%s' % self.ctx.policy.name)
+                return []
         elif isinstance(mode, ServerlessExecutionMode):
             resources = mode.provision()
         else:
