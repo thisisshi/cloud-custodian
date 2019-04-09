@@ -488,6 +488,13 @@ class ValueFilter(Filter):
     def match(self, i):
         if self.v is None and len(self.data) == 1:
             [(self.k, self.v)] = self.data.items()
+        elif 'value_from' in self.data and self.data['value_from']['url'] == 'self':
+            # content will be initialized on a per resource basis as the comparison
+            # will be on the metadata for that specific resource
+            self.k = self.data.get('key')
+            self.op = self.data.get('op')
+            self.vtype = self.data.get('value_type')
+            self.v = self.get_resource_value(self.data['value_from']['expr'], i)
         elif self.v is None and not hasattr(self, 'content_initialized'):
             self.k = self.data.get('key')
             self.op = self.data.get('op')
@@ -560,6 +567,10 @@ class ValueFilter(Filter):
             return value, sentinel
         elif self.vtype == 'age':
             if not isinstance(sentinel, datetime.datetime):
+                if isinstance(sentinel, type(None)):
+                    sentinel = 0
+                if isinstance(sentinel, str):
+                    sentinel = int(sentinel)
                 sentinel = datetime.datetime.now(tz=tzutc()) - timedelta(sentinel)
             if isinstance(value, (str, int, float)):
                 try:
