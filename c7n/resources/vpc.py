@@ -970,6 +970,28 @@ class SGPermission(Filter):
             - "::/0"
           op: in
 
+    Additionally, it is possible to check if a Cidr overlaps with another one.
+
+    .. code-block:: yaml
+
+      - type: egress
+        Cidr:
+          value: 10.0.0.0/8
+          op: cidr_overlap
+          value_type: cidr
+
+    or a list of Cidr's:
+
+
+    .. code-block:: yaml
+
+      - type: egress
+        Cidr:
+          value:
+            - 10.0.0.0/8
+            - 20.0.0.0/8
+          op: cidr_overlap
+          value_type: cidr
 
     """
 

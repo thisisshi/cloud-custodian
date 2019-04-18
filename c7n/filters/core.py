@@ -30,7 +30,7 @@ import jmespath
 import six
 
 from c7n import ipaddress
-from c7n.exceptions import PolicyValidationError
+from c7n.exceptions import PolicyValidationError, PolicyExecutionError
 from c7n.executor import ThreadPoolExecutor
 from c7n.registry import PluginRegistry
 from c7n.resolver import ValuesFrom
@@ -83,6 +83,22 @@ def intersect(x, y):
     return bool(set(x).intersection(y))
 
 
+def cidr_overlap(x, y):
+
+    if isinstance(y, list):
+        for cidr in y:
+            if cidr_overlap(x, cidr):
+                return True
+        return False
+
+    if not isinstance(x, ipaddress._BaseNetwork) or not isinstance(y, ipaddress._BaseNetwork):
+        raise PolicyExecutionError(
+            'Unable to compare cidr overlap, values:[%s, %s] are not cidrs'
+            ' or the filter is missing value_type: cidr' % (x, y))
+
+    return x.overlaps(y)
+
+
 OPERATORS = {
     'eq': operator.eq,
     'equal': operator.eq,
@@ -104,7 +120,9 @@ OPERATORS = {
     'not-in': operator_ni,
     'contains': operator.contains,
     'difference': difference,
-    'intersect': intersect}
+    'intersect': intersect,
+    'cidr_overlap': cidr_overlap,
+}
 
 
 class FilterRegistry(PluginRegistry):
@@ -438,6 +456,16 @@ class ValueFilter(Filter):
                 except re.error as e:
                     raise PolicyValidationError(
                         "Invalid regex: %s %s" % (e, self.data))
+            if self.data['op'] == 'cidr_overlap' and self.data.get('value_type').lower() != 'cidr':
+                raise PolicyValidationError('cidr_overlap op requires value_type of "cidr"')
+            if self.data['op'] == 'cidr_overlap':
+                if isinstance(self.data['value'], list):
+                    for cidr in self.data['value']:
+                        if not isinstance(parse_cidr(cidr), ipaddress._BaseNetwork):
+                            raise PolicyValidationError('Invalid cidr block in list: %s.' % cidr)
+                elif not isinstance(parse_cidr(self.data['value']), ipaddress._BaseNetwork):
+                    raise PolicyValidationError('Invalid cidr block found: %s' % self.data['value'])
+
         return self
 
     def __call__(self, i):
@@ -578,7 +606,10 @@ class ValueFilter(Filter):
             # comparisons is intuitively wrong.
             return value, sentinel
         elif self.vtype == 'cidr':
-            s = parse_cidr(sentinel)
+            if isinstance(sentinel, list):
+                s = [parse_cidr(c) for c in sentinel]
+            else:
+                s = parse_cidr(sentinel)
             v = parse_cidr(value)
             if (isinstance(s, ipaddress._BaseAddress) and isinstance(v, ipaddress._BaseNetwork)):
                 return v, s
