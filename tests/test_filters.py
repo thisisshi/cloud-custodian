@@ -728,5 +728,65 @@ class TestFilterRegistry(unittest.TestCase):
         self.assertRaises(PolicyValidationError, reg.factory, {"type": ""})
 
 
+class TestCidrOverlapOpValidation(unittest.TestCase):
+
+    validator = base_filters.core.cidr_overlap_validate
+
+    def test_cidr_overlap_validate_success_single(self):
+        data = {
+            'key': None,
+            'value': '10.0.0.0/8',
+            'op': 'cidr_overlap',
+            'value_type': 'cidr'
+        }
+        self.assertFalse(TestCidrOverlapOpValidation.validator(data))
+
+    def test_cidr_overlap_validate_success_list(self):
+        data = {
+            'key': None,
+            'value': ['10.0.0.0/8', '20.0.0.0/8'],
+            'op': 'cidr_overlap',
+            'value_type': 'cidr'
+        }
+        self.assertFalse(TestCidrOverlapOpValidation.validator(data))
+
+    def test_cidr_overlap_validate_fail_value_type(self):
+        data = {
+            'key': None,
+            'value': ['10.0.0.0/8', '20.0.0.0/8'],
+            'op': 'cidr_overlap',
+        }
+        with self.assertRaises(PolicyValidationError):
+            TestCidrOverlapOpValidation.validator(data)
+
+        data = {
+            'key': None,
+            'value': ['10.0.0.0/8', '20.0.0.0/8'],
+            'op': 'cidr_overlap',
+            'value_type': 'not-cidr'
+        }
+        with self.assertRaises(PolicyValidationError):
+            TestCidrOverlapOpValidation.validator(data)
+
+    def test_cidr_overlap_validate_fail_invalid_cidrs(self):
+        data = {
+            'key': None,
+            'value': ['foo', '20.0.0.0/8'],
+            'op': 'cidr_overlap',
+            'value_type': 'cidr',
+        }
+        with self.assertRaises(PolicyValidationError):
+            TestCidrOverlapOpValidation.validator(data)
+
+        data = {
+            'key': None,
+            'value': 'bar',
+            'op': 'cidr_overlap',
+            'value_type': 'cidr',
+        }
+        with self.assertRaises(PolicyValidationError):
+            TestCidrOverlapOpValidation.validator(data)
+
+
 if __name__ == "__main__":
     unittest.main()
