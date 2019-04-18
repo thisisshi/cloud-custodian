@@ -100,8 +100,7 @@ def cidr_overlap(x, y):
 
 
 def cidr_overlap_validate(data):
-    if data.get('value_type', '').lower() != 'cidr':
-        raise PolicyValidationError('cidr_overlap op requires value_type of "cidr"')
+    # when using the cidr_overlap op, we automatically set the value_type to cidr
     if isinstance(data['value'], list):
         for cidr in data['value']:
             if not isinstance(parse_cidr(cidr), ipaddress._BaseNetwork):
@@ -539,6 +538,9 @@ class ValueFilter(Filter):
 
         if self.op in ('in', 'not-in') and r is None:
             r = ()
+
+        if self.op == 'cidr_overlap':
+            self.vtype = 'cidr'
 
         # value type conversion
         if self.vtype is not None:
