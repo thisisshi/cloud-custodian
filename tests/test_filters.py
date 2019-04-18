@@ -22,6 +22,7 @@ from c7n.exceptions import PolicyValidationError
 from c7n import filters as base_filters
 from c7n.resources.ec2 import filters
 from c7n.utils import annotation
+from c7n.filters.core import cidr_overlap_validate
 from .common import instance, event_data, Bag
 
 
@@ -769,9 +770,6 @@ class TestCidrOverlap(unittest.TestCase):
 
 
 class TestCidrOverlapOpValidation(unittest.TestCase):
-
-    validator = base_filters.core.cidr_overlap_validate
-
     def test_cidr_overlap_validate_success_single(self):
         data = {
             'key': None,
@@ -779,7 +777,7 @@ class TestCidrOverlapOpValidation(unittest.TestCase):
             'op': 'cidr_overlap',
             'value_type': 'cidr'
         }
-        self.assertFalse(TestCidrOverlapOpValidation.validator(data))
+        self.assertFalse(cidr_overlap_validate(data))
 
     def test_cidr_overlap_validate_success_list(self):
         data = {
@@ -788,25 +786,7 @@ class TestCidrOverlapOpValidation(unittest.TestCase):
             'op': 'cidr_overlap',
             'value_type': 'cidr'
         }
-        self.assertFalse(TestCidrOverlapOpValidation.validator(data))
-
-    def test_cidr_overlap_validate_fail_value_type(self):
-        data = {
-            'key': None,
-            'value': ['10.0.0.0/8', '20.0.0.0/8'],
-            'op': 'cidr_overlap',
-        }
-        with self.assertRaises(PolicyValidationError):
-            TestCidrOverlapOpValidation.validator(data)
-
-        data = {
-            'key': None,
-            'value': ['10.0.0.0/8', '20.0.0.0/8'],
-            'op': 'cidr_overlap',
-            'value_type': 'not-cidr'
-        }
-        with self.assertRaises(PolicyValidationError):
-            TestCidrOverlapOpValidation.validator(data)
+        self.assertFalse(cidr_overlap_validate(data))
 
     def test_cidr_overlap_validate_fail_invalid_cidrs(self):
         data = {
@@ -816,7 +796,7 @@ class TestCidrOverlapOpValidation(unittest.TestCase):
             'value_type': 'cidr',
         }
         with self.assertRaises(PolicyValidationError):
-            TestCidrOverlapOpValidation.validator(data)
+            cidr_overlap_validate(data)
 
         data = {
             'key': None,
@@ -825,7 +805,7 @@ class TestCidrOverlapOpValidation(unittest.TestCase):
             'value_type': 'cidr',
         }
         with self.assertRaises(PolicyValidationError):
-            TestCidrOverlapOpValidation.validator(data)
+            cidr_overlap_validate(data)
 
 
 if __name__ == "__main__":
