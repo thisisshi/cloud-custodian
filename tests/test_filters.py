@@ -728,6 +728,46 @@ class TestFilterRegistry(unittest.TestCase):
         self.assertRaises(PolicyValidationError, reg.factory, {"type": ""})
 
 
+class TestCidrOverlap(unittest.TestCase):
+    sg = {'Cidr': '10.0.0.0/24'}
+
+    def test_cidr_overlap_single(self):
+        f = filters.factory(
+            {
+                'type': 'value',
+                'key': 'Cidr',
+                'value': '10.0.0.0/8',
+                'op': 'cidr_overlap',
+                'value_type': 'cidr'
+            }
+        )
+        self.assertTrue(f(TestCidrOverlap.sg))
+
+    def test_cidr_no_overlap_single(self):
+        f = filters.factory(
+            {
+                'type': 'value',
+                'key': 'Cidr',
+                'value': '20.0.0.0/8',
+                'op': 'cidr_overlap',
+                'value_type': 'cidr'
+            }
+        )
+        self.assertFalse(f(TestCidrOverlap.sg))
+
+    def test_cidr_overlap_list(self):
+        f = filters.factory(
+            {
+                'type': 'value',
+                'key': 'Cidr',
+                'value': ['10.0.0.0/8', '20.0.0.8/8'],
+                'op': 'cidr_overlap',
+                'value_type': 'cidr'
+            }
+        )
+        self.assertTrue(f(TestCidrOverlap.sg))
+
+
 class TestCidrOverlapOpValidation(unittest.TestCase):
 
     validator = base_filters.core.cidr_overlap_validate
