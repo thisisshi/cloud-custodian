@@ -23,6 +23,7 @@ from c7n.exceptions import PolicyValidationError, ClientError
 from c7n.filters import (
     DefaultVpcBase, Filter, ValueFilter)
 import c7n.filters.vpc as net_filters
+from c7n.filters.core import cidr_overlap_validate
 from c7n.filters.iamaccess import CrossAccountAccessFilter
 from c7n.filters.related import RelatedResourceFilter
 from c7n.filters.revisions import Diff
@@ -1008,6 +1009,10 @@ class SGPermission(Filter):
         if delta:
             raise PolicyValidationError("Unknown keys %s on %s" % (
                 ", ".join(delta), self.manager.data))
+        if 'Cidr' in self.data.keys():
+            if self.data['Cidr'].get('op') == 'cidr_overlap':
+                cidr_overlap_validate(self.data['Cidr'])
+
         return self
 
     def process(self, resources, event=None):

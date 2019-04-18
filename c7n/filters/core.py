@@ -99,6 +99,17 @@ def cidr_overlap(x, y):
     return x.overlaps(y)
 
 
+def cidr_overlap_validate(data):
+    if data.get('value_type', '').lower() != 'cidr':
+        raise PolicyValidationError('cidr_overlap op requires value_type of "cidr"')
+    if isinstance(data['value'], list):
+        for cidr in data['value']:
+            if not isinstance(parse_cidr(cidr), ipaddress._BaseNetwork):
+                raise PolicyValidationError('Invalid cidr block in list: %s.' % cidr)
+    elif not isinstance(parse_cidr(data['value']), ipaddress._BaseNetwork):
+        raise PolicyValidationError('Invalid cidr block found: %s' % data['value'])
+
+
 OPERATORS = {
     'eq': operator.eq,
     'equal': operator.eq,
@@ -456,15 +467,8 @@ class ValueFilter(Filter):
                 except re.error as e:
                     raise PolicyValidationError(
                         "Invalid regex: %s %s" % (e, self.data))
-            if self.data['op'] == 'cidr_overlap' and self.data.get('value_type').lower() != 'cidr':
-                raise PolicyValidationError('cidr_overlap op requires value_type of "cidr"')
             if self.data['op'] == 'cidr_overlap':
-                if isinstance(self.data['value'], list):
-                    for cidr in self.data['value']:
-                        if not isinstance(parse_cidr(cidr), ipaddress._BaseNetwork):
-                            raise PolicyValidationError('Invalid cidr block in list: %s.' % cidr)
-                elif not isinstance(parse_cidr(self.data['value']), ipaddress._BaseNetwork):
-                    raise PolicyValidationError('Invalid cidr block found: %s' % self.data['value'])
+                cidr_overlap_validate(self.data)
 
         return self
 
