@@ -29,6 +29,7 @@ import six
 import sys
 
 from six.moves.urllib import parse as urlparse
+from yaml.constructor import ConstructorError
 
 from c7n.exceptions import ClientError, PolicyValidationError
 from c7n import ipaddress, config
@@ -103,6 +104,8 @@ def yaml_join(loader, node):
     """
     Simple join tag to allow string concatenation in yaml file
     """
+    if not isinstance(node.value, list):
+        raise ConstructorError('!join expects a list of items, not %s' % type(node.value))
     seq = loader.construct_sequence(node)
     return ''.join([str(i) for i in seq])
 

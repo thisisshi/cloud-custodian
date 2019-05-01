@@ -18,6 +18,7 @@ import os
 import sys
 import tempfile
 import time
+import yaml
 
 from botocore.exceptions import ClientError
 from dateutil.parser import parse as parse_date
@@ -453,3 +454,11 @@ class UtilTest(BaseTest):
                  'b': '{account_id}'}, account_id=21),
             {'k': '{limit}',
              'b': '21'})
+
+    def test_yaml_join(self):
+        data = utils.yaml_load("baz: !join ['foo', 'bar']")
+        self.assertEqual(data['baz'], 'foobar')
+
+    def test_yaml_load_bad_value(self):
+        with self.assertRaises(yaml.YAMLError):
+            utils.yaml_load("baz: !join 'foo'")
