@@ -99,10 +99,19 @@ def load_file(path, format=None, vars=None):
             return loads(contents)
 
 
-def yaml_load(value):
+def yaml_join(loader, node):
+    """
+    Simple join tag to allow string concatenation in yaml file
+    """
+    seq = loader.construct_sequence(node)
+    return ''.join([str(i) for i in seq])
+
+
+def yaml_load(value, loader=SafeLoader):
     if yaml is None:
         raise RuntimeError("Yaml not available")
-    return yaml.load(value, Loader=SafeLoader)
+    yaml.add_constructor('!join', yaml_join, loader)
+    return yaml.load(value, Loader=loader)
 
 
 def loads(body):

@@ -30,7 +30,7 @@ from yaml.constructor import ConstructorError
 from c7n.exceptions import ClientError
 from c7n.provider import clouds
 from c7n.policy import Policy, PolicyCollection, load as policy_load
-from c7n.utils import dumps, load_file, local_session, SafeLoader
+from c7n.utils import dumps, load_file, local_session, SafeLoader, yaml_load
 from c7n.config import Bag, Config
 from c7n import provider
 from c7n.resources import load_resources
@@ -213,7 +213,7 @@ def validate(options):
 
         with open(config_file) as fh:
             if fmt in ('yml', 'yaml', 'json'):
-                data = yaml.load(fh.read(), Loader=DuplicateKeyCheckLoader)
+                data = yaml_load(fh.read(), DuplicateKeyCheckLoader)
             else:
                 log.error("The config file must end in .json, .yml or .yaml.")
                 raise ValueError("The config file must end in .json, .yml or .yaml.")

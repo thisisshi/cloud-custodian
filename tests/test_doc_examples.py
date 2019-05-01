@@ -14,9 +14,10 @@
 import itertools
 import os
 import sys
-import yaml
 
 from c7n.provider import resources
+from c7n.utils import yaml_load
+from c7n.commands import DuplicateKeyCheckLoader
 from .common import BaseTest
 
 try:
@@ -59,7 +60,7 @@ class DocExampleTest(BaseTest):
         policy_map = {}
         idx = 1
         for ptext, resource_name, el_name in get_doc_examples():
-            data = yaml.safe_load(ptext)
+            data = yaml_load(ptext, DuplicateKeyCheckLoader)
             for p in data.get('policies', []):
                 # We unique based on name and content to avoid duplicates
                 # from inherited docs.
