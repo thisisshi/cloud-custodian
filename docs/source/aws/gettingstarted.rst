@@ -79,6 +79,23 @@ For more information on basic concepts and terms, check the :ref:`glossary
 :ref:`tag compliance policy <policyStructure>`, or browse all of our
 :ref:`use case recipes <usecases>`.
 
+.. _monitor-aws-cc:
+
+Monitor AWS
+-----------
+
+You can generate CloudWatch metrics by specifying the ``--metrics`` flag and specifying ``aws``::
+
+  $ custodian run -s <output_directory> --metrics aws <policyfile>.yml
+
+You can also upload Cloud Custodian logs to CloudWatch logs::
+
+  $ custodian run --log-group=/cloud-custodian/<dev-account>/<region> -s <output_directory> <policyfile>.yml
+
+And you can output logs and resource records to S3::
+
+  $ custodian run -s s3://<my-bucket><my-prefix> <policyfile>.yml
+
 Troubleshooting & Tinkering
 +++++++++++++++++++++++++++
 

@@ -99,7 +99,7 @@ page.
 
 - :ref:`AWS <aws-gettingstarted>`
 - :ref:`Azure <azure_gettingstarted>`
-- GCP <tbd> 
+- GCP <tbd>
 
 Troubleshooting & Tinkering
 +++++++++++++++++++++++++++
@@ -128,39 +128,12 @@ Additional commands let you monitor your services in detail.
 You can generate metrics, log outputs, and output to blob storage in each of the different
 providers (AWS, Azure, Google Cloud Platform).
 
-.. _monitor-aws-cc:
+For detailed instructions on how to add metrics, logging, and blob storage output for the
+different clouds, check out the cloud provider specific pages:
 
-Monitor AWS
------------
-
-You can generate CloudWatch metrics by specifying the ``--metrics`` flag and specifying ``aws``::
-
-  $ custodian run -s <output_directory> --metrics aws <policyfile>.yml
-
-You can also upload Cloud Custodian logs to CloudWatch logs::
-
-  $ custodian run --log-group=/cloud-custodian/<dev-account>/<region> -s <output_directory> <policyfile>.yml
-
-And you can output logs and resource records to S3::
-
-  $ custodian run -s s3://<my-bucket><my-prefix> <policyfile>.yml
-
-.. _monitor-azure-cc:
-
-Monitor Azure
--------------
-
-You can generate App Insights metrics by specifying the ``--metrics`` flag and specifying ``azure``::
-
-  $ custodian run -s <output_directory> --metrics azure <policyfile>.yml
-
-You can also upload Cloud Custodian logs to App Insights logs::
-
-  $ custodian run --log-group=azure://cloud-custodian/<dev-account>/<region> -s <output_directory> <policyfile>.yml
-
-And you can output logs and resource records to Azure storage accounts::
-
-  $ custodian run -s azure://<my-bucket><my-prefix> <policyfile>.yml
+- :ref:`AWS <aws-gettingstarted>`
+- :ref:`Azure <azure_gettingstarted>`
+- GCP <tbd>
 
 .. _monitor-gcp-cc:
 
