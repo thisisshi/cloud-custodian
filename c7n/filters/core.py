@@ -592,7 +592,6 @@ class ValueFilter(Filter):
         # Allows for expiration filtering, for events in the future as opposed
         # to events in the past which age filtering allows for.
         elif self.vtype == 'expiration':
-            breakpoint()
             if not isinstance(sentinel, datetime.datetime):
                 sentinel = datetime.datetime.now(tz=tzutc()) + timedelta(sentinel)
 
