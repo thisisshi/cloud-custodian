@@ -18,14 +18,70 @@ Install Cloud Custodian
 
 To install Cloud Custodian, just run::
 
-  $ virtualenv --python=python2 custodian
+  $ python3 -m venv custodian
   $ source custodian/bin/activate
   (custodian) $ pip install c7n
 
-(Note that Custodian's `Lambda features <../policy/lambda.html>`_ currently `do
-not work <https://github.com/cloud-custodian/cloud-custodian/issues/193>`_ outside
-of a virtualenv.)
+.. _explore-cc:
 
+Explore Cloud Custodian
+-----------------------
+
+Run ``custodian -h`` to see a list of available commands.
+
+Run ``custodian schema`` to see the complete list of cloud resources against
+which you can run policies. To invoke command-line help with more information
+about policy schema details, run ``custodian schema -h``.
+
+Run ``custodian schema <cloud-provider>`` to see the available resources for a
+specific cloud provider: ``custodian schema aws``
+
+Run ``custodian schema <cloud-provider>.<resource>`` to see the available
+:ref:`filters and actions <policy>` for each resource.
+
+Drill down to get more information about available policy settings for each
+resource, where the model for the command is::
+
+  $ custodian schema <cloud>.<resource>.<category>.<item>
+
+For example::
+
+  $ custodian schema aws.s3.filters.is-log-target
+
+provides the following information::
+
+  Help
+  ----
+
+  Filter and return buckets are log destinations.
+
+  Not suitable for use in lambda on large accounts, This is a api
+  heavy process to detect scan all possible log sources.
+
+  Sources:
+    - elb (Access Log)
+    - s3 (Access Log)
+    - cfn (Template writes)
+    - cloudtrail
+
+  :example:
+
+      .. code-block: yaml
+
+          policies:
+            - name: s3-log-bucket
+              resource: s3
+              filters:
+                - type: is-log-target
+
+  Schema
+  ------
+  
+  {   'additionalProperties': False,
+      'properties': {   'type': {   'enum': ['is-log-target']},
+                        'value': {   'type': 'boolean'}},
+      'required': ['type'],
+      'type': 'object'}
 
 .. _write-policy:
 
@@ -52,6 +108,26 @@ Then, create a file named ``custodian.yml`` with this content:
         resource: ec2
         filters:
           - "tag:Custodian": present
+
+At this point, we have specified the following things:
+
+1. The name of the policy
+2. The resource type to query against, in this case (aws.ec2)
+3. The filters list
+3a. The Custodian tag filter
+
+Running this policy will not execute any actions as the actions list does not exist.
+
+We can extend this example to stop the instances that are actually filtered in by the
+Custodian tag filter by simply specifying the ``stop`` action:
+
+.. code-block:: yaml
+
+    policies:
+      - name: my-first-policy
+        resource: ec2
+        filters:
+          - "tag:Custodian": present
         actions:
           - stop
 
@@ -66,7 +142,7 @@ Now, run Custodian:
 
     AWS_ACCESS_KEY_ID="foo" AWS_SECRET_ACCESS_KEY="bar" custodian run --output-dir=. custodian.yml
 
-Note: If you already have AWS credentials configured for AWS CLI or SDK access, then you may omit providing them on the command line. 
+Note: If you already have AWS credentials configured for AWS CLI or SDK access, then you may omit providing them on the command line.
 If successful, you should see output similar to the following on the command line::
 
     2016-12-20 08:35:06,133: custodian.policy:INFO Running policy my-first-policy resource: ec2 region:us-east-1 c7n:0.8.21.2
@@ -114,69 +190,6 @@ running any actions on the resources:
 
   $ custodian run --dryrun -s . custodian.yml
 
-
-.. _explore-cc:
-
-Explore Cloud Custodian
------------------------
-
-Run ``custodian -h`` to see a list of available commands.
-
-Run ``custodian schema`` to see the complete list of AWS resources against
-which you can run policies. To invoke command-line help with more information
-about policy schema details, run ``custodian schema -h``.
-
-Run ``custodian schema <cloud-provider>`` to see the available resources for a specific
-cloud provider: ``custodian schema aws``
-
-Run ``custodian schema <resource>`` to see the available :ref:`filters and
-actions <policy>` for each resource.
-
-Drill down to get more information about available policy settings for each
-resource, where the model for the command is::
-
-  $ custodian schema <resource>.<category>.<item>
-
-For example::
-
-  $ custodian schema s3.filters.is-log-target
-
-provides the following information::
-
-  Help
-  ----
-
-  Filter and return buckets are log destinations.
-
-  Not suitable for use in lambda on large accounts, This is a api
-  heavy process to detect scan all possible log sources.
-
-  Sources:
-    - elb (Access Log)
-    - s3 (Access Log)
-    - cfn (Template writes)
-    - cloudtrail
-
-  :example:
-
-      .. code-block: yaml
-
-          policies:
-            - name: s3-log-bucket
-              resource: s3
-              filters:
-                - type: is-log-target
-
-  Schema
-  ------
-  
-  {   'additionalProperties': False,
-      'properties': {   'type': {   'enum': ['is-log-target']},
-                        'value': {   'type': 'boolean'}},
-      'required': ['type'],
-      'type': 'object'}
-
-
 .. _monitor-cc:
 
 Monitor resources
@@ -184,9 +197,17 @@ Monitor resources
 
 Additional commands let you monitor your services in detail.
 
-You can generate metrics by specifying the boolean metrics flag::
+You can generate metrics, log outputs, and output to blob storage in each of the different
+providers (AWS, Azure, Google Cloud Platform).
 
-  $ custodian run -s <output_directory> --metrics <policyfile>.yml
+.. _monitor-aws-cc:
+
+Monitor AWS
+-----------
+
+You can generate CloudWatch metrics by specifying the ``--metrics`` flag and specifying ``aws``::
+
+  $ custodian run -s <output_directory> --metrics aws <policyfile>.yml
 
 You can also upload Cloud Custodian logs to CloudWatch logs::
 
@@ -195,6 +216,45 @@ You can also upload Cloud Custodian logs to CloudWatch logs::
 And you can output logs and resource records to S3::
 
   $ custodian run -s s3://<my-bucket><my-prefix> <policyfile>.yml
+
+.. _monitor-azure-cc:
+
+Monitor Azure
+-------------
+
+You can generate App Insights metrics by specifying the ``--metrics`` flag and specifying ``azure``::
+
+  $ custodian run -s <output_directory> --metrics azure <policyfile>.yml
+
+You can also upload Cloud Custodian logs to App Insights logs::
+
+  $ custodian run --log-group=azure://cloud-custodian/<dev-account>/<region> -s <output_directory> <policyfile>.yml
+
+And you can output logs and resource records to Azure storage accounts::
+
+  $ custodian run -s azure://<my-bucket><my-prefix> <policyfile>.yml
+
+.. _monitor-gcp-cc:
+
+Monitor GCP
+-------------
+
+You can generate Stackdriver metrics by specifying the ``--metrics`` flag and specifying ``gcp``::
+
+  $ custodian run -s <output_directory> --metrics gcp <policyfile>.yml
+
+You can also upload Cloud Custodian logs to Stackdriver logs::
+
+  $ custodian run --log-group=gcp://cloud-custodian/<dev-account>/<region> -s <output_directory> <policyfile>.yml
+
+And you can output logs and resource records to GCP Buckets::
+
+  $ custodian run -s gcp://<my-bucket><my-prefix> <policyfile>.yml
+
+
+For details, see :ref:`usage`.
+
+
 
 For details, see :ref:`usage`.
 
