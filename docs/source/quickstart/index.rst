@@ -83,6 +83,12 @@ provides the following information::
       'required': ['type'],
       'type': 'object'}
 
+
+Additionally, you can use the schema command to view information on the different
+supported modes in Cloud Custodian::
+
+  $ custodian schema mode
+
 .. _write-policy:
 
 Write your first policy
@@ -105,7 +111,7 @@ Then, create a file named ``custodian.yml`` with this content:
 
     policies:
       - name: my-first-policy
-        resource: ec2
+        resource: aws.ec2
         filters:
           - "tag:Custodian": present
 
@@ -114,7 +120,7 @@ At this point, we have specified the following things:
 1. The name of the policy
 2. The resource type to query against, in this case (aws.ec2)
 3. The filters list
-3a. The Custodian tag filter
+4. The Custodian tag filter
 
 Running this policy will not execute any actions as the actions list does not exist.
 
@@ -250,11 +256,6 @@ You can also upload Cloud Custodian logs to Stackdriver logs::
 And you can output logs and resource records to GCP Buckets::
 
   $ custodian run -s gcp://<my-bucket><my-prefix> <policyfile>.yml
-
-
-For details, see :ref:`usage`.
-
-
 
 For details, see :ref:`usage`.
 
