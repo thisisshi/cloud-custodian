@@ -60,5 +60,6 @@ Navigate below and get started with Cloud Custodian!
    developer/index.rst
    developer/installing.rst
    developer/tests.rst
+   developer/documentation.rst
 
 
