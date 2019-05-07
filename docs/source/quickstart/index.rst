@@ -6,8 +6,8 @@ Getting Started
 See also the readme in the GitHub repository.
 
 * :ref:`install-cc`
-* :ref:`cloud-providers`
 * :ref:`explore-cc`
+* :ref:`cloud-providers`
 * :ref:`monitor-cc`
 * :ref:`tab-completion`
 
