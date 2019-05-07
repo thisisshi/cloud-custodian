@@ -96,6 +96,11 @@ And you can output logs and resource records to S3::
 
   $ custodian run -s s3://<my-bucket><my-prefix> <policyfile>.yml
 
+If Custodian is being run without Assume Roles, all output will be put into the same account.
+Custodian is built with the ability to be run from different accounts and leverage STS
+Role Assumption for cross-account access. Users can leverage the metrics that are
+being generated after each run by creating Custodian Dashboards in CloudWatch.
+
 Troubleshooting & Tinkering
 +++++++++++++++++++++++++++
 

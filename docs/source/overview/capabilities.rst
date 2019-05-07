@@ -28,6 +28,9 @@ run from.
 Custodian currently provides policy definition around AWS, Azure, and Google Cloud
 Platform resources:
 
+**Note**: this is a small sample of all of the available resources, see the
+section :ref:`explore-cc` on how to view the full list of available resources.
+
 
 AWS
 ---
@@ -42,11 +45,6 @@ AWS
 - :ref:`rds`
 - :ref:`redshift`
 - :ref:`s3`
-
-If Custodian is being run without Assume Roles, all output will be put into the same account.
-Custodian is built with the ability to be run from different accounts and leverage STS
-Role Assumption for cross-account access. Users can leverage the metrics that are
-being generated after each run by creating Custodian Dashboards in CloudWatch.
 
 Azure
 -----

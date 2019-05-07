@@ -135,23 +135,6 @@ different clouds, check out the cloud provider specific pages:
 - :ref:`Azure <azure_gettingstarted>`
 - GCP <tbd>
 
-.. _monitor-gcp-cc:
-
-Monitor GCP
--------------
-
-You can generate Stackdriver metrics by specifying the ``--metrics`` flag and specifying ``gcp``::
-
-  $ custodian run -s <output_directory> --metrics gcp <policyfile>.yml
-
-You can also upload Cloud Custodian logs to Stackdriver logs::
-
-  $ custodian run --log-group=gcp://cloud-custodian/<dev-account>/<region> -s <output_directory> <policyfile>.yml
-
-And you can output logs and resource records to GCP Buckets::
-
-  $ custodian run -s gcp://<my-bucket><my-prefix> <policyfile>.yml
-
 For details, see :ref:`usage`.
 
 .. _tab-completion:
