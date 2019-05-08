@@ -20,6 +20,7 @@ Navigate below and get started with Cloud Custodian!
    overview/index
    quickstart/index
    quickstart/usage
+   filters
    quickstart/advanced
    quickstart/policyStructure
    overview/glossary
@@ -31,7 +32,6 @@ Navigate below and get started with Cloud Custodian!
    aws/gettingstarted
    aws/examples/index
    aws/policy/index
-   filters
    aws/policy/lambda
    aws/policy/mu
 
