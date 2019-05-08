@@ -16,11 +16,13 @@ Navigate below and get started with Cloud Custodian!
    :maxdepth: 2
    :caption: Introduction
 
-   overview/index
+   overview
    quickstart/index
    quickstart/usage
    quickstart/advanced
    quickstart/policyStructure
+   overview/glossary
+   overview/deployment
 
 .. toctree::
    :maxdepth: 2
@@ -46,11 +48,21 @@ Navigate below and get started with Cloud Custodian!
 
 .. toctree::
    :maxdepth: 2
+   :caption: Tools
+
+   tools/c7n-org
+   tools/c7n-policystream
+   tools/c7n-mailer
+
+
+.. toctree::
+   :maxdepth: 2
    :caption: Contributing
 
    contribute
    developer/index.rst
    developer/installing.rst
    developer/tests.rst
+   developer/documentation.rst
 
 
