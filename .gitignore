@@ -35,3 +35,4 @@ results.xml
 pyvenv.cfg
 junit
 /.vs
+docs/source/tools/*
