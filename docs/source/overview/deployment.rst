@@ -180,4 +180,4 @@ Multi Account Execution
 For more advanced setups, such as executing Custodian against multiple accounts, we
 distribute the tool c7n-org. c7n-org utilizes a accounts configuration file and
 assume roles to operate against multiple accounts, projects, or subscriptions in
-parallel. More information can be found in tools/c7n-org.
+parallel. More information can be found in :doc:`/tools/c7n-org`.

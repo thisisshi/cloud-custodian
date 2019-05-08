@@ -1,4 +1,4 @@
-# Custodian Mailer
+# c7n-mailer: Custodian Mailer
 
 A mailer implementation for Custodian. Outbound mail delivery is still somewhat
 organization-specific, so this at the moment serves primarily as an example

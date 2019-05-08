@@ -1,4 +1,4 @@
-# Policy Changes from Git
+# c7n-policystream: Policy Changes from Git
 
 Using custodian in accordance with infrastructure as code principles,
 we store policy assets in a versioned control repository. This
