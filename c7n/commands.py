@@ -531,14 +531,14 @@ def _print_cls_schema(cls):
 
 
 def _expand_schema(schema, definitions):
-    for k, v in schema.items():
+    """Expand references in schema to their full schema"""
+    for k, v in list(schema.items()):
         if k == '$ref':
-            schema.pop(k)
+            # the value here is in the form of: '#/definitions/path/to/key'
             path = '.'.join(v.split('/')[2:])
             return jmespath.search(path, definitions)
         if isinstance(v, dict):
-            v = _expand_schema(v, definitions)
-            schema[k] = v
+            schema[k] = _expand_schema(v, definitions)
     return schema
 
 
