@@ -1,3 +1,20 @@
+..
+    !!! Important !!!
+    This file is moved during document generation.
+    Only edit the original document at ./README.rst
+
+===============
+Cloud Custodian
+===============
+
+.. image:: https://cloudcustodian.io/img/logo_capone_devex_cloud_custodian.svg
+    :alt: Cloud Custodian Logo
+    :height: 200 px
+    :width: 200 px
+    :align: center
+
+----------------
+
 .. image:: https://badges.gitter.im/cloud-custodian/cloud-custodian.svg
      :target: https://gitter.im/cloud-custodian/cloud-custodian?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
      :alt: Join the chat at https://gitter.im/cloud-custodian/cloud-custodian
@@ -18,8 +35,6 @@
      :target: https://requires.io/github/cloud-custodian/cloud-custodian/requirements/?branch=master
      :alt: Requirements Status
 
-
-Cloud Custodian
 ===============
 
 Cloud Custodian is a rules engine for managing public cloud accounts
@@ -86,7 +101,7 @@ Usage
 
 First a role must be created with the appropriate permissions for custodian to act on the resources
 described in the policies yaml given as an example below.
-For convenience, an _`example policy <_static/custodian-quickstart-policy.json>`_
+For convenience, an `example policy <_static/custodian-quickstart-policy.json>`_
 is provided for this quick start guide. Customized AWS IAM policies
 will be necessary for your own custodian policies
 
