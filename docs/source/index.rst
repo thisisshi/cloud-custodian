@@ -17,6 +17,7 @@ Navigate below and get started with Cloud Custodian!
    :caption: Introduction
 
    overview
+   overview/index
    quickstart/index
    quickstart/usage
    filters
