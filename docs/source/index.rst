@@ -17,8 +17,10 @@ Navigate below and get started with Cloud Custodian!
    :caption: Introduction
 
    overview
+   overview/index
    quickstart/index
    quickstart/usage
+   filters
    quickstart/advanced
    quickstart/policyStructure
    overview/glossary
@@ -31,7 +33,6 @@ Navigate below and get started with Cloud Custodian!
    aws/gettingstarted
    aws/examples/index
    aws/policy/index
-   filters
    aws/policy/lambda
    aws/policy/mu
 
@@ -53,7 +54,7 @@ Navigate below and get started with Cloud Custodian!
    tools/c7n-org
    tools/c7n-policystream
    tools/c7n-mailer
-
+   tools/c7n-trailcreator
 
 .. toctree::
    :maxdepth: 2
