@@ -1022,7 +1022,7 @@ class CopyRelatedResourceTag(Tag):
     def process(self, resources):
         related_resources = list(
             zip(jmespath.search('[].[%s || `false`]|[]' % self.data['key'], resources), resources))
-        related_ids = set([r[0] for r in related_resources])
+        related_ids = set(related_resources)
         related_tag_map = self.get_resource_tag_map(self.data['resource'], related_ids)
 
         missing_related_tags = related_ids.difference(related_tag_map.keys())
@@ -1038,14 +1038,14 @@ class CopyRelatedResourceTag(Tag):
 
         stats = Counter()
 
-        for related, res in related_resources:
+        for related, r in related_resources:
             if related in missing_related_tags or not related_tag_map[related]:
                 stats['missing'] += 1
             elif self.process_resource(
-                    client, res, related_tag_map[related], self.data['tags'], tag_action):
+                    client, r, related_tag_map[related], self.data['tags'], tag_action):
                 stats['tagged'] += 1
             else:
-                stats['unchanged'] = 1
+                stats['unchanged'] += 1
 
         self.log.info(
             'Tagged %d resources from related, missing-skipped %d unchanged %d',
