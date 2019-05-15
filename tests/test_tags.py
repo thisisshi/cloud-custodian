@@ -322,7 +322,7 @@ class CopyRelatedResourceTag(BaseTest):
         session_factory = self.replay_flight_data('test_copy_related_resource_tag_multi_ref')
         client = session_factory().client('ec2')
 
-        result = client.describe_instances()['Reservations'][0]['Instances']
+        result = client.describe_instances()
         self.assertEqual(len(result['Reservations']), 1)
 
         instances = result['Reservations'][0]['Instances']
