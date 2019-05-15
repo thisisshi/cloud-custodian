@@ -21,6 +21,7 @@ from mock import MagicMock, call
 
 from c7n.tags import universal_retry, coalesce_copy_user_tags
 from c7n.exceptions import PolicyExecutionError, PolicyValidationError
+from c7n.utils import yaml_load
 
 from .common import BaseTest
 
@@ -316,3 +317,62 @@ class CopyRelatedResourceTag(BaseTest):
             ]
         }
         self.assertRaises(PolicyValidationError, self.load_policy, policy)
+
+    def test_copy_related_resource_tag_multi_ref(self):
+        session_factory = self.replay_flight_data('test_copy_related_resource_tag_multi_ref')
+        client = session_factory().client('ec2')
+
+        result = client.describe_instances()['Reservations'][0]['Instances']
+        self.assertEqual(len(result['Reservations']), 1)
+
+        instances = result['Reservations'][0]['Instances']
+        self.assertEqual(len(instances), 1)
+
+        enis = [e['NetworkInterfaceId'] for e in instances[0]['NetworkInterfaces']]
+
+        self.assertEqual(len(enis), 2)
+        self.assertEqual(
+            instances[0]['Tags'],
+            [{'Key': 'test', 'Value': 'test'}]
+        )
+
+        policy = """
+        name: copy-tags-from-ec2-instance-to-eni
+        description: 'Copies tags from instances to attached ENIs on launch'
+        resource: eni
+        filters:
+          - type: value
+            key: Tags
+            value: empty
+        actions:
+          - type: copy-related-tag
+            resource: ec2
+            skip_missing: True
+            key: Attachment.InstanceId
+            tags: '*'
+        """
+
+        p = self.load_policy(yaml_load(policy), session_factory=session_factory)
+
+        resources = p.run()
+
+        self.assertEqual(len(resources), 3)
+
+        all_enis = client.describe_network_interfaces()['NetworkInterfaces']
+
+        self.assertEqual(len(all_enis), 3)
+
+        self.assertEqual(
+            set(enis).intersection(set(e['NetworkInterfaceId'] for e in all_enis)),
+            set(enis)
+        )
+
+        taggable_enis = [e for e in all_enis if e.get('Attachment', {}).get('InstanceId')]
+        untagged_enis = [e for e in all_enis if not e.get('Attachment', {}).get('InstanceId')]
+
+        self.assertEqual(len(taggable_enis), 2)
+        self.assertEqual(taggable_enis[0]['TagSet'], instances[0]['Tags'])
+        self.assertEqual(taggable_enis[1]['TagSet'], instances[0]['Tags'])
+
+        self.assertEqual(len(untagged_enis), 1)
+        self.assertEqual(untagged_enis[0]['TagSet'], [])

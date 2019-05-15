@@ -1,0 +1,194 @@
+{
+    "status_code": 200,
+    "data": {
+        "Reservations": [
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-0de53d8956e8dcf80",
+                        "InstanceId": "i-01c98e880d276c704",
+                        "InstanceType": "t2.micro",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2019,
+                            "month": 5,
+                            "day": 14,
+                            "hour": 14,
+                            "minute": 33,
+                            "second": 5,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1a",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "ip-10-205-7-77.ec2.internal",
+                        "PrivateIpAddress": "10.205.7.77",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 16,
+                            "Name": "running"
+                        },
+                        "StateTransitionReason": "",
+                        "SubnetId": "subnet-07c118e47bb84cee7",
+                        "VpcId": "vpc-03005fb9b8740263d",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [
+                            {
+                                "DeviceName": "/dev/xvda",
+                                "Ebs": {
+                                    "AttachTime": {
+                                        "__class__": "datetime",
+                                        "year": 2019,
+                                        "month": 5,
+                                        "day": 14,
+                                        "hour": 14,
+                                        "minute": 33,
+                                        "second": 6,
+                                        "microsecond": 0
+                                    },
+                                    "DeleteOnTermination": true,
+                                    "Status": "attached",
+                                    "VolumeId": "vol-03bf58ede4f0ea38e"
+                                }
+                            }
+                        ],
+                        "ClientToken": "",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [
+                            {
+                                "Attachment": {
+                                    "AttachTime": {
+                                        "__class__": "datetime",
+                                        "year": 2019,
+                                        "month": 5,
+                                        "day": 14,
+                                        "hour": 14,
+                                        "minute": 33,
+                                        "second": 5,
+                                        "microsecond": 0
+                                    },
+                                    "AttachmentId": "eni-attach-0c34f0a9669bee928",
+                                    "DeleteOnTermination": true,
+                                    "DeviceIndex": 0,
+                                    "Status": "attached"
+                                },
+                                "Description": "Primary network interface",
+                                "Groups": [
+                                    {
+                                        "GroupName": "launch-wizard-5",
+                                        "GroupId": "sg-0310af3633dcdb810"
+                                    }
+                                ],
+                                "Ipv6Addresses": [],
+                                "MacAddress": "0a:0d:92:af:a6:00",
+                                "NetworkInterfaceId": "eni-0f99e4a72786e71ee",
+                                "OwnerId": "644160558196",
+                                "PrivateIpAddress": "10.205.7.77",
+                                "PrivateIpAddresses": [
+                                    {
+                                        "Primary": true,
+                                        "PrivateIpAddress": "10.205.7.77"
+                                    }
+                                ],
+                                "SourceDestCheck": true,
+                                "Status": "in-use",
+                                "SubnetId": "subnet-07c118e47bb84cee7",
+                                "VpcId": "vpc-03005fb9b8740263d"
+                            },
+                            {
+                                "Attachment": {
+                                    "AttachTime": {
+                                        "__class__": "datetime",
+                                        "year": 2019,
+                                        "month": 5,
+                                        "day": 14,
+                                        "hour": 14,
+                                        "minute": 33,
+                                        "second": 5,
+                                        "microsecond": 0
+                                    },
+                                    "AttachmentId": "eni-attach-02697d491cd9fd942",
+                                    "DeleteOnTermination": true,
+                                    "DeviceIndex": 1,
+                                    "Status": "attached"
+                                },
+                                "Description": "",
+                                "Groups": [
+                                    {
+                                        "GroupName": "launch-wizard-5",
+                                        "GroupId": "sg-0310af3633dcdb810"
+                                    }
+                                ],
+                                "Ipv6Addresses": [],
+                                "MacAddress": "0a:75:c7:2d:46:d8",
+                                "NetworkInterfaceId": "eni-04c73144cb1e6a097",
+                                "OwnerId": "644160558196",
+                                "PrivateIpAddress": "10.205.14.83",
+                                "PrivateIpAddresses": [
+                                    {
+                                        "Primary": true,
+                                        "PrivateIpAddress": "10.205.14.83"
+                                    }
+                                ],
+                                "SourceDestCheck": true,
+                                "Status": "in-use",
+                                "SubnetId": "subnet-07c118e47bb84cee7",
+                                "VpcId": "vpc-03005fb9b8740263d"
+                            }
+                        ],
+                        "RootDeviceName": "/dev/xvda",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [
+                            {
+                                "GroupName": "launch-wizard-5",
+                                "GroupId": "sg-0310af3633dcdb810"
+                            }
+                        ],
+                        "SourceDestCheck": true,
+                        "Tags": [
+                            {
+                                "Key": "test",
+                                "Value": "test"
+                            }
+                        ],
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 1
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "ReservationId": "r-02d563945ef9e6679"
+            }
+        ],
+        "ResponseMetadata": {
+            "RequestId": "4786b801-7418-45de-9935-a84e5df43c77",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+                "content-type": "text/xml;charset=UTF-8",
+                "content-length": "7617",
+                "vary": "accept-encoding",
+                "date": "Wed, 15 May 2019 15:11:43 GMT",
+                "server": "AmazonEC2"
+            },
+            "RetryAttempts": 0
+        }
+    }
+}
