@@ -323,16 +323,13 @@ class CopyRelatedResourceTag(BaseTest):
         client = session_factory().client('ec2')
 
         result = client.describe_instances()
-        self.assertEqual(len(result['Reservations']), 1)
+        instance = result['Reservations'][0]['Instances'][0]
 
-        instances = result['Reservations'][0]['Instances']
-        self.assertEqual(len(instances), 1)
-
-        enis = [e['NetworkInterfaceId'] for e in instances[0]['NetworkInterfaces']]
+        enis = [e['NetworkInterfaceId'] for e in instance['NetworkInterfaces']]
 
         self.assertEqual(len(enis), 2)
         self.assertEqual(
-            instances[0]['Tags'],
+            instance['Tags'],
             [{'Key': 'test', 'Value': 'test'}]
         )
 
@@ -371,8 +368,8 @@ class CopyRelatedResourceTag(BaseTest):
         untagged_enis = [e for e in all_enis if not e.get('Attachment', {}).get('InstanceId')]
 
         self.assertEqual(len(taggable_enis), 2)
-        self.assertEqual(taggable_enis[0]['TagSet'], instances[0]['Tags'])
-        self.assertEqual(taggable_enis[1]['TagSet'], instances[0]['Tags'])
+        self.assertEqual(taggable_enis[0]['TagSet'], instance['Tags'])
+        self.assertEqual(taggable_enis[1]['TagSet'], instance['Tags'])
 
         self.assertEqual(len(untagged_enis), 1)
         self.assertEqual(untagged_enis[0]['TagSet'], [])
