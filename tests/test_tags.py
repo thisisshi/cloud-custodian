@@ -322,30 +322,24 @@ class CopyRelatedResourceTag(BaseTest):
         session_factory = self.replay_flight_data('test_copy_related_resource_tag_multi_ref')
         client = session_factory().client('ec2')
 
-        result = client.describe_instances()
-        instance = result['Reservations'][0]['Instances'][0]
+        result = client.describe_volumes()['Volumes']
+        self.assertEqual(len(result), 1)
+        vol = result[0]
 
-        enis = [e['NetworkInterfaceId'] for e in instance['NetworkInterfaces']]
-
-        self.assertEqual(len(enis), 2)
-        self.assertEqual(
-            instance['Tags'],
-            [{'Key': 'test', 'Value': 'test'}]
-        )
+        self.assertEqual(vol['Tags'], [{'Key': 'test', 'Value': 'test'}])
 
         policy = """
-        name: copy-tags-from-ec2-instance-to-eni
-        description: 'Copies tags from instances to attached ENIs on launch'
-        resource: eni
+        name: copy-tags-from-ebs-volume-to-snapshot
+        resource: ebs-snapshot
         filters:
           - type: value
             key: Tags
             value: empty
         actions:
           - type: copy-related-tag
-            resource: ec2
+            resource: ebs
             skip_missing: True
-            key: Attachment.InstanceId
+            key: VolumeId
             tags: '*'
         """
 
@@ -355,21 +349,19 @@ class CopyRelatedResourceTag(BaseTest):
 
         self.assertEqual(len(resources), 3)
 
-        all_enis = client.describe_network_interfaces()['NetworkInterfaces']
+        if self.recording:
+            time.sleep(10)
 
-        self.assertEqual(len(all_enis), 3)
+        all_snaps = client.describe_snapshots(OwnerIds=['self'])['Snapshots']
 
-        self.assertEqual(
-            set(enis).intersection(set(e['NetworkInterfaceId'] for e in all_enis)),
-            set(enis)
-        )
+        self.assertEqual(len(all_snaps), 3)
 
-        taggable_enis = [e for e in all_enis if e.get('Attachment', {}).get('InstanceId')]
-        untagged_enis = [e for e in all_enis if not e.get('Attachment', {}).get('InstanceId')]
+        tagged_snaps = [e for e in all_snaps if e['VolumeId'] == vol['VolumeId']]
+        untagged_snaps = [e for e in all_snaps if e['VolumeId'] != vol['VolumeId']]
 
-        self.assertEqual(len(taggable_enis), 2)
-        self.assertEqual(taggable_enis[0]['TagSet'], instance['Tags'])
-        self.assertEqual(taggable_enis[1]['TagSet'], instance['Tags'])
+        self.assertEqual(len(tagged_snaps), 2)
+        self.assertEqual(tagged_snaps[0]['Tags'], vol['Tags'])
+        self.assertEqual(tagged_snaps[1]['Tags'], vol['Tags'])
 
-        self.assertEqual(len(untagged_enis), 1)
-        self.assertEqual(untagged_enis[0]['TagSet'], [])
+        self.assertEqual(len(untagged_snaps), 1)
+        self.assertTrue('Tags' not in untagged_snaps[0].keys())
