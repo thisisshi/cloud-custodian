@@ -168,3 +168,11 @@ class UrlValueTest(BaseTest):
         )
         self.assertEqual(values.get_values(), ["east-resource"])
         self.assertEqual(values.data.get("url", ""), ACCOUNT_ID)
+
+    def test_yaml(self):
+        values = self.get_values_from(
+            {'url': 'apollo', 'expr': 'bean', 'format': 'yaml'},
+            """
+            hello: world
+            """)
+        self.assertEqual(values.get_values(), "world")
