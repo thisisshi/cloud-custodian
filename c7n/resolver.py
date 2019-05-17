@@ -103,7 +103,7 @@ class ValuesFrom(object):
        # inferred from extension
        format: [json, csv, csv2dict, txt]
     """
-    supported_formats = set(CONTENT_LOADER.keys())
+    supported_formats = list(CONTENT_LOADER.keys())
 
     # intent is that callers embed this schema
     schema = {

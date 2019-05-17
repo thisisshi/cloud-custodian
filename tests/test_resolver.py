@@ -171,7 +171,7 @@ class UrlValueTest(BaseTest):
 
     def test_yaml(self):
         values = self.get_values_from(
-            {'url': 'apollo', 'expr': 'bean', 'format': 'yaml'},
+            {'url': 'apollo', 'expr': 'hello', 'format': 'yaml'},
             """
             hello: world
             """)
