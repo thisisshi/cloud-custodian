@@ -23,9 +23,17 @@ from six import text_type
 from six.moves.urllib.request import urlopen
 from six.moves.urllib.parse import parse_qsl, urlparse
 
-from c7n.utils import format_string_values
+from c7n.utils import format_string_values, yaml_load
 
 log = logging.getLogger('custodian.resolver')
+
+CONTENT_LOADER = {
+    'json': json.loads,
+    'yaml': yaml_load,
+    'csv': csv.reader,
+    'csv2dict': csv.reader,
+    'txt': io.StringIO,
+}
 
 
 class URIResolver(object):
@@ -95,7 +103,7 @@ class ValuesFrom(object):
        # inferred from extension
        format: [json, csv, csv2dict, txt]
     """
-    supported_formats = ('json', 'txt', 'csv', 'csv2dict')
+    supported_formats = set(CONTENT_LOADER.keys())
 
     # intent is that callers embed this schema
     schema = {
@@ -104,7 +112,7 @@ class ValuesFrom(object):
         'required': ['url'],
         'properties': {
             'url': {'type': 'string'},
-            'format': {'enum': ['csv', 'json', 'txt', 'csv2dict']},
+            'format': {'enum': supported_formats},
             'expr': {'oneOf': [
                 {'type': 'integer'},
                 {'type': 'string'}]}
@@ -138,15 +146,15 @@ class ValuesFrom(object):
     def get_values(self):
         contents, format = self.get_contents()
 
-        if format == 'json':
-            data = json.loads(contents)
+        if format == 'json' or format == 'yaml':
+            data = CONTENT_LOADER[format](contents)
             if 'expr' in self.data:
                 res = jmespath.search(self.data['expr'], data)
                 if res is None:
                     log.warning('ValueFrom filter: %s key returned None' % self.data['expr'])
                 return res
         elif format == 'csv' or format == 'csv2dict':
-            data = csv.reader(io.StringIO(contents))
+            data = CONTENT_LOADER[format](io.StringIO(contents))
             if format == 'csv2dict':
                 data = {x[0]: list(x[1:]) for x in zip(*data)}
             else:
@@ -160,4 +168,4 @@ class ValuesFrom(object):
                 return res
             return data
         elif format == 'txt':
-            return [s.strip() for s in io.StringIO(contents).readlines()]
+            return [s.strip() for s in CONTENT_LOADER[format](contents).readlines()]
