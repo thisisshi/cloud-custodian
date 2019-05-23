@@ -240,10 +240,15 @@ def setup_parser():
         "--skip-validation",
         action="store_true",
         help="Skips validation of policies (assumes you've run the validate command seperately).")
+
+    metrics_help = ("Emit metrics to provider metrics. Specify 'aws', 'gcp', or 'azure'. "
+        "To emit metrics back to the master account in aws: `-m aws://master`. To emit metrics "
+        "to a custom namespace: `-m aws://?namespace=foo`")
+
     run.add_argument(
         "-m", "--metrics-enabled",
         default=None, nargs="?", const="aws",
-        help="Emit metrics to provider metrics")
+        help=metrics_help)
     run.add_argument(
         "--trace",
         dest="tracer",

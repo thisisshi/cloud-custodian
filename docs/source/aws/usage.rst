@@ -31,7 +31,22 @@ Additionally some filters and actions may generate their own metrics.
 In order to enable metrics output, the boolean metrics
 flag needs to be specified when running Cloud Custodian::
 
-  $ custodian run -s <output_directory> --metrics <policyfile>.yml
+  $ custodian run -s <output_directory> --metrics-enabled aws <policyfile>.yml
+
+You can also consolidate metrics into a single account by specifying the ``master``
+location in the cli::
+
+  $ custodian run -s <output_directory> --metrics-enabled aws://master
+
+Additionally, to use a different namespace other than the default ``CloudMaid``, you can
+add the following query parameter to the metrics flag::
+
+  $ custodian run -s <output_directory> --metrics-enabled aws://?namespace=foo
+
+This will create a new namespace, ``foo`` in CloudWatch Metrics. You can also combine
+these two options to emit metrics into a custom namespace in a central account::
+
+  $ custodian run -s <output_directory> --metrics-enabled aws://master?namespace=foo
 
 
 CloudWatch Logs
