@@ -596,7 +596,7 @@ class TestSNS(BaseTest):
         self.assertEqual(attributes.get('KmsMasterKeyId'), key_alias)
 
     def test_sns_delete(self):
-        session_factory = self.record_flight_data('test_sns_delete_topic')
+        session_factory = self.replay_flight_data('test_sns_delete_topic')
         policy = """
         name: delete-sns
         resource: aws.sns
