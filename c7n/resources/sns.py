@@ -356,5 +356,3 @@ class DeleteTopic(BaseAction):
                 client.delete_topic(TopicArn=r['TopicArn'])
             except client.exceptions.NotFoundException:
                 continue
-            else:
-                raise
