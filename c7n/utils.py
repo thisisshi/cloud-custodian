@@ -41,23 +41,20 @@ except ImportError:  # pragma: no cover
     yaml = None
 else:
     try:
-        from yaml import CSafeLoader as SafeLoader, CSafeDumper
-
-        class SafeDumper(CSafeDumper):
-            def ignore_aliases(self, data):
-                return True
-
+        from yaml import CSafeLoader as SafeLoader, CSafeDumper as BaseSafeDumper
     except ImportError:  # pragma: no cover
         try:
             from yaml import SafeLoader, SafeDumper as BaseSafeDumper
-
-            class SafeDumper(BaseSafeDumper):
-                def ignore_aliases(self, data):
-                    return True
-
         except ImportError:
             SafeLoader = None
-            SafeDumper = None
+            BaseSafeDumper = None
+
+if BaseSafeDumper:
+    class SafeDumper(BaseSafeDumper):
+        def ignore_aliases(self, data):
+            return True
+else:
+    SafeDumper = None
 
 log = logging.getLogger('custodian.utils')
 
