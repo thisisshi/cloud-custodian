@@ -14,6 +14,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from collections import Counter, defaultdict
+import copy
 from datetime import timedelta, datetime
 from functools import wraps
 import jmespath
@@ -536,7 +537,7 @@ def _expand_schema(schema, definitions):
         if k == '$ref':
             # the value here is in the form of: '#/definitions/path/to/key'
             path = '.'.join(v.split('/')[2:])
-            return jmespath.search(path, definitions)
+            return copy.deepcopy(jmespath.search(path, definitions))
         if isinstance(v, dict):
             schema[k] = _expand_schema(v, definitions)
     return schema
