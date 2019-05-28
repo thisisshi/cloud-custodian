@@ -16,6 +16,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import json
 import os
 import sys
+import yaml
 
 from argparse import ArgumentTypeError
 from datetime import datetime, timedelta
@@ -236,6 +237,46 @@ class SchemaTest(CliTest):
         }
         result = _expand_schema(test_schema, generate()['definitions'])
         self.assertEquals(result, ValuesFrom.schema)
+
+    def test_schema_multi_expand(self):
+        test_schema = {
+            'schema1': {
+                '$ref': '#/definitions/filters_common/value_from'
+            },
+            'schema2': {
+                '$ref': '#/definitions/filters_common/value_from'
+            }
+        }
+
+        expected = yaml.safe_dump({
+            'schema1': {
+                'type': 'object',
+                'additionalProperties': 'False',
+                'required': ['url'],
+                'properties': {
+                    'url': {'type': 'string'},
+                    'format': {'enum': ['csv', 'json', 'txt', 'csv2dict']},
+                    'expr': {'oneOf': [
+                        {'type': 'integer'},
+                        {'type': 'string'}]}
+                }
+            },
+            'schema2': {
+                'type': 'object',
+                'additionalProperties': 'False',
+                'required': ['url'],
+                'properties': {
+                    'url': {'type': 'string'},
+                    'format': {'enum': ['csv', 'json', 'txt', 'csv2dict']},
+                    'expr': {'oneOf': [
+                        {'type': 'integer'},
+                        {'type': 'string'}]}
+                }
+            }
+        })
+
+        result = yaml.safe_dump(_expand_schema(test_schema, generate()['definitions']))
+        self.assertEquals(result, expected)
 
     def test_schema_expand_not_found(self):
         test_schema = {

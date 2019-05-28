@@ -14,9 +14,9 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from collections import Counter, defaultdict
-import copy
 from datetime import timedelta, datetime
 from functools import wraps
+import copy
 import jmespath
 import inspect
 import logging
