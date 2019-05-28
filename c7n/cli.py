@@ -242,8 +242,8 @@ def setup_parser():
         help="Skips validation of policies (assumes you've run the validate command seperately).")
 
     metrics_help = ("Emit metrics to provider metrics. Specify 'aws', 'gcp', or 'azure'. "
-        "To emit metrics back to the master account in aws: `-m aws://master`. To emit metrics "
-        "to a custom namespace: `-m aws://?namespace=foo`")
+            "For more details on aws metrics options, see: "
+            "https://cloudcustodian.io/docs/aws/usage.html#metrics")
 
     run.add_argument(
         "-m", "--metrics-enabled",
