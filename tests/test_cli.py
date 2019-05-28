@@ -16,7 +16,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import json
 import os
 import sys
-import yaml
 
 from argparse import ArgumentTypeError
 from datetime import datetime, timedelta
@@ -26,6 +25,7 @@ from c7n.resolver import ValuesFrom
 from c7n.commands import _expand_schema
 from c7n.resources import aws
 from c7n.schema import generate
+from c7n.utils import yaml_dump
 
 from .common import BaseTest, TextTestIO
 
@@ -248,7 +248,7 @@ class SchemaTest(CliTest):
             }
         }
 
-        expected = yaml.safe_dump({
+        expected = yaml_dump({
             'schema1': {
                 'type': 'object',
                 'additionalProperties': 'False',
@@ -275,7 +275,7 @@ class SchemaTest(CliTest):
             }
         })
 
-        result = yaml.safe_dump(_expand_schema(test_schema, generate()['definitions']))
+        result = yaml_dump(_expand_schema(test_schema, generate()['definitions']))
         self.assertEquals(result, expected)
 
     def test_schema_expand_not_found(self):

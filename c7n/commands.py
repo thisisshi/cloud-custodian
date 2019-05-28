@@ -16,7 +16,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from collections import Counter, defaultdict
 from datetime import timedelta, datetime
 from functools import wraps
-import copy
 import jmespath
 import inspect
 import logging
@@ -33,7 +32,7 @@ from c7n.exceptions import ClientError
 from c7n.provider import clouds
 from c7n.policy import Policy, PolicyCollection, load as policy_load
 from c7n.schema import generate
-from c7n.utils import dumps, load_file, local_session, SafeLoader
+from c7n.utils import dumps, load_file, local_session, SafeLoader, yaml_dump
 from c7n.config import Bag, Config
 from c7n import provider
 from c7n.resources import load_resources
@@ -407,7 +406,7 @@ def schema_cmd(options):
 
     if not options.resource:
         resource_list = {'resources': sorted(provider.resources().keys())}
-        print(yaml.safe_dump(resource_list, default_flow_style=False))
+        print(yaml_dump(resource_list))
         return
 
     # Format is [PROVIDER].RESOURCE.CATEGORY.ITEM
@@ -416,7 +415,7 @@ def schema_cmd(options):
     if len(components) == 1 and components[0] in provider.clouds.keys():
         resource_list = {'resources': sorted(
             provider.resources(cloud_provider=components[0]).keys())}
-        print(yaml.safe_dump(resource_list, default_flow_style=False))
+        print(yaml_dump(resource_list))
         return
     if components[0] in provider.clouds.keys():
         cloud_provider = components.pop(0)
@@ -435,7 +434,7 @@ def schema_cmd(options):
     if components[0] == "mode":
         if len(components) == 1:
             output = {components[0]: list(resource_mapping[components[0]].keys())}
-            print(yaml.safe_dump(output, default_flow_style=False))
+            print(yaml_dump(output))
             return
 
         if len(components) == 2:
@@ -466,7 +465,7 @@ def schema_cmd(options):
             print("\nHelp\n----\n")
             print(docstring + '\n')
         output = {resource: resource_mapping[resource]}
-        print(yaml.safe_dump(output))
+        print(yaml_dump(output))
         return
 
     #
@@ -482,7 +481,7 @@ def schema_cmd(options):
         if category in resource_mapping[resource]:
             output = {resource: {
                 category: resource_mapping[resource][category]}}
-        print(yaml.safe_dump(output))
+        print(yaml_dump(output))
         return
 
     #
@@ -523,7 +522,7 @@ def _print_cls_schema(cls):
         component_schema = _expand_schema(component_schema, definitions)
         component_schema.pop('additionalProperties', None)
         component_schema.pop('type', None)
-        print(yaml.safe_dump(component_schema))
+        print(yaml_dump(component_schema))
     else:
         # Shouldn't ever hit this, so exclude from cover
         print("No schema is available for this item.", file=sys.sterr)  # pragma: no cover
@@ -537,7 +536,7 @@ def _expand_schema(schema, definitions):
         if k == '$ref':
             # the value here is in the form of: '#/definitions/path/to/key'
             path = '.'.join(v.split('/')[2:])
-            return copy.deepcopy(jmespath.search(path, definitions))
+            return jmespath.search(path, definitions)
         if isinstance(v, dict):
             schema[k] = _expand_schema(v, definitions)
     return schema

@@ -41,13 +41,24 @@ except ImportError:  # pragma: no cover
     yaml = None
 else:
     try:
-        from yaml import CSafeLoader
+        from yaml import CSafeLoader, CSafeDumper
         SafeLoader = CSafeLoader
+
+        class SafeDumper(CSafeDumper):
+            def ignore_aliases(self, data):
+                return True
+
     except ImportError:  # pragma: no cover
         try:
-            from yaml import SafeLoader
+            from yaml import SafeLoader, SafeDumper as BaseSafeDumper
+
+            class SafeDumper(BaseSafeDumper):
+                def ignore_aliases(self, data):
+                    return True
+
         except ImportError:
             SafeLoader = None
+            SafeDumper = None
 
 log = logging.getLogger('custodian.utils')
 
@@ -103,6 +114,12 @@ def yaml_load(value):
     if yaml is None:
         raise RuntimeError("Yaml not available")
     return yaml.load(value, Loader=SafeLoader)
+
+
+def yaml_dump(value):
+    if yaml is None:
+        raise RuntimeError("Yaml not available")
+    return yaml.dump(value, default_flow_style=False, Dumper=SafeDumper)
 
 
 def loads(body):
