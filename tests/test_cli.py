@@ -180,6 +180,9 @@ class SchemaTest(CliTest):
         # json option
         self.run_and_expect_success(["custodian", "schema", "--json"])
 
+        # with just a cloud
+        self.run_and_expect_success(["custodian", "schema", "aws"])
+
         # with just a resource
         self.run_and_expect_success(["custodian", "schema", "ec2"])
 
@@ -217,7 +220,18 @@ class SchemaTest(CliTest):
     def test_schema_output(self):
 
         output = self.get_output(["custodian", "schema"])
-        self.assertIn("ec2", output)
+        self.assertIn("aws.ec2", output)
+        self.assertIn("azure.vm", output)
+        self.assertIn("gcp.instance", output)
+
+        output = self.get_output(["custodian", "schema", "aws"])
+        self.assertIn("aws.ec2", output)
+        self.assertNotIn("azure.vm", output)
+        self.assertNotIn("gcp.instance", output)
+
+        output = self.get_output(["custodian", "schema", "aws.ec2"])
+        self.assertIn("actions:", output)
+        self.assertIn("filters:", output)
 
         output = self.get_output(["custodian", "schema", "ec2"])
         self.assertIn("actions:", output)

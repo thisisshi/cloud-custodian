@@ -41,8 +41,7 @@ except ImportError:  # pragma: no cover
     yaml = None
 else:
     try:
-        from yaml import CSafeLoader, CSafeDumper
-        SafeLoader = CSafeLoader
+        from yaml import CSafeLoader as SafeLoader, CSafeDumper
 
         class SafeDumper(CSafeDumper):
             def ignore_aliases(self, data):
