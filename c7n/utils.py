@@ -39,6 +39,7 @@ try:
     import yaml
 except ImportError:  # pragma: no cover
     yaml = None
+    BaseSafeDumper = None
 else:
     try:
         from yaml import CSafeLoader as SafeLoader, CSafeDumper as BaseSafeDumper
