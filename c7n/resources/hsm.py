@@ -37,19 +37,16 @@ class CloudHSMCluster(QueryResourceManager):
         # Note: resourcegroupstaggingapi still points to hsm-classic
 
     augment = universal_augment
-    _generate_arn = None
 
     @property
     def generate_arn(self):
-        if self._generate_arn is None:
-            self._generate_arn = functools.partial(
-                generate_arn,
-                'cloudhsm',
-                region=self.config.region,
-                account_id=self.account_id,
-                resource_type='cluster',
-                separator='/')
-        return self._generate_arn
+        return functools.partial(
+            generate_arn,
+            'cloudhsm',
+            region=self.config.region,
+            account_id=self.account_id,
+            resource_type='cluster',
+            separator='/')
 
 
 @CloudHSMCluster.action_registry.register('tag')
@@ -112,7 +109,7 @@ class CloudHSM(QueryResourceManager):
     class resource_type(object):
         service = 'cloudhsm'
         enum_spec = ('list_hsms', 'HsmList', None)
-        id = 'HsmArn'
+        arn = id = 'HsmArn'
         name = 'Name'
         date = dimension = None
         detail_spec = (
@@ -127,7 +124,7 @@ class PartitionGroup(QueryResourceManager):
         service = 'cloudhsm'
         enum_spec = ('list_hapgs', 'HapgList', None)
         detail_spec = ('describe_hapg', 'HapgArn', None, None)
-        id = 'HapgArn'
+        arn = id = 'HapgArn'
         name = 'HapgSerial'
         date = 'LastModifiedTimestamp'
         dimension = None
@@ -141,7 +138,7 @@ class HSMClient(QueryResourceManager):
         service = 'cloudhsm'
         enum_spec = ('list_luna_clients', 'ClientList', None)
         detail_spec = ('describe_luna_client', 'ClientArn', None, None)
-        id = 'ClientArn'
+        arn = id = 'ClientArn'
         name = 'Label'
         date = dimension = None
         filter_name = None

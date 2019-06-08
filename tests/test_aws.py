@@ -76,7 +76,7 @@ class ArnTest(BaseTest):
 class UtilTest(BaseTest):
 
     def test_default_account_id_assume(self):
-        config = Bag(assume_role='arn:aws:iam::644160558196:role/custodian-mu')
+        config = Bag(assume_role='arn:aws:iam::644160558196:role/custodian-mu', account_id=None)
         aws._default_account_id(config)
         self.assertEqual(config.account_id, '644160558196')
 
@@ -118,6 +118,34 @@ class TracerTest(BaseTest):
 
 
 class OutputMetricsTest(BaseTest):
+
+    def test_metrics_destination_dims(self):
+        tmetrics = []
+
+        class Metrics(aws.MetricsOutput):
+
+            def _put_metrics(self, ns, metrics):
+                tmetrics.extend(metrics)
+
+        conf = Bag({'region': 'us-east-2', 'scheme': 'aws', 'netloc': 'master'})
+        ctx = Bag(session_factory=None,
+                  options=Bag(account_id='001100', region='us-east-1'),
+                  policy=Bag(name='test', resource_type='ec2'))
+        moutput = Metrics(ctx, conf)
+
+        moutput.put_metric('Calories', 400, 'Count', Scope='Policy', Food='Pizza')
+        moutput.flush()
+
+        tmetrics[0].pop('Timestamp')
+        self.assertEqual(tmetrics, [{
+            'Dimensions': [{'Name': 'Policy', 'Value': 'test'},
+                           {'Name': 'ResType', 'Value': 'ec2'},
+                           {'Name': 'Food', 'Value': 'Pizza'},
+                           {'Name': 'Region', 'Value': 'us-east-1'},
+                           {'Name': 'Account', 'Value': '001100'}],
+            'MetricName': 'Calories',
+            'Unit': 'Count',
+            'Value': 400}])
 
     def test_metrics(self):
         session_factory = self.replay_flight_data('output-aws-metrics')

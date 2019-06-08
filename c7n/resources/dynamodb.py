@@ -80,26 +80,6 @@ class ConfigTable(query.ConfigSource):
 
 class DescribeTable(query.DescribeSource):
 
-    def get_resources(self, ids, *args, **kw):
-        # Dynamodb tables aren't taggable while pending creation, even
-        # attempting to fetch tags for a table will return not found errors.
-        # In order to resolve on several user reported issues  #3361, #3171, #3514
-        # When subscribing to create table events, wait for the table to exist
-        # leaving at least a 15s margin before our configured timeout.
-        if (self.manager.ctx.policy.execution_mode == 'cloudtrail' and
-                'CreateTable' in self.manager.data['mode']['events']):
-            waiter, waiter_config = self.get_waiter()
-            for tid in ids:
-                waiter.wait(tid, WaiterConfig=waiter_config)
-        return super(DescribeTable, self).get_resources(ids, *args, **kw)
-
-    def get_waiter(self):
-        timeout = self.manager.data['mode'].get('timeout', 60)
-        waiter_config = {'Delay': 15, 'MaxAttempts': int((timeout - 15) / 15)}
-        return local_session(
-            self.manager.session_factory).client(
-                'dynamodb').get_waiter('table_exists'), waiter_config
-
     def augment(self, resources):
         return universal_augment(
             self.manager,
@@ -386,7 +366,7 @@ class Stream(query.QueryResourceManager):
         # Note max rate of 10 calls per second.
         detail_spec = (
             "describe_stream", "StreamArn", "StreamArn", "StreamDescription")
-        id = 'StreamArn'
+        arn = id = 'StreamArn'
 
         # TODO, we default to filtering by id, but the api takes table names, which
         # require additional client side filtering as multiple streams may be present
@@ -423,8 +403,20 @@ class DynamoDbAccelerator(query.QueryResourceManager):
             return query.ConfigSource(self)
         raise ValueError('invalid source %s' % source_type)
 
+    def get_resources(self, ids, cache=True, augment=True):
+        """Override in order to disable the augment for serverless policies.
+           list_tags on dax resources always fail until the cluster is finished creating.
+        """
+        return super(DynamoDbAccelerator, self).get_resources(ids, cache, augment=False)
+
 
 class DescribeDaxCluster(query.DescribeSource):
+
+    def get_resources(self, ids, cache=True):
+        """Retrieve dax resources for serverless policies or related resources
+        """
+        client = local_session(self.manager.session_factory).client('dax')
+        return client.describe_clusters(ClusterNames=ids).get('Clusters')
 
     def augment(self, clusters):
         resources = super(DescribeDaxCluster, self).augment(clusters)

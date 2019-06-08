@@ -58,7 +58,7 @@ class ECSCluster(query.QueryResourceManager):
         batch_detail_spec = (
             'describe_clusters', 'clusters', None, 'clusters', {'include': ['TAGS']})
         name = "clusterName"
-        id = "clusterArn"
+        arn = id = "clusterArn"
         dimension = None
         filter_name = None
 
@@ -163,7 +163,7 @@ class Service(query.ChildResourceManager):
     class resource_type(object):
         service = 'ecs'
         name = 'serviceName'
-        id = 'serviceArn'
+        arn = id = 'serviceArn'
         enum_spec = ('list_services', 'serviceArns', None)
         parent_spec = ('ecs', 'cluster', None)
         dimension = None
@@ -229,7 +229,7 @@ class ServiceTaskDefinitionFilter(RelatedTaskDefinitionFilter):
     :Example:
 
      Find any fargate services that are running with a particular
-     image in the task and delete them.
+     image in the task and stop them.
 
     .. code-block:: yaml
 
@@ -237,15 +237,14 @@ class ServiceTaskDefinitionFilter(RelatedTaskDefinitionFilter):
          - name: fargate-readonly-tasks
            resource: ecs-task
            filters:
-            - launchType: FARGATE
-            - type: task-definition
-              key: "containerDefinitions[].image"
-              value: "elasticsearch/elasticsearch:6.4.3
-              value_type: swap
-              op: contains
+             - launchType: FARGATE
+             - type: task-definition
+               key: "containerDefinitions[].image"
+               value: "elasticsearch/elasticsearch:6.4.3"
+               value_type: swap
+               op: contains
            actions:
-            - delete
-
+             - type: stop
     """
 
 
@@ -291,12 +290,13 @@ class UpdateService(BaseAction):
                                 'type': 'array',
                                 'items': {
                                     'type': 'string',
-                                }
+                                },
+                                'minItems': 1
                             },
                             'securityGroups': {
                                 'items': {
                                     'type': 'string',
-                                }
+                                },
                             },
                             'assignPublicIp': {
                                 'type': 'string',
@@ -316,19 +316,31 @@ class UpdateService(BaseAction):
 
     def process(self, resources):
         client = local_session(self.manager.session_factory).client('ecs')
+        update = self.data.get('update')
+
         for r in resources:
-            api_call_param = {}
-            requested_change_param = self.data.get('update')
-            for update_prop, requested_val in requested_change_param.items():
-                if r.get(update_prop) != requested_val:
-                    api_call_param[update_prop] = requested_val
+            param = {}
 
-            if not api_call_param:
+            # Handle network separately as it requires atomic updating, and populating
+            # defaults from the resource.
+            net_update = update.get('networkConfiguration', {}).get('awsvpcConfiguration')
+            if net_update:
+                net_param = dict(r['networkConfiguration']['awsvpcConfiguration'])
+                param['networkConfiguration'] = {'awsvpcConfiguration': net_param}
+                for k, v in net_update.items():
+                    net_param[k] = v
+
+            for k, v in update.items():
+                if k == 'networkConfiguration':
+                    continue
+                elif r.get(k) != v:
+                    param[k] = v
+
+            if not param:
                 continue
-            api_call_param['service'] = r['serviceName']
-            api_call_param['cluster'] = r['clusterArn']
 
-            client.update_service(**api_call_param)
+            client.update_service(
+                cluster=r['clusterArn'], service=r['serviceName'], **param)
 
 
 @Service.action_registry.register('delete')
@@ -380,7 +392,7 @@ class Task(query.ChildResourceManager):
 
     class resource_type(object):
         service = 'ecs'
-        id = name = 'taskArn'
+        arn = id = name = 'taskArn'
         enum_spec = ('list_tasks', 'taskArns', None)
         parent_spec = ('ecs', 'cluster', None)
         dimension = None
@@ -413,14 +425,14 @@ class TaskTaskDefinitionFilter(RelatedTaskDefinitionFilter):
          - name: fargate-readonly-tasks
            resource: ecs-task
            filters:
-            - launchType: FARGATE
-            - type: task-definition
-              key: "containerDefinitions[].readonlyRootFilesystem"
-              value: None
-              value_type: swap
-              op: contains
+             - launchType: FARGATE
+             - type: task-definition
+               key: "containerDefinitions[].readonlyRootFilesystem"
+               value: None
+               value_type: swap
+               op: contains
            actions:
-            - stop
+             - type: stop
 
     """
     related_key = 'taskDefinitionArn'
@@ -455,7 +467,7 @@ class TaskDefinition(query.QueryResourceManager):
 
     class resource_type(object):
         service = 'ecs'
-        id = name = 'taskDefinitionArn'
+        arn = id = name = 'taskDefinitionArn'
         enum_spec = ('list_task_definitions', 'taskDefinitionArns', None)
         dimension = None
         filter_name = None
@@ -525,6 +537,7 @@ class ContainerInstance(query.ChildResourceManager):
         enum_spec = ('list_container_instances', 'containerInstanceArns', None)
         parent_spec = ('ecs', 'cluster', None)
         dimension = None
+        arn = "containerInstanceArn"
 
     @property
     def source_type(self):
@@ -680,12 +693,11 @@ class RemoveTagEcsResource(RemoveTag):
     .. code-block:: yaml
 
             policies:
-              - name: ecs-cluster-remove-tag
-                resource: ecs
+              - name: ecs-service-remove-tag
+                resource: ecs-service
                 filters:
-                  - "tag:BadTag": present
                   - type: taggable
-                    value: true
+                    state: true
                 actions:
                   - type: remove-tag
                     tags: ["BadTag"]
@@ -746,11 +758,11 @@ class ECSTaggable(Filter):
         .. code-block:: yaml
 
             policies:
-                - name:
+                - name: taggable
                   resource: ecs-service
                   filters:
                     - type: taggable
-                      state: true
+                      state: True
     """
 
     schema = type_schema('taggable', state={'type': 'boolean'})

@@ -28,9 +28,10 @@ import time
 import six
 import sys
 
+from six.moves.urllib import parse as urlparse
 
 from c7n.exceptions import ClientError, PolicyValidationError
-from c7n import ipaddress
+from c7n import ipaddress, config
 
 # Try to place nice in lambda exec environment
 # where we don't require yaml
@@ -40,13 +41,20 @@ except ImportError:  # pragma: no cover
     yaml = None
 else:
     try:
-        from yaml import CSafeLoader
-        SafeLoader = CSafeLoader
+        from yaml import CSafeLoader as SafeLoader, CSafeDumper as BaseSafeDumper
     except ImportError:  # pragma: no cover
         try:
-            from yaml import SafeLoader
+            from yaml import SafeLoader, SafeDumper as BaseSafeDumper
         except ImportError:
             SafeLoader = None
+            BaseSafeDumper = None
+
+if BaseSafeDumper:
+    class SafeDumper(BaseSafeDumper):
+        def ignore_aliases(self, data):
+            return True
+else:
+    SafeDumper = None
 
 log = logging.getLogger('custodian.utils')
 
@@ -102,6 +110,12 @@ def yaml_load(value):
     if yaml is None:
         raise RuntimeError("Yaml not available")
     return yaml.load(value, Loader=SafeLoader)
+
+
+def yaml_dump(value):
+    if yaml is None:
+        raise RuntimeError("Yaml not available")
+    return yaml.dump(value, default_flow_style=False, Dumper=SafeDumper)
 
 
 def loads(body):
@@ -519,6 +533,19 @@ def format_string_values(obj, err_fallback=(IndexError, KeyError), *args, **kwar
             return obj
     else:
         return obj
+
+
+def parse_url_config(url):
+    if url and '://' not in url:
+        url += "://"
+    conf = config.Bag()
+    parsed = urlparse.urlparse(url)
+    for k in ('scheme', 'netloc', 'path'):
+        conf[k] = getattr(parsed, k)
+    for k, v in urlparse.parse_qs(parsed.query).items():
+        conf[k] = v[0]
+    conf['url'] = url
+    return conf
 
 
 class FormatDate(object):
