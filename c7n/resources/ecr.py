@@ -116,8 +116,6 @@ class ECRCrossAccountAccessFilter(CrossAccountAccessFilter):
                     self.log.warning('Access Denied on GetRepositoryPolicy for repository: %s' %
                         r['repositoryName'])
                     return None
-                else:
-                    raise
             return r
 
         self.log.debug("fetching policy for %d repos" % len(resources))
@@ -226,8 +224,6 @@ class LifecycleRule(Filter):
                     self.log.warning('Access Denied on GetLifecyclePolicy for repository: %s' %
                         r['repositoryName'])
                     r[self.policy_annotation] = {}
-                else:
-                    raise
 
         state = self.data.get('state', False)
         matchers = []
