@@ -20,7 +20,7 @@ from c7n.exceptions import PolicyValidationError
 from c7n.filters.core import StateTransitionFilter
 from c7n.filters.vpc import SubnetFilter, SecurityGroupFilter
 from c7n.manager import resources
-from c7n.query import QueryResourceManager
+from c7n.query import QueryResourceManager, TypeInfo
 from c7n.utils import local_session, type_schema
 from c7n.tags import RemoveTag, Tag, TagActionFilter, TagDelayedAction
 
@@ -28,7 +28,7 @@ from c7n.tags import RemoveTag, Tag, TagActionFilter, TagDelayedAction
 @resources.register('sagemaker-notebook')
 class NotebookInstance(QueryResourceManager):
 
-    class resource_type(object):
+    class resource_type(TypeInfo):
         service = 'sagemaker'
         enum_spec = ('list_notebook_instances', 'NotebookInstances', None)
         detail_spec = (
@@ -64,7 +64,7 @@ NotebookInstance.filter_registry.register('marked-for-op', TagActionFilter)
 @resources.register('sagemaker-job')
 class SagemakerJob(QueryResourceManager):
 
-    class resource_type(object):
+    class resource_type(TypeInfo):
         service = 'sagemaker'
         enum_spec = ('list_training_jobs', 'TrainingJobSummaries', None)
         detail_spec = (
@@ -72,8 +72,6 @@ class SagemakerJob(QueryResourceManager):
         arn = id = 'TrainingJobArn'
         name = 'TrainingJobName'
         date = 'CreationTime'
-        dimension = None
-        filter_name = None
 
     permissions = (
         'sagemaker:ListTrainingJobs', 'sagemaker:DescribeTrainingJobs',
@@ -110,8 +108,8 @@ class SagemakerJob(QueryResourceManager):
 @resources.register('sagemaker-transform-job')
 class SagemakerTransformJob(QueryResourceManager):
 
-    class resource_type(object):
-        type = 'None'
+    class resource_type(TypeInfo):
+        arn_type = "transform-job"
         service = 'sagemaker'
         enum_spec = ('list_transform_jobs', 'TransformJobSummaries', None)
         detail_spec = (
@@ -119,7 +117,6 @@ class SagemakerTransformJob(QueryResourceManager):
         arn = id = 'TransformJobArn'
         name = 'TransformJobName'
         date = 'CreationTime'
-        dimension = None
         filter_name = 'TransformJobArn'
 
     permissions = (
@@ -217,7 +214,7 @@ class QueryFilter(object):
 @resources.register('sagemaker-endpoint')
 class SagemakerEndpoint(QueryResourceManager):
 
-    class resource_type(object):
+    class resource_type(TypeInfo):
         service = 'sagemaker'
         enum_spec = ('list_endpoints', 'Endpoints', None)
         detail_spec = (
@@ -226,8 +223,6 @@ class SagemakerEndpoint(QueryResourceManager):
         arn = id = 'EndpointArn'
         name = 'EndpointName'
         date = 'CreationTime'
-        dimension = None
-        filter_name = None
 
     permissions = ('sagemaker:ListTags',)
 
@@ -251,7 +246,7 @@ SagemakerEndpoint.filter_registry.register('marked-for-op', TagActionFilter)
 @resources.register('sagemaker-endpoint-config')
 class SagemakerEndpointConfig(QueryResourceManager):
 
-    class resource_type(object):
+    class resource_type(TypeInfo):
         service = 'sagemaker'
         enum_spec = ('list_endpoint_configs', 'EndpointConfigs', None)
         detail_spec = (
@@ -260,8 +255,6 @@ class SagemakerEndpointConfig(QueryResourceManager):
         arn = id = 'EndpointConfigArn'
         name = 'EndpointConfigName'
         date = 'CreationTime'
-        dimension = None
-        filter_name = None
 
     permissions = ('sagemaker:ListTags',)
 
@@ -283,7 +276,8 @@ SagemakerEndpointConfig.filter_registry.register('marked-for-op', TagActionFilte
 
 @resources.register('sagemaker-model')
 class Model(QueryResourceManager):
-    class resource_type(object):
+
+    class resource_type(TypeInfo):
         service = 'sagemaker'
         enum_spec = ('list_models', 'Models', None)
         detail_spec = (
@@ -292,8 +286,6 @@ class Model(QueryResourceManager):
         arn = id = 'ModelArn'
         name = 'ModelName'
         date = 'CreationTime'
-        dimension = None
-        filter_name = None
 
     permissions = ('sagemaker:ListTags',)
 
@@ -476,7 +468,7 @@ class StartNotebookInstance(BaseAction, StateTransitionFilter):
 
     :example:
 
-    .. code-block: yaml
+    .. code-block:: yaml
 
         policies:
           - name: start-sagemaker-notebook
@@ -509,7 +501,7 @@ class StopNotebookInstance(BaseAction, StateTransitionFilter):
 
     :example:
 
-    .. code-block: yaml
+    .. code-block:: yaml
 
         policies:
           - name: stop-sagemaker-notebook
@@ -544,7 +536,7 @@ class DeleteNotebookInstance(BaseAction, StateTransitionFilter):
 
     :example:
 
-    .. code-block: yaml
+    .. code-block:: yaml
 
         policies:
           - name: delete-sagemaker-notebook
@@ -591,7 +583,7 @@ class DeleteModel(BaseAction):
 
     :example:
 
-    .. code-block: yaml
+    .. code-block:: yaml
 
         policies:
           - name: delete-sagemaker-model
@@ -649,7 +641,7 @@ class SagemakerEndpointDelete(BaseAction):
 
     :example:
 
-    .. code-block: yaml
+    .. code-block:: yaml
 
         policies:
           - name: delete-sagemaker-endpoint
@@ -679,7 +671,7 @@ class SagemakerEndpointConfigDelete(BaseAction):
 
     :example:
 
-    .. code-block: yaml
+    .. code-block:: yaml
 
         policies:
           - name: delete-sagemaker-endpoint-config

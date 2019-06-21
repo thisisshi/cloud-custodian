@@ -53,11 +53,10 @@ actions = ActionRegistry('ec2.actions')
 @resources.register('ec2')
 class EC2(query.QueryResourceManager):
 
-    class resource_type(object):
+    class resource_type(query.TypeInfo):
         service = 'ec2'
-        type = 'instance'
+        arn_type = 'instance'
         enum_spec = ('describe_instances', 'Reservations[].Instances[]', None)
-        detail_spec = None
         id = 'InstanceId'
         filter_name = 'InstanceIds'
         filter_type = 'list'
@@ -272,6 +271,7 @@ class AttachedVolume(ValueFilter):
         'ebs', rinherit=ValueFilter.schema,
         **{'operator': {'enum': ['and', 'or']},
            'skip-devices': {'type': 'array', 'items': {'type': 'string'}}})
+    schema_alias = False
 
     def get_permissions(self):
         return self.manager.get_resource_manager('ebs').get_permissions()
@@ -434,6 +434,7 @@ class ImageAge(AgeFilter, InstanceImageBase):
 class InstanceImage(ValueFilter, InstanceImageBase):
 
     schema = type_schema('image', rinherit=ValueFilter.schema)
+    schema_alias = False
 
     def get_permissions(self):
         return self.manager.get_resource_manager('ami').get_permissions()
@@ -710,6 +711,7 @@ class UserData(ValueFilter):
     """
 
     schema = type_schema('user-data', rinherit=ValueFilter.schema)
+    schema_alias = False
     batch_size = 50
     annotation = 'c7n:user-data'
     permissions = ('ec2:DescribeInstanceAttribute',)
@@ -849,6 +851,7 @@ class SsmStatus(ValueFilter):
                 value: 18.04
     """
     schema = type_schema('ssm', rinherit=ValueFilter.schema)
+    schema_alias = False
     permissions = ('ssm:DescribeInstanceInformation',)
     annotation = 'c7n:SsmState'
 
@@ -1547,7 +1550,7 @@ class PropagateSpotTags(BaseAction):
 
     :Example:
 
-    .. code-block: yaml
+    .. code-block:: yaml
 
         policies:
           - name: ec2-spot-instances
@@ -1757,6 +1760,7 @@ class InstanceAttribute(ValueFilter):
         rinherit=ValueFilter.schema,
         attribute={'enum': valid_attrs},
         required=('attribute',))
+    schema_alias = False
 
     def get_permissions(self):
         return ('ec2:DescribeInstanceAttribute',)
@@ -1787,17 +1791,16 @@ class InstanceAttribute(ValueFilter):
 @resources.register('launch-template-version')
 class LaunchTemplate(query.QueryResourceManager):
 
-    class resource_type(object):
+    class resource_type(query.TypeInfo):
         id = 'LaunchTemplateId'
         name = 'LaunchTemplateName'
         service = 'ec2'
         date = 'CreateTime'
-        dimension = None
         enum_spec = (
             'describe_launch_templates', 'LaunchTemplates', None)
         filter_name = 'LaunchTemplateIds'
         filter_type = 'list'
-        type = "launch-template"
+        arn_type = "launch-template"
 
     def augment(self, resources):
         client = utils.local_session(
@@ -1869,7 +1872,7 @@ class LaunchTemplate(query.QueryResourceManager):
 @resources.register('ec2-reserved')
 class ReservedInstance(query.QueryResourceManager):
 
-    class resource_type(object):
+    class resource_type(query.TypeInfo):
         service = 'ec2'
         name = id = 'ReservedInstancesId'
         date = 'Start'
@@ -1877,5 +1880,4 @@ class ReservedInstance(query.QueryResourceManager):
             'describe_reserved_instances', 'ReservedInstances', None)
         filter_name = 'ReservedInstancesIds'
         filter_type = 'list'
-        dimension = None
-        type = "reserved-instances"
+        arn_type = "reserved-instances"

@@ -18,7 +18,7 @@ from botocore.exceptions import ClientError
 from c7n.actions import BaseAction
 from c7n.filters.core import StateTransitionFilter
 from c7n.manager import resources
-from c7n.query import QueryResourceManager
+from c7n.query import QueryResourceManager, TypeInfo
 from c7n.utils import local_session, type_schema
 from c7n import utils
 
@@ -26,7 +26,7 @@ from c7n import utils
 @resources.register('opswork-stack')
 class OpsworkStack(QueryResourceManager):
 
-    class resource_type(object):
+    class resource_type(TypeInfo):
         service = 'opsworks'
         enum_spec = ('describe_stacks', 'Stacks', None)
         filter_name = 'StackIds'
@@ -140,14 +140,13 @@ class StopStack(BaseAction):
 @resources.register('opswork-cm')
 class OpsworksCM(QueryResourceManager):
 
-    class resource_type(object):
+    class resource_type(TypeInfo):
         service = "opsworkscm"
         enum_spec = ('describe_servers', 'Servers', None)
         filter_name = 'ServerName'
         filter_type = 'scalar'
         name = id = 'ServerName'
         date = 'CreatedAt'
-        dimension = None
         arn = "ServerArn"
 
 
