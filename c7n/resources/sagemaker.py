@@ -37,8 +37,6 @@ class NotebookInstance(QueryResourceManager):
         arn = id = 'NotebookInstanceArn'
         name = 'NotebookInstanceName'
         date = 'CreationTime'
-        dimension = None
-        filter_name = None
         state_key = 'NotebookInstanceStatus'
 
     permissions = ('sagemaker:ListTags',)
