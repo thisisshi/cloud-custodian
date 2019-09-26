@@ -22,9 +22,8 @@ from datetime import datetime, timedelta
 
 from c7n import cli, version, commands
 from c7n.resolver import ValuesFrom
-from c7n.commands import _expand_schema
 from c7n.resources import aws
-from c7n.schema import generate
+from c7n.schema import ElementSchema, generate
 from c7n.utils import yaml_dump
 
 from .common import BaseTest, TextTestIO
@@ -249,8 +248,8 @@ class SchemaTest(CliTest):
         test_schema = {
             '$ref': '#/definitions/filters_common/value_from'
         }
-        result = _expand_schema(test_schema, generate()['definitions'])
-        self.assertEquals(result, ValuesFrom.schema)
+        result = ElementSchema.schema(generate()['definitions'], test_schema)
+        self.assertEqual(result, ValuesFrom.schema)
 
     def test_schema_multi_expand(self):
         test_schema = {
@@ -289,15 +288,15 @@ class SchemaTest(CliTest):
             }
         })
 
-        result = yaml_dump(_expand_schema(test_schema, generate()['definitions']))
-        self.assertEquals(result, expected)
+        result = yaml_dump(ElementSchema.schema(generate()['definitions'], test_schema))
+        self.assertEqual(result, expected)
 
     def test_schema_expand_not_found(self):
         test_schema = {
             '$ref': '#/definitions/filters_common/invalid_schema'
         }
-        result = _expand_schema(test_schema, generate()['definitions'])
-        self.assertEquals(result, None)
+        result = ElementSchema.schema(generate()['definitions'], test_schema)
+        self.assertEqual(result, None)
 
 
 class ReportTest(CliTest):

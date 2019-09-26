@@ -13,23 +13,35 @@
 # limitations under the License.
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from mock import patch, Mock
+import sys
 import types
 
 from azure_common import BaseTest, DEFAULT_SUBSCRIPTION_ID
-from c7n.config import Bag
-from c7n_azure.utils import Math
-from c7n_azure.utils import ResourceIdParser
-from c7n_azure.utils import StringUtils
 from c7n_azure.tags import TagHelper
-from c7n_azure.utils import PortsRangeHelper
-from c7n_azure.utils import AppInsightsHelper
-from c7n_azure.utils import custodian_azure_send_override
-from c7n_azure.utils import ManagedGroupHelper
+from c7n_azure.utils import (AppInsightsHelper, ManagedGroupHelper, Math, PortsRangeHelper,
+                             ResourceIdParser, StringUtils, custodian_azure_send_override,
+                             get_keyvault_secret, get_service_tag_ip_space, is_resource_group_id,
+                             is_resource_group)
+from mock import patch, Mock
+
+from c7n.config import Bag
+import pytest
+
+try:
+    from importlib import reload
+except Exception:
+    pass  # Python 2.7 has reload built-in
 
 RESOURCE_ID = (
     "/subscriptions/%s/resourceGroups/"
     "rgtest/providers/Microsoft.Compute/virtualMachines/nametest" % DEFAULT_SUBSCRIPTION_ID)
+
+
+RESOURCE_ID_CHILD = (
+    "/subscriptions/%s/resourceGroups/"
+    "rgtest/providers/Microsoft.Sql/servers/testserver/"
+    "databases/testdb" % DEFAULT_SUBSCRIPTION_ID)
+
 GUID = '00000000-0000-0000-0000-000000000000'
 
 
@@ -42,12 +54,15 @@ class UtilsTest(BaseTest):
 
     def test_get_namespace(self):
         self.assertEqual(ResourceIdParser.get_namespace(RESOURCE_ID), "Microsoft.Compute")
+        self.assertEqual(ResourceIdParser.get_namespace(RESOURCE_ID_CHILD), "Microsoft.Sql/servers")
 
     def test_get_resource_group(self):
         self.assertEqual(ResourceIdParser.get_resource_group(RESOURCE_ID), "rgtest")
 
     def test_get_resource_type(self):
+
         self.assertEqual(ResourceIdParser.get_resource_type(RESOURCE_ID), "virtualMachines")
+        self.assertEqual(ResourceIdParser.get_resource_type(RESOURCE_ID_CHILD), "databases")
 
     def test_get_full_type(self):
         self.assertEqual(ResourceIdParser.get_full_type(RESOURCE_ID),
@@ -252,3 +267,55 @@ class UtilsTest(BaseTest):
     def test_managed_group_helper(self, _1):
         sub_ids = ManagedGroupHelper.get_subscriptions_list('test-group', "")
         self.assertEqual(sub_ids, [DEFAULT_SUBSCRIPTION_ID, GUID])
+
+    @patch('msrestazure.azure_active_directory.MSIAuthentication')
+    def test_get_keyvault_secret(self, _1):
+        mock = Mock()
+        mock.value = '{"client_id": "client", "client_secret": "secret"}'
+        with patch('azure.common.credentials.ServicePrincipalCredentials.__init__',
+                   return_value=None), \
+                patch('azure.keyvault.v7_0.KeyVaultClient.get_secret', return_value=mock):
+
+            reload(sys.modules['c7n_azure.utils'])
+
+            result = get_keyvault_secret(None, 'https://testkv.vault.net/secrets/testsecret/123412')
+            self.assertEqual(result, mock.value)
+
+    # Test relies on substitute data in Azure Common, not designed for live data
+    @pytest.mark.skiplive
+    def test_get_service_tag_ip_space(self):
+        # Get with region
+        result = get_service_tag_ip_space('ApiManagement', 'WestUS')
+        self.assertEqual(3, len(result))
+        self.assertEqual({"13.64.39.16/32",
+                          "40.112.242.148/31",
+                          "40.112.243.240/28"}, set(result))
+
+        # Get without region
+        result = get_service_tag_ip_space('ApiManagement')
+        self.assertEqual(5, len(result))
+        self.assertEqual({"13.69.64.76/31",
+                          "13.69.66.144/28",
+                          "23.101.67.140/32",
+                          "51.145.179.78/32",
+                          "137.117.160.56/32"}, set(result))
+
+        # Invalid tag
+        result = get_service_tag_ip_space('foo')
+        self.assertEqual(0, len(result))
+
+    def test_is_resource_group_id(self):
+        self.assertTrue(is_resource_group_id('/subscriptions/GUID/resourceGroups/rg'))
+        self.assertTrue(is_resource_group_id('/subscriptions/GUID/resourceGroups/rg/'))
+        self.assertTrue(is_resource_group_id('/Subscriptions/GUID/resourcegroups/rg'))
+
+        self.assertFalse(is_resource_group_id('/subscriptions/GUID/rg/'))
+        self.assertFalse(is_resource_group_id('subscriptions/GUID/rg/'))
+        self.assertFalse(is_resource_group_id('/GUID/rg/'))
+        self.assertFalse(is_resource_group_id('/subscriptions/GUID/rg/providers/vm/vm'))
+        self.assertFalse(is_resource_group_id('/subscriptions/GUID/rg/providers'))
+        self.assertFalse(is_resource_group_id('/subscriptions/GUID/rg/p'))
+
+    def test_is_resource_group(self):
+        self.assertTrue(is_resource_group({'type': 'resourceGroups'}))
+        self.assertFalse(is_resource_group({'type': 'virtualMachines'}))

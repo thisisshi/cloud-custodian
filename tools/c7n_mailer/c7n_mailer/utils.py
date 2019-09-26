@@ -15,7 +15,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import base64
 from datetime import datetime, timedelta
-from enum import Enum
 import functools
 import json
 import os
@@ -29,7 +28,7 @@ from dateutil.tz import gettz, tzutc
 from ruamel import yaml
 
 
-class Providers(Enum):
+class Providers(object):
     AWS = 0
     Azure = 1
 
@@ -156,6 +155,8 @@ def get_resource_tag_value(resource, k):
 
 
 def resource_format(resource, resource_type):
+    if resource_type.startswith('aws.'):
+        resource_type = resource_type.lstrip('aws.')
     if resource_type == 'ec2':
         tag_map = {t['Key']: t['Value'] for t in resource.get('Tags', ())}
         return "%s %s %s %s %s %s" % (
@@ -349,7 +350,7 @@ def resource_format(resource, resource_type):
 
 
 def get_provider(mailer_config):
-    if mailer_config.get('queue_url', '').startswith('asq'):
+    if mailer_config.get('queue_url', '').startswith('asq://'):
         return Providers.Azure
 
     return Providers.AWS
@@ -382,7 +383,8 @@ def decrypt(config, logger, session, encrypted_field):
     if config.get(encrypted_field):
         provider = get_provider(config)
         if provider == Providers.Azure:
-            return config[encrypted_field]
+            from c7n_mailer.azure_mailer.utils import azure_decrypt
+            return azure_decrypt(config, logger, session, encrypted_field)
         elif provider == Providers.AWS:
             return kms_decrypt(config, logger, session, encrypted_field)
         else:

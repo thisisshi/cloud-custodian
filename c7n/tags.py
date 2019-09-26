@@ -97,12 +97,9 @@ def universal_augment(self, resources):
     from c7n.query import RetryPageIterator
     paginator = client.get_paginator('get_resources')
     paginator.PAGE_ITERATOR_CLS = RetryPageIterator
-    resource_type = getattr(self.get_model(), 'resource_type', None)
 
-    if not resource_type:
-        resource_type = self.get_model().service
-        if self.get_model().type:
-            resource_type += ":" + self.get_model().type
+    m = self.get_model()
+    resource_type = "%s:%s" % (m.arn_service or m.service, m.arn_type)
 
     resource_tag_map_list = list(itertools.chain(
         *[p['ResourceTagMappingList'] for p in paginator.paginate(
@@ -460,7 +457,7 @@ class RemoveTag(Action):
     concurrency = 2
 
     schema = utils.type_schema(
-        'untag', aliases=('unmark', 'remove-tag'),
+        'remove-tag', aliases=('unmark', 'untag', 'remove-tag'),
         tags={'type': 'array', 'items': {'type': 'string'}})
     schema_alias = True
     permissions = ('ec2:DeleteTags',)
@@ -1020,18 +1017,23 @@ class CopyRelatedResourceTag(Tag):
         return self
 
     def process(self, resources):
-        related_resources = list(
-            zip(jmespath.search('[].[%s || "c7n:NotFound"]|[]' % self.data['key'], resources),
-                resources))
+        related_resources = []
+        for rrid, r in zip(jmespath.search('[].[%s]' % self.data['key'], resources),
+                           resources):
+            related_resources.append((rrid[0], r))
         related_ids = set([r[0] for r in related_resources])
-        related_ids.discard('c7n:NotFound')
+        missing = False
+        if None in related_ids:
+            missing = True
+            related_ids.discard(None)
         related_tag_map = self.get_resource_tag_map(self.data['resource'], related_ids)
 
         missing_related_tags = related_ids.difference(related_tag_map.keys())
-        if not self.data.get('skip_missing', True) and missing_related_tags:
+        if not self.data.get('skip_missing', True) and (missing_related_tags or missing):
             raise PolicyExecutionError(
                 "Unable to find all %d %s related resources tags %d missing" % (
-                    len(related_ids), self.data['resource'], len(missing_related_tags)))
+                    len(related_ids), self.data['resource'],
+                    len(missing_related_tags) + int(missing)))
 
         # rely on resource manager tag action implementation as it can differ between resources
         tag_action = self.manager.action_registry.get('tag')({}, self.manager)
@@ -1041,7 +1043,9 @@ class CopyRelatedResourceTag(Tag):
         stats = Counter()
 
         for related, r in related_resources:
-            if related in missing_related_tags or not related_tag_map[related]:
+            if (related is None or
+                related in missing_related_tags or
+                    not related_tag_map[related]):
                 stats['missing'] += 1
             elif self.process_resource(
                     client, r, related_tag_map[related], self.data['tags'], tag_action):
@@ -1078,10 +1082,10 @@ class CopyRelatedResourceTag(Tag):
         """
         manager = self.manager.get_resource_manager(r_type)
         r_id = manager.resource_type.id
-        # TODO only fetch resource with the given ids.
+
         return {
             r[r_id]: {t['Key']: t['Value'] for t in r.get('Tags', [])}
-            for r in manager.resources() if r[r_id] in ids
+            for r in manager.get_resources(list(ids))
         }
 
     @classmethod

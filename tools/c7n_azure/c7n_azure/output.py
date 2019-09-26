@@ -52,11 +52,12 @@ class AzureStorageOutput(DirectoryOutput):
 
     DEFAULT_BLOB_FOLDER_PREFIX = '{policy_name}/{now:%Y/%m/%d/%H/}'
 
+    log = logging.getLogger('custodian.azure.output.AzureStorageOutput')
+
     def __init__(self, ctx, config=None):
         self.ctx = ctx
         self.config = config
 
-        self.log = logging.getLogger('custodian.output')
         self.root_dir = tempfile.mkdtemp()
         self.output_dir = self.get_output_path(self.ctx.options.output_dir)
         self.blob_service, self.container, self.file_prefix = \
@@ -89,8 +90,12 @@ class AzureStorageOutput(DirectoryOutput):
                         blob_name,
                         os.path.join(root, f))
                 except AzureHttpError as e:
-                    self.log.error("Error writing output. Confirm output storage URL is correct "
-                                   "and that 'Storage Blob Contributor' role is assigned. \n" +
+                    if e.status_code == 403:
+                        self.log.error("Access Error: Storage Blob Data Contributor Role "
+                                       "is required to write to Azure Blob Storage.")
+                    else:
+                        self.log.error("Error writing output. "
+                                       "Confirm output storage URL is correct. \n" +
                                    str(e))
 
                 self.log.debug("%s uploaded" % blob_name)
@@ -168,12 +173,14 @@ class AppInsightsLogHandler(LoggingHandler):
             'ExecutionId': self.execution_id
         }
 
+        if hasattr(record, 'properties'):
+            properties.update(record.properties)
+
         if record.exc_info:
             self.client.track_exception(*record.exc_info, properties=properties)
             return
 
-        formatted_message = self.format(record)
-        self.client.track_trace(formatted_message, properties=properties, severity=record.levelname)
+        self.client.track_trace(record.msg, properties=properties, severity=record.levelname)
 
 
 @log_outputs.register('azure')

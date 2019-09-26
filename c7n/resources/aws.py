@@ -134,7 +134,7 @@ def shape_validate(params, shape_name, service):
 
 class Arn(namedtuple('_Arn', (
         'arn', 'partition', 'service', 'region',
-        'account_id', 'resource', 'resource_type'))):
+        'account_id', 'resource', 'resource_type', 'separator'))):
 
     __slots__ = ()
 
@@ -144,11 +144,35 @@ class Arn(namedtuple('_Arn', (
         # a few resources use qualifiers without specifying type
         if parts[2] in ('s3', 'apigateway', 'execute-api'):
             parts.append(None)
+            parts.append(None)
         elif '/' in parts[-1]:
             parts.extend(reversed(parts.pop(-1).split('/', 1)))
+            parts.append('/')
         elif ':' in parts[-1]:
             parts.extend(reversed(parts.pop(-1).split(':', 1)))
+            parts.append(':')
         return cls(*parts)
+
+
+class ArnResolver(object):
+
+    def __init__(self, manager):
+        self.manager = manager
+
+    @staticmethod
+    def resolve_type(arn):
+        for type_name, klass in AWS.resources.items():
+            if type_name in ('rest-account', 'account') or klass.resource_type.arn is False:
+                continue
+            if arn.service != (klass.resource_type.arn_service or klass.resource_type.service):
+                continue
+            if (type_name in ('asg', 'ecs-task') and
+                    "%s%s" % (klass.resource_type.arn_type, klass.resource_type.arn_separator)
+                    in arn.resource_type):
+                return type_name
+            elif (klass.resource_type.arn_type is not None and
+                    klass.resource_type.arn_type == arn.resource_type):
+                return type_name
 
 
 @metrics_outputs.register('aws')
@@ -205,12 +229,49 @@ class CloudWatchLogOutput(LogOutput):
 
     log_format = '%(asctime)s - %(levelname)s - %(name)s - %(message)s'
 
+    def __init__(self, ctx, config=None):
+        super(CloudWatchLogOutput, self).__init__(ctx, config)
+        if self.config.get('netloc') == 'master':
+            self.log_group = self.config.get('path').strip("/")
+        else:
+            self.log_group = self.config.get('netloc')
+        self.region = self.config.get('region')
+        self.destination = (
+            self.config.scheme == 'aws' and
+            self.config.get('netloc') == 'master') and 'master' or None
+
+    def construct_stream_name(self):
+        if self.config.get('stream') is None:
+            log_stream = self.ctx.policy.name
+            if self.config.get('region') is not None:
+                log_stream = "{}/{}".format(self.ctx.options.region, log_stream)
+            if self.config.get('netloc') == 'master':
+                log_stream = "{}/{}".format(self.ctx.options.account_id, log_stream)
+        else:
+            log_stream = self.config.get('stream').format(
+                region=self.ctx.options.region,
+                account=self.ctx.options.account_id,
+                policy=self.ctx.policy.name
+            )
+        return log_stream
+
     def get_handler(self):
-        return CloudWatchLogHandler(
-            log_group=self.ctx.options.log_group,
-            log_stream=self.ctx.policy.name,
-            session_factory=lambda x=None: self.ctx.session_factory(
-                assume=False))
+        log_stream = self.construct_stream_name()
+        if self.destination == 'master':
+            handler = CloudWatchLogHandler(
+                log_group=self.log_group,
+                log_stream=log_stream,
+                session_factory=lambda x=None: self.ctx.session_factory(
+                    assume=False,
+                    region=self.region
+                )
+            )
+        else:
+            handler = CloudWatchLogHandler(
+                log_group=self.log_group,
+                log_stream=log_stream,
+                session_factory=lambda x=None: self.ctx.session_factory(region=self.region))
+        return handler
 
     def __repr__(self):
         return "<%s to group:%s stream:%s>" % (
@@ -438,6 +499,7 @@ class S3Output(DirectoryOutput):
 @clouds.register('aws')
 class AWS(object):
 
+    display_name = 'AWS'
     resource_prefix = 'aws'
     # legacy path for older plugins
     resources = PluginRegistry('resources')

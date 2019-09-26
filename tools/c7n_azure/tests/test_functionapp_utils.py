@@ -14,14 +14,13 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from azure_common import BaseTest, arm_template
-from c7n_azure.function_package import FunctionPackage
+from c7n_azure.function_package import FunctionPackage, AzurePythonPackageArchive
 from c7n_azure.functionapp_utils import FunctionAppUtilities
 
 from c7n_azure.provisioning.app_insights import AppInsightsUnit
 from mock import patch
 
 from c7n.utils import local_session
-from c7n.mu import PythonPackageArchive
 from c7n_azure.session import Session
 
 CONST_GROUP_NAME = 'test_functionapp-reqs'
@@ -32,14 +31,17 @@ class FunctionAppUtilsTest(BaseTest):
     def setUp(self):
         super(FunctionAppUtilsTest, self).setUp()
         self.session = local_session(Session)
+        self.subscription_id = self.session.get_subscription_id()
+        self.storage_name = 'ccfuncapp%s' % self.subscription_id[-12:]
+        self.dedicated_function_name = 'cloud-custodian-test-dedicated%s' \
+            % self.subscription_id[-12:]
 
     @arm_template('functionapp-reqs.json')
     def test_get_storage_connection_string(self):
-        storage_name = 'cloudcustodiantest'
         id = '/subscriptions/%s/resourceGroups/test_functionapp-reqs/providers/Microsoft.Storage' \
-             '/storageAccounts/cloudcustodiantest' % local_session(Session).subscription_id
+             '/storageAccounts/%s' % (self.subscription_id, self.storage_name)
         conn_string = FunctionAppUtilities.get_storage_account_connection_string(id)
-        self.assertIn('AccountName=%s;' % storage_name, conn_string)
+        self.assertIn('AccountName=%s;' % self.storage_name, conn_string)
 
     @arm_template('functionapp-reqs.json')
     def test_get_application_insights_key_exists(self):
@@ -51,7 +53,6 @@ class FunctionAppUtilsTest(BaseTest):
 
     @arm_template('functionapp-reqs.json')
     def test_deploy_function_app(self):
-
         parameters = FunctionAppUtilities.FunctionAppInfrastructureParameters(
             app_insights={
                 'id': '',
@@ -61,7 +62,7 @@ class FunctionAppUtilsTest(BaseTest):
             storage_account={
                 'id': '',
                 'resource_group_name': CONST_GROUP_NAME,
-                'name': 'cloudcustodiantest'
+                'name': self.storage_name
             },
             service_plan={
                 'id': '',
@@ -77,7 +78,6 @@ class FunctionAppUtilsTest(BaseTest):
 
     @arm_template('functionapp-reqs.json')
     def test_deploy_function_app_pre_existing_app_fetch_actual_sku_tier(self):
-
         parameters = FunctionAppUtilities.FunctionAppInfrastructureParameters(
             app_insights={
                 'id': '',
@@ -87,7 +87,7 @@ class FunctionAppUtilsTest(BaseTest):
             storage_account={
                 'id': '',
                 'resource_group_name': CONST_GROUP_NAME,
-                'name': 'cloudcustodiantest'
+                'name': self.storage_name
             },
             service_plan={
                 'id': '',
@@ -96,7 +96,7 @@ class FunctionAppUtilsTest(BaseTest):
                 'sku_tier': 'something wrong'
             },
             function_app_resource_group_name=CONST_GROUP_NAME,
-            function_app_name='cloud-custodian-test')
+            function_app_name=self.dedicated_function_name)
 
         FunctionAppUtilities.deploy_function_app(parameters)
         self.assertEqual(parameters.service_plan['sku_tier'], 'Basic')
@@ -140,6 +140,7 @@ class FunctionAppUtilsTest(BaseTest):
     @arm_template('functionapp-reqs.json')
     @patch('time.sleep')
     def test_publish_functions_package_consumption(self, _1):
+        function_app_name = 'cloud-custodian-test-consumption%s' % self.subscription_id[-12:]
         parameters = FunctionAppUtilities.FunctionAppInfrastructureParameters(
             app_insights={
                 'id': '',
@@ -149,7 +150,7 @@ class FunctionAppUtilsTest(BaseTest):
             storage_account={
                 'id': '',
                 'resource_group_name': CONST_GROUP_NAME,
-                'name': 'cloudcustodiantest'
+                'name': self.storage_name
             },
             service_plan={
                 'id': '',
@@ -158,10 +159,10 @@ class FunctionAppUtilsTest(BaseTest):
                 'sku_tier': 'dynamic'
             },
             function_app_resource_group_name=CONST_GROUP_NAME,
-            function_app_name='cloud-custodian-test')
+            function_app_name=function_app_name)
 
         package = FunctionPackage("TestPolicy")
-        package.pkg = PythonPackageArchive()
+        package.pkg = AzurePythonPackageArchive()
         package.close()
 
         FunctionAppUtilities.publish_functions_package(
@@ -170,7 +171,7 @@ class FunctionAppUtilsTest(BaseTest):
         # verify app setting updated
         wc = self.session.client('azure.mgmt.web.WebSiteManagementClient')
         app_settings = wc.web_apps.list_application_settings(
-            CONST_GROUP_NAME, 'cloud-custodian-test')
+            CONST_GROUP_NAME, function_app_name)
         self.assertIsNotNone(app_settings.properties['WEBSITE_RUN_FROM_PACKAGE'])
 
     @arm_template('functionapp-reqs.json')
@@ -185,7 +186,7 @@ class FunctionAppUtilsTest(BaseTest):
             storage_account={
                 'id': '',
                 'resource_group_name': CONST_GROUP_NAME,
-                'name': 'cloudcustodiantest'
+                'name': self.storage_name
             },
             service_plan={
                 'id': '',
@@ -194,7 +195,7 @@ class FunctionAppUtilsTest(BaseTest):
                 'sku_tier': 'Basic'
             },
             function_app_resource_group_name=CONST_GROUP_NAME,
-            function_app_name='cloud-custodian-test')
+            function_app_name=self.dedicated_function_name)
 
         FunctionAppUtilities.publish_functions_package(parameters, FunctionPackage("TestPolicy"))
         mock_function_package_publish.assert_called_once()

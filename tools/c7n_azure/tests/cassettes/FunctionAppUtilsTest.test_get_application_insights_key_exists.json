@@ -4,7 +4,7 @@
         {
             "request": {
                 "method": "GET",
-                "uri": "https://management.azure.com/subscriptions/ea42f556-5106-4743-99b0-c129bfa71a47/resourceGroups/test_functionapp-reqs/providers/microsoft.insights/components/cloud-custodian-test?api-version=2015-05-01",
+                "uri": "https://management.azure.com/subscriptions/ea42f556-5106-4743-99b0-c129bfa71a47/resourceGroups/test_functionapp-reqs/providers/Microsoft.Insights/components/cloud-custodian-test?api-version=2015-05-01",
                 "body": null,
                 "headers": {}
             },
@@ -14,6 +14,12 @@
                     "message": "OK"
                 },
                 "headers": {
+                    "date": [
+                        "Fri, 13 Sep 2019 22:07:21 GMT"
+                    ],
+                    "cache-control": [
+                        "no-cache"
+                    ],
                     "request-context": [
                         "appId=cid-v1:920e14b1-13f3-461a-a4bb-b4fe6f1a4525"
                     ],
@@ -23,14 +29,8 @@
                     "content-type": [
                         "application/json; charset=utf-8"
                     ],
-                    "date": [
-                        "Thu, 02 May 2019 19:31:42 GMT"
-                    ],
-                    "cache-control": [
-                        "no-cache"
-                    ],
                     "content-length": [
-                        "1041"
+                        "777"
                     ]
                 },
                 "body": {
@@ -38,30 +38,23 @@
                         "id": "/subscriptions/ea42f556-5106-4743-99b0-c129bfa71a47/resourceGroups/test_functionapp-reqs/providers/microsoft.insights/components/cloud-custodian-test",
                         "name": "cloud-custodian-test",
                         "type": "microsoft.insights/components",
-                        "location": "westus2",
-                        "tags": {
-                            "hidden-link:/subscriptions/ea42f556-5106-4743-99b0-c129bfa71a47/resourceGroups/test_functionapp-reqs/providers/Microsoft.Web/sites/cloud-custodian-test": "Resource"
-                        },
+                        "location": "southcentralus",
+                        "tags": {},
                         "kind": "web",
-                        "etag": "\"19006d63-0000-0600-0000-5cca14f30000\"",
+                        "etag": "\"01007499-0000-0500-0000-5d7c10680000\"",
                         "properties": {
                             "Ver": "v2",
                             "ApplicationId": "cloud-custodian-test",
-                            "AppId": "ceacef8b-51b3-4f3f-8931-d5de24086ff6",
+                            "AppId": "1d513b73-aaaa-416e-a1b9-33b3e8f963d8",
                             "Application_Type": "web",
                             "Flow_Type": null,
                             "Request_Source": "IbizaWebAppExtensionCreate",
-                            "InstrumentationKey": "92921c0a-5f65-4c17-8bf2-d480dbe2af3b",
+                            "InstrumentationKey": "00000000-0000-0000-0000-000000000004",
                             "Name": "cloud-custodian-test",
-                            "CreationDate": "2019-05-01T21:51:46.7859097+00:00",
-                            "PackageId": null,
-                            "TenantId": "ea42f556-5106-4743-99b0-c129bfa71a47",
-                            "HockeyAppId": null,
-                            "HockeyAppToken": null,
+                            "CreationDate": "2019-09-13T21:55:52.5766984+00:00",
+                            "TenantId": "00000000-0000-0000-0000-000000000003",
                             "provisioningState": "Succeeded",
-                            "SamplingPercentage": null,
-                            "CustomMetricsOptedInType": null,
-                            "Retention": null
+                            "SamplingPercentage": null
                         }
                     }
                 }

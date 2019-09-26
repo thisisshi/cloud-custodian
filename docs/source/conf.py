@@ -120,7 +120,15 @@ html_theme = 'sphinx_rtd_theme'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = {
+  'prev_next_buttons_location': 'both',
+  'style_external_links': True,
+  # Toc options
+  'collapse_navigation': False,
+  'sticky_navigation': True,
+  'includehidden': True,
+  'titles_only': False
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
@@ -140,7 +148,7 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-html_favicon = 'c1_labs.ico'
+html_favicon = 'icon.ico'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

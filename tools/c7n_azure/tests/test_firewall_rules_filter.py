@@ -17,7 +17,9 @@ import logging
 
 from azure_common import BaseTest
 from c7n_azure.filters import FirewallRulesFilter
-from netaddr import IPRange, IPNetwork
+from jsonschema import ValidationError
+from mock import Mock
+from netaddr import IPRange, IPNetwork, IPSet
 
 
 class FirewallRulesFilterTest(BaseTest):
@@ -31,7 +33,7 @@ class FirewallRulesFilterTest(BaseTest):
             {'rules': [IPNetwork('0.0.0.1')]},
         ]
 
-        mock = FirewallRulesFilterMock({'include': []})
+        mock = FirewallRulesFilterMock({'include': []}, Mock())
 
         mock.validate()
         actual = mock.process(satisfying_resources)
@@ -63,7 +65,61 @@ class FirewallRulesFilterTest(BaseTest):
             '0.0.0.0-0.0.0.0',
             '1.0.0.20/10',
             '2.0.0.0-2.0.0.10'
-        ]})
+        ]}, Mock())
+
+        mock.validate()
+        actual = mock.process(satisfying_resources + non_satisfying_resources)
+        self.assertEqual(satisfying_resources, actual)
+
+    def test_firewall_rules_only(self):
+        required_rules = [
+            IPNetwork('1.0.0.20/10'),
+            IPNetwork('0.0.0.0'),
+            IPRange('2.0.0.0', '2.0.0.10')]
+
+        satisfying_resources = [
+            {'rules': required_rules},
+            {'rules': [required_rules[0], required_rules[1]]}
+        ]
+
+        non_satisfying_resources = [
+            {'rules': [IPNetwork('0.0.0.1')]},
+            {'rules': required_rules + [IPRange('2.0.0.0', '2.0.0.20')]}
+        ]
+
+        mock = FirewallRulesFilterMock({'only': [
+            '0.0.0.0-0.0.0.0',
+            '1.0.0.20/10',
+            '2.0.0.0-2.0.0.10',
+            '8.8.8.8'
+        ]}, Mock())
+
+        mock.validate()
+        actual = mock.process(satisfying_resources + non_satisfying_resources)
+        self.assertEqual(satisfying_resources, actual)
+
+    def test_firewall_rules_any(self):
+        required_rules = [
+            IPNetwork('1.0.0.20/10'),
+            IPNetwork('0.0.0.0'),
+            IPRange('2.0.0.0', '2.0.0.10')]
+
+        satisfying_resources = [
+            {'rules': required_rules},
+            {'rules': [required_rules[0], required_rules[1]]},
+            {'rules': required_rules + [IPRange('2.0.0.0', '2.0.0.20')]}
+        ]
+
+        non_satisfying_resources = [
+            {'rules': [IPNetwork('0.0.0.1')]}
+        ]
+
+        mock = FirewallRulesFilterMock({'any': [
+            '0.0.0.0-0.0.0.0',
+            '1.0.0.20/10',
+            '2.0.0.0-2.0.0.10',
+            '8.8.8.8'
+        ]}, Mock())
 
         mock.validate()
         actual = mock.process(satisfying_resources + non_satisfying_resources)
@@ -80,7 +136,7 @@ class FirewallRulesFilterTest(BaseTest):
             {'rules': [IPNetwork('0.0.0.1')]},
         ]
 
-        mock = FirewallRulesFilterMock({'equal': []})
+        mock = FirewallRulesFilterMock({'equal': []}, Mock())
 
         mock.validate()
         actual = mock.process(satisfying_resources + non_satisfying_resources)
@@ -88,8 +144,8 @@ class FirewallRulesFilterTest(BaseTest):
 
     def test_firewall_rules_equal(self):
         required_rules = [
-            IPNetwork('0.0.0.0'),
             IPNetwork('1.0.0.20/10'),
+            IPNetwork('0.0.0.0'),
             IPRange('2.0.0.0', '2.0.0.10')]
 
         satisfying_resources = [
@@ -109,29 +165,22 @@ class FirewallRulesFilterTest(BaseTest):
             '0.0.0.0-0.0.0.0',
             '1.0.0.20/10',
             '2.0.0.0-2.0.0.10'
-        ]})
+        ]}, Mock())
 
         mock.validate()
         actual = mock.process(satisfying_resources + non_satisfying_resources)
         self.assertEqual(satisfying_resources, actual)
 
-    def test_firewall_no_rules(self):
-        with self.assertRaises(Exception) as context:
-            mock = FirewallRulesFilterMock({})
-            mock.validate()
-        self.assertEqual('Must have either include or equal.', str(context.exception))
-
-    def test_firewall_both_rules(self):
-        with self.assertRaises(Exception) as context:
-            mock = FirewallRulesFilterMock({'equal': [], 'include': []})
-            mock.validate()
-        self.assertEqual('Cannot have both include and equal.', str(context.exception))
-
-    def test_firewall_invalid_range(self):
-        with self.assertRaises(Exception) as context:
-            mock = FirewallRulesFilterMock({'equal': [], 'include': ['0.0.0.1-0.0.0.0']})
-            mock.validate()
-        self.assertEqual('lower bound IP greater than upper bound!', str(context.exception))
+    def test_firewall_bad_schema(self):
+        p = self.load_policy({
+            'name': 'test-azure-storage',
+            'resource': 'azure.storage',
+            'filters': [{
+                'type': 'firewall-rules'
+            }],
+        })
+        with self.assertRaises(ValidationError):
+            self.load_policy(data=p, validate=True)
 
 
 class FirewallRulesFilterMock(FirewallRulesFilter):
@@ -141,4 +190,8 @@ class FirewallRulesFilterMock(FirewallRulesFilter):
         return logging.Logger.root
 
     def _query_rules(self, resource):
-        return set(resource['rules'])
+        rules = IPSet()
+        for r in resource['rules']:
+            rules.add(r)
+
+        return rules

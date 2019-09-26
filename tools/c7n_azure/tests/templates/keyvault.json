@@ -2,12 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "tenantId": {
-          "type": "string",
-          "metadata": {
-            "description": "The id of the azure ad tenant."
-          }
-        },
         "userObjectId": {
           "type": "string",
           "metadata": {
@@ -15,11 +9,13 @@
           }
         }
     },
-    "variables": {},
+    "variables": {
+         "kvname": "[concat('cckeyvault1', uniqueString(resourceGroup().id))]"
+    },
     "resources": [
         {
             "type": "Microsoft.KeyVault/vaults",
-            "name": "[concat('cckeyvault1', uniqueString(resourceGroup().id))]",
+            "name": "[variables('kvname')]",
             "apiVersion": "2016-10-01",
             "location": "southcentralus",
             "tags": {},
@@ -29,10 +25,48 @@
                     "family": "A",
                     "name": "Standard"
                 },
-                "tenantId": "[parameters('tenantId')]",
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "defaultAction": "Deny",
+                    "ipRules": [
+                        {
+                            "value": "0.0.0.0/2",
+                            "action": "Allow"
+                        },
+                        {
+                            "value": "64.0.0.0/3",
+                            "action": "Allow"
+                        },
+                        {
+                            "value": "96.0.0.0/4",
+                            "action": "Allow"
+                        },
+                        {
+                            "value": "112.0.0.0/5",
+                            "action": "Allow"
+                        },
+                        {
+                            "value": "120.0.0.0/6",
+                            "action": "Allow"
+                        },
+                        {
+                            "value": "124.0.0.0/7",
+                            "action": "Allow"
+                        },
+                        {
+                            "value": "126.0.0.0/8",
+                            "action": "Allow"
+                        },
+                        {
+                            "value": "128.0.0.0/1",
+                            "action": "Allow"
+                        }
+                    ]
+                },
+                "tenantId": "[subscription().tenantId]",
                 "accessPolicies": [
                     {
-                        "tenantId": "[parameters('tenantId')]",
+                        "tenantId": "[subscription().tenantId]",
                         "objectId": "[parameters('userObjectId')]",
                         "permissions": {
                             "keys": [
@@ -69,6 +103,12 @@
                                 "ListIssuers",
                                 "SetIssuers",
                                 "DeleteIssuers"
+                            ],
+                            "storage": [
+                                "Get",
+                                "List",
+                                "Set",
+                                "regeneratekey"
                             ]
                         }
                     }
@@ -78,6 +118,18 @@
                 "enabledForTemplateDeployment": false
             },
             "dependsOn": []
+        },
+        {
+          "name": "[concat('cckvstorage', uniqueString(resourceGroup().id))]",
+          "type": "Microsoft.Storage/storageAccounts",
+          "apiVersion": "2016-01-01",
+          "sku": {
+            "name": "Standard_LRS"
+          },
+          "kind": "Storage",
+          "location": "southcentralus",
+          "tags": {},
+          "properties": {}
         }
     ]
 }

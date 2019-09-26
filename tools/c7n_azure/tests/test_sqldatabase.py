@@ -11,16 +11,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from azure_common import BaseTest, arm_template
-from c7n.exceptions import PolicyValidationError
-from c7n.utils import local_session
+from azure.mgmt.sql.models import DatabaseUpdate, Sku
+from azure_common import BaseTest, arm_template, requires_arm_polling
 from c7n_azure.resources.sqldatabase import (
     BackupRetentionPolicyHelper, ShortTermBackupRetentionPolicyAction)
 from c7n_azure.session import Session
+from c7n_azure.utils import ResourceIdParser
+from mock import patch
+
+from c7n.exceptions import PolicyValidationError
+from c7n.utils import local_session
 
 
 class SqlDatabaseTest(BaseTest):
+
+    def setUp(self):
+        super(SqlDatabaseTest, self).setUp()
+        self.client = local_session(Session).client('azure.mgmt.sql.SqlManagementClient')
 
     def test_sql_database_schema_validate(self):
         with self.sign_out_patch():
@@ -72,6 +79,44 @@ class SqlDatabaseTest(BaseTest):
         db = resources[0]
 
         self.assertEqual(db.get('name'), 'cctestdb')
+
+    @arm_template('sqlserver.json')
+    @patch('azure.mgmt.sql.operations.DatabasesOperations.update')
+    def test_resize_action(self, update_mock):
+        p = self.load_policy({
+            'name': 'resize-sqldatabase',
+            'resource': 'azure.sqldatabase',
+            'filters': [
+                {
+                    'type': 'value',
+                    'key': 'name',
+                    'value': 'cctestdb'
+                }
+            ],
+            'actions': [
+                {
+                    'type': 'resize',
+                    'tier': 'Standard',
+                    'capacity': 100,
+                    'max_size_bytes': 21474836480
+                }
+            ],
+        })
+
+        self.resources = p.run()
+        self.assertEqual(len(self.resources), 1)
+        self.assertEqual(self.resources[0]['name'], 'cctestdb')
+
+        parent_id = ResourceIdParser.get_resource_name(self.resources[0]['c7n:parent-id'])
+        expected_db_update = DatabaseUpdate(sku=Sku(capacity=100, tier='Standard', name='Standard'),
+                                            max_size_bytes=21474836480)
+
+        update_mock.assert_called_once()
+        name, args, kwargs = update_mock.mock_calls[0]
+        self.assertEqual('test_sqlserver', args[0])
+        self.assertEqual(parent_id, args[1])
+        self.assertEqual('cctestdb', args[2])
+        self.assertEqual(expected_db_update, args[3])
 
 
 class ShortTermBackupRetentionPolicyFilterTest(BaseTest):
@@ -303,6 +348,7 @@ class ShortTermBackupRetentionPolicyActionSchemaTest(BaseTest):
 # operation has finished. However, this polling happens client-side and causes the tests to complete
 # slowly. In order to speed these up, the cassettes were manually modified to immediately return the
 # completed operation.
+@requires_arm_polling
 class ShortTermBackupRetentionPolicyActionTest(BaseTest):
 
     @classmethod
@@ -375,6 +421,7 @@ class LongTermBackupRetentionPolicyActionSchemaTest(BaseTest):
 # operation has finished. However, this polling happens client-side and causes the tests to complete
 # slowly. In order to speed these up, the cassettes were manually modified to immediately return the
 # completed operation.
+@requires_arm_polling
 class LongTermBackupRetentionPolicyActionTest(BaseTest):
 
     @classmethod

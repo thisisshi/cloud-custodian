@@ -29,7 +29,7 @@ import jmespath
 from c7n.actions import (
     ActionRegistry, BaseAction, ModifyVpcSecurityGroupsAction
 )
-from c7n.actions.securityhub import PostFinding
+
 from c7n.exceptions import PolicyValidationError
 from c7n.filters import (
     FilterRegistry, AgeFilter, ValueFilter, Filter, DefaultVpcBase
@@ -39,9 +39,10 @@ import c7n.filters.vpc as net_filters
 
 from c7n.manager import resources
 from c7n import query, utils
-from c7n.resources.iam import CheckPermissions
 from c7n.utils import type_schema, filter_empty
 
+from c7n.resources.iam import CheckPermissions
+from c7n.resources.securityhub import PostFinding
 
 RE_ERROR_INSTANCE_ID = re.compile("'(?P<instance_id>i-.*?)'")
 
@@ -52,11 +53,10 @@ actions = ActionRegistry('ec2.actions')
 @resources.register('ec2')
 class EC2(query.QueryResourceManager):
 
-    class resource_type(object):
+    class resource_type(query.TypeInfo):
         service = 'ec2'
-        type = 'instance'
+        arn_type = 'instance'
         enum_spec = ('describe_instances', 'Reservations[].Instances[]', None)
-        detail_spec = None
         id = 'InstanceId'
         filter_name = 'InstanceIds'
         filter_type = 'list'
@@ -64,7 +64,6 @@ class EC2(query.QueryResourceManager):
         date = 'LaunchTime'
         dimension = 'InstanceId'
         config_type = "AWS::EC2::Instance"
-        shape = "Instance"
 
         default_report_fields = (
             'CustodianDate',
@@ -293,6 +292,7 @@ class AttachedVolume(ValueFilter):
         'ebs', rinherit=ValueFilter.schema,
         **{'operator': {'enum': ['and', 'or']},
            'skip-devices': {'type': 'array', 'items': {'type': 'string'}}})
+    schema_alias = False
 
     def get_permissions(self):
         return self.manager.get_resource_manager('ebs').get_permissions()
@@ -455,6 +455,7 @@ class ImageAge(AgeFilter, InstanceImageBase):
 class InstanceImage(ValueFilter, InstanceImageBase):
 
     schema = type_schema('image', rinherit=ValueFilter.schema)
+    schema_alias = False
 
     def get_permissions(self):
         return self.manager.get_resource_manager('ami').get_permissions()
@@ -731,6 +732,7 @@ class UserData(ValueFilter):
     """
 
     schema = type_schema('user-data', rinherit=ValueFilter.schema)
+    schema_alias = False
     batch_size = 50
     annotation = 'c7n:user-data'
     permissions = ('ec2:DescribeInstanceAttribute',)
@@ -856,7 +858,7 @@ class SsmStatus(ValueFilter):
     .. code-block:: yaml
 
         policies:
-          - name: ec2-recover-instances
+          - name: ec2-ssm-check
             resource: ec2
             filters:
               - type: ssm
@@ -870,6 +872,7 @@ class SsmStatus(ValueFilter):
                 value: 18.04
     """
     schema = type_schema('ssm', rinherit=ValueFilter.schema)
+    schema_alias = False
     permissions = ('ssm:DescribeInstanceInformation',)
     annotation = 'c7n:SsmState'
 
@@ -1568,7 +1571,7 @@ class PropagateSpotTags(BaseAction):
 
     :Example:
 
-    .. code-block: yaml
+    .. code-block:: yaml
 
         policies:
           - name: ec2-spot-instances
@@ -1778,6 +1781,7 @@ class InstanceAttribute(ValueFilter):
         rinherit=ValueFilter.schema,
         attribute={'enum': valid_attrs},
         required=('attribute',))
+    schema_alias = False
 
     def get_permissions(self):
         return ('ec2:DescribeInstanceAttribute',)
@@ -1808,17 +1812,16 @@ class InstanceAttribute(ValueFilter):
 @resources.register('launch-template-version')
 class LaunchTemplate(query.QueryResourceManager):
 
-    class resource_type(object):
+    class resource_type(query.TypeInfo):
         id = 'LaunchTemplateId'
         name = 'LaunchTemplateName'
         service = 'ec2'
         date = 'CreateTime'
-        dimension = None
         enum_spec = (
             'describe_launch_templates', 'LaunchTemplates', None)
         filter_name = 'LaunchTemplateIds'
         filter_type = 'list'
-        type = "launch-template"
+        arn_type = "launch-template"
 
     def augment(self, resources):
         client = utils.local_session(
@@ -1864,9 +1867,16 @@ class LaunchTemplate(query.QueryResourceManager):
         results = []
         # We may end up fetching duplicates on $Latest and $Version
         for tid, tversions in t_versions.items():
-            ltv = client.describe_launch_template_versions(
-                LaunchTemplateId=tid, Versions=tversions).get(
-                    'LaunchTemplateVersions')
+            try:
+                ltv = client.describe_launch_template_versions(
+                    LaunchTemplateId=tid, Versions=tversions).get(
+                        'LaunchTemplateVersions')
+            except ClientError as e:
+                if e.response['Error']['Code'] == "InvalidLaunchTemplateId.NotFound":
+                    continue
+                if e.response['Error']['Code'] == "InvalidLaunchTemplateId.VersionNotFound":
+                    continue
+                raise
             if not tversions:
                 tversions = [str(t['VersionNumber']) for t in ltv]
             for tversion, t in zip(tversions, ltv):
@@ -1890,7 +1900,7 @@ class LaunchTemplate(query.QueryResourceManager):
 @resources.register('ec2-reserved')
 class ReservedInstance(query.QueryResourceManager):
 
-    class resource_type(object):
+    class resource_type(query.TypeInfo):
         service = 'ec2'
         name = id = 'ReservedInstancesId'
         date = 'Start'
@@ -1898,5 +1908,4 @@ class ReservedInstance(query.QueryResourceManager):
             'describe_reserved_instances', 'ReservedInstances', None)
         filter_name = 'ReservedInstancesIds'
         filter_type = 'list'
-        dimension = None
-        type = "reserved-instances"
+        arn_type = "reserved-instances"

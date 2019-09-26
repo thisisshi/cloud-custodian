@@ -1,14 +1,16 @@
-.. {{provider_name|upper}}:
+.. _{{provider_name|upper}}:
 
-{{provider_name|upper}} Resources
+{{provider_name}} Reference
+------------------------------------
 
 Reference information about provider resources and their actions and filters.
 See the :ref:`Generic Filters reference <filters>` for filters that can
 be applies for all resources.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :titlesonly:
-   :glob:
 
-   *
+{% for f in files %}
+   {{f}}
+{% endfor %}

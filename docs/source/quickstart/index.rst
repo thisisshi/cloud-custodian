@@ -16,11 +16,33 @@ See also the readme in the GitHub repository.
 Install Cloud Custodian
 -----------------------
 
+Cloud Custodian is a Python application and supports Python 2 and 3 on Linux and 
+Windows.
+
+We recommend using Python 3.6 or higher.
+
+Linux and Mac OS
++++++++++++++++++++++++++++
+
 To install Cloud Custodian, just run::
 
   $ python3 -m venv custodian
   $ source custodian/bin/activate
-  (custodian) $ pip install c7n
+  (custodian) $ pip install c7n       #Install AWS package
+  (custodian) $ pip install c7n_azure #Install Azure package
+  (custodian) $ pip install c7n_gcp   #Install GCP Package
+
+Windows (CMD/PowerShell)
++++++++++++++++++++++++++++
+
+To install Cloud Custodian, just run::
+
+  $ python3 -m venv custodian
+  $ ./custodian/Scripts/activate
+  (custodian) $ pip install c7n       #Install AWS package
+  (custodian) $ pip install c7n_azure #Install Azure package
+  (custodian) $ pip install c7n_gcp   #Install GCP Package
+
 
 .. _explore-cc:
 
@@ -37,7 +59,7 @@ Run ``custodian schema <cloud-provider>`` to see the available resources for a
 specific cloud provider: ``custodian schema aws``
 
 Run ``custodian schema <cloud-provider>.<resource>`` to see the available
-:ref:`filters and actions <policy>` for each resource.
+filters and actions for each resource.
 
 Drill down to get more information about available policy settings for each
 resource, where the model for the command is::
@@ -99,7 +121,7 @@ page.
 
 - :ref:`AWS <aws-gettingstarted>`
 - :ref:`Azure <azure_gettingstarted>`
-- GCP <tbd>
+- :ref:`GCP <gcp_gettingstarted>`
 
 Troubleshooting & Tinkering
 +++++++++++++++++++++++++++
