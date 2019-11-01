@@ -14,6 +14,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from datetime import datetime
+import jmespath
 import re
 
 from concurrent.futures import as_completed
@@ -22,6 +23,7 @@ from dateutil.parser import parse
 
 from c7n.actions import (
     ActionRegistry, BaseAction, ModifyVpcSecurityGroupsAction)
+from c7n.exceptions import PolicyExecutionError
 from c7n.filters import FilterRegistry, AgeFilter
 import c7n.filters.vpc as net_filters
 from c7n.manager import resources
@@ -62,6 +64,25 @@ class ElastiCacheCluster(QueryResourceManager):
 class SecurityGroupFilter(net_filters.SecurityGroupFilter):
 
     RelatedIdsExpression = "SecurityGroups[].SecurityGroupId"
+
+
+@filters.register('vpc')
+class VpcFilter(net_filters.VpcFilter):
+
+    RelatedIdsExpression = ""
+
+    def get_related_ids(self, resources):
+        vpc_ids = []
+        for r in resources:
+            vpc_ids.append(self.vpc_map[r['CacheSubnetGroupName']])
+        return set(vpc_ids)
+
+    def process(self, resources, event):
+        subnet_groups = self.manager.get_resource_manager('cache-subnet-group').resources()
+        self.vpc_map = {
+            r['CacheSubnetGroupName']: r['VpcId'] for r in subnet_groups
+        }
+        return super(VpcFilter, self).process(resources, event)
 
 
 @filters.register('subnet')
@@ -237,10 +258,42 @@ class ElasticacheClusterModifyVpcSecurityGroups(ModifyVpcSecurityGroupsAction):
     """
     permissions = ('elasticache:ModifyReplicationGroup',)
 
+    def validate(self):
+        return self
+
+    def resolve_group_names(self, r, target_group_ids, groups):
+        names = self.get_group_names(target_group_ids)
+        if not names:
+            return target_group_ids
+        target_group_ids = list(target_group_ids)
+        # shouldn't need to check if vpc_id exists as all elasticache clusters
+        # are launched inside of a vpc
+        vpc_id = self.vpc_map.get(r['CacheSubnetGroupName'])
+        found = False
+        for n in names:
+            for g in groups:
+                if g['GroupName'] == n and g['VpcId'] == vpc_id:
+                    found = g['GroupId']
+            if not found:
+                raise PolicyExecutionError(self._format_error((
+                    "policy:{policy} could not resolve sg:{name} for "
+                    "resource:{resource_id} in vpc:{vpc}"),
+                    name=n,
+                    resource_id=r[self.manager.resource_type.id], vpc=vpc_id))
+            target_group_ids.remove(n)
+            target_group_ids.append(found)
+        return target_group_ids
+
     def process(self, clusters):
+        self.sg_expr = jmespath.compile(
+            self.manager.filter_registry.get('security-group').RelatedIdsExpression)
         replication_group_map = {}
         client = local_session(
             self.manager.session_factory).client('elasticache')
+        subnet_groups = self.manager.get_resource_manager('cache-subnet-group').resources()
+        self.vpc_map = {
+            r['CacheSubnetGroupName']: r['VpcId'] for r in subnet_groups
+        }
         groups = super(
             ElasticacheClusterModifyVpcSecurityGroups, self).get_groups(
                 clusters)
