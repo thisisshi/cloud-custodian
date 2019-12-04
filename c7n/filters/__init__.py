@@ -30,3 +30,4 @@ from .health import HealthEventFilter
 from .iamaccess import CrossAccountAccessFilter, PolicyChecker
 from .metrics import MetricsFilter, ShieldMetrics
 from .vpc import DefaultVpcBase
+from .computeoptimizer import ComputeOptimizerFilter
