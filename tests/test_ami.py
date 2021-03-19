@@ -152,7 +152,16 @@ class TestAMI(BaseTest):
     def test_unused_ami_with_asg_launch_templates(self):
         factory = self.replay_flight_data('test_unused_ami_launch_template')
         p = self.load_policy(
-            {"name": "test-unused-ami", "resource": "ami", "filters": ["unused"]},
+            {
+                "name": "test-unused-ami",
+                "resource": "ami",
+                "filters": [
+                    {
+                        "type": "unused",
+                        "include-launch-configurations": True
+                    }
+                ]
+            },
             session_factory=factory,
         )
         resources = p.run()
