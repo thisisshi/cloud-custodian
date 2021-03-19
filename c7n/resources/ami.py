@@ -320,9 +320,7 @@ class ImageUnusedFilter(Filter):
         if asgs is None and include_lcfg is False:
             return set()
 
-        if asgs is None:
-            asgs = []
-        elif asgs and include_lcfg:
+        if asgs is None or include_lcfg:
             asgs = []
 
         image_ids = set()
@@ -333,13 +331,14 @@ class ImageUnusedFilter(Filter):
             image_ids.update([
                 lcfg['ImageId'] for lcfg in lcfg_mgr.resources()
                 if lcfg['LaunchConfigurationName'] in lcfgs])
-        else:
+        elif not lcfgs and include_lcfg:
             image_ids.update([lcfg['ImageId'] for lcfg in lcfg_mgr.resources()])
 
         tmpl_mgr = self.manager.get_resource_manager('launch-template-version')
-        for tversion in tmpl_mgr.get_resources(
-                list(tmpl_mgr.get_asg_templates(asgs).keys())):
-            image_ids.add(tversion['LaunchTemplateData'].get('ImageId'))
+        if asgs or include_lcfg:
+            for tversion in tmpl_mgr.get_resources(
+                    list(tmpl_mgr.get_asg_templates(asgs).keys())):
+                image_ids.add(tversion['LaunchTemplateData'].get('ImageId'))
         return image_ids
 
     def _pull_asg_images(self):
