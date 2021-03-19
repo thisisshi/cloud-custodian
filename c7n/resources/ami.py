@@ -281,11 +281,16 @@ class ImageAgeFilter(AgeFilter):
 class ImageUnusedFilter(Filter):
     """Filters images based on usage
 
-    value:
-        true: image has no instances spawned from it
-        false: image has instances spawned from it
-    include-launch-configurations:
-        include all launch configurations and launch templates (default versions)
+    `value`: boolean
+
+    true: image has no instances spawned from it
+    false: image has instances spawned from it
+
+    `include-launch-configurations`: boolean
+
+    true: include all launch configurations and launch templates (default versions)
+    false: only include launch configurations and launch templates for existing
+    autoscaling groups
 
     :example:
 
