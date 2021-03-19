@@ -314,7 +314,6 @@ class ImageUnusedFilter(Filter):
             for m in ('asg', 'launch-config', 'ec2')]))
 
     def _pull_launch_configs_templates(self, asgs=None):
-        breakpoint()
         include_lcfg = self.data.get('include-launch-configurations', False)
 
         # if we dont pass in asgs and include-launch-configs is false, just bail
