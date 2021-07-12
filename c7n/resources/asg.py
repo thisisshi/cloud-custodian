@@ -1311,6 +1311,9 @@ class PropagateTags(Action):
 class RenameTag(Action):
     """Rename a tag on an AutoScaleGroup.
 
+    Optionally pass in a list of source tags to be renamed. The first
+    matching source tag will be renamed.
+
     :example:
 
     .. code-block:: yaml
@@ -1325,12 +1328,45 @@ class RenameTag(Action):
                     propagate: true
                     source: OwnerNames
                     dest: OwnerName
+            policies:
+              - name: asg-rename-owner-tag-multiple
+                resource: asg
+                description: |
+                    rename tag to proper spelling of the tag "OwnerNames", the
+                    match will be the key that is renamed.
+                filters:
+                  - or:
+                    - "tag:OwnerNames": present
+                    - "tag:ownerNames": present
+                    - "tag:ownernames": present
+                    - "tag:ownernames ": present
+                    - "tag:owner_names": present
+                actions:
+                  - type: rename-tag
+                    propagate: true
+                    source:
+                        - OwnerNames
+                        - ownerNames
+                        - ownernames
+                        - "ownernames "
+                        - "owner_names"
+                    dest: OwnerName
     """
 
     schema = type_schema(
         'rename-tag', required=['source', 'dest'],
         propagate={'type': 'boolean'},
-        source={'type': 'string'},
+        source={
+            'oneOf': [
+                {'type': 'string'},
+                {
+                    'type': 'array',
+                    'items': {
+                        'type': 'string'
+                    }
+                },
+            ]
+        },
         dest={'type': 'string'})
 
     def get_permissions(self):
@@ -1369,8 +1405,18 @@ class RenameTag(Action):
         Create new tag
         Delete old tag
         """
-        source_tag = self.data.get('source')
         tag_map = {t['Key']: t for t in asg.get('Tags', [])}
+        source_tag = None
+        # if source is a list, we take the first matching item as the source tag
+        if isinstance(self.data.get('source'), list):
+            for s in self.data.get('source'):
+                if s in tag_map:
+                    source_tag = s
+            if source_tag is None:
+                self.log.info('No source tag found from list:%s' % self.data['source'])
+                return
+        else:
+            source_tag = self.data.get('source')
         source = tag_map[source_tag]
         destination_tag = self.data.get('dest')
         propagate = self.data.get('propagate', True)
