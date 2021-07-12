@@ -803,7 +803,6 @@ class TestTag(BaseTest):
         resources = policy.run()
         self.assertEqual(len(resources), 3)
 
-
     def test_ec2_mark_zero(self):
         localtz = tz.gettz("America/New_York")
         dt = datetime.datetime.now(localtz)
