@@ -484,7 +484,12 @@ class RenameTag(Action):
 
     schema = utils.type_schema(
         'rename-tag',
-        old_key={'type': 'string'},
+        old_key={
+            'oneOf': [
+                {'type': 'string'},
+                {'type': 'array', 'items': {'type': 'string'}},
+            ]
+        },
         new_key={'type': 'string'})
     schema_alias = True
 
