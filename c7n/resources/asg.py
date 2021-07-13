@@ -1312,7 +1312,7 @@ class RenameTag(Action):
     """Rename a tag on an AutoScaleGroup.
 
     Optionally pass in a list of source tags to be renamed. The first
-    matching source tag will be renamed.
+    matching source tag will be renamed. Any other tags will be removed.
 
     :example:
 
@@ -1385,9 +1385,13 @@ class RenameTag(Action):
         filtered = []
         for a in asgs:
             for t in a.get('Tags'):
-                if t['Key'] == source:
-                    filtered.append(a)
-                    break
+                if isinstance(source, list):
+                    if t['Key'] in source:
+                        filtered.append(a)
+                else:
+                    if t['Key'] == source:
+                        filtered.append(a)
+                        break
         asgs = filtered
         self.log.info("Filtered from %d asgs to %d", count, len(asgs))
         self.log.info(
@@ -1409,10 +1413,13 @@ class RenameTag(Action):
         source_tag = None
         # if source is a list, we take the first matching item as the source tag
         if isinstance(self.data.get('source'), list):
+            found = False
             for s in self.data.get('source'):
                 if s in tag_map:
                     source_tag = s
-            if source_tag is None:
+                    found = True
+                    break
+            if not found:
                 self.log.info('No source tag found from list:%s' % self.data['source'])
                 return
         else:
@@ -1426,11 +1433,23 @@ class RenameTag(Action):
         # max tags constraints, otherwise.
         #
         # delete_first = len([t for t in tag_map if not t.startswith('aws:')])
-        client.delete_tags(Tags=[
-            {'ResourceId': asg['AutoScalingGroupName'],
-             'ResourceType': 'auto-scaling-group',
-             'Key': source_tag,
-             'Value': source['Value']}])
+        if isinstance(self.data.get('source'), list):
+            client.delete_tags(
+                Tags=[
+                    {
+                        'ResourceId': asg['AutoScalingGroupName'],
+                        'ResourceType': 'auto-scaling-group',
+                        'Key': s
+                    }
+                    for s in self.data['source']
+                ]
+            )
+        else:
+            client.delete_tags(Tags=[
+                {'ResourceId': asg['AutoScalingGroupName'],
+                 'ResourceType': 'auto-scaling-group',
+                 'Key': source_tag,
+                 'Value': source['Value']}])
         client.create_or_update_tags(Tags=[
             {'ResourceId': asg['AutoScalingGroupName'],
              'ResourceType': 'auto-scaling-group',
@@ -1442,9 +1461,15 @@ class RenameTag(Action):
 
     def propagate_instance_tag(self, source, destination_tag, asg):
         client = local_session(self.manager.session_factory).client('ec2')
-        client.delete_tags(
-            Resources=[i['InstanceId'] for i in asg['Instances']],
-            Tags=[{"Key": source['Key']}])
+        if isinstance(self.data.get('source'), list):
+            client.delete_tags(
+                Resources=[i['InstanceId'] for i in asg['Instances']],
+                Tags=[{"Key": s} for s in self.data['source']]
+            )
+        else:
+            client.delete_tags(
+                Resources=[i['InstanceId'] for i in asg['Instances']],
+                Tags=[{"Key": source['Key']}])
         client.create_tags(
             Resources=[i['InstanceId'] for i in asg['Instances']],
             Tags=[{'Key': destination_tag, 'Value': source['Value']}])

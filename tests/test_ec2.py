@@ -766,42 +766,60 @@ class TestTag(BaseTest):
         self.assertEqual(len(resources), 3)
 
     def test_ec2_rename_tag_list(self):
-        session_factory = self.replay_flight_data("test_ec2_rename_tag")
+        session_factory = self.replay_flight_data("test_ec2_rename_tag_list")
 
         policy = self.load_policy(
             {
                 "name": "ec2-rename-start",
                 "resource": "ec2",
-                "filters": [{"tag:Testing": "present"}],
+                "filters": [
+                    {"tag:Test": "absent"},
+                    {"tag:tEst": "absent"},
+                    {"tag:TEST": "testALLUPPER"},
+                    {"tag:test": "testLower"},
+                    {"tag:tesT": "testLast"},
+                    {"tag:teSt": "testRandom"},
+                ],
             },
             session_factory=session_factory,
         )
         resources = policy.run()
-        self.assertEqual(len(resources), 3)
+        self.assertEqual(len(resources), 1)
 
         policy = self.load_policy(
             {
                 "name": "ec2-rename-tag",
                 "resource": "ec2",
                 "actions": [
-                    {"type": "rename-tag", "old_key": ["testing", "Testing"], "new_key": "Testing1"}
+                    {
+                        "type": "rename-tag",
+                        "old_key": ["tEst", "TEST", "teSt", "tesT", "test"],
+                        "new_key": "Test"
+                    }
                 ],
             },
             session_factory=session_factory,
         )
         resources = policy.run()
-        self.assertEqual(len(resources), 3)
+        self.assertEqual(len(resources), 1)
 
         policy = self.load_policy(
             {
                 "name": "ec2-rename-end",
                 "resource": "ec2",
-                "filters": [{"tag:Testing1": "present"}],
+                "filters": [
+                    {"tag:Test": "testALLUPPER"},
+                    {"tag:tEst": "absent"},
+                    {"tag:TEST": "absent"},
+                    {"tag:teSt": "absent"},
+                    {"tag:test": "absent"},
+                    {"tag:tesT": "absent"},
+                ],
             },
             session_factory=session_factory,
         )
         resources = policy.run()
-        self.assertEqual(len(resources), 3)
+        self.assertEqual(len(resources), 1)
 
     def test_ec2_mark_zero(self):
         localtz = tz.gettz("America/New_York")
