@@ -497,15 +497,18 @@ class RenameTag(Action):
 
     tag_count_max = 50
 
-    def delete_tag(self, client, ids, key, value=None):
+    def delete_tag(self, client, ids, key=None, value=None, keys=None):
         # tag values are optional, if they're specified the client will only delete
         # the tag if the value matches
-        tags = {'Key': key}
+        if keys:
+            tags = [{'Key': k} for k in keys]
+        else:
+            tags = [{'Key': key}]
         if value:
-            tags['Value'] = value
+            tags[0]['Value'] = value
         client.delete_tags(
             Resources=ids,
-            Tags=[tags])
+            Tags=tags)
 
     def create_tag(self, client, ids, key, value):
         client.create_tags(
@@ -536,14 +539,13 @@ class RenameTag(Action):
 
         for old_key, resources in old_key_resource_set.items():
             self.delete_tag(
-                client, [r[self.id_key] for r in resources], old_key)
+                client, [r[self.id_key] for r in resources], key=old_key)
 
         if isinstance(self.data.get('old_key'), list):
-            for k in self.data.get('old_key'):
-                # because we don't know the tag value of the other keys, we can't pass
-                # the value in when deleting
-                self.delete_tag(
-                    client, [r[self.id_key] for r in resources], k)
+            # because we don't know the tag value of the other keys, we can't pass
+            # the value in when deleting
+            self.delete_tag(
+                client, [r[self.id_key] for r in resources], keys=self.data.get('old_key'))
 
         # For resources with 50 tags, we need to delete first and then create.
         resource_ids = [r[self.id_key] for r in resource_set if len(
