@@ -1382,16 +1382,15 @@ class RenameTag(Action):
         dest = self.data.get('dest')
         count = len(asgs)
 
+        if not isinstance(source, list):
+            source = [source]
+
         filtered = []
         for a in asgs:
             for t in a.get('Tags'):
-                if isinstance(source, list):
-                    if t['Key'] in source:
-                        filtered.append(a)
-                else:
-                    if t['Key'] == source:
-                        filtered.append(a)
-                        break
+                if t['Key'] in source:
+                    filtered.append(a)
+                    break
         asgs = filtered
         self.log.info("Filtered from %d asgs to %d", count, len(asgs))
         self.log.info(
