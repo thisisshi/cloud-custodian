@@ -34,8 +34,9 @@ from urllib.error import URLError
 from googleapiclient import discovery, errors  # NOQA
 from googleapiclient.http import set_user_agent
 from google.auth.credentials import with_scopes_if_required
-import google.oauth2.credentials
 import google_auth_httplib2
+
+from google.cloud.client import Client
 
 import httplib2
 from ratelimiter import RateLimiter
@@ -175,8 +176,7 @@ class Session:
         if not credentials:
             # Only share the http object when using the default credentials.
             self._use_cached_http = True
-            credentials, _ = google.auth.default(quota_project_id=project_id or
-            get_default_project())
+            credentials = Client(credentials)._credentials
         self._credentials = with_scopes_if_required(credentials, list(CLOUD_SCOPES))
         if use_rate_limiter:
             self._rate_limiter = RateLimiter(max_calls=quota_max_calls,
