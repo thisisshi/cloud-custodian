@@ -62,6 +62,7 @@ install_requires = \
  'azure-mgmt-resource>=16.0.0,<17.0.0',
  'azure-mgmt-resourcegraph>=7.0.0,<8.0.0',
  'azure-mgmt-search>=8.0.0,<9.0.0',
+ 'azure-mgmt-security>=1.0.0,<2.0.0',
  'azure-mgmt-servicefabric>=1.0.0,<2.0.0',
  'azure-mgmt-sql>=1.0.0,<2.0.0',
  'azure-mgmt-storage>=17.0.0,<18.0.0',
@@ -101,7 +102,7 @@ extras_require = \
 
 setup_kwargs = {
     'name': 'c7n-azure',
-    'version': '0.7.14',
+    'version': '0.7.15',
     'description': 'Cloud Custodian - Azure Support',
     'license': 'Apache-2.0',
     'classifiers': [
