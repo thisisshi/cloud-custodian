@@ -98,7 +98,10 @@ ttest:
 
 sphinx:
 # if this errors either tox -e docs or cd tools/c7n_sphinext && poetry install
-	make -f docs/Makefile.sphinx html
+#
+# typing-extensions isn't needed for c7n itself, but rather the azure credentials module
+# so we dont install it in pyproject.toml
+	pip install typing-extensions && make -f docs/Makefile.sphinx html
 
 ghpages:
 	-git checkout gh-pages && \
