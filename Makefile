@@ -1,6 +1,6 @@
 SELF_MAKE := $(lastword $(MAKEFILE_LIST))
 PKG_REPO = testpypi
-PKG_SET = tools/c7n_gcp tools/c7n_azure tools/c7n_kube tools/c7n_openstack tools/c7n_mailer tools/c7n_logexporter tools/c7n_policystream tools/c7n_trailcreator tools/c7n_org tools/c7n_sphinxext tools/c7n_terraform tools/c7n_awscc
+PKG_SET = tools/c7n_gcp tools/c7n_kube tools/c7n_openstack tools/c7n_mailer tools/c7n_logexporter tools/c7n_policystream tools/c7n_trailcreator tools/c7n_org tools/c7n_sphinxext tools/c7n_terraform tools/c7n_awscc tools/c7n_azure
 
 install:
 	python3 -m venv .
@@ -98,10 +98,7 @@ ttest:
 
 sphinx:
 # if this errors either tox -e docs or cd tools/c7n_sphinext && poetry install
-#
-# typing-extensions isn't needed for c7n itself, but rather the azure credentials module
-# so we dont install it in pyproject.toml
-	pip install typing-extensions && make -f docs/Makefile.sphinx html
+	make -f docs/Makefile.sphinx html
 
 ghpages:
 	-git checkout gh-pages && \
