@@ -3,8 +3,8 @@ atomicwrites==1.4.0; python_version >= "3.6" and python_full_version < "3.0.0" a
 attrs==21.4.0; python_version >= "3.7" and python_full_version < "3.0.0" and python_version < "4.0" or python_full_version >= "3.5.0" and python_version >= "3.7" and python_version < "4.0"
 aws-xray-sdk==2.9.0
 bleach==5.0.0; python_version >= "3.7"
-boto3==1.21.39; python_version >= "3.6"
-botocore==1.24.39; python_version >= "3.6"
+boto3==1.21.42; python_version >= "3.6"
+botocore==1.24.42; python_version >= "3.6"
 certifi==2021.10.8; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6"
 cffi==1.15.0; sys_platform == "linux" and python_version >= "3.7"
 charset-normalizer==2.0.12; python_full_version >= "3.6.0" and python_version >= "3.6"
@@ -18,7 +18,7 @@ flake8==3.9.2; (python_version >= "2.7" and python_full_version < "3.0.0") or (p
 future==0.18.2; python_version >= "2.6" and python_full_version < "3.0.0" or python_full_version >= "3.3.0"
 idna==3.3; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6"
 importlib-metadata==4.11.3; python_version >= "3.7"
-importlib-resources==5.6.0; python_version < "3.9" and python_version >= "3.7"
+importlib-resources==5.7.1; python_version < "3.9" and python_version >= "3.7"
 iniconfig==1.1.1; python_version >= "3.6" and python_full_version < "3.0.0" and python_version < "4.0" or python_full_version >= "3.5.0" and python_version >= "3.6" and python_version < "4.0"
 jeepney==0.8.0; sys_platform == "linux" and python_version >= "3.7"
 jmespath==1.0.0; python_version >= "3.7" and python_version < "4.0"
@@ -64,7 +64,7 @@ termcolor==1.1.0
 toml==0.10.2; python_version >= "3.6" and python_full_version < "3.0.0" and python_version < "4.0" or python_full_version >= "3.5.0" and python_version >= "3.6" and python_version < "4.0"
 tqdm==4.64.0; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.6"
 twine==3.8.0; python_version >= "3.6"
-typing-extensions==4.1.1; python_version == "3.7" and (python_version >= "3.7" and python_full_version < "3.0.0" and python_version < "3.8" or python_full_version >= "3.5.0" and python_version < "3.8" and python_version >= "3.7")
+typing-extensions==4.2.0; python_version == "3.7" and (python_version >= "3.7" and python_full_version < "3.0.0" and python_version < "3.8" or python_full_version >= "3.5.0" and python_version < "3.8" and python_version >= "3.7")
 urllib3==1.26.9; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version < "4" and python_version >= "3.6"
 vcrpy==4.1.1; python_version >= "3.5"
 webencodings==0.5.1; python_version >= "3.7"
