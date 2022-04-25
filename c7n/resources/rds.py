@@ -1877,3 +1877,25 @@ class ConsecutiveSnapshots(Filter):
             if expected_dates.issubset(snapshot_dates):
                 results.append(r)
         return results
+
+
+@filters.register('engine')
+class EngineFilter(ValueFilter):
+    schema = type_schema('engine', rinherit=ValueFilter.schema)
+
+    def process(self, resources, event=None):
+        client = local_session(self.manager.session_factory).client('rds')
+        paginator = client.get_paginator('describe_db_engine_versions')
+        response = paginator.paginate(IncludeAll=True)
+        all_versions = {}
+        matched = []
+        for page in response:
+            for e in page['DBEngineVersions']:
+                all_versions.setdefault(e['Engine'], {})
+                all_versions[e['Engine']][e['EngineVersion']] = e
+        for r in resources:
+            v = all_versions[r['Engine']][r['EngineVersion']]
+            if self.match(v):
+                r['c7n:Engine'] = v
+                matched.append(r)
+        return matched
