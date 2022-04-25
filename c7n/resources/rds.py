@@ -1899,7 +1899,7 @@ class EngineFilter(ValueFilter):
 
     schema = type_schema('engine', rinherit=ValueFilter.schema)
 
-    permissions = ("rds:DescribeDBEngineVersions")
+    permissions = ("rds:DescribeDBEngineVersions", )
 
     def process(self, resources, event=None):
         client = local_session(self.manager.session_factory).client('rds')
