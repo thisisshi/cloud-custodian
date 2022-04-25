@@ -1881,7 +1881,25 @@ class ConsecutiveSnapshots(Filter):
 
 @filters.register('engine')
 class EngineFilter(ValueFilter):
+    """
+    Filter a rds resource based on its Engine Metadata
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+            - name: find-deprecated-versions
+              resource: aws.rds
+              filters:
+                - type: engine
+                  key: Status
+                  value: deprecated
+    """
+
     schema = type_schema('engine', rinherit=ValueFilter.schema)
+
+    permissions = ("rds:DescribeDBEngineVersions")
 
     def process(self, resources, event=None):
         client = local_session(self.manager.session_factory).client('rds')
