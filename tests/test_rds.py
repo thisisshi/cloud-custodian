@@ -1397,7 +1397,7 @@ class RDSSnapshotTest(BaseTest):
         self.assertIn("requires cross-account filter", str(err.exception))
 
     def test_rds_engine_filter(self):
-        session_factory = self.record_flight_data("test_rds_engine_filter")
+        session_factory = self.replay_flight_data("test_rds_engine_filter")
         p = self.load_policy(
             {
                 "name": "rds-engine-filter",
