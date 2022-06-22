@@ -505,6 +505,8 @@ class ValueFilter(BaseValueFilter):
         if self.data.get('value_type') == 'resource_count':
             return self._validate_resource_count()
         elif self.data.get('value_type') == 'date':
+            if self.data.get('value') == "today":
+                self.data['value'] = datetime.datetime.today().strftime('%Y-%m-%d')
             if not parse_date(self.data.get('value')):
                 raise PolicyValidationError(
                     "value_type: date with invalid date value:%s",
@@ -536,7 +538,6 @@ class ValueFilter(BaseValueFilter):
     def __call__(self, i):
         if self.data.get('value_type') == 'resource_count':
             return self.process(i)
-
         matched = self.match(i)
         if matched and self.annotate:
             set_annotation(i, ANNOTATION_KEY, self.k)
@@ -630,7 +631,10 @@ class ValueFilter(BaseValueFilter):
         elif self.vtype == 'swap':
             return value, sentinel
         elif self.vtype == 'date':
-            return parse_date(sentinel), parse_date(value)
+            if sentinel == "today":
+                sentinel = datetime.datetime.today().strftime('%Y-%m-%d')
+            return (parse_date(sentinel, date_only=True),
+                    parse_date(value, date_only=True))
         elif self.vtype == 'age':
             if not isinstance(sentinel, datetime.datetime):
                 sentinel = datetime.datetime.now(tz=tzutc()) - timedelta(sentinel)

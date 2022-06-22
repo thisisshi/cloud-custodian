@@ -419,6 +419,21 @@ class TestValueTypes(BaseFilterTest):
         self.assertFilter(fdata, i(parse_date('2019/04/01')), True)
         self.assertFilter(fdata, i(datetime.now().isoformat()), False)
 
+    def test_date_today(self):
+        def i(d):
+            return instance(LaunchTime=d)
+
+        fdata = {
+            'type': 'value',
+            'key': 'LaunchTime',
+            'op': 'eq',
+            'value_type': 'date',
+            'value': 'today'
+        }
+        self.assertFilter(fdata, i(parse_date('2019/04/01')), False)
+        self.assertFilter(fdata, i(datetime.today().strftime('%Y-%m-%d')), True)
+        self.assertFilter(fdata, i(datetime.now().isoformat()), True)
+
     def test_parse_date_epoch(self):
         def t(s, y):
             dt = core_parse_date(s)

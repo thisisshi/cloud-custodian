@@ -113,7 +113,7 @@ def filter_empty(d):
 DATE_FLOOR = time.mktime((2006, 3, 19, 0, 0, 0, 0, 0, 0))
 
 
-def parse_date(v, tz=None):
+def parse_date(v, tz=None, date_only=False):
     """Handle various permutations of a datetime serialization
     to a datetime with the given timezone.
 
@@ -132,7 +132,10 @@ def parse_date(v, tz=None):
 
     if isinstance(v, str) and not v.isdigit():
         try:
-            return parse(v).astimezone(tz)
+            parsed = parse(v).astimezone(tz)
+            if date_only:
+                return parsed.date()
+            return parsed
         except (AttributeError, TypeError, ValueError, OverflowError):
             pass
 
