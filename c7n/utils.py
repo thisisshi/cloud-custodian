@@ -126,6 +126,8 @@ def parse_date(v, tz=None, date_only=False):
     tz = tz or tzutc()
 
     if isinstance(v, datetime):
+        if date_only:
+            return v.date()
         if v.tzinfo is None:
             return v.astimezone(tz)
         return v
@@ -156,6 +158,9 @@ def parse_date(v, tz=None, date_only=False):
                 v = datetime.fromtimestamp(float(v) / 1000).astimezone(tz)
         except exceptions:
             pass
+
+    if date_only:
+        return isinstance(v, datetime) and v.date() or None
 
     return isinstance(v, datetime) and v or None
 
