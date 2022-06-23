@@ -125,6 +125,14 @@ def _report_options(p):
     p.add_argument(
         '--all-findings', default=False, action="store_true",
         help="Outputs all findings per resource. Defaults to a single finding per resource. ")
+    p.add_argument(
+        '--minutes', type=bool, default=False,
+        help=''
+    )
+    p.add_argument(
+        '--seconds', type=bool, default=False,
+        help=''
+    )
 
 
 def _metrics_options(p):

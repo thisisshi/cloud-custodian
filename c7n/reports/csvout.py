@@ -63,7 +63,10 @@ def strip_output_path(path, policy_name):
     return ''.join(path.strip('/').rpartition(policy_name)[:-1])
 
 
-def report(policies, start_date, options, output_fh, raw_output_fh=None):
+def report(
+    policies, start_date, options, output_fh, raw_output_fh=None,
+    minutes=False, seconds=False
+):
     """Format a policy's extant records into a report."""
     regions = {p.options.region for p in policies}
     policy_names = {p.name for p in policies}
@@ -84,7 +87,7 @@ def report(policies, start_date, options, output_fh, raw_output_fh=None):
                 policy.session_factory,
                 policy.ctx.output.config['netloc'],
                 strip_output_path(policy.ctx.output.config['path'], policy.name),
-                start_date)
+                start_date, minutes, seconds)
         else:
             policy_records = fs_record_set(policy.ctx.log_dir, policy.name)
 
@@ -236,7 +239,10 @@ def fs_record_set(output_path, policy_name):
         return records
 
 
-def record_set(session_factory, bucket, key_prefix, start_date, specify_hour=False):
+def record_set(
+    session_factory, bucket, key_prefix, start_date, specify_hour=False,
+    minutes=False, seconds=False
+):
     """Retrieve all s3 records for the given policy output url
 
     From the given start date.
@@ -269,7 +275,7 @@ def record_set(session_factory, bucket, key_prefix, start_date, specify_hour=Fal
                     if k['Key'].endswith('resources.json.gz')]
             key_count += len(keys)
             futures = map(lambda k: w.submit(
-                get_records, bucket, k, session_factory), keys)
+                get_records, bucket, k, session_factory, minutes, seconds), keys)
 
             for f in as_completed(futures):
                 records.extend(f.result())
@@ -279,7 +285,7 @@ def record_set(session_factory, bucket, key_prefix, start_date, specify_hour=Fal
     return records
 
 
-def get_records(bucket, key, session_factory):
+def get_records(bucket, key, session_factory, minutes=False, seconds=False):
     # we're doing a lot of this in memory, worst case
     # though we're talking about a 10k objects, else
     # we should spool to temp files
@@ -287,6 +293,14 @@ def get_records(bucket, key, session_factory):
     # key ends with 'YYYY/mm/dd/HH/resources.json.gz'
     # so take the date parts only
     date_str = '-'.join(key['Key'].rsplit('/', 5)[-5:-1])
+    if minutes:
+        date_str = '-'.join(key['Key'].rsplit('/', 6)[-6:-3])
+        time_str = ':'.join(key['Key'].rsplit('/', 6)[-3:-1])
+        date_str = ' '.join([date_str, time_str])
+    if seconds:
+        date_str = '-'.join(key['Key'].rsplit('/', 7)[-7:-4])
+        time_str = ':'.join(key['Key'].rsplit('/', 6)[-4:-1])
+        date_str = ' '.join([date_str, time_str])
     custodian_date = date_parse(date_str)
     s3 = local_session(session_factory).client('s3')
     result = s3.get_object(Bucket=bucket, Key=key['Key'])
