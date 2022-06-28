@@ -916,7 +916,7 @@ class CopyInstanceTags(BaseAction):
     schema = type_schema(
         'copy-instance-tags',
         tags={'type': 'array', 'items': {'type': 'string'}},
-        overwrite={'type': 'bool'})
+        overwrite={'type': 'boolean'})
 
     def get_permissions(self):
         perms = self.manager.get_resource_manager('ec2').get_permissions()
