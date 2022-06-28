@@ -537,13 +537,19 @@ class CopyInstanceTagsTest(BaseTest):
             "Tags"
         ]
         tags = {t["Key"]: t["Value"] for t in results}
-        self.assertEqual(tags, {})
+        self.assertEqual(tags, {"Testing": "Original Value"})
 
         policy = self.load_policy(
             {
                 "name": "test-copy-instance-tags",
                 "resource": "ebs",
-                "actions": [{"type": "copy-instance-tags", "tags": ["Name"]}],
+                "actions": [
+                    {
+                        "type": "copy-instance-tags",
+                        "tags": ["Name", "Testing"],
+                        "overwrite": False
+                    }
+                ],
             },
             config={"region": "us-west-2"},
             session_factory=factory,
@@ -558,6 +564,7 @@ class CopyInstanceTagsTest(BaseTest):
 
         tags = {t["Key"]: t["Value"] for t in results}
         self.assertEqual(tags["Name"], "CompileLambda")
+        self.assertEqual(tags["Testing"], "Original Value")
 
 
 class VolumePostFindingTest(BaseTest):

@@ -893,6 +893,8 @@ class CopyInstanceTags(BaseAction):
     their useful, as well letting us know the last time the volume
     was actually used.
 
+    Specify overwrite: false to not overwite any existing tags
+
     :example:
 
     .. code-block:: yaml
@@ -906,13 +908,15 @@ class CopyInstanceTags(BaseAction):
                     value: not-null
                 actions:
                   - type: copy-instance-tags
+                    overwrite: false
                     tags:
                       - Name
     """
 
     schema = type_schema(
         'copy-instance-tags',
-        tags={'type': 'array', 'items': {'type': 'string'}})
+        tags={'type': 'array', 'items': {'type': 'string'}},
+        overwrite={'type': 'bool'})
 
     def get_permissions(self):
         perms = self.manager.get_resource_manager('ec2').get_permissions()
@@ -991,6 +995,7 @@ class CopyInstanceTags(BaseAction):
 
     def get_volume_tags(self, volume, instance, attachment):
         only_tags = self.data.get('tags', [])  # specify which tags to copy
+        overwrite = self.data.get("overwrite", True)  # specify whether to overwrite extant tags
         copy_tags = []
         extant_tags = dict([
             (t['Key'], t['Value']) for t in volume.get('Tags', [])])
@@ -1002,6 +1007,8 @@ class CopyInstanceTags(BaseAction):
                 continue
             if t['Key'].startswith('aws:'):
                 continue
+            if t['Key'] in extant_tags and not overwrite:
+                pass
             copy_tags.append(t)
 
         # Don't add attachment tags if we're already current
