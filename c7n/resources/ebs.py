@@ -1008,7 +1008,7 @@ class CopyInstanceTags(BaseAction):
             if t['Key'].startswith('aws:'):
                 continue
             if t['Key'] in extant_tags and not overwrite:
-                pass
+                continue
             copy_tags.append(t)
 
         # Don't add attachment tags if we're already current
