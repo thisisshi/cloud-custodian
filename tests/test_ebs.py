@@ -566,6 +566,33 @@ class CopyInstanceTagsTest(BaseTest):
         self.assertEqual(tags["Name"], "CompileLambda")
         self.assertEqual(tags["Testing"], "Original Value")
 
+        policy = self.load_policy(
+            {
+                "name": "test-copy-instance-tags",
+                "resource": "ebs",
+                "actions": [
+                    {
+                        "type": "copy-instance-tags",
+                        "tags": ["Name", "Testing"],
+                        "overwrite": True
+                    }
+                ],
+            },
+            config={"region": "us-west-2"},
+            session_factory=factory,
+        )
+
+        policy.run()
+        results = factory().client("ec2").describe_tags(
+            Filters=[{"Name": "resource-id", "Values": [volume_id]}]
+        )[
+            "Tags"
+        ]
+
+        tags = {t["Key"]: t["Value"] for t in results}
+        self.assertEqual(tags["Name"], "CompileLambda")
+        self.assertEqual(tags["Testing"], "Testing123")
+
 
 class VolumePostFindingTest(BaseTest):
 
