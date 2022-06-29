@@ -236,11 +236,9 @@ class BaseValueFilter(Filter):
                     if t.get('Key') == tk:
                         r = t.get('Value')
                         break
-            # GCP schema: 'labels': {'key': 'value'}, gke uses resourceLabels
-            elif 'labels' in i or 'resourceLabels' in i:
-                labels = i.get('labels', {}).get(tk, None)
-                resource_labels = i.get('resourceLabels', {}).get(tk, None)
-                r = labels or resource_labels
+            # GCP schema: 'labels': {'key': 'value'}
+            elif 'labels' in i:
+                r = i.get('labels', {}).get(tk, None)
             # GCP has a secondary form of labels called tags
             # as labels without values.
             # Azure schema: 'tags': {'key': 'value'}

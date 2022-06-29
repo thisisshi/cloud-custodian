@@ -79,11 +79,7 @@ class LabelActionFilter(Filter):
         return super(LabelActionFilter, self).process(resources, event)
 
     def __call__(self, i):
-        labels = i.get('labels', {}).get(self.label, None)
-        # some resources use resourceLabels as the key for labels rather than labels
-        # such as gke clusters
-        resource_labels = i.get('resourceLabels', {}).get(self.label, None)
-        v = labels or resource_labels
+        v = i.get('labels', {}).get(self.label, None)
 
         if v is None:
             return False
