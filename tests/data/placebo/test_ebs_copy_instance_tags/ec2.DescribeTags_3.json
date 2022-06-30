@@ -27,7 +27,7 @@
             {
                 "ResourceType": "volume",
                 "ResourceId": "vol-2b047792",
-                "Value": "Testing123",
+                "Value": "Original Value",
                 "Key": "Testing"
             }
         ]

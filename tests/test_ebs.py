@@ -574,7 +574,7 @@ class CopyInstanceTagsTest(BaseTest):
                     {
                         "type": "copy-instance-tags",
                         "tags": ["Name", "Testing"],
-                        "overwrite": True
+                        "overwrite": False
                     }
                 ],
             },
@@ -591,7 +591,7 @@ class CopyInstanceTagsTest(BaseTest):
 
         tags = {t["Key"]: t["Value"] for t in results}
         self.assertEqual(tags["Name"], "CompileLambda")
-        self.assertEqual(tags["Testing"], "Testing123")
+        self.assertEqual(tags["Testing"], "Original Value")
 
 
 class VolumePostFindingTest(BaseTest):
