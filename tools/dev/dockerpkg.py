@@ -305,9 +305,10 @@ def build(provider, registry, tag, image, quiet, push, test, scan, verbose):
 
     for path, image_def in ImageMap.items():
         _, image_name = path.split("/", 1)
-        if image and image not in image_name:
+        image_name, platform = image_name.split("-")
+        if image and image_name not in image:
             continue
-        image_id = build_image(client, image_name, image_def, path, build_args)
+        image_id = build_image(client, image_name, image_def, path, build_args, platform)
         image_refs = tag_image(client, image_id, image_def, registry, image_tags)
         if test:
             test_image(image_id, image_name, provider)
@@ -494,7 +495,7 @@ def push_image(client, image_id, image_refs):
                 log.info("other %s" % (line,))
 
 
-def build_image(client, image_name, image_def, dfile_path, build_args):
+def build_image(client, image_name, image_def, dfile_path, build_args, platform):
     log.info("Building %s image (--verbose for build output)" % image_name)
 
     labels = get_labels(image_def)
@@ -506,7 +507,7 @@ def build_image(client, image_name, image_def, dfile_path, build_args):
         rm=True,
         pull=True,
         decode=True,
-        platform=image_def.platform
+        platform=platform
     )
 
     built_image_id = None
