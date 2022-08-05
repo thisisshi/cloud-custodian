@@ -23,6 +23,8 @@ from pathlib import Path
 
 import click
 
+authed = False
+
 log = logging.getLogger("dockerpkg")
 
 BUILD_STAGE = """\
@@ -478,11 +480,13 @@ def test_image(image_id, image_name, providers):
 
 
 def push_image(client, image_id, image_refs):
-    if "HUB_TOKEN" in os.environ and "HUB_USER" in os.environ:
+    if "HUB_TOKEN" in os.environ and "HUB_USER" in os.environ and authed is False:
         log.info("docker hub login %s" % os.environ["HUB_USER"])
         result = client.login(os.environ["HUB_USER"], os.environ["HUB_TOKEN"])
         if result.get("Status", "") != "Login Succeeded":
             raise RuntimeError("Docker Login failed %s" % (result,))
+        global authed
+        authed = True
 
     for (repo, tag) in image_refs:
         log.info(f"Pushing image {repo}:{tag}")
