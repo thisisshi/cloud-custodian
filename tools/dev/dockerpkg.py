@@ -397,7 +397,7 @@ def build(provider, registry, tag, image, quiet, push, test, scan, verbose):
         if image and image_name not in image:
             continue
         image = image_def.build_image(
-            client, image_name, image_def, f"docker/{image_name}", build_args)
+            client, image_name, f"docker/{image_name}", build_args)
         image_id = image.id
         image_refs = image_def.tag_image(client, registry, image_tags)
         if test:
