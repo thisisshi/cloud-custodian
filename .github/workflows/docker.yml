@@ -34,25 +34,25 @@ jobs:
           HUB_USER: sonnyshi
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         run: |
-          python tools/dev/dockerpkg.py build -v --test --scan --push -t auto -r cloudcustodian -i cli
+          python tools/dev/dockerpkg.py build -v --test --scan --push -t auto -r sonnyshi -i cli
 
       - name: org
         env:
           HUB_USER: sonnyshi
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         run: |
-          python tools/dev/dockerpkg.py build -v --test --scan --push -t auto -r cloudcustodian -i org
+          python tools/dev/dockerpkg.py build -v --test --scan --push -t auto -r sonnyshi -i org
 
       - name: mailer
         env:
           HUB_USER: sonnyshi
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         run: |
-          python tools/dev/dockerpkg.py build -v --test --scan --push -t auto -r cloudcustodian -i mailer
+          python tools/dev/dockerpkg.py build -v --test --scan --push -t auto -r sonnyshi -i mailer
 
       - name: policystream
         env:
           HUB_USER: sonnyshi
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         run: |
-          python tools/dev/dockerpkg.py build -v --test --scan --push -t auto -r cloudcustodian -i policystream
+          python tools/dev/dockerpkg.py build -v --test --scan --push -t auto -r sonnyshi -i policystream
