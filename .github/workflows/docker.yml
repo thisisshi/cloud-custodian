@@ -3,7 +3,7 @@ name: "Docker Build"
 on:
   push:
     branches:
-      - master
+      - multi-arch-dockerbuild
     tags:
       # todo: update for 1.0
       - 0.*
