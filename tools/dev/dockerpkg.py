@@ -214,6 +214,10 @@ class Image:
         log.info("Building %s image (--verbose for build output)" % image_name)
 
         labels = self.get_labels()
+
+        if build_args is None:
+            build_args = {}
+
         image = client.buildx.build(
             context_path=os.path.abspath(os.getcwd()),
             file=dfile_path,
