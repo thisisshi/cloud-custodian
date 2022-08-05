@@ -276,6 +276,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#check-permissions">check-permissions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#client-properties">client-properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#config-compliance">config-compliance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#connection-aliases">connection-aliases</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#domain-options">domain-options</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#engine">engine</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#event">event</a></li>
@@ -5380,7 +5381,16 @@
 <span id="install-cc"></span><h2>Install Cloud Custodian<a class="headerlink" href="#install-cloud-custodian" title="Permalink to this headline">¶</a></h2>
 <p>These instructions will install Cloud Custodian. Cloud Custodian is a Python
 application that supports Python 3 on Linux, MacOS and Windows. We recommend
-using Python 3.6 or higher.</p>
+using at least the minimum supported version of Python.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">--version</span></code> shows a Python version that is not <a class="reference external" href="https://devguide.python.org/#status-of-python-branches">actively
+supported</a> and the
+steps above don’t apply to your environment, you can still install a current
+release of Python manually. <a class="reference external" href="https://realpython.com/installing-python/">This guide</a> may be a useful reference.</p>
+<p>NOTE: Some Enterprise/Long Term Support Linux distributions may support Python
+longer than the upstream support period. If you are in this situation it might
+be prudent to contact your vendor to see if there are other supported ways to
+use a more recent version. In some cases using the Docker container might be
+an appropriate solution.</p>
 <p>NOTE: Ensure you install the correct follow-on package depending on the cloud
 you are deploying to, otherwise you won’t have the right modules for that
 specific cloud.</p>

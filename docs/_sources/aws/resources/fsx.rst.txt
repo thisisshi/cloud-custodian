@@ -26,6 +26,8 @@ Filters
   
   - :ref:`reduce <aws.common.filters.reduce>`
   
+  - :ref:`subnet <aws.common.filters.subnet>`
+  
   - :ref:`value <aws.common.filters.value>`
   
 
