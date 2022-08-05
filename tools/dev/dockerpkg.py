@@ -138,15 +138,18 @@ RUN . /usr/local/bin/activate && cd tools/c7n_policystream && $HOME/.poetry/bin/
 RUN . /usr/local/bin/activate && pytest -n "no:terraform" tools/c7n_policystream
 """
 
+PLATFORMS = ["linux/amd64", "linux/arm64"]
+
 
 class Image:
 
     defaults = dict(base_build_image="ubuntu:20.04", base_target_image="ubuntu:20.04")
 
-    def __init__(self, metadata, build, target):
+    def __init__(self, metadata, build, target, platform="linux/amd64"):
         self.metadata = metadata
         self.build = build
         self.target = target
+        self.platform = platform
 
     @property
     def repo(self):
@@ -170,46 +173,52 @@ class Image:
         return Image(d, self.build, target or self.target)
 
 
-ImageMap = {
-    "docker/cli": Image(
-        dict(
+image_args = {
+    "docker/cli": {
+        "metadata": dict(
             name="cli",
             repo="c7n",
             description="Cloud Management Rules Engine",
             entrypoint="/usr/local/bin/custodian",
         ),
-        build=[BUILD_STAGE],
-        target=[TARGET_UBUNTU_STAGE],
-    ),
-    "docker/org": Image(
-        dict(
+        "build": [BUILD_STAGE],
+        "target": [TARGET_UBUNTU_STAGE],
+    },
+    "docker/org": {
+        "metadata": dict(
             name="org",
             repo="c7n-org",
             description="Cloud Custodian Organization Runner",
             entrypoint="/usr/local/bin/c7n-org",
         ),
-        build=[BUILD_STAGE, BUILD_ORG],
-        target=[TARGET_UBUNTU_STAGE],
-    ),
-    "docker/mailer": Image(
-        dict(
+        "build": [BUILD_STAGE, BUILD_ORG],
+        "target": [TARGET_UBUNTU_STAGE],
+    },
+    "docker/mailer": {
+        "metadata": dict(
             name="mailer",
             description="Cloud Custodian Notification Delivery",
             entrypoint="/usr/local/bin/c7n-mailer",
         ),
-        build=[BUILD_STAGE, BUILD_MAILER],
-        target=[TARGET_UBUNTU_STAGE],
-    ),
-    "docker/policystream": Image(
-        dict(
+        "build": [BUILD_STAGE, BUILD_MAILER],
+        "target": [TARGET_UBUNTU_STAGE],
+    },
+    "docker/policystream": {
+        "metadata": dict(
             name="policystream",
             description="Custodian policy changes streamed from Git",
             entrypoint="/usr/local/bin/c7n-policystream",
         ),
-        build=[BUILD_STAGE, BUILD_POLICYSTREAM],
-        target=[TARGET_UBUNTU_STAGE],
-    ),
+        "build": [BUILD_STAGE, BUILD_POLICYSTREAM],
+        "target": [TARGET_UBUNTU_STAGE],
+    },
 }
+
+ImageMap = {}
+
+for image, image_def in image_args.items():
+    for platform in PLATFORMS:
+        ImageMap[f"{image}-{platform}"] = Image(**image_def, platform=platform)
 
 
 def human_size(size, precision=2):
@@ -497,6 +506,7 @@ def build_image(client, image_name, image_def, dfile_path, build_args):
         rm=True,
         pull=True,
         decode=True,
+        platform=image_def.platform
     )
 
     built_image_id = None
