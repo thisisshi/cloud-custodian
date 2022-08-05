@@ -120,8 +120,8 @@ class Status(ValueFilter):
     def __call__(self, r):
         return self.match(r[self.annotation_key])
 
-@CloudTrail.filter_registry.register('check-for-one')
-class CheckForOne(ValueFilter):
+@CloudTrail.filter_registry.register('check-for-multi-trail-mfa-login')
+class CheckForMultiTrailMfaLogin(Filter):
     
     """
     Ensure at least one trail has filter value
@@ -134,9 +134,13 @@ class CheckForOne(ValueFilter):
           - name: cloudtrail-check-for-one
             resource: aws.cloudtrail
             filters:
-            - type: check-for-one
+            - type: check-for-multi-trail-mfa-login
+                pattern: "{ ($.eventName = \"ConsoleLogin\") && ($.additionalEventData.MFAUsed != \"Yes\") }"
     """
-    schema = type_schema('check-for-multi-trail-mfa-login', rinherit=ValueFilter.schema)
+    schema = type_schema('check-for-multi-trail-mfa-login', 
+    fail_without_pattern = {'type':'string'},
+    required= ['fail_without_pattern'])
+
     schema_alias = False
     permissions = ('cloudtrail:DescribeTrails','cloudwatch:DescribeAlarms','logs:DescribeMetricFilters')
     annotation_key = 'c7n:CheckForMultiTrailMfaLogin'
@@ -145,6 +149,9 @@ class CheckForOne(ValueFilter):
         trails_w_multiregion= []
         trails_w_activeStatus = []
         trails_w_IncludeManagementEvents =[]
+        filters_matched =[]
+        log_group_names = []
+        match_alarms =[]
         grouped_trails = get_trail_groups(self.manager.session_factory, resources)
         for region, (client, trails) in grouped_trails.items():
             #-Ensure there is at least one multi-region CloudTrail
@@ -152,7 +159,7 @@ class CheckForOne(ValueFilter):
                 if t['IsMultiRegionTrail'] == True:
                     trails_w_multiregion.append(t)
             if not trails_w_multiregion:
-                return [{"failure_point":"No multi-region trail"}]
+                return resources
             else:
                 # -Take note of CloudWatch Logs Group ARN
                 for t in trails_w_multiregion:
@@ -161,37 +168,54 @@ class CheckForOne(ValueFilter):
                     if status["IsLogging"] == True:
                         trails_w_activeStatus.append(t)
                 if not trails_w_activeStatus:
-                    [{"failure_point":"Multi region trail exists but is not actively logging"}]
+                    return resources
                 else:
                     # -Ensure multi-region CloudTrail captures all management events
                     # -Ensure there is at least one event selector with IncludeManagementEvents set to "true" and "ReadWriteType" set to "All"
                     for t in trails_w_activeStatus:
                         selectors = client.get_event_selectors(TrailName=t['TrailARN'])
-                        event_selectors = selectors["EventSelectors"][0]
-                        if event_selectors['IncludeManagementEvents'] == True and event_selectors['ReadWriteType'] == "All":
-                            trails_w_IncludeManagementEvents.append(t)
+                        if "EventSelectors" in selectors.keys():
+                            event_selectors = selectors["EventSelectors"][0]
+                            if event_selectors['IncludeManagementEvents'] == True and event_selectors['ReadWriteType'] == "All":
+                                trails_w_IncludeManagementEvents.append(t)
                     if not trails_w_IncludeManagementEvents:
-                        return [{"failure_point":"Ensure there is at least one event selector with IncludeManagementEvents set to \"true\" and \"ReadWriteType\" set to \"All\""}]
+                        return resources
                     else:
+                        client_logs = boto3.client('logs')
                         for t in trails_w_IncludeManagementEvents:
                             #parse log group arn for name
-                            log_group_name = t["CloudWatchLogsLogGroupArn"].split(":")[6]
-                            # -Get a list of associated metric filters for the CloudWatch Logs Group ARN
-                            client_logs = boto3.client('logs')
-                            metric_filters_log_group = client_logs.describe_metric_filters(logGroupName=log_group_name)['metricFilters']
-                            # -Look for this filter pattern in the CloudWatch Metric Alarm:
-                            # { ($.eventName = "ConsoleLogin") && ($.additionalEventData.MFAUsed != "Yes") }
-                            for f in metric_filters_log_group:
-                                if f["filterPattern"] == "{ ($.eventName = \"ConsoleLogin\") && ($.additionalEventData.MFAUsed != \"Yes\") }":
+                            if "CloudWatchLogsLogGroupArn" in t.keys():
+                                log_group_name = t["CloudWatchLogsLogGroupArn"].split(":")[6]
+                                # -Get a list of associated metric filters for the CloudWatch Logs Group ARN
+                                log_group_names.append(log_group_name)
+                        if  not log_group_names:
+                            return resources
+                        else:
+                            for name in log_group_names:
+                                metric_filters_log_group = client_logs.describe_metric_filters(logGroupName=name)['metricFilters']
+                                # -Look for this filter pattern in the CloudWatch Metric Alarm:
+                                # { ($.eventName = "ConsoleLogin") && ($.additionalEventData.MFAUsed != "Yes") }
+                                if metric_filters_log_group:
+                                    for f in metric_filters_log_group:
+                                        #if f["filterPattern"] == "{ ($.eventName = \"ConsoleLogin\") && ($.additionalEventData.MFAUsed != \"Yes\") }":
+                                        pattern = self.data.get('fail_without_pattern')
+                                        if f["filterPattern"] == pattern:
+                                            filters_matched.append(f)
+                            if not filters_matched:
+                                return resources     
+                            else:
+                                for f in filters_matched:        
                                     metric_name = f["metricTransformations"][0]["metricName"]
-                                    #check for alarm
-                                    client_cw = boto3.client('cloudwatch')
                                     # -Ensure that an alarm exists for the above metric
+                                    client_cw = boto3.client('cloudwatch')
                                     alarms = client_cw.describe_alarms()["MetricAlarms"]
                                     for a in alarms:
                                         if a["MetricName"] == metric_name:
-                                            return [{}]
-                            return [{"failure_point":"Ensure there is a metric filter with pattern  { ($.eventName = \"ConsoleLogin\") && ($.additionalEventData.MFAUsed != \"Yes\") and set alarm for it"}] 
+                                            match_alarms.append(a)
+                                if alarms:
+                                    return []
+                                else: 
+                                    return resources
     
     def __call__(self, r):
         return self.match(r[self.annotation_key])
