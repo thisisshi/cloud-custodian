@@ -304,8 +304,8 @@ def build(provider, registry, tag, image, quiet, push, test, scan, verbose):
         build_args = {"providers": " ".join(sorted(provider))} if provider else []
 
     for path, image_def in ImageMap.items():
-        _, image_name = path.split("/")
-        if image and image_name not in image:
+        _, image_name = path.split("/", 1)
+        if image and image not in image_name:
             continue
         image_id = build_image(client, image_name, image_def, path, build_args)
         image_refs = tag_image(client, image_id, image_def, registry, image_tags)
