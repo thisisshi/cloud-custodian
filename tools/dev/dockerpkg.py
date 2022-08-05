@@ -24,9 +24,6 @@ from pathlib import Path
 import click
 
 
-global authed
-authed = False
-
 log = logging.getLogger("dockerpkg")
 
 BUILD_STAGE = """\
@@ -149,11 +146,11 @@ class Image:
 
     defaults = dict(base_build_image="ubuntu:20.04", base_target_image="ubuntu:20.04")
 
-    def __init__(self, metadata, build, target, platform="linux/amd64"):
+    def __init__(self, metadata, build, target):
         self.metadata = metadata
         self.build = build
         self.target = target
-        self.platform = platform
+        self.image = None
 
     @property
     def repo(self):
@@ -162,6 +159,37 @@ class Image:
     @property
     def tag_prefix(self):
         return self.metadata.get("tag_prefix", "")
+
+    def get_image_repo_tags(self, registries, tags):
+        results = []
+        # get a local tag with name
+        if not registries:
+            registries = [""]
+        for t in tags:
+            for r in registries:
+                results.append((f"{r}/{self.repo}".lstrip("/"), self.tag_prefix + t))
+        return results
+
+    def get_labels(self):
+        hub_env = get_github_env()
+        # Standard Container Labels / Metadata
+        # https://github.com/opencontainers/image-spec/blob/master/annotations.md
+        labels = {
+            "org.opencontainers.image.created": datetime.utcnow().isoformat(),
+            "org.opencontainers.image.licenses": "Apache-2.0",
+            "org.opencontainers.image.documentation": "https://cloudcustodian.io/docs",
+            "org.opencontainers.image.title": self.metadata["name"],
+            "org.opencontainers.image.description": self.metadata["description"],
+        }
+
+        if not hub_env:
+            hub_env = get_git_env()
+
+        if hub_env.get("repository"):
+            labels["org.opencontainers.image.source"] = hub_env["repository"]
+        if hub_env.get("sha"):
+            labels["org.opencontainers.image.revision"] = hub_env["sha"]
+        return labels
 
     def render(self):
         output = []
@@ -176,9 +204,72 @@ class Image:
         d.update(metadata)
         return Image(d, self.build, target or self.target)
 
+    def tag_image(self, client, registries, env_tags):
+        image_tags = self.get_image_repo_tags(registries, env_tags)
+        for repo, tag in image_tags:
+            client.image.tag(self.image, f"{repo}/{tag}")
+        return image_tags
 
-image_args = {
-    "docker/cli": {
+    def build_image(self, client, image_name, dfile_path, build_args):
+        log.info("Building %s image (--verbose for build output)" % image_name)
+
+        labels = self.get_labels()
+        image = client.buildx.build(
+            context_path=os.path.abspath(os.getcwd()),
+            file=dfile_path,
+            build_args=build_args,
+            labels=labels,
+            pull=True,
+            platforms=PLATFORMS,
+        )
+
+        self.image = image
+
+        log.info(
+            "Built %s image Id:%s Size:%s"
+            % (image_name, image.id, human_size(image.size))
+        )
+
+        return image.id
+
+    def push_image(self, client, image_refs):
+        if "HUB_TOKEN" in os.environ and "HUB_USER" in os.environ:
+            log.info("docker hub login %s" % os.environ["HUB_USER"])
+            client.login(username=os.environ["HUB_USER"], password=os.environ["HUB_TOKEN"])
+
+        for (repo, tag) in image_refs:
+            log.info(f"Pushing image {repo}:{tag}")
+            client.image.push(f"{repo}/{tag}", quiet=False)
+
+    def scan_image(self):
+        cmd = ["trivy"]
+        hub_env = get_github_env()
+        if "workspace" in hub_env:
+            cmd = [os.path.join(hub_env["workspace"], "bin", "trivy")]
+        cmd.append(self.image.id)
+        subprocess.check_call(cmd, stderr=subprocess.STDOUT)
+
+    def test_image(self, image_name, providers):
+        env = dict(os.environ)
+        env.update(
+            {
+                "TEST_DOCKER": "yes",
+                "CUSTODIAN_%s_IMAGE"
+                % image_name.upper().split("-", 1)[0]: self.image.id.split(":")[-1],
+            }
+        )
+        if providers not in (None, ()):
+            env["CUSTODIAN_PROVIDERS"] = " ".join(providers)
+        subprocess.check_call(
+            [Path(sys.executable).parent / "pytest", "-p",
+             "no:terraform", "-v", "tests/test_docker.py"],
+            env=env,
+            stderr=subprocess.STDOUT,
+        )
+
+
+ImageMap = {
+    "docker/cli": Image(**{
         "metadata": dict(
             name="cli",
             repo="c7n",
@@ -187,8 +278,8 @@ image_args = {
         ),
         "build": [BUILD_STAGE],
         "target": [TARGET_UBUNTU_STAGE],
-    },
-    "docker/org": {
+    }),
+    "docker/org": Image(**{
         "metadata": dict(
             name="org",
             repo="c7n-org",
@@ -197,8 +288,8 @@ image_args = {
         ),
         "build": [BUILD_STAGE, BUILD_ORG],
         "target": [TARGET_UBUNTU_STAGE],
-    },
-    "docker/mailer": {
+    }),
+    "docker/mailer": Image(**{
         "metadata": dict(
             name="mailer",
             description="Cloud Custodian Notification Delivery",
@@ -206,8 +297,8 @@ image_args = {
         ),
         "build": [BUILD_STAGE, BUILD_MAILER],
         "target": [TARGET_UBUNTU_STAGE],
-    },
-    "docker/policystream": {
+    }),
+    "docker/policystream": Image(**{
         "metadata": dict(
             name="policystream",
             description="Custodian policy changes streamed from Git",
@@ -215,14 +306,8 @@ image_args = {
         ),
         "build": [BUILD_STAGE, BUILD_POLICYSTREAM],
         "target": [TARGET_UBUNTU_STAGE],
-    },
+    }),
 }
-
-ImageMap = {}
-
-for image, image_def in image_args.items():
-    for platform in PLATFORMS:
-        ImageMap[f"{image}-{platform}"] = Image(**image_def, platform=platform)
 
 
 def human_size(size, precision=2):
@@ -280,11 +365,11 @@ def build(provider, registry, tag, image, quiet, push, test, scan, verbose):
     python tools/dev/dockerpkg.py --test -i cli -i org -i mailer
     """
     try:
-        import docker
+        from python_on_whales import DockerClient
     except ImportError as e:
         print("import error %s" % e)
         traceback.print_exc()
-        print("python docker client library required")
+        print("python_on_whales client library required")
         print("python %s" % ("\n".join(sys.path)))
         sys.exit(1)
     if quiet:
@@ -292,7 +377,7 @@ def build(provider, registry, tag, image, quiet, push, test, scan, verbose):
     if verbose:
         logging.getLogger().setLevel(logging.DEBUG)
 
-    client = docker.from_env()
+    client = DockerClient()
 
     # Nomenclature wise these are the set of version tags, independent
     # of registry / repo name, that will be applied to all images.
@@ -308,41 +393,19 @@ def build(provider, registry, tag, image, quiet, push, test, scan, verbose):
         build_args = {"providers": " ".join(sorted(provider))} if provider else []
 
     for path, image_def in ImageMap.items():
-        _, image_name = path.split("/", 1)
-        image_name, platform = image_name.split("-")
+        _, image_name = path.split("/")
         if image and image_name not in image:
             continue
-        image_id = build_image(
-            client, image_name, image_def, f"docker/{image_name}", build_args, platform)
-        image_refs = tag_image(client, image_id, image_def, registry, image_tags)
+        image = image_def.build_image(
+            client, image_name, image_def, f"docker/{image_name}", build_args)
+        image_id = image.id
+        image_refs = image_def.tag_image(client, registry, image_tags)
         if test:
-            test_image(image_id, image_name, provider)
+            image_def.test_image(image_id, image_name, provider)
         if scan:
-            scan_image(":".join(image_refs[0]))
+            image_def.scan_image(":".join(image_refs[0]))
         if push:
-            retry(3, (RuntimeError,), push_image, client, image_id, image_refs)
-
-
-def get_labels(image):
-    hub_env = get_github_env()
-    # Standard Container Labels / Metadata
-    # https://github.com/opencontainers/image-spec/blob/master/annotations.md
-    labels = {
-        "org.opencontainers.image.created": datetime.utcnow().isoformat(),
-        "org.opencontainers.image.licenses": "Apache-2.0",
-        "org.opencontainers.image.documentation": "https://cloudcustodian.io/docs",
-        "org.opencontainers.image.title": image.metadata["name"],
-        "org.opencontainers.image.description": image.metadata["description"],
-    }
-
-    if not hub_env:
-        hub_env = get_git_env()
-
-    if hub_env.get("repository"):
-        labels["org.opencontainers.image.source"] = hub_env["repository"]
-    if hub_env.get("sha"):
-        labels["org.opencontainers.image.revision"] = hub_env["sha"]
-    return labels
+            retry(3, (RuntimeError,), image_def.push_image, client, image_refs)
 
 
 def retry(retry_count, exceptions, func, *args, **kw):
@@ -382,17 +445,6 @@ def get_git_env():
         "sha": subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("utf8"),
         "repository": "https://github.com/cloud-custodian/cloud-custodian",
     }
-
-
-def get_image_repo_tags(image, registries, tags):
-    results = []
-    # get a local tag with name
-    if not registries:
-        registries = [""]
-    for t in tags:
-        for r in registries:
-            results.append((f"{r}/{image.repo}".lstrip("/"), image.tag_prefix + t))
-    return results
 
 
 def get_env_tags(cli_tag):
@@ -445,104 +497,11 @@ def get_env_tags(cli_tag):
     return list(filter(None, image_tags))
 
 
-def tag_image(client, image_id, image_def, registries, env_tags):
-    image = client.images.get(image_id)
-    image_tags = get_image_repo_tags(image_def, registries, env_tags)
-    for repo, tag in image_tags:
-        image.tag(repo, tag)
-    return image_tags
-
-
-def scan_image(image_ref):
-    cmd = ["trivy"]
-    hub_env = get_github_env()
-    if "workspace" in hub_env:
-        cmd = [os.path.join(hub_env["workspace"], "bin", "trivy")]
-    cmd.append(image_ref)
-    subprocess.check_call(cmd, stderr=subprocess.STDOUT)
-
-
-def test_image(image_id, image_name, providers):
-    env = dict(os.environ)
-    env.update(
-        {
-            "TEST_DOCKER": "yes",
-            "CUSTODIAN_%s_IMAGE"
-            % image_name.upper().split("-", 1)[0]: image_id.split(":")[-1],
-        }
-    )
-    if providers not in (None, ()):
-        env["CUSTODIAN_PROVIDERS"] = " ".join(providers)
-    subprocess.check_call(
-        [Path(sys.executable).parent / "pytest", "-p",
-         "no:terraform", "-v", "tests/test_docker.py"],
-        env=env,
-        stderr=subprocess.STDOUT,
-    )
-
-
-def push_image(client, image_id, image_refs):
-    global authed
-    if "HUB_TOKEN" in os.environ and "HUB_USER" in os.environ and authed is False:
-        log.info("docker hub login %s" % os.environ["HUB_USER"])
-        result = client.login(os.environ["HUB_USER"], os.environ["HUB_TOKEN"])
-        if result.get("Status", "") != "Login Succeeded":
-            raise RuntimeError("Docker Login failed %s" % (result,))
-        authed = True
-
-    for (repo, tag) in image_refs:
-        log.info(f"Pushing image {repo}:{tag}")
-        for line in client.images.push(repo, tag, stream=True, decode=True):
-            if "status" in line:
-                log.debug("%s id:%s" % (line["status"], line.get("id", "n/a")))
-            elif "error" in line:
-                log.warning("Push error %s" % (line,))
-                raise RuntimeError("Docker Push Failed\n %s" % (line,))
-            else:
-                log.info("other %s" % (line,))
-
-
-def build_image(client, image_name, image_def, dfile_path, build_args, platform):
-    log.info("Building %s image (--verbose for build output)" % image_name)
-
-    labels = get_labels(image_def)
-    stream = client.api.build(
-        path=os.path.abspath(os.getcwd()),
-        dockerfile=dfile_path,
-        buildargs=build_args,
-        labels=labels,
-        rm=True,
-        pull=True,
-        decode=True,
-        platform=platform
-    )
-
-    built_image_id = None
-    for chunk in stream:
-        if "stream" in chunk:
-            log.debug(chunk["stream"].strip())
-        elif "status" in chunk:
-            log.debug(chunk["status"].strip())
-        elif "aux" in chunk:
-            built_image_id = chunk["aux"].get("ID")
-    assert built_image_id
-    if built_image_id.startswith("sha256:"):
-        built_image_id = built_image_id[7:]
-
-    built_image = client.images.get(built_image_id)
-    log.info(
-        "Built %s image Id:%s Size:%s"
-        % (image_name, built_image_id[:12], human_size(built_image.attrs["Size"]),)
-    )
-
-    return built_image_id[:12]
-
-
 @cli.command()
 def generate():
     """Generate dockerfiles"""
     for df_path, image in ImageMap.items():
-        p = Path(df_path)
+        p = Path(df_path.split('-')[0])
         p.write_text(image.render())
 
 

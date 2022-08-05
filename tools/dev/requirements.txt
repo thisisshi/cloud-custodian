@@ -1,2 +1,2 @@
-docker
 pygit2
+python_on_whales
