@@ -2,10 +2,6 @@ name: "Docker Build"
 
 env:
   repository: "sonnyshi"
-  cli_description: "Cloud Management Rules Engine"
-  org_description: "Cloud Custodian Organization Runner"
-  mailer_description: "CLoud Custodian NOtification Delivery"
-  policystream_description: "Custodian policy changes streamed from Git"
 
 on:
   push:
@@ -18,6 +14,28 @@ on:
 jobs:
 
   Publish:
+    strategy:
+      matrix:
+        flavor:
+          - ""
+          - "-distroless"
+        include:
+          - iamge: c7n
+            image_name: cli
+            image_description: "Cloud Management Rules Engine"
+            dockerfile: docker/cli
+          - image: c7n-org
+            image_name: org
+            image_description: "Cloud Custodian Organization Runner"
+            dockerfile: docker/org
+          - image: mailer
+            image_name: mailer
+            image_description: "Cloud Custodian Notification Delivery"
+            dockerfile: docker/mailer
+          - image: policystream
+            iamge_name: policystream
+            image_description: "Custodian policy changes streamed from Git"
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -55,102 +73,14 @@ jobs:
         run: |
           python tools/dev/dockerpkg.py generate
 
-      - name: c7n
+      - name: ${{ matrix.image }} ${{ matrix.image_name }}${{ matrix.flavor }} build and push
         uses: ./.github/composites/docker-build-push
         env:
           HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
-          dockerfile: docker/cli
+          dockerfile: ${{ matrix.dockerfile }}${{ matrix.flavor }}
           repository: ${{ env.repository }}
-          image: c7n
-          image_name: cli
-          description: ${{ env.cli_description }}
-
-      - name: c7n-distroless
-        uses: ./.github/composites/docker-build-push
-        env:
-          HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
-          HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
-        with:
-          dockerfile: docker/cli-distroless
-          image: c7n
-          image_name: cli
-          repository: ${{ env.repository }}
-          description: ${{ env.cli_description }}
-          tag_prefix: "distroless-"
-
-      - name: c7n-org
-        uses: ./.github/composites/docker-build-push
-        env:
-          HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
-          HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
-        with:
-          dockerfile: docker/org
-          image: c7n-org
-          image_name: org
-          repository: ${{ env.repository }}
-          description: ${{ env.org_description }}
-
-      - name: c7n-org-distroless
-        uses: ./.github/composites/docker-build-push
-        env:
-          HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
-          HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
-        with:
-          dockerfile: docker/org-distroless
-          repository: ${{ env.repository }}
-          image: c7n-org
-          image_name: org
-          description: ${{ env.org_description }}
-          tag_prefix: "distroless-"
-
-      - name: mailer
-        uses: ./.github/composites/docker-build-push
-        env:
-          HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
-          HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
-        with:
-          dockerfile: docker/mailer
-          repository: ${{ env.repository }}
-          image: mailer
-          image_name: mailer
-          description: ${{ env.mailer_description }}
-
-      - name: mailer-distroless
-        uses: ./.github/composites/docker-build-push
-        env:
-          HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
-          HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
-        with:
-          dockerfile: docker/mailer-distroless
-          repository: ${{ env.repository }}
-          image: mailer
-          image_name: mailer
-          description: ${{ env.mailer_description }}
-          tag_prefix: "distroless-"
-
-      - name: policystream
-        uses: ./.github/composites/docker-build-push
-        env:
-          HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
-          HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
-        with:
-          dockerfile: docker/policystream
-          repository: ${{ env.repository }}
-          image: policystream
-          image_name: policystream
-          description: ${{ env.policystream_description }}
-
-      - name: policystream-distroless
-        uses: ./.github/composites/docker-build-push
-        env:
-          HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
-          HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
-        with:
-          dockerfile: docker/policystream-distroless
-          repository: ${{ env.repository }}
-          image: policystream
-          image_name: policystream
-          description: ${{ env.policystream_description }}
-          tag_prefix: "distroless-"
+          image: ${{ matrix.image }}
+          image_name: ${{ matrix.image_name }}
+          description: ${{ matrix.image_description }}
