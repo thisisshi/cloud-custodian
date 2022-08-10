@@ -142,7 +142,7 @@ class CheckForMultiTrailMfaLogin(Filter):
     required= ['fail_without_pattern'])
 
     schema_alias = False
-    permissions = ('cloudtrail:DescribeTrails','cloudwatch:DescribeAlarms','logs:DescribeMetricFilters')
+    permissions = ('cloudtrail:DescribeTrails','cloudwatch:DescribeAlarms','logs:DescribeMetricFilters', 'sns:ListSubscriptions')
     annotation_key = 'c7n:CheckForMultiTrailMfaLogin'
 
     def process(self, resources,event=None):
@@ -151,71 +151,92 @@ class CheckForMultiTrailMfaLogin(Filter):
         trails_w_IncludeManagementEvents =[]
         filters_matched =[]
         log_group_names = []
-        match_alarms =[]
+        match_alarms_actions =[]
         grouped_trails = get_trail_groups(self.manager.session_factory, resources)
         for region, (client, trails) in grouped_trails.items():
             #-Ensure there is at least one multi-region CloudTrail
-            for t in trails:
-                if t['IsMultiRegionTrail'] == True:
-                    trails_w_multiregion.append(t)
-            if not trails_w_multiregion:
+            if not trails:
+                self.log.info('No cloudtrails have been created')
                 return resources
             else:
-                # -Take note of CloudWatch Logs Group ARN
-                for t in trails_w_multiregion:
-                    # -Ensure multi-region CloudTrail is active
-                    status = client.get_trail_status(Name=t['TrailARN'])
-                    if status["IsLogging"] == True:
-                        trails_w_activeStatus.append(t)
-                if not trails_w_activeStatus:
+                for t in trails:
+                    if t['IsMultiRegionTrail'] == True:
+                        trails_w_multiregion.append(t)
+                if not trails_w_multiregion:
+                    self.log.info('No multi-region cloudtrail exists')
                     return resources
                 else:
-                    # -Ensure multi-region CloudTrail captures all management events
-                    # -Ensure there is at least one event selector with IncludeManagementEvents set to "true" and "ReadWriteType" set to "All"
-                    for t in trails_w_activeStatus:
-                        selectors = client.get_event_selectors(TrailName=t['TrailARN'])
-                        if "EventSelectors" in selectors.keys():
-                            event_selectors = selectors["EventSelectors"][0]
-                            if event_selectors['IncludeManagementEvents'] == True and event_selectors['ReadWriteType'] == "All":
-                                trails_w_IncludeManagementEvents.append(t)
-                    if not trails_w_IncludeManagementEvents:
+                    # -Take note of CloudWatch Logs Group ARN
+                    for t in trails_w_multiregion:
+                        # -Ensure multi-region CloudTrail is active
+                        status = client.get_trail_status(Name=t['TrailARN'])
+                        if status['IsLogging'] == True:
+                            trails_w_activeStatus.append(t)
+                    if not trails_w_activeStatus:
+                        self.log.info('Ensure multi-region trail is logging')
                         return resources
                     else:
-                        client_logs = boto3.client('logs')
-                        for t in trails_w_IncludeManagementEvents:
-                            #parse log group arn for name
-                            if "CloudWatchLogsLogGroupArn" in t.keys():
-                                log_group_name = t["CloudWatchLogsLogGroupArn"].split(":")[6]
-                                # -Get a list of associated metric filters for the CloudWatch Logs Group ARN
-                                log_group_names.append(log_group_name)
-                        if  not log_group_names:
+                        # -Ensure multi-region CloudTrail captures all management events
+                        # -Ensure there is at least one event selector with IncludeManagementEvents set to "true" and "ReadWriteType" set to "All"
+                        for t in trails_w_activeStatus:
+                            selectors = client.get_event_selectors(TrailName=t['TrailARN'])
+                            if 'EventSelectors' in selectors.keys():
+                                event_selectors = selectors['EventSelectors'][0]
+                                if event_selectors['IncludeManagementEvents'] == True and event_selectors['ReadWriteType'] == 'All':
+                                    trails_w_IncludeManagementEvents.append(t)
+                        if not trails_w_IncludeManagementEvents:
+                            self.log.info('Mulit-region trail must have event selectors IncludeManagementEvents == True and ReadWriteType = All')
                             return resources
                         else:
-                            for name in log_group_names:
-                                metric_filters_log_group = client_logs.describe_metric_filters(logGroupName=name)['metricFilters']
-                                # -Look for this filter pattern in the CloudWatch Metric Alarm:
-                                # { ($.eventName = "ConsoleLogin") && ($.additionalEventData.MFAUsed != "Yes") }
-                                if metric_filters_log_group:
-                                    for f in metric_filters_log_group:
-                                        #if f["filterPattern"] == "{ ($.eventName = \"ConsoleLogin\") && ($.additionalEventData.MFAUsed != \"Yes\") }":
-                                        pattern = self.data.get('fail_without_pattern')
-                                        if f["filterPattern"] == pattern:
-                                            filters_matched.append(f)
-                            if not filters_matched:
-                                return resources     
+                            client_logs = boto3.client('logs')
+                            for t in trails_w_IncludeManagementEvents:
+                                #parse log group arn for name
+                                if 'CloudWatchLogsLogGroupArn' in t.keys():
+                                    log_group_name = t['CloudWatchLogsLogGroupArn'].split(':')[6]
+                                    # -Get a list of associated metric filters for the CloudWatch Logs Group ARN
+                                    log_group_names.append(log_group_name)
+                            if  not log_group_names:
+                                self.log.info('No metric filter associated with log group. Metric filter must be { ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) } ')
+                                return resources
                             else:
-                                for f in filters_matched:        
-                                    metric_name = f["metricTransformations"][0]["metricName"]
-                                    # -Ensure that an alarm exists for the above metric
-                                    client_cw = boto3.client('cloudwatch')
-                                    alarms = client_cw.describe_alarms()["MetricAlarms"]
-                                    for a in alarms:
-                                        if a["MetricName"] == metric_name:
-                                            match_alarms.append(a)
-                                if alarms:
-                                    return []
-                                else: 
+                                for name in log_group_names:
+                                    metric_filters_log_group = client_logs.describe_metric_filters(logGroupName=name)['metricFilters']
+                                    # -Look for this filter pattern in the CloudWatch Metric Alarm:
+                                    if metric_filters_log_group:
+                                        for f in metric_filters_log_group:
+                                            pattern = self.data.get('fail_without_pattern')
+                                            if f['filterPattern'] == pattern:
+                                                filters_matched.append(f)
+                                if not filters_matched:
+                                    self.log.info('No metric filter match. Metric filter must be { ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) } ')
+                                    #fail here
                                     return resources
+                                else:
+                                    client_cw = boto3.client('cloudwatch')
+                                    alarms = client_cw.describe_alarms()['MetricAlarms']
+                                    for f in filters_matched:        
+                                        metric_name = f["metricTransformations"][0]["metricName"]
+                                        # -Ensure that an alarm exists for the above metric
+                                        for a in alarms:
+                                            if a['MetricName'] == metric_name:
+                                                for arn in a['AlarmActions']:
+                                                    match_alarms_actions.append(arn)
+                                    if not match_alarms_actions:
+                                        self.log.info('No sns alarm action tied to metric alarm')
+                                        return resources
+                                    else:
+                                        client_sns = boto3.client('sns')
+                                        sns_subscriptions = client_sns.list_subscriptions()['Subscriptions']
+                                        if not sns_subscriptions:
+                                            self.log.info('No sns subscription tied to metric alarm')
+                                            return resources
+                                        else:
+                                            for s in sns_subscriptions:
+                                                if not (s['TopicArn'] in match_alarms_actions):
+                                                    return resources
+                                                else:
+                                                    return []
+                                    
     
     def __call__(self, r):
         return self.match(r[self.annotation_key])
