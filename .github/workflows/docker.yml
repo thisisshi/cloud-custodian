@@ -2,6 +2,21 @@ name: "Docker Build"
 
 env:
   repository: "sonnyshi"
+  job_metadata:
+    c7n:
+      name: cli
+      description: "Cloud Management Rules Engine"
+    c7n-org:
+      name: org
+      description: "Cloud Custodian Organization Runner"
+      dockerfile: "docker/org"
+    mailer:
+      name: mailer
+      description: "Cloud Custodian Notification Delivery"
+    policystream:
+      name: policystream
+      description: "Custodian policy changes streamed from Git"
+
 
 on:
   push:
@@ -24,23 +39,6 @@ jobs:
         flavor:
           - ""
           - "-distroless"
-        include:
-          - image: c7n
-            image_name: cli
-            image_description: "Cloud Management Rules Engine"
-            dockerfile: docker/cli
-          - image: c7n-org
-            image_name: org
-            image_description: "Cloud Custodian Organization Runner"
-            dockerfile: docker/org
-          - image: mailer
-            image_name: mailer
-            image_description: "Cloud Custodian Notification Delivery"
-            dockerfile: docker/mailer
-          - image: policystream
-            image_name: policystream
-            image_description: "Custodian policy changes streamed from Git"
-            dockerfile: docker/policystream
 
     runs-on: ubuntu-latest
     steps:
@@ -79,14 +77,14 @@ jobs:
         run: |
           python tools/dev/dockerpkg.py generate
 
-      - name: ${{ matrix.image }} ${{ matrix.image_name }}${{ matrix.flavor }} build and push
+      - name: ${{ matrix.images }}${{ matrix.flavor }} build and push
         uses: ./.github/composites/docker-build-push
         env:
           HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
-          dockerfile: ${{ matrix.dockerfile }}${{ matrix.flavor }}
+          image_name: docker/${{ toJSON(env.job_metadata)[toJSON(env.job_metadata)[matrix.images]]["name"] }}${{ matrix.flavor }}
           repository: ${{ env.repository }}
-          image: ${{ matrix.image }}
-          image_name: ${{ matrix.image_name }}
-          description: ${{ matrix.image_description }}
+          image: ${{ matrix.images }}
+          image_name: ${{ toJSON(env.job_metadata)[toJSON(env.job_metadata)[matrix.images]]["name"] }}
+          description: ${{ toJSON(env.job_metadata)[toJSON(env.job_metadata)[matrix.images]]["description"] }}
