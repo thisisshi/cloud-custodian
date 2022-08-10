@@ -2,20 +2,24 @@ name: "Docker Build"
 
 env:
   repository: "sonnyshi"
-  job_metadata:
-    c7n:
-      name: cli
-      description: "Cloud Management Rules Engine"
-    c7n-org:
-      name: org
-      description: "Cloud Custodian Organization Runner"
-      dockerfile: "docker/org"
-    mailer:
-      name: mailer
-      description: "Cloud Custodian Notification Delivery"
-    policystream:
-      name: policystream
-      description: "Custodian policy changes streamed from Git"
+  job_metadata: '
+    {
+      "c7n": {
+        "name": "cli",
+        "description": "Cloud Management Rules Engine"
+      },
+      "c7n-org": {
+        "name": "org",
+        "description": "Cloud Custodian Organization Runner"
+      },
+      "mailer": {
+        "name": "mailer",
+        "description": "Cloud Custodian Notification Delivery"
+      },
+      "policystream": {
+        "name": "policystream",
+        "description": "Custodian policy changes streamed from Git"
+  }'
 
 
 on:
