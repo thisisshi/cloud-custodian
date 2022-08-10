@@ -16,11 +16,16 @@ jobs:
   Publish:
     strategy:
       matrix:
+        images:
+          - c7n
+          - c7n-org
+          - mailer
+          - policystream
         flavor:
           - ""
           - "-distroless"
         include:
-          - iamge: c7n
+          - image: c7n
             image_name: cli
             image_description: "Cloud Management Rules Engine"
             dockerfile: docker/cli
@@ -33,7 +38,7 @@ jobs:
             image_description: "Cloud Custodian Notification Delivery"
             dockerfile: docker/mailer
           - image: policystream
-            iamge_name: policystream
+            image_name: policystream
             image_description: "Custodian policy changes streamed from Git"
 
     runs-on: ubuntu-latest
