@@ -50,7 +50,7 @@ jobs:
       # Ubuntu images
       - name: generate
         env:
-          HUB_USER: ${{ secretes.DOCKER_CI_HUB_USER }}
+          HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         run: |
           python tools/dev/dockerpkg.py generate
