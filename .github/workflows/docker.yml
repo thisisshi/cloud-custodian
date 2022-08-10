@@ -87,8 +87,8 @@ jobs:
           HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
-          dockerfile: "docker/${{ toJSON(env.job_metadata)[toJSON(env.job_metadata)[matrix.images]]['name'] }}${{ matrix.flavor }}"
+          dockerfile: "docker/${{ toJSON(env.job_metadata)[matrix.images]['name'] }}${{ matrix.flavor }}"
           repository: ${{ env.repository }}
           image: ${{ matrix.images }}
-          image_name: "${{ toJSON(env.job_metadata)[toJSON(env.job_metadata)[matrix.images]]['name'] }}"
-          description: "${{ toJSON(env.job_metadata)[toJSON(env.job_metadata)[matrix.images]]['description'] }}"
+          image_name: "${{ toJSON(env.job_metadata)[matrix.images]['name'] }}"
+          description: "${{ toJSON(env.job_metadata)[matrix.images]['description'] }}"
