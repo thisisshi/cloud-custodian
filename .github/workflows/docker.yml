@@ -49,7 +49,7 @@ jobs:
     steps:
       - name: foo
         run:
-          echo "${{ toJSON(env.job_metadata }}"
+          echo "${{ toJSON(env.job_metadata) }}"
           echo "${{ env.job_metadata }}"
           echo "docker/${{ toJSON(env.job_metadata)[matrix.images]['name'] }}${{ matrix.flavor }}"
           echo "${{ toJSON(env.job_metadata)[matrix.images]['name'] }}"
