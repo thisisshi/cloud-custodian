@@ -27,8 +27,8 @@ runs:
       if: github.event_name != 'pull_request'
       uses: docker/login-action@v1
       with:
-        username: ${{ secrets.DOCKER_CI_HUB_USER }}
-        password: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
+        username: ${{ env.HUB_USER }}
+        password: ${{ env.HUB_TOKEN }}
 
     - name: Docker meta
       id: meta
