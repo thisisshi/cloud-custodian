@@ -1,0 +1,57 @@
+name: 'Build and Publish Docker Image'
+description: 'Build and Publish Docker Image'
+inputs:
+  dockerfile:
+    description: 'Dockerfile to build'
+    required: true
+  repository:
+    description: 'docker hub repository'
+    required: true
+  image:
+    description: 'image'
+    required: true
+  name:
+    description: 'iamge name'
+    required: true
+  description:
+    description: 'image description'
+    required: true
+  tag_prefix:
+    description: 'tag prefix'
+    required: true
+    default: ""
+runs:
+  using: "composite"
+  steps:
+    - name: Login to Docker Hub
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v3
+      with:
+        # list of Docker images to use as base name for tags
+        images: |
+          ${{ inputs.repository }}/${{ inputs.image }}
+        labels: |
+          org.opencontainers.image.created={{date YYYY-MM-DD}}
+          org.opencontainers.image.licenses=Apache-2.0
+          org.opencontainers.image.documentation=https://cloudcustodian.io/docs
+          org.opencontainers.image.title=${{ inputs.image_name }}
+          org.opencontainers.image.description=${{ inputs.description }}
+        tags: |
+          type=raw,value=${{inputs.tag_prefix}}latest
+          type=semver,pattern={{raw}}
+
+    - name: Build and push
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        file: ${{ inputs.dockerfile }}

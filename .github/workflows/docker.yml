@@ -1,9 +1,16 @@
 name: "Docker Build"
 
+env:
+  repository: "sonnyshi"
+  cli_description: "Cloud Management Rules Engine"
+  org_description: "Cloud Custodian Organization Runner"
+  mailer_description: "CLoud Custodian NOtification Delivery"
+  policystream_description: "Custodian policy changes streamed from Git"
+
 on:
   push:
     branches:
-      - master
+      - docker-buildx
     tags:
       # todo: update for 1.0
       - 0.*
@@ -14,6 +21,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
       - name: Set up Python 3.8
         uses: actions/setup-python@v1
         with:
@@ -28,38 +40,93 @@ jobs:
           cd bin && tar xzf trivy.tgz
 
       # For *lightweight* functional image tests
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.DOCKER_CI_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.DOCKER_CI_AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.DOCKER_CI_AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.DOCKER_CI_AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: us-east-1
 
       # Ubuntu images
-      - name: cli
+      - name: generate
         env:
           HUB_USER: c7nbuild
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         run: |
-          python tools/dev/dockerpkg.py build -v --test --scan --push -t auto -r cloudcustodian -i cli
+          python tools/dev/dockerpkg.py generate
 
-      - name: org
-        env:
-          HUB_USER: c7nbuild
-          HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
-        run: |
-          python tools/dev/dockerpkg.py build -v --test --scan --push -t auto -r cloudcustodian -i org
+      - name: c7n
+        uses: ./.github/composites/docker-build-push
+        with:
+          dockerfile: docker/cli
+          repository: ${{ env.repository }}
+          image: c7n
+          image_name: cli
+          description: ${{ env.cli_description }}
+
+      - name: c7n-distroless
+        uses: ./.github/composites/docker-build-push
+        with:
+          dockerfile: docker/cli-distroless
+          image: c7n
+          image_name: cli
+          repository: ${{ env.repository }}
+          description: ${{ env.cli_description }}
+          tag_prefix: "distroless-"
+
+      - name: c7n-org
+        uses: ./.github/composites/docker-build-push
+        with:
+          dockerfile: docker/org
+          image: c7n-org
+          image_name: org
+          repository: ${{ env.repository }}
+          description: ${{ env.org_description }}
+
+      - name: c7n-org-distroless
+        uses: ./.github/composites/docker-build-push
+        with:
+          dockerfile: docker/org-distroless
+          repository: ${{ env.repository }}
+          image: c7n-org
+          image_name: org
+          description: ${{ env.org_description }}
+          tag_prefix: "distroless-"
 
       - name: mailer
-        env:
-          HUB_USER: c7nbuild
-          HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
-        run: |
-          python tools/dev/dockerpkg.py build -v --test --scan --push -t auto -r cloudcustodian -i mailer
+        uses: ./.github/composites/docker-build-push
+        with:
+          dockerfile: docker/mailer
+          repository: ${{ env.repository }}
+          image: mailer
+          image_name: mailer
+          description: ${{ env.mailer_description }}
+
+      - name: mailer-distroless
+        uses: ./.github/composites/docker-build-push
+        with:
+          dockerfile: docker/mailer-distroless
+          repository: ${{ env.repository }}
+          image: mailer
+          image_name: mailer
+          description: ${{ env.mailer_description }}
+          tag_prefix: "distroless-"
 
       - name: policystream
-        env:
-          HUB_USER: c7nbuild
-          HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
-        run: |
-          python tools/dev/dockerpkg.py build -v --test --scan --push -t auto -r cloudcustodian -i policystream
+        uses: ./.github/composites/docker-build-push
+        with:
+          dockerfile: docker/policystream
+          repository: ${{ env.repository }}
+          image: policystream
+          image_name: policystream
+          description: ${{ env.policystream_description }}
+
+      - name: policystream-distroless
+        uses: ./.github/composites/docker-build-push
+        with:
+          dockerfile: docker/policystream-distroless
+          repository: ${{ env.repository }}
+          image: policystream
+          image_name: policystream
+          description: ${{ env.policystream_description }}
+          tag_prefix: "distroless-"
