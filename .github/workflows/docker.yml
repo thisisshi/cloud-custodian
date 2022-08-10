@@ -37,10 +37,10 @@ jobs:
     strategy:
       matrix:
         images:
-          - c7n
+#           - c7n
 # - c7n-org
           - mailer
-          - policystream
+# # # # - policystream
         flavor:
           - ""
           - "-distroless"
