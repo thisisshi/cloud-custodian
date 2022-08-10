@@ -36,11 +36,11 @@ jobs:
   Publish:
     strategy:
       matrix:
-        images:
+        image:
           - c7n
-# - c7n-org
-# - mailer
-# - policystream
+          - c7n-org
+          - mailer
+          - policystream
         flavor:
           - ""
           - "-distroless"
@@ -65,31 +65,14 @@ jobs:
           wget -q -O bin/trivy.tgz https://github.com/aquasecurity/trivy/releases/download/v0.5.4/trivy_0.5.4_Linux-64bit.tar.gz
           cd bin && tar xzf trivy.tgz
 
-      # For *lightweight* functional image tests
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-access-key-id: ${{ secrets.DOCKER_CI_AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.DOCKER_CI_AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: us-east-1
-
-      # Ubuntu images
-      # - name: generate
-      #   env:
-      #     HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
-      #     HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
-      #   run: |
-      #     python tools/dev/dockerpkg.py generate
-
-
-      - name: ${{ matrix.images }}${{ matrix.flavor }} build and push
+      - name: ${{ matrix.image }}${{ matrix.flavor }} build and push
         uses: ./.github/composites/docker-build-push
         env:
           HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
-          dockerfile: "docker/${{ fromJSON(env.job_metadata)[matrix.images]['name'] }}${{ matrix.flavor }}"
+          dockerfile: "docker/${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}${{ matrix.flavor }}"
           repository: ${{ env.repository }}
-          image: ${{ matrix.images }}
-          name: "${{ fromJSON(env.job_metadata)[matrix.images]['name'] }}"
-          description: "${{ fromJSON(env.job_metadata)[matrix.images]['description'] }}"
+          image: ${{ matrix.image }}
+          name: "${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}"
+          description: "${{ fromJSON(env.job_metadata)[matrix.image]['description'] }}"
