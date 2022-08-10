@@ -38,7 +38,7 @@ runs:
         images: |
           ${{ inputs.repository }}/${{ inputs.image }}
         labels: |
-          org.opencontainers.image.created=${{date YYYY-MM-DD}}
+          org.opencontainers.image.created={{date YYYY-MM-DD}}
           org.opencontainers.image.licenses=Apache-2.0
           org.opencontainers.image.documentation=https://cloudcustodian.io/docs
           org.opencontainers.image.title=${{ inputs.image_name }}
