@@ -87,4 +87,4 @@ jobs:
           repository: ${{ env.repository }}
           image: ${{ matrix.images }}
           image_name: "${{ toJSON(env.job_metadata)[toJSON(env.job_metadata)[matrix.images]]['name'] }}"
-          description: ${{ toJSON(env.job_metadata)[toJSON(env.job_metadata)[matrix.images]]["description"] }}
+          description: "${{ toJSON(env.job_metadata)[toJSON(env.job_metadata)[matrix.images]]['description'] }}"
