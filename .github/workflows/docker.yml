@@ -49,11 +49,11 @@ jobs:
     steps:
       - name: foo
         run:
-          echo "${{ toJSON(env.job_metadata) }}"
+          echo "${{ fromJSON(env.job_metadata) }}"
           echo "${{ env.job_metadata }}"
-          echo "docker/${{ toJSON(env.job_metadata)[matrix.images]['name'] }}${{ matrix.flavor }}"
-          echo "${{ toJSON(env.job_metadata)[matrix.images]['name'] }}"
-          echo "${{ toJSON(env.job_metadata)[matrix.images]['description'] }}"
+          echo "docker/${{ fromJSON(env.job_metadata)[matrix.images]['name'] }}${{ matrix.flavor }}"
+          echo "${{ fromJSON(env.job_metadata)[matrix.images]['name'] }}"
+          echo "${{ fromJSON(env.job_metadata)[matrix.images]['description'] }}"
       - uses: actions/checkout@v2
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -96,8 +96,8 @@ jobs:
           HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
-          dockerfile: "docker/${{ toJSON(env.job_metadata)[matrix.images]['name'] }}${{ matrix.flavor }}"
+          dockerfile: "docker/${{ fromJSON(env.job_metadata)[matrix.images]['name'] }}${{ matrix.flavor }}"
           repository: ${{ env.repository }}
           image: ${{ matrix.images }}
-          image_name: "${{ toJSON(env.job_metadata)[matrix.images]['name'] }}"
-          description: "${{ toJSON(env.job_metadata)[matrix.images]['description'] }}"
+          image_name: "${{ fromJSON(env.job_metadata)[matrix.images]['name'] }}"
+          description: "${{ fromJSON(env.job_metadata)[matrix.images]['description'] }}"
