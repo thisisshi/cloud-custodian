@@ -81,6 +81,12 @@ jobs:
         run: |
           python tools/dev/dockerpkg.py generate
 
+      - name: foo
+        run:
+          echo "docker/${{ toJSON(env.job_metadata)[matrix.images]['name'] }}${{ matrix.flavor }}"
+          echo "${{ toJSON(env.job_metadata)[matrix.images]['name'] }}"
+          echo "${{ toJSON(env.job_metadata)[matrix.images]['description'] }}"
+
       - name: ${{ matrix.images }}${{ matrix.flavor }} build and push
         uses: ./.github/composites/docker-build-push
         env:
