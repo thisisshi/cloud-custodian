@@ -91,5 +91,5 @@ jobs:
           dockerfile: "docker/${{ fromJSON(env.job_metadata)[matrix.images]['name'] }}${{ matrix.flavor }}"
           repository: ${{ env.repository }}
           image: ${{ matrix.images }}
-          image_name: "${{ fromJSON(env.job_metadata)[matrix.images]['name'] }}"
+          name: "${{ fromJSON(env.job_metadata)[matrix.images]['name'] }}"
           description: "${{ fromJSON(env.job_metadata)[matrix.images]['description'] }}"
