@@ -16,7 +16,7 @@ inputs:
   description:
     description: 'image description'
     required: true
-  tag_prefix:
+  tag_suffix:
     description: 'tag prefix'
     required: true
     default: ""
@@ -44,7 +44,7 @@ runs:
           org.opencontainers.image.title=${{ inputs.image_name }}
           org.opencontainers.image.description=${{ inputs.description }}
         tags: |
-          type=raw,value=${{inputs.tag_prefix}}latest
+          type=raw,value=latest${{inputs.tag_suffix}}
           type=semver,pattern={{raw}}
 
     - name: Build and push
