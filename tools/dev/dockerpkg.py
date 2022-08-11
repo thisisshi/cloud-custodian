@@ -44,7 +44,7 @@ WORKDIR /src
 ADD pyproject.toml poetry.lock README.md /src/
 ADD c7n /src/c7n/
 RUN . /usr/local/bin/activate && pip install pyrsistent pyyaml
-RUN . /usr/local/bin/activate && $HOME/.poetry/bin/poetry install --no-dev
+RUN . /usr/local/bin/activate && $HOME/.poetry/bin/poetry install
 RUN . /usr/local/bin/activate && pip install -q wheel && \
       pip install -U pip
 RUN . /usr/local/bin/activate && pip install -q aws-xray-sdk psutil jsonpatch
@@ -63,7 +63,7 @@ RUN rm -R tools/c7n_openstack/tests
 ARG providers="azure gcp kube openstack"
 RUN . /usr/local/bin/activate && \\
     for pkg in $providers; do cd tools/c7n_$pkg && \\
-    $HOME/.poetry/bin/poetry install --no-dev && cd ../../; done
+    $HOME/.poetry/bin/poetry install && cd ../../; done
 
 RUN mkdir /output
 """
@@ -119,31 +119,30 @@ CMD ["--help"]
 BUILD_ORG = """\
 # Install c7n-org
 ADD tools/c7n_org /src/tools/c7n_org
-RUN . /usr/local/bin/activate && cd tools/c7n_org && $HOME/.poetry/bin/poetry install --no-dev
+RUN . /usr/local/bin/activate && cd tools/c7n_org && $HOME/.poetry/bin/poetry install
 """
 
 BUILD_MAILER = """\
 # Install c7n-mailer
 ADD tools/c7n_mailer /src/tools/c7n_mailer
-RUN . /usr/local/bin/activate && cd tools/c7n_mailer && $HOME/.poetry/bin/poetry install --no-dev
+RUN . /usr/local/bin/activate && cd tools/c7n_mailer && $HOME/.poetry/bin/poetry install
 """
 
 BUILD_POLICYSTREAM = """\
 # Install c7n-policystream
 ADD tools/c7n_policystream /src/tools/c7n_policystream
-RUN . /usr/local/bin/activate && cd tools/c7n_policystream && $HOME/.poetry/bin/poetry install --no-dev
+RUN . /usr/local/bin/activate && cd tools/c7n_policystream && $HOME/.poetry/bin/poetry install
 
 # Verify the install
 #  - policystream is not in ci due to libgit2 compilation needed
 #  - as a sanity check to distributing known good assets / we test here
-RUN . /usr/local/bin/activate && pip install pytest
 RUN . /usr/local/bin/activate && pytest tools/c7n_policystream
 """
 
 
 class Image:
 
-    defaults = dict(base_build_image="ubuntu:20.04", base_target_image="ubuntu:20.04")
+    defaults = dict(base_build_image="ubuntu:22.04", base_target_image="ubuntu:22.04")
 
     def __init__(self, metadata, build, target):
         self.metadata = metadata
