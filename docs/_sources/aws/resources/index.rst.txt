@@ -66,6 +66,8 @@ be applies for all resources.
 
    group-config.rst
 
+   group-connect.rst
+
    group-datapipeline.rst
 
    group-dax.rst

@@ -284,6 +284,7 @@
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#health-event">health-event</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#iam-analyzer">iam-analyzer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#image">image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#instance-attribute">instance-attribute</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#logging">logging</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#marked-for-op">marked-for-op</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#metrics">metrics</a></li>
@@ -579,6 +580,14 @@
 <li class="toctree-l3"><a class="reference internal" href="config-rule.html">aws.config-rule</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="config-rule.html#filters">Filters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="config-rule.html#actions">Actions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group-connect.html">connect resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="connect-instance.html">aws.connect-instance</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="connect-instance.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="connect-instance.html#actions">Actions</a></li>
 </ul>
 </li>
 </ul>
@@ -5421,6 +5430,18 @@
 <dt class="field-odd">example</dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">enable-https</span><span class="w"></span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudsearch</span><span class="w"></span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">domain-options</span><span class="w"></span>
+<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Options.EnforceHTTPS</span><span class="w"></span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">enable-https</span><span class="w"></span>
+<span class="w">        </span><span class="nt">tls-policy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Policy-Min-TLS-1-0-2019-07</span><span class="w"></span>
+</pre></div>
+</div>
 <div class="toggle docutils container">
 <div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="nt">tls-policy</span><span class="p">:</span><span class="w"></span>

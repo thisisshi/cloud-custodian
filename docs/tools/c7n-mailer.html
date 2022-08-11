@@ -284,6 +284,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#health-event">health-event</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#iam-analyzer">iam-analyzer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#image">image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#instance-attribute">instance-attribute</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#logging">logging</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#marked-for-op">marked-for-op</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#metrics">metrics</a></li>
@@ -579,6 +580,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/config-rule.html">aws.config-rule</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../aws/resources/config-rule.html#filters">Filters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../aws/resources/config-rule.html#actions">Actions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/resources/group-connect.html">connect resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../aws/resources/connect-instance.html">aws.connect-instance</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../aws/resources/connect-instance.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../aws/resources/connect-instance.html#actions">Actions</a></li>
 </ul>
 </li>
 </ul>
@@ -5366,7 +5375,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section class="tex2jax_ignore mathjax_ignore" id="c7n-mailer-custodian-mailer">
+  <section id="c7n-mailer-custodian-mailer">
 <h1>c7n-mailer: Custodian Mailer<a class="headerlink" href="#c7n-mailer-custodian-mailer" title="Permalink to this headline">¶</a></h1>
 <p>A mailer implementation for Custodian. Outbound mail delivery is still somewhat
 organization-specific, so this at the moment serves primarily as an example
@@ -5384,8 +5393,8 @@ should be cross-account enabled for sending between accounts.</p>
 <h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
 <p>Our goal in starting out with the Custodian mailer is to install the mailer,
 and run a policy that triggers an email to your inbox.</p>
-<ol class="simple">
-<li><p><a class="reference external" href="#developer-install-os-x-el-capitan">Install</a> the mailer on your laptop (if you are not running as a <a class="reference external" href="https://hub.docker.com/r/cloudcustodian/mailer">Docker container</a></p>
+<ol class="arabic simple">
+<li><p><span class="xref myst">Install</span> the mailer on your laptop (if you are not running as a <a class="reference external" href="https://hub.docker.com/r/cloudcustodian/mailer">Docker container</a></p>
 <ul class="simple">
 <li><p>or use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">c7n-mailer</span></code></p></li>
 </ul>
@@ -5570,7 +5579,9 @@ like so: <code class="docutils literal notranslate"><span class="pre">slack_msg_
 </tbody>
 </table>
 <p>Slack delivery can also be set via a resource’s tag name. For example, using “slack://tag/slack_channel” will look for a tag name of ‘slack_channel’, and if matched on a resource will deliver the message to the value of that resource’s tag:</p>
-<p><code class="docutils literal notranslate"><span class="pre">slack_channel:https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">slack_channel:https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX</span></code>
+<code class="docutils literal notranslate"><span class="pre">slack_channel:custodian-test</span></code>
+<code class="docutils literal notranslate"><span class="pre">owner:foo&#64;bar</span></code></p>
 <p>Delivery via tag has been tested with webhooks but should support all delivery methods.</p>
 </section>
 <section id="splunk-http-event-collector-hec">
@@ -5624,7 +5635,7 @@ Custodian mailer.</p>
 </section>
 <section id="usage-configuration">
 <h2>Usage &amp; Configuration<a class="headerlink" href="#usage-configuration" title="Permalink to this headline">¶</a></h2>
-<p>Once <a class="reference external" href="#developer-install-os-x-el-capitan">installed</a> you should have a
+<p>Once <span class="xref myst">installed</span> you should have a
 <code class="docutils literal notranslate"><span class="pre">c7n-mailer</span></code> executable on your path:
 aws</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(env) $ c7n-mailer
@@ -5635,8 +5646,8 @@ c7n-mailer: error: argument -c/--config is required
 </div>
 <p>Fundamentally what <code class="docutils literal notranslate"><span class="pre">c7n-mailer</span></code> does is deploy a Lambda (using
 <a class="reference external" href="http://cloudcustodian.io/docs/policy/mu.html">Mu</a>) based on
-configuration you specify in a YAML file.  Here is <a class="reference external" href="./c7n_mailer/cli.py#L11-L41">the
-schema</a> to which the file must conform,
+configuration you specify in a YAML file.  Here is <span class="xref myst">the
+schema</span> to which the file must conform,
 and here is a description of the options:</p>
 <table border="1" class="docutils">
 <thead>
@@ -6172,7 +6183,7 @@ Custodian tries to decrypt the string using KMS, if it fails c7n treats it as a 
 </div>
 <p>So breaking it down, you add an action of type <code class="docutils literal notranslate"><span class="pre">notify</span></code>. You can specify a
 template that’s used to format the email; customizing templates is described
-<a class="reference external" href="#writing-an-email-template">below</a>.</p>
+<span class="xref myst">below</span>.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">to</span></code> list specifies the intended recipient for the email. You can specify
 either an email address, an SNS topic, a Datadog Metric, or a special value. The special values
 are either</p>

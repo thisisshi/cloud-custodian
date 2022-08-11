@@ -284,6 +284,7 @@
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#health-event">health-event</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#iam-analyzer">iam-analyzer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#image">image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#instance-attribute">instance-attribute</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#logging">logging</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#marked-for-op">marked-for-op</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#metrics">metrics</a></li>
@@ -579,6 +580,14 @@
 <li class="toctree-l3"><a class="reference internal" href="config-rule.html">aws.config-rule</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="config-rule.html#filters">Filters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="config-rule.html#actions">Actions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group-connect.html">connect resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="connect-instance.html">aws.connect-instance</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="connect-instance.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="connect-instance.html#actions">Actions</a></li>
 </ul>
 </li>
 </ul>
@@ -5375,6 +5384,7 @@
 <blockquote>
 <div><ul class="simple">
 <li><p><a class="reference internal" href="aws-common-filters.html#aws-common-filters-config-compliance"><span class="std std-ref">config-compliance</span></a></p></li>
+<li><p><a class="reference internal" href="#aws-fsx-filters-consecutive-backups"><span class="std std-ref">consecutive-backups</span></a></p></li>
 <li><p><a class="reference internal" href="aws-common-filters.html#aws-common-filters-event"><span class="std std-ref">event</span></a></p></li>
 <li><p><a class="reference internal" href="aws-common-filters.html#aws-common-filters-finding"><span class="std std-ref">finding</span></a></p></li>
 <li><p><a class="reference internal" href="#aws-fsx-filters-kms-key"><span class="std std-ref">kms-key</span></a></p></li>
@@ -5385,6 +5395,50 @@
 <li><p><a class="reference internal" href="aws-common-filters.html#aws-common-filters-value"><span class="std std-ref">value</span></a></p></li>
 </ul>
 </div></blockquote>
+<section id="consecutive-backups">
+<span id="aws-fsx-filters-consecutive-backups"></span><h3>consecutive-backups<a class="headerlink" href="#consecutive-backups" title="Permalink to this headline">¶</a></h3>
+<p>Returns consecutive daily FSx backups, which are equal to/or greater than n days.
+:Example:
+.. code-block:: yaml</p>
+<blockquote>
+<div><dl>
+<dt>policies:</dt><dd><ul>
+<li><p>name: fsx-daily-backup-count
+resource: fsx
+filters:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>type: consecutive-backups
+days: 5</p></li>
+</ul>
+</div></blockquote>
+<dl class="simple">
+<dt>actions:</dt><dd><ul class="simple">
+<li><p>notify</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+<div class="toggle docutils container">
+<div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">days</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">minimum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">number</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">consecutive-backups</span><span class="w"></span>
+<span class="nt">required</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">days</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<p>Permissions - fsx:DescribeBackups, fsx:DescribeVolumes</p>
+</section>
 <section id="kms-key">
 <span id="aws-fsx-filters-kms-key"></span><h3>kms-key<a class="headerlink" href="#kms-key" title="Permalink to this headline">¶</a></h3>
 <p>Filter a resource by its associated kms key and optionally the aliasname

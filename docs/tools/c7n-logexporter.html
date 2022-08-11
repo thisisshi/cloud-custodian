@@ -18,8 +18,6 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/js/expand.js"></script>
-        <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -286,6 +284,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#health-event">health-event</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#iam-analyzer">iam-analyzer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#image">image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#instance-attribute">instance-attribute</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#logging">logging</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#marked-for-op">marked-for-op</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#metrics">metrics</a></li>
@@ -581,6 +580,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/config-rule.html">aws.config-rule</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../aws/resources/config-rule.html#filters">Filters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../aws/resources/config-rule.html#actions">Actions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/resources/group-connect.html">connect resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../aws/resources/connect-instance.html">aws.connect-instance</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../aws/resources/connect-instance.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../aws/resources/connect-instance.html#actions">Actions</a></li>
 </ul>
 </li>
 </ul>
@@ -5368,7 +5375,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section class="tex2jax_ignore mathjax_ignore" id="c7n-log-exporter-cloud-watch-log-exporter-automation">
+  <section id="c7n-log-exporter-cloud-watch-log-exporter-automation">
 <h1>c7n-log-exporter: Cloud watch log exporter automation<a class="headerlink" href="#c7n-log-exporter-cloud-watch-log-exporter-automation" title="Permalink to this headline">¶</a></h1>
 <p>A small serverless app to archive cloud logs across accounts to an archive bucket. It utilizes
 cloud log export to s3 feature for historical exports.</p>
@@ -5383,7 +5390,7 @@ as the periodic historical exports.</p>
 <li><p>Cross account via sts role assume</p></li>
 <li><p>Lambda and CLI support.</p></li>
 <li><p>Day based log segmentation (output keys look
-like <span class="math notranslate nohighlight">\(prefix/\)</span>account_id/<span class="math notranslate nohighlight">\(group/\)</span>year/<span class="math notranslate nohighlight">\(month/\)</span>day/<span class="math notranslate nohighlight">\(export_task_uuid/\)</span>stream/$log)</p></li>
+like $prefix/$account_id/$group/$year/$month/$day/$export_task_uuid/$stream/$log)</p></li>
 </ul>
 </section>
 <section id="assumptions">

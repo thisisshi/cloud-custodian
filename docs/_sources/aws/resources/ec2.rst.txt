@@ -2109,7 +2109,7 @@ While ec2 offers a bulk delete api, any given instance can be configured
 with api deletion termination protection, so we can't use the bulk call
 reliabily, we need to process the instances individually. Additionally
 If we're configured with 'force' then we'll turn off instance termination
-protection.
+and stop protection.
 
 :Example:
 

@@ -284,6 +284,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#health-event">health-event</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#iam-analyzer">iam-analyzer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#image">image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#instance-attribute">instance-attribute</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#logging">logging</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#marked-for-op">marked-for-op</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/aws-common-filters.html#metrics">metrics</a></li>
@@ -579,6 +580,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../aws/resources/config-rule.html">aws.config-rule</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../aws/resources/config-rule.html#filters">Filters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../aws/resources/config-rule.html#actions">Actions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/resources/group-connect.html">connect resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../aws/resources/connect-instance.html">aws.connect-instance</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../aws/resources/connect-instance.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../aws/resources/connect-instance.html#actions">Actions</a></li>
 </ul>
 </li>
 </ul>
@@ -5366,7 +5375,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section class="tex2jax_ignore mathjax_ignore" id="c7n-org-multi-account-custodian-execution">
+  <section id="c7n-org-multi-account-custodian-execution">
 <h1>c7n-org: Multi Account Custodian Execution<a class="headerlink" href="#c7n-org-multi-account-custodian-execution" title="Permalink to this headline">¶</a></h1>
 <p>c7n-org is a tool to run custodian against multiple AWS accounts,
 Azure subscriptions, or GCP projects in parallel.</p>
@@ -5441,7 +5450,7 @@ from the AWS Organizations API</p></li>
 <li><p>For <strong>Azure</strong>, the script <code class="docutils literal notranslate"><span class="pre">azuresubs.py</span></code> generates a config file
 from the Azure Resource Management API</p>
 <ul>
-<li><p>Please see the <a class="reference external" href="#Additional-Azure-Instructions">Additional Azure Instructions</a></p></li>
+<li><p>Please see the <span class="xref myst">Additional Azure Instructions</span></p></li>
 <li><p>for initial setup and other important info</p></li>
 </ul>
 </li>
@@ -5539,10 +5548,12 @@ don’t require quoting, i.e., “my_{charge_code}”.</p>
 </section>
 <section id="other-commands">
 <h2>Other commands<a class="headerlink" href="#other-commands" title="Permalink to this headline">¶</a></h2>
-<p>c7n-org also supports running arbitrary scripts against accounts via the run-script command.
-For AWS the standard AWS SDK credential information is exported into the process environment before executing.
-For Azure and GCP, only the environment variables <code class="docutils literal notranslate"><span class="pre">AZURE_SUBSCRIPTION_ID</span></code> and <code class="docutils literal notranslate"><span class="pre">PROJECT_ID</span></code> are exported(in addition
-of the system env variables).</p>
+<p>c7n-org also supports running arbitrary scripts against accounts via
+the run-script command.  For AWS the standard AWS SDK credential
+information is exported into the process environment before executing.
+For Azure and GCP, only the environment variables
+<code class="docutils literal notranslate"><span class="pre">AZURE_SUBSCRIPTION_ID</span></code> and <code class="docutils literal notranslate"><span class="pre">PROJECT_ID</span></code> are exported(in addition of
+the system env variables).</p>
 <p>c7n-org also supports generating reports for a given policy execution
 across accounts via the <code class="docutils literal notranslate"><span class="pre">c7n-org</span> <span class="pre">report</span></code> subcommand.</p>
 </section>
