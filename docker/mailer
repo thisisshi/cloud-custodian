@@ -12,7 +12,7 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
 WORKDIR /src
 
 # Add core & aws packages
-ADD pyproject.toml poetry.lock README.md /src/
+ADD pyproject.toml poetry.lock README.md requirements.txt /src/
 ADD c7n /src/c7n/
 RUN . /usr/local/bin/activate && pip install pyrsistent
 RUN . /usr/local/bin/activate && pip install -r requirements.txt
