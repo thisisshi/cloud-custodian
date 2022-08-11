@@ -44,7 +44,7 @@ jobs:
           - policystream
         flavor:
           - ""
-          - "-distroless"
+          - "distroless-"
 
     runs-on: ubuntu-latest
     steps:
