@@ -55,3 +55,11 @@ runs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         file: ${{ inputs.dockerfile }}
+
+    - name: Scan
+      run: |
+        echo "hello world"
+
+    - name: Test
+      run: |
+        echo "hello world"
