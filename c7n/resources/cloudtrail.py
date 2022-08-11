@@ -155,7 +155,7 @@ class CheckForMultiTrailMfaLogin(Filter):
         grouped_trails = get_trail_groups(self.manager.session_factory, resources)
         for region, (client, trails) in grouped_trails.items():
             #-Ensure there is at least one multi-region CloudTrail
-            if not trails:
+            if not grouped_trails:
                 self.log.info('No cloudtrails have been created')
                 return resources
             else:
@@ -209,7 +209,6 @@ class CheckForMultiTrailMfaLogin(Filter):
                                                 filters_matched.append(f)
                                 if not filters_matched:
                                     self.log.info('No metric filter match. Metric filter must be { ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) } ')
-                                    #fail here
                                     return resources
                                 else:
                                     client_cw = boto3.client('cloudwatch')
