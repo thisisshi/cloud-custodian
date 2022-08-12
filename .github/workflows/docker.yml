@@ -77,4 +77,4 @@ jobs:
           image: ${{ matrix.image }}
           name: "${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}"
           description: "${{ fromJSON(env.job_metadata)[matrix.image]['description'] }}"
-          tag_prefix: "${{ matrix.flavor }}-"
+          tag_prefix: "${{ matrix.flavor == "" && "" || format('{0}-', matrix.flavor) }}"
