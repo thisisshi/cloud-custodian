@@ -87,3 +87,17 @@ runs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         file: ${{ inputs.dockerfile }}
+
+    - uses: sigstore/cosign-installer@main
+
+    - name: Sign
+        run: |
+          cosign sign ${{ inputs.repository }}/${{ inputs.image}}:${{ inputs.tag_prefix }}latest
+        env:
+          COSIGN_EXPERIMENTAL: 1
+
+    - name: Verify
+      run: |
+          cosign verify ${{ inputs.repository }}/${{ inputs.image}}:${{ inputs.tag_prefix }}latest
+      env:
+        COSIGN_EXPERIMENTAL: 1

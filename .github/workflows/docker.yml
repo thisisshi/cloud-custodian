@@ -30,7 +30,7 @@ env:
 on:
   push:
     branches:
-      - docker-buildx
+      - cosign-docker
     tags:
       # todo: update for 1.0
       - 0.*
@@ -38,6 +38,9 @@ on:
 jobs:
 
   Publish:
+    permissions:
+      id-token: write
+
     strategy:
       fail-fast: false
       matrix:
