@@ -61,7 +61,8 @@ runs:
       run: |
         wget -q -O bin/trivy.tgz https://github.com/aquasecurity/trivy/releases/download/v0.5.4/trivy_0.5.4_Linux-64bit.tar.gz
         cd bin && tar xzf trivy.tgz
-        trivy  ${{ inputs.repository }}/${{ inputs.image }}:${{ inputs.tag_prefix}}latest
+        ./trivy  ${{ inputs.repository }}/${{ inputs.image }}:${{ inputs.tag_prefix}}latest
+        cd ..
 
     - name: test
       shell: bash
