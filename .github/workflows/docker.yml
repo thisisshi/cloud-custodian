@@ -44,7 +44,7 @@ jobs:
           - policystream
         flavor:
           - ""
-          - "distroless-"
+          - "distroless"
 
     runs-on: ubuntu-latest
     steps:
@@ -66,15 +66,15 @@ jobs:
           wget -q -O bin/trivy.tgz https://github.com/aquasecurity/trivy/releases/download/v0.5.4/trivy_0.5.4_Linux-64bit.tar.gz
           cd bin && tar xzf trivy.tgz
 
-      - name: ${{ matrix.image }}${{ matrix.flavor }} build and push
+      - name: ${{ matrix.image }}-${{ matrix.flavor }} build and push
         uses: ./.github/composites/docker-build-push
         env:
           HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
-          dockerfile: "docker/${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}${{ matrix.flavor }}"
+          dockerfile: "docker/${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}-${{ matrix.flavor }}"
           repository: ${{ env.repository }}
           image: ${{ matrix.image }}
           name: "${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}"
           description: "${{ fromJSON(env.job_metadata)[matrix.image]['description'] }}"
-          tag_prefix: ${{ matrix.flavor }}
+          tag_prefix: "${{ matrix.flavor }}-"
