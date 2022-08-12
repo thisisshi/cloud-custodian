@@ -95,9 +95,11 @@ runs:
     - uses: sigstore/cosign-installer@main
 
     - name: Sign
+      shell: bash
       run: |
         cosign sign ${{ inputs.repository }}/${{ inputs.image}}:${{ inputs.tag_prefix }}latest
 
     - name: Verify
+      shell: bash
       run: |
           cosign verify ${{ inputs.repository }}/${{ inputs.image}}:${{ inputs.tag_prefix }}latest
