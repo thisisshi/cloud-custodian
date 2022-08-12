@@ -57,12 +57,14 @@ runs:
         file: ${{ inputs.dockerfile }}
 
     - name: scan
+      shell: bash
       run: |
         wget -q -O bin/trivy.tgz https://github.com/aquasecurity/trivy/releases/download/v0.5.4/trivy_0.5.4_Linux-64bit.tar.gz
         cd bin && tar xzf trivy.tgz
         trivy  ${{ inputs.repository }}/${{ inputs.image }}:${{ inputs.tag_prefix}}latest
 
     - name: test
+      shell: bash
       run : |
         python -m venv .
         . bin/activate && poetry install
