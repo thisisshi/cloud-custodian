@@ -11,7 +11,7 @@ inputs:
     description: 'image'
     required: true
   name:
-    description: 'iamge name'
+    description: 'image name'
     required: true
   description:
     description: 'image description'
@@ -70,8 +70,11 @@ runs:
         curl -sL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python - -y --version 1.1.14
         python -m venv .
         . bin/activate && poetry install
+        IMAGE_NAME =  ${{ inputs.name }}
+        # set it to uppercase
+        IMAGE_NAME = ${IMAGE_NAME^^}
         . bin/activate && TEST_DOCKER=yes \
-                          CUSTODIAN_${{ inputs.image }}_IMAGE=${{ inputs.repository }}/${{ inputs.image }}:${{ inputs.tag_prefix }}latest \
+                          CUSTODIAN_${IMAGE_NAME}_IMAGE=${{ inputs.repository }}/${{ inputs.image }}:${{ inputs.tag_prefix }}latest \
                           pytest -p no:terraform -v tests/test_docker.py
 
     - name: Push
