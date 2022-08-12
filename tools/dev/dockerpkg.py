@@ -33,7 +33,7 @@ FROM {base_build_image} as build-env
 # pre-requisite distro deps, and build env setup
 RUN adduser --disabled-login --gecos "" custodian
 RUN apt-get --yes update
-RUN apt-get --yes install build-essential curl python3-venv python3-dev libffi-dev \
+RUN apt-get --yes install build-essential curl python3-venv python3-dev \
     --no-install-recommends
 RUN python3 -m venv /usr/local
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py \
