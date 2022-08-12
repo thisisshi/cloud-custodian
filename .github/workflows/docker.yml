@@ -6,19 +6,23 @@ env:
     {
       "c7n": {
         "name": "cli",
-        "description": "Cloud Management Rules Engine"
+        "description": "Cloud Management Rules Engine",
+        "custodian_image_var": "CUSTODIAN_CLI_IMAGE"
       },
       "c7n-org": {
         "name": "org",
-        "description": "Cloud Custodian Organization Runner"
+        "description": "Cloud Custodian Organization Runner",
+        "custodian_image_var": "CUSTODIAN_ORG_IMAGE"
       },
       "mailer": {
         "name": "mailer",
-        "description": "Cloud Custodian Notification Delivery"
+        "description": "Cloud Custodian Notification Delivery",
+        "custodian_image_var": "CUSTODIAN_MAILER_IMAGE"
       },
       "policystream": {
         "name": "policystream",
-        "description": "Custodian policy changes streamed from Git"
+        "description": "Custodian policy changes streamed from Git",
+        "custodian_image_var": "CUSTODIAN_POLICYSTREAM_IMAGE"
       }
   }'
 
@@ -78,3 +82,4 @@ jobs:
           name: "${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}"
           description: "${{ fromJSON(env.job_metadata)[matrix.image]['description'] }}"
           tag_prefix: "${{ matrix.flavor && format('{0}-', matrix.flavor) || matrix.flavor }}"
+          CUSTODIAN_IMAGE_VAR: "${{ fromJSON(env.job_metadata)[matrix.image]['custodian_image_var'] }}

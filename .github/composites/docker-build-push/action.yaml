@@ -1,6 +1,9 @@
 name: 'Build and Publish Docker Image'
 description: 'Build and Publish Docker Image'
 inputs:
+  CUSTODIAN_IMAGE_VAR:
+    description: 'env var name for custodian image'
+    required: true
   dockerfile:
     description: 'Dockerfile to build'
     required: true
@@ -70,11 +73,11 @@ runs:
         curl -sL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python - -y --version 1.1.14
         python -m venv .
         . bin/activate && poetry install
-        IMAGE_NAME =  ${{ inputs.name }}
+        export IMAGE_NAME= ${{ inputs.name }}
         # set it to uppercase
         IMAGE_NAME = ${IMAGE_NAME^^}
         . bin/activate && TEST_DOCKER=yes \
-                          CUSTODIAN_${IMAGE_NAME}_IMAGE=${{ inputs.repository }}/${{ inputs.image }}:${{ inputs.tag_prefix }}latest \
+                          ${{ inputs.CUSTODIAN_IMAGE_VAR }}=${{ inputs.repository }}/${{ inputs.image }}:${{ inputs.tag_prefix }}latest \
                           pytest -p no:terraform -v tests/test_docker.py
 
     - name: Push
