@@ -47,7 +47,30 @@ runs:
           type=raw,value=${{ inputs.tag_prefix }}latest
           type=semver,pattern={{raw}}
 
-    - name: Build and push
+    - name: Build
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        file: ${{ inputs.dockerfile }}
+
+    - name: scan
+      run: |
+        wget -q -O bin/trivy.tgz https://github.com/aquasecurity/trivy/releases/download/v0.5.4/trivy_0.5.4_Linux-64bit.tar.gz
+        cd bin && tar xzf trivy.tgz
+        trivy  ${{ inputs.repository }}/${{ inputs.image }}:${{ inputs.tag_prefix}}latest
+
+    - name: test
+      run : |
+        python -m venv .
+        . bin/activate && poetry install
+        . bin/activate && TEST_DOCKER=yes \
+                          CUSTODIAN_${{ inputs.image }}_IMAGE=${{ inputs.repository }}/${{ inputs.image }}:${{ inputs.tag_prefix }}latest \
+                          pytest -p no:terraform -v tests/test_docker.py
+
+    - name: Push
       uses: docker/build-push-action@v2
       with:
         context: .
