@@ -44,7 +44,7 @@ WORKDIR /src
 # Add core & aws packages
 ADD pyproject.toml poetry.lock README.md /src/
 ADD c7n /src/c7n/
-# RUN . /usr/local/bin/activate && pip install pyrsistent pyyaml cffi cryptography
+RUN . /usr/local/bin/activate && pip install -U pip
 RUN . /usr/local/bin/activate && $HOME/.poetry/bin/poetry install --no-dev
 RUN . /usr/local/bin/activate && pip install -q wheel && \
       pip install -U pip
