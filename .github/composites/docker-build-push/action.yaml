@@ -96,10 +96,12 @@ runs:
 
     - name: Sign
       shell: bash
-      run: |
-        cosign sign ${{ inputs.repository }}/${{ inputs.image}}:${{ inputs.tag_prefix }}latest
+      env:
+        TAGS: ${{ steps.meta.outputs.tags }}
+      run: cosign sign ${TAGS}
 
     - name: Verify
       shell: bash
-      run: |
-          cosign verify ${{ inputs.repository }}/${{ inputs.image}}:${{ inputs.tag_prefix }}latest
+      env:
+        TAGS: ${{ steps.meta.outputs.tags }}
+      run: cosign verify ${TAGS}
