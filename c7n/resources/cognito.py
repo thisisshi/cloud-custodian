@@ -7,19 +7,6 @@ from c7n.manager import resources
 from c7n.query import QueryResourceManager, TypeInfo
 from c7n.utils import local_session, type_schema
 
-from c7n.query import DescribeSource
-
-
-class DescribeIdentityPool(DescribeSource):
-    def augment(self, resources):
-        client = local_session(self.manager.session_factory).client('cognito-identity')
-        for r in resources:
-            tags = client.list_tags_for_resource(
-                ResourceArn=r['']
-            )
-            r['Tags'] = tags['Tags']
-        pass
-
 
 @resources.register('identity-pool')
 class CognitoIdentityPool(QueryResourceManager):
@@ -33,10 +20,6 @@ class CognitoIdentityPool(QueryResourceManager):
         name = 'IdentityPoolName'
         arn_type = "identitypool"
         cfn_type = 'AWS::Cognito::IdentityPool'
-
-    source_mapping = {
-        'describe': DescribeIdentityPool
-    }
 
 
 @CognitoIdentityPool.action_registry.register('delete')
