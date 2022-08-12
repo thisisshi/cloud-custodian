@@ -1,5 +1,8 @@
 name: 'Build and Publish Docker Image'
 description: 'Build and Publish Docker Image'
+env:
+  COSIGN_EXPERIMENTAL: 1
+
 inputs:
   CUSTODIAN_IMAGE_VAR:
     description: 'env var name for custodian image'
@@ -92,13 +95,9 @@ runs:
     - uses: sigstore/cosign-installer@main
 
     - name: Sign
-        run: |
-          cosign sign ${{ inputs.repository }}/${{ inputs.image}}:${{ inputs.tag_prefix }}latest
-        env:
-          COSIGN_EXPERIMENTAL: 1
+      run: |
+        cosign sign ${{ inputs.repository }}/${{ inputs.image}}:${{ inputs.tag_prefix }}latest
 
     - name: Verify
       run: |
           cosign verify ${{ inputs.repository }}/${{ inputs.image}}:${{ inputs.tag_prefix }}latest
-      env:
-        COSIGN_EXPERIMENTAL: 1
