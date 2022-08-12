@@ -73,6 +73,7 @@ runs:
         curl -sL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python - -y --version 1.1.14
         python -m venv .
         . bin/activate && poetry install
+        . bin/activate && pip install docker
         . bin/activate && TEST_DOCKER=yes \
                           ${{ inputs.CUSTODIAN_IMAGE_VAR }}=${{ inputs.repository }}/${{ inputs.image }}:${{ inputs.tag_prefix }}latest \
                           pytest -p no:terraform -v tests/test_docker.py
