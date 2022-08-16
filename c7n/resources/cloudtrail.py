@@ -120,26 +120,26 @@ class Status(ValueFilter):
     def __call__(self, r):
         return self.match(r[self.annotation_key])
 
-@CloudTrail.filter_registry.register('check-for-multi-trail-mfa-login')
-class CheckForMultiTrailMfaLogin(Filter):
+@CloudTrail.filter_registry.register('log-metric-filter-pattern')
+class LogMetricFilterPattern(Filter):
     
     """
-    Ensure at least one trail has filter value
+    If pattern entered is found then resource will pass if not then resource will fail
 
     :Example:
 
     .. code-block:: yaml
 
         policies:
-          - name: cloudtrail-check-for-one
+          - name: log-metric-filter-pattern
             resource: aws.cloudtrail
             filters:
-            - type: check-for-multi-trail-mfa-login
-                pattern: "{ ($.eventName = \"ConsoleLogin\") && ($.additionalEventData.MFAUsed != \"Yes\") }"
+            - type: log-metric-filter-pattern
+                required_pattern: "{ ($.eventName = \"ConsoleLogin\") && ($.additionalEventData.MFAUsed != \"Yes\") }"
     """
-    schema = type_schema('check-for-multi-trail-mfa-login', 
-    fail_without_pattern = {'type':'string'},
-    required= ['fail_without_pattern'])
+    schema = type_schema('log-metric-filter-pattern',
+                            required_pattern = {'type':'string'},
+                            required= ['required_pattern'])
 
     schema_alias = False
     permissions = ('cloudtrail:DescribeTrails','cloudwatch:DescribeAlarms','logs:DescribeMetricFilters', 'sns:ListSubscriptions')
@@ -188,7 +188,9 @@ class CheckForMultiTrailMfaLogin(Filter):
                             self.log.info('Mulit-region trail must have event selectors IncludeManagementEvents == True and ReadWriteType = All')
                             return resources
                         else:
-                            client_logs = boto3.client('logs')
+                            client_logs = local_session(self.manager.session_factory).client(
+                            'logs', region_name=region)
+                            #client_logs = boto3.client('logs')
                             for t in trails_w_IncludeManagementEvents:
                                 #parse log group arn for name
                                 if 'CloudWatchLogsLogGroupArn' in t.keys():
@@ -204,14 +206,17 @@ class CheckForMultiTrailMfaLogin(Filter):
                                     # -Look for this filter pattern in the CloudWatch Metric Alarm:
                                     if metric_filters_log_group:
                                         for f in metric_filters_log_group:
-                                            pattern = self.data.get('fail_without_pattern')
+                                            pattern = self.data.get('required_pattern')
                                             if f['filterPattern'] == pattern:
                                                 filters_matched.append(f)
                                 if not filters_matched:
+                                    #fail here
                                     self.log.info('No metric filter match. Metric filter must be { ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) } ')
                                     return resources
                                 else:
-                                    client_cw = boto3.client('cloudwatch')
+                                    client_cw = local_session(self.manager.session_factory).client(
+                            'cloudwatch', region_name=region)
+                                    #client_cw = boto3.client('cloudwatch')
                                     alarms = client_cw.describe_alarms()['MetricAlarms']
                                     for f in filters_matched:        
                                         metric_name = f["metricTransformations"][0]["metricName"]
@@ -224,7 +229,9 @@ class CheckForMultiTrailMfaLogin(Filter):
                                         self.log.info('No sns alarm action tied to metric alarm')
                                         return resources
                                     else:
-                                        client_sns = boto3.client('sns')
+                                        client_sns = local_session(self.manager.session_factory).client(
+                            'sns', region_name=region)
+                                        #client_sns = boto3.client('sns')
                                         sns_subscriptions = client_sns.list_subscriptions()['Subscriptions']
                                         if not sns_subscriptions:
                                             self.log.info('No sns subscription tied to metric alarm')
