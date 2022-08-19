@@ -5231,6 +5231,7 @@
 <li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#secured-string">Secured String</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="c7n-mailer.html#aws">AWS</a></li>
 <li class="toctree-l4"><a class="reference internal" href="c7n-mailer.html#azure">Azure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="c7n-mailer.html#gcp">GCP</a></li>
 </ul>
 </li>
 </ul>
@@ -5239,6 +5240,10 @@
 <li class="toctree-l2"><a class="reference internal" href="c7n-mailer.html#using-on-azure">Using on Azure</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#deploying-azure-functions">Deploying Azure Functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#configuring-function-identity">Configuring Function Identity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-mailer.html#using-on-gcp">Using on GCP</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#deploying-gcp-functions">Deploying GCP Functions</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="c7n-mailer.html#writing-an-email-template">Writing an email template</a></li>
@@ -5448,6 +5453,8 @@ source account access to the Cloudwatch Destination</p>
 
 <span class="n">accounts</span><span class="p">:</span>
   <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">custodian</span><span class="o">-</span><span class="n">demo</span>
+    <span class="c1"># https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CreateSubscriptionFilter-IAMrole.html</span>
+    <span class="n">subscription</span><span class="o">-</span><span class="n">role</span><span class="p">:</span> <span class="s2">&quot;arn:aws:iam::111111111111:role/&lt;role-name&gt;&quot;</span>
     <span class="n">role</span><span class="p">:</span> <span class="s2">&quot;arn:aws:iam::111111111111:role/CloudCustodianRole&quot;</span>
     <span class="n">groups</span><span class="p">:</span>
       <span class="o">-</span> <span class="s2">&quot;/aws/lambda/*&quot;</span>

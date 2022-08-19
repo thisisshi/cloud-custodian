@@ -5231,6 +5231,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../tools/c7n-mailer.html#secured-string">Secured String</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tools/c7n-mailer.html#aws">AWS</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tools/c7n-mailer.html#azure">Azure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tools/c7n-mailer.html#gcp">GCP</a></li>
 </ul>
 </li>
 </ul>
@@ -5239,6 +5240,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../../tools/c7n-mailer.html#using-on-azure">Using on Azure</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../tools/c7n-mailer.html#deploying-azure-functions">Deploying Azure Functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../tools/c7n-mailer.html#configuring-function-identity">Configuring Function Identity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/c7n-mailer.html#using-on-gcp">Using on GCP</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../tools/c7n-mailer.html#deploying-gcp-functions">Deploying GCP Functions</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../tools/c7n-mailer.html#writing-an-email-template">Writing an email template</a></li>
@@ -5409,6 +5414,7 @@
 <li><p><a class="reference internal" href="#aws-ec2-filters-ssm"><span class="std std-ref">ssm</span></a></p></li>
 <li><p><a class="reference internal" href="#aws-ec2-filters-ssm-compliance"><span class="std std-ref">ssm-compliance</span></a></p></li>
 <li><p><a class="reference internal" href="#aws-ec2-filters-state-age"><span class="std std-ref">state-age</span></a></p></li>
+<li><p><a class="reference internal" href="#aws-ec2-filters-stop-protected"><span class="std std-ref">stop-protected</span></a></p></li>
 <li><p><a class="reference internal" href="aws-common-filters.html#aws-common-filters-subnet"><span class="std std-ref">subnet</span></a></p></li>
 <li><p><a class="reference internal" href="aws-common-filters.html#aws-common-filters-tag-count"><span class="std std-ref">tag-count</span></a></p></li>
 <li><p><a class="reference internal" href="#aws-ec2-filters-termination-protected"><span class="std std-ref">termination-protected</span></a></p></li>
@@ -6401,6 +6407,45 @@ and do not have Cloudwatch recover alarms.</p>
 </pre></div>
 </div>
 </div>
+</section>
+<section id="stop-protected">
+<span id="aws-ec2-filters-stop-protected"></span><h3>stop-protected<a class="headerlink" href="#stop-protected" title="Permalink to this headline">¶</a></h3>
+<p>EC2 instances with <code class="docutils literal notranslate"><span class="pre">disableApiStop</span></code> attribute set</p>
+<p>Filters EC2 instances with <code class="docutils literal notranslate"><span class="pre">disableApiStop</span></code> attribute set to true.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop-protection-enabled</span><span class="w"></span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2</span><span class="w"></span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop-protected</span><span class="w"></span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop-protection-NOT-enabled</span><span class="w"></span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2</span><span class="w"></span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">not</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop-protected</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="toggle docutils container">
+<div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop-protected</span><span class="w"></span>
+<span class="nt">required</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<p>Permissions - ec2:DescribeInstanceAttribute</p>
 </section>
 <section id="termination-protected">
 <span id="aws-ec2-filters-termination-protected"></span><h3>termination-protected<a class="headerlink" href="#termination-protected" title="Permalink to this headline">¶</a></h3>
