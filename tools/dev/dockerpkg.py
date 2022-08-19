@@ -33,16 +33,18 @@ FROM {base_build_image} as build-env
 # pre-requisite distro deps, and build env setup
 RUN adduser --disabled-login --gecos "" custodian
 RUN apt-get --yes update
-RUN apt-get --yes install build-essential curl python3-venv python3-dev --no-install-recommends
+RUN apt-get --yes install build-essential curl python3-venv python3-dev \
+    --no-install-recommends
 RUN python3 -m venv /usr/local
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py \
- | python3 - -y --version 1.1.14
+    | python3 - -y --version 1.1.14
 
 WORKDIR /src
 
 # Add core & aws packages
 ADD pyproject.toml poetry.lock README.md /src/
 ADD c7n /src/c7n/
+RUN . /usr/local/bin/activate && pip install -U pip
 RUN . /usr/local/bin/activate && $HOME/.poetry/bin/poetry install --no-dev
 RUN . /usr/local/bin/activate && pip install -q wheel && \
       pip install -U pip
@@ -77,7 +79,9 @@ COPY --from=build-env /src /src
 COPY --from=build-env /usr/local /usr/local
 COPY --from=build-env /output /output
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get --yes update \\
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get --yes update \\
         && apt-get --yes install python3 python3-venv --no-install-recommends \\
         && rm -Rf /var/cache/apt \\
         && rm -Rf /var/lib/apt/lists/* \\
@@ -128,9 +132,26 @@ RUN . /usr/local/bin/activate && cd tools/c7n_mailer && $HOME/.poetry/bin/poetry
 """
 
 BUILD_POLICYSTREAM = """\
+# Update git since the base version does not allow for --initial-branch
+RUN apt-get install wget autoconf libz-dev gettext -y && \\
+    wget https://www.kernel.org/pub/software/scm/git/git-2.37.2.tar.gz && \\
+    tar -zxf git-2.37.2.tar.gz && \\
+    cd git-2.37.2 && \\
+    make configure && \\
+    ./configure --prefix=/usr && \\
+    make all && \\
+    make install && \\
+    git --version
+
+
 # Install c7n-policystream
 ADD tools/c7n_policystream /src/tools/c7n_policystream
 RUN . /usr/local/bin/activate && cd tools/c7n_policystream && $HOME/.poetry/bin/poetry install
+
+# Verify the install
+#  - policystream is not in ci due to libgit2 compilation needed
+#  - as a sanity check to distributing known good assets / we test here
+RUN . /usr/local/bin/activate && pytest -p "no:terraform" tools/c7n_policystream
 """
 
 
@@ -521,6 +542,28 @@ def generate():
     for df_path, image in ImageMap.items():
         p = Path(df_path)
         p.write_text(image.render())
+
+
+@cli.command()
+@click.option("-t", "--tag", help="Static tag for the image")
+def tags(tag):
+    """Get tags"""
+    tags = get_env_tags(tag)
+    flavor = os.environ.get("FLAVOR")
+    result = []
+    if flavor:
+        for t in tags:
+            result.append(f"{flavor}-{t}")
+    else:
+        result = tags
+
+    # we shouldn't ever have more than 5 tags
+    for i in range(0, 5):
+        try:
+            val = result[i]
+        except IndexError:
+            val = ""
+        click.echo(f"::set-output name=tag{i}::{val}")
 
 
 if __name__ == "__main__":

@@ -142,6 +142,8 @@ def test_image_metadata(image_name):
         "org.opencontainers.image.title",
         "org.opencontainers.image.source",
         "org.opencontainers.image.revision",
+        "org.opencontainers.image.url",
+        "org.opencontainers.image.version",
     }
 
 
