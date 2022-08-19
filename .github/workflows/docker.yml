@@ -29,7 +29,7 @@ env:
 on:
   push:
     branches:
-      - master
+      - cosign-docker
     tags:
       # todo: update for 1.0
       - 0.*
@@ -38,6 +38,11 @@ jobs:
 
   Publish:
     strategy:
+    permissions:
+      id-token: write
+
+    strategy:
+      fail-fast: false
       matrix:
         image:
           - c7n
