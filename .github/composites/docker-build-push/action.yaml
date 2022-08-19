@@ -1,7 +1,5 @@
 name: 'Build and Publish Docker Image'
 description: 'Build and Publish Docker Image'
-env:
-  COSIGN_EXPERIMENTAL: 1
 
 inputs:
   CUSTODIAN_IMAGE_VAR:
@@ -135,16 +133,21 @@ runs:
         labels: ${{ steps.meta.outputs.labels }}
         file: ${{ inputs.dockerfile }}
 
-    - uses: sigstore/cosign-installer@main
+    - name: Install cosign
+      uses: sigstore/cosign-installer@main
+      with:
+        cosign-release: 'v1.3.1'
 
     - name: Sign
       shell: bash
       env:
+        COSIGN_EXPERIMENTAL: "true"
         TAGS: ${{ steps.meta.outputs.tags }}
       run: cosign sign ${TAGS}
 
     - name: Verify
       shell: bash
       env:
+        COSIGN_EXPERIMENTAL: "true"
         TAGS: ${{ steps.meta.outputs.tags }}
       run: cosign verify ${TAGS}
