@@ -1,6 +1,6 @@
 name: "Docker Build"
 env:
-  repository: "sonnyshi"
+  repository: "cloudcustodian"
   job_metadata: '
     {
       "c7n": {
@@ -29,7 +29,7 @@ env:
 on:
   push:
     branches:
-      - docker-buildx
+      - master
     tags:
       # todo: update for 1.0
       - 0.*
@@ -38,7 +38,6 @@ jobs:
 
   Publish:
     strategy:
-      fail-fast: false
       matrix:
         image:
           - c7n
@@ -55,7 +54,7 @@ jobs:
       - name: ${{ matrix.image }} ${{ matrix.flavor }} build and push
         uses: ./.github/composites/docker-build-push
         env:
-          HUB_USER: ${{ secrets.DOCKER_CI_HUB_USER }}
+          HUB_USER: c7nbuild
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
           FLAVOR: ${{ matrix.flavor }}
         with:
