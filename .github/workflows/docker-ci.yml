@@ -1,4 +1,4 @@
-name: "Docker Build"
+name: "Docker Build CI"
 env:
   repository: "cloudcustodian"
   job_metadata: '
@@ -7,46 +7,21 @@ env:
         "name": "cli",
         "description": "Cloud Management Rules Engine",
         "custodian_image_var": "CUSTODIAN_CLI_IMAGE"
-      },
-      "c7n-org": {
-        "name": "org",
-        "description": "Cloud Custodian Organization Runner",
-        "custodian_image_var": "CUSTODIAN_ORG_IMAGE"
-      },
-      "mailer": {
-        "name": "mailer",
-        "description": "Cloud Custodian Notification Delivery",
-        "custodian_image_var": "CUSTODIAN_MAILER_IMAGE"
-      },
-      "policystream": {
-        "name": "policystream",
-        "description": "Custodian policy changes streamed from Git",
-        "custodian_image_var": "CUSTODIAN_POLICYSTREAM_IMAGE"
       }
   }'
 
 
-on:
-  push:
-    branches:
-      - master
-    tags:
-      # todo: update for 1.0
-      - 0.*
+on: push
 
 jobs:
 
-  Publish:
+  Test:
     strategy:
       matrix:
         image:
           - c7n
-          - c7n-org
-          - mailer
-          - policystream
         flavor:
           - ""
-          - "distroless"
 
     runs-on: ubuntu-latest
     steps:
@@ -64,4 +39,4 @@ jobs:
           name: "${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}"
           description: "${{ fromJSON(env.job_metadata)[matrix.image]['description'] }}"
           CUSTODIAN_IMAGE_VAR: "${{ fromJSON(env.job_metadata)[matrix.image]['custodian_image_var'] }}"
-          push: true
+          push: false

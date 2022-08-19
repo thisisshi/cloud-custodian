@@ -19,6 +19,10 @@ inputs:
   description:
     description: 'image description'
     required: true
+  push:
+    description: 'true/false'
+    required: true
+    default: false
 runs:
   using: "composite"
   steps:
@@ -116,6 +120,7 @@ runs:
 
     # actually push the multi arch image
     - name: Push
+      if: ${{ inputs.push == 'true' }}
       uses: docker/build-push-action@v2
       with:
         context: .
