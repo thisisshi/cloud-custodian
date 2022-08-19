@@ -81,7 +81,7 @@ runs:
           ${{ steps.calctags.outputs.tag2 }}
           ${{ steps.calctags.outputs.tag3 }}
           ${{ steps.calctags.outputs.tag4 }}
-        sep-tags: ','
+        sep-tags: ' '
 
     # build a single platform image first in order to actually load the image from buildx
     # manifests are not supported yet
@@ -143,11 +143,11 @@ runs:
       env:
         COSIGN_EXPERIMENTAL: "true"
         TAGS: ${{ steps.meta.outputs.tags }}
-      run: cosign sign ${TAGS}
-
-    - name: Verify
-      shell: bash
-      env:
-        COSIGN_EXPERIMENTAL: "true"
-        TAGS: ${{ steps.meta.outputs.tags }}
-      run: cosign verify ${TAGS}
+      run: |
+        tags = ($TAGS)
+        for i in "${tags[@]}"
+        do
+          docker pull $i
+          cosign sign $i
+          cosign verify $i
+        done
