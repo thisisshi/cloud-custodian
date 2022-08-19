@@ -134,11 +134,13 @@ runs:
         file: ${{ inputs.dockerfile }}
 
     - name: Install cosign
+      # if: ${{ inputs.push == true }}
       uses: sigstore/cosign-installer@main
       with:
         cosign-release: 'v1.11.0'
 
     - name: Sign
+      # if: ${{ inputs.push == true }}
       shell: bash
       env:
         COSIGN_EXPERIMENTAL: "true"
