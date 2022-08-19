@@ -136,7 +136,7 @@ runs:
     - name: Install cosign
       uses: sigstore/cosign-installer@main
       with:
-        cosign-release: 'v1.3.1'
+        cosign-release: 'v1.11.0'
 
     - name: Sign
       shell: bash
