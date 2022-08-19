@@ -40,19 +40,17 @@ jobs:
     strategy:
     permissions:
       id-token: write
-
     strategy:
       fail-fast: false
-      matrix:
-        image:
-          - c7n
-          - c7n-org
-          - mailer
-          - policystream
-        flavor:
-          - ""
-          - "distroless"
-
+    matrix:
+      image:
+        - c7n
+        - c7n-org
+        - mailer
+        - policystream
+      flavor:
+        - ""
+        - "distroless"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
