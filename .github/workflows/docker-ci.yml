@@ -5,7 +5,6 @@ env:
     {
       "c7n": {
         "name": "cli",
-        "description": "Cloud Management Rules Engine",
         "custodian_image_var": "CUSTODIAN_CLI_IMAGE"
       }
   }'
@@ -37,6 +36,5 @@ jobs:
           repository: ${{ env.repository }}
           image: ${{ matrix.image }}
           name: "${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}"
-          description: "${{ fromJSON(env.job_metadata)[matrix.image]['description'] }}"
-          CUSTODIAN_IMAGE_VAR: "${{ fromJSON(env.job_metadata)[matrix.image]['custodian_image_var'] }}"
+          custodian_image_var: "${{ fromJSON(env.job_metadata)[matrix.image]['custodian_image_var'] }}"
           push: false

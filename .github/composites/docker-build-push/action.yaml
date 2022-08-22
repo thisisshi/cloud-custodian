@@ -1,7 +1,7 @@
 name: 'Build and Publish Docker Image'
 description: 'Build and Publish Docker Image'
 inputs:
-  CUSTODIAN_IMAGE_VAR:
+  custodian_image_var:
     description: 'env var name for custodian image'
     required: true
   dockerfile:
@@ -113,7 +113,7 @@ runs:
         . bin/activate && poetry install
         . bin/activate && pip install docker
         . bin/activate && TEST_DOCKER=yes \
-                          ${{ inputs.CUSTODIAN_IMAGE_VAR }}="$(echo $tags | cut -d ',' -f 1)" \
+                          ${{ inputs.custodian_image_var }}="$(echo $tags | cut -d ',' -f 1)" \
                           pytest -p no:terraform -v tests/test_docker.py
 
     # actually push the multi arch image

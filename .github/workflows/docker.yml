@@ -54,5 +54,5 @@ jobs:
           repository: ${{ env.repository }}
           image: ${{ matrix.image }}
           name: "${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}"
-          CUSTODIAN_IMAGE_VAR: "${{ fromJSON(env.job_metadata)[matrix.image]['custodian_image_var'] }}"
+          custodian_image_var: "${{ fromJSON(env.job_metadata)[matrix.image]['custodian_image_var'] }}"
           push: true
