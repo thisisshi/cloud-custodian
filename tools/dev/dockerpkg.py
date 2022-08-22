@@ -27,7 +27,7 @@ log = logging.getLogger("dockerpkg")
 
 BUILD_STAGE = """\
 # Dockerfiles are generated from tools/dev/dockerpkg.py
-
+ARG POETRY_VERSION="1.1.14"
 FROM {base_build_image} as build-env
 
 # pre-requisite distro deps, and build env setup
@@ -37,7 +37,7 @@ RUN apt-get --yes install build-essential curl python3-venv python3-dev \
     --no-install-recommends
 RUN python3 -m venv /usr/local
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py \
-    | python3 - -y --version 1.1.14
+    | python3 - -y --version {poetry_version}
 
 WORKDIR /src
 
@@ -67,6 +67,8 @@ RUN . /usr/local/bin/activate && \\
     $HOME/.poetry/bin/poetry install && cd ../../; done
 
 RUN mkdir /output
+
+LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 """
 
 TARGET_UBUNTU_STAGE = """\
@@ -118,17 +120,28 @@ ENTRYPOINT ["{entrypoint}"]
 CMD ["--help"]
 """
 
+BUILD_CLI = """\
+LABEL "org.opencontainers.image.title"="cli"
+LABEL "org.opencontainers.image.description"="Cloud Management Rules Engine"
+"""
+
 
 BUILD_ORG = """\
 # Install c7n-org
 ADD tools/c7n_org /src/tools/c7n_org
 RUN . /usr/local/bin/activate && cd tools/c7n_org && $HOME/.poetry/bin/poetry install
+
+LABEL "org.opencontainers.image.title"="org"
+LABEL "org.opencontainers.image.description"="Cloud Custodian Management Rules Engine"
 """
 
 BUILD_MAILER = """\
 # Install c7n-mailer
 ADD tools/c7n_mailer /src/tools/c7n_mailer
 RUN . /usr/local/bin/activate && cd tools/c7n_mailer && $HOME/.poetry/bin/poetry install
+
+LABEL "org.opencontainers.image.title"="mailer"
+LABEL "org.opencontainers.image.description"="Cloud Custodian Notification Delivery"
 """
 
 BUILD_POLICYSTREAM = """\
@@ -148,16 +161,18 @@ RUN apt-get install wget autoconf libz-dev gettext -y && \\
 ADD tools/c7n_policystream /src/tools/c7n_policystream
 RUN . /usr/local/bin/activate && cd tools/c7n_policystream && $HOME/.poetry/bin/poetry install
 
-# Verify the install
-#  - policystream is not in ci due to libgit2 compilation needed
-#  - as a sanity check to distributing known good assets / we test here
-RUN . /usr/local/bin/activate && pytest -p "no:terraform" tools/c7n_policystream
+LABEL "org.opencontainers.image.title"="policystream"
+LABEL "org.opencontainers.image.description"="Custodian policy changes streamed from Git"
 """
 
 
 class Image:
 
-    defaults = dict(base_build_image="ubuntu:22.04", base_target_image="ubuntu:22.04")
+    defaults = dict(
+        base_build_image="ubuntu:22.04",
+        base_target_image="ubuntu:22.04",
+        poetry_version="${POETRY_VERSION}"
+    )
 
     def __init__(self, metadata, build, target):
         self.metadata = metadata

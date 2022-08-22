@@ -5,22 +5,18 @@ env:
     {
       "c7n": {
         "name": "cli",
-        "description": "Cloud Management Rules Engine",
         "custodian_image_var": "CUSTODIAN_CLI_IMAGE"
       },
       "c7n-org": {
         "name": "org",
-        "description": "Cloud Custodian Organization Runner",
         "custodian_image_var": "CUSTODIAN_ORG_IMAGE"
       },
       "mailer": {
         "name": "mailer",
-        "description": "Cloud Custodian Notification Delivery",
         "custodian_image_var": "CUSTODIAN_MAILER_IMAGE"
       },
       "policystream": {
         "name": "policystream",
-        "description": "Custodian policy changes streamed from Git",
         "custodian_image_var": "CUSTODIAN_POLICYSTREAM_IMAGE"
       }
   }'
@@ -44,24 +40,19 @@ jobs:
           - c7n-org
           - mailer
           - policystream
-        flavor:
-          - ""
-          - "distroless"
 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: ${{ matrix.image }} ${{ matrix.flavor }} build and push
+      - name: ${{ matrix.image }} build and push
         uses: ./.github/composites/docker-build-push
         env:
           HUB_USER: c7nbuild
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
-          FLAVOR: ${{ matrix.flavor }}
         with:
-          dockerfile: "docker/${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}${{ matrix.flavor && format('-{0}', matrix.flavor) || matrix.flavor }}"
+          dockerfile: "docker/${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}"
           repository: ${{ env.repository }}
           image: ${{ matrix.image }}
           name: "${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}"
-          description: "${{ fromJSON(env.job_metadata)[matrix.image]['description'] }}"
           CUSTODIAN_IMAGE_VAR: "${{ fromJSON(env.job_metadata)[matrix.image]['custodian_image_var'] }}"
           push: true

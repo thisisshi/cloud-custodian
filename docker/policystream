@@ -1,5 +1,5 @@
 # Dockerfiles are generated from tools/dev/dockerpkg.py
-
+ARG POETRY_VERSION="1.1.14"
 FROM ubuntu:22.04 as build-env
 
 # pre-requisite distro deps, and build env setup
@@ -7,7 +7,7 @@ RUN adduser --disabled-login --gecos "" custodian
 RUN apt-get --yes update
 RUN apt-get --yes install build-essential curl python3-venv python3-dev     --no-install-recommends
 RUN python3 -m venv /usr/local
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py     | python3 - -y --version 1.1.14
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py     | python3 - -y --version ${POETRY_VERSION}
 
 WORKDIR /src
 
@@ -37,6 +37,8 @@ RUN . /usr/local/bin/activate && \
 
 RUN mkdir /output
 
+LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
+
 # Update git since the base version does not allow for --initial-branch
 RUN apt-get install wget autoconf libz-dev gettext -y && \
     wget https://www.kernel.org/pub/software/scm/git/git-2.37.2.tar.gz && \
@@ -53,10 +55,8 @@ RUN apt-get install wget autoconf libz-dev gettext -y && \
 ADD tools/c7n_policystream /src/tools/c7n_policystream
 RUN . /usr/local/bin/activate && cd tools/c7n_policystream && $HOME/.poetry/bin/poetry install
 
-# Verify the install
-#  - policystream is not in ci due to libgit2 compilation needed
-#  - as a sanity check to distributing known good assets / we test here
-RUN . /usr/local/bin/activate && pytest -p "no:terraform" tools/c7n_policystream
+LABEL "org.opencontainers.image.title"="policystream"
+LABEL "org.opencontainers.image.description"="Custodian policy changes streamed from Git"
 
 FROM ubuntu:22.04
 
