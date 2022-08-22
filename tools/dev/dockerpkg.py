@@ -153,18 +153,6 @@ LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 """
 
 BUILD_POLICYSTREAM = """\
-# Update git since the base version does not allow for --initial-branch
-RUN apt-get install wget autoconf libz-dev gettext -y && \\
-    wget https://www.kernel.org/pub/software/scm/git/git-2.37.2.tar.gz && \\
-    tar -zxf git-2.37.2.tar.gz && \\
-    cd git-2.37.2 && \\
-    make configure && \\
-    ./configure --prefix=/usr && \\
-    make all && \\
-    make install && \\
-    git --version
-
-
 # Install c7n-policystream
 ADD tools/c7n_policystream /src/tools/c7n_policystream
 RUN . /usr/local/bin/activate && cd tools/c7n_policystream && $HOME/.poetry/bin/poetry install
