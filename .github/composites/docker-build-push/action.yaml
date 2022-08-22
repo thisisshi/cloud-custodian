@@ -119,7 +119,7 @@ runs:
     # actually push the multi arch image
     - name: Push
       if: ${{ inputs.push == true }}
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v3.1.1
       with:
         context: .
         push: true
