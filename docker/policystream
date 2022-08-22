@@ -39,8 +39,6 @@ RUN . /usr/local/bin/activate && \
 
 RUN mkdir /output
 
-LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
-
 # Update git since the base version does not allow for --initial-branch
 RUN apt-get install wget autoconf libz-dev gettext -y && \
     wget https://www.kernel.org/pub/software/scm/git/git-2.37.2.tar.gz && \
@@ -59,6 +57,7 @@ RUN . /usr/local/bin/activate && cd tools/c7n_policystream && $HOME/.poetry/bin/
 
 LABEL "org.opencontainers.image.title"="policystream"
 LABEL "org.opencontainers.image.description"="Custodian policy changes streamed from Git"
+LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 
 FROM ubuntu:22.04
 

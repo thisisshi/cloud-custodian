@@ -39,14 +39,13 @@ RUN . /usr/local/bin/activate && \
 
 RUN mkdir /output
 
-LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
-
 # Install c7n-org
 ADD tools/c7n_org /src/tools/c7n_org
 RUN . /usr/local/bin/activate && cd tools/c7n_org && $HOME/.poetry/bin/poetry install
 
 LABEL "org.opencontainers.image.title"="org"
 LABEL "org.opencontainers.image.description"="Cloud Custodian Management Rules Engine"
+LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 
 FROM gcr.io/distroless/python3-debian10
 

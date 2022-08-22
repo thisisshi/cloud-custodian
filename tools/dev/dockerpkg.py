@@ -69,8 +69,6 @@ RUN . /usr/local/bin/activate && \\
     $HOME/.poetry/bin/poetry install && cd ../../; done
 
 RUN mkdir /output
-
-LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 """
 
 TARGET_UBUNTU_STAGE = """\
@@ -125,6 +123,7 @@ CMD ["--help"]
 BUILD_CLI = """\
 LABEL "org.opencontainers.image.title"="cli"
 LABEL "org.opencontainers.image.description"="Cloud Management Rules Engine"
+LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 """
 
 
@@ -135,6 +134,7 @@ RUN . /usr/local/bin/activate && cd tools/c7n_org && $HOME/.poetry/bin/poetry in
 
 LABEL "org.opencontainers.image.title"="org"
 LABEL "org.opencontainers.image.description"="Cloud Custodian Management Rules Engine"
+LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 """
 
 BUILD_MAILER = """\
@@ -144,6 +144,7 @@ RUN . /usr/local/bin/activate && cd tools/c7n_mailer && $HOME/.poetry/bin/poetry
 
 LABEL "org.opencontainers.image.title"="mailer"
 LABEL "org.opencontainers.image.description"="Cloud Custodian Notification Delivery"
+LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 """
 
 BUILD_POLICYSTREAM = """\
@@ -165,6 +166,7 @@ RUN . /usr/local/bin/activate && cd tools/c7n_policystream && $HOME/.poetry/bin/
 
 LABEL "org.opencontainers.image.title"="policystream"
 LABEL "org.opencontainers.image.description"="Custodian policy changes streamed from Git"
+LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 """
 
 
@@ -211,7 +213,7 @@ ImageMap = {
             description="Cloud Management Rules Engine",
             entrypoint="/usr/local/bin/custodian",
         ),
-        build=[BUILD_STAGE],
+        build=[BUILD_STAGE, BUILD_CLI],
         target=[TARGET_UBUNTU_STAGE],
     ),
     "docker/org": Image(
