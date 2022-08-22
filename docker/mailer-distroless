@@ -43,9 +43,6 @@ RUN mkdir /output
 ADD tools/c7n_mailer /src/tools/c7n_mailer
 RUN . /usr/local/bin/activate && cd tools/c7n_mailer && $HOME/.poetry/bin/poetry install
 
-LABEL "org.opencontainers.image.title"="mailer"
-LABEL "org.opencontainers.image.description"="Cloud Custodian Notification Delivery"
-LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 
 FROM gcr.io/distroless/python3-debian10
 

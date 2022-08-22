@@ -39,10 +39,6 @@ RUN . /usr/local/bin/activate && \
 
 RUN mkdir /output
 
-LABEL "org.opencontainers.image.title"="cli"
-LABEL "org.opencontainers.image.description"="Cloud Management Rules Engine"
-LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
-
 FROM ubuntu:22.04
 
 LABEL name="cli" \
@@ -67,3 +63,7 @@ ENV LC_ALL="C.UTF-8" LANG="C.UTF-8"
 VOLUME ["/home/custodian"]
 ENTRYPOINT ["/usr/local/bin/custodian"]
 CMD ["--help"]
+
+LABEL "org.opencontainers.image.title"="cli"
+LABEL "org.opencontainers.image.description"="Cloud Management Rules Engine"
+LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
