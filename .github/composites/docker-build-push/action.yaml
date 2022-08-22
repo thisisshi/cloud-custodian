@@ -64,8 +64,6 @@ runs:
       uses: docker/metadata-action@v3
       with:
         # list of Docker images to use as base name for tags
-        build-args: |
-          POETRY_VERSION = ${{ inputs.poetry_version }}
         images: |
           ${{ inputs.repository }}/${{ inputs.image }}
         tags: |
@@ -86,6 +84,8 @@ runs:
       uses: docker/build-push-action@v3.1.1
       with:
         context: .
+        build-args: |
+          POETRY_VERSION=${{ inputs.poetry_version }}
         push: false
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
@@ -122,6 +122,8 @@ runs:
       uses: docker/build-push-action@v3.1.1
       with:
         context: .
+        build-args: |
+          POETRY_VERSION=${{ inputs.poetry_version }}
         push: true
         platforms: linux/amd64,linux/arm64
         tags: ${{ steps.meta.outputs.tags }}
