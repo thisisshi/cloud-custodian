@@ -69,8 +69,6 @@ RUN . /usr/local/bin/activate && \\
     $HOME/.poetry/bin/poetry install && cd ../../; done
 
 RUN mkdir /output
-
-LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 """
 
 TARGET_UBUNTU_STAGE = """\
@@ -122,9 +120,10 @@ ENTRYPOINT ["{entrypoint}"]
 CMD ["--help"]
 """
 
-BUILD_CLI = """\
+TARGET_CLI = """\
 LABEL "org.opencontainers.image.title"="cli"
 LABEL "org.opencontainers.image.description"="Cloud Management Rules Engine"
+LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 """
 
 
@@ -132,9 +131,12 @@ BUILD_ORG = """\
 # Install c7n-org
 ADD tools/c7n_org /src/tools/c7n_org
 RUN . /usr/local/bin/activate && cd tools/c7n_org && $HOME/.poetry/bin/poetry install
+"""
 
+TARGET_ORG = """\
 LABEL "org.opencontainers.image.title"="org"
 LABEL "org.opencontainers.image.description"="Cloud Custodian Management Rules Engine"
+LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 """
 
 BUILD_MAILER = """\
@@ -142,8 +144,12 @@ BUILD_MAILER = """\
 ADD tools/c7n_mailer /src/tools/c7n_mailer
 RUN . /usr/local/bin/activate && cd tools/c7n_mailer && $HOME/.poetry/bin/poetry install
 
+"""
+
+TARGET_MAILER = """\
 LABEL "org.opencontainers.image.title"="mailer"
 LABEL "org.opencontainers.image.description"="Cloud Custodian Notification Delivery"
+LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 """
 
 BUILD_POLICYSTREAM = """\
@@ -162,9 +168,12 @@ RUN apt-get install wget autoconf libz-dev gettext -y && \\
 # Install c7n-policystream
 ADD tools/c7n_policystream /src/tools/c7n_policystream
 RUN . /usr/local/bin/activate && cd tools/c7n_policystream && $HOME/.poetry/bin/poetry install
+"""
 
+TARGET_POLICYSTREAM = """\
 LABEL "org.opencontainers.image.title"="policystream"
 LABEL "org.opencontainers.image.description"="Custodian policy changes streamed from Git"
+LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 """
 
 
@@ -212,7 +221,7 @@ ImageMap = {
             entrypoint="/usr/local/bin/custodian",
         ),
         build=[BUILD_STAGE],
-        target=[TARGET_UBUNTU_STAGE],
+        target=[TARGET_UBUNTU_STAGE, TARGET_CLI],
     ),
     "docker/org": Image(
         dict(
@@ -222,7 +231,7 @@ ImageMap = {
             entrypoint="/usr/local/bin/c7n-org",
         ),
         build=[BUILD_STAGE, BUILD_ORG],
-        target=[TARGET_UBUNTU_STAGE],
+        target=[TARGET_UBUNTU_STAGE, TARGET_ORG],
     ),
     "docker/mailer": Image(
         dict(
@@ -231,7 +240,7 @@ ImageMap = {
             entrypoint="/usr/local/bin/c7n-mailer",
         ),
         build=[BUILD_STAGE, BUILD_MAILER],
-        target=[TARGET_UBUNTU_STAGE],
+        target=[TARGET_UBUNTU_STAGE, TARGET_MAILER],
     ),
     "docker/policystream": Image(
         dict(
@@ -240,7 +249,7 @@ ImageMap = {
             entrypoint="/usr/local/bin/c7n-policystream",
         ),
         build=[BUILD_STAGE, BUILD_POLICYSTREAM],
-        target=[TARGET_UBUNTU_STAGE],
+        target=[TARGET_UBUNTU_STAGE, TARGET_POLICYSTREAM],
     ),
 }
 

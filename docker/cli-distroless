@@ -39,8 +39,6 @@ RUN . /usr/local/bin/activate && \
 
 RUN mkdir /output
 
-LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
-
 FROM gcr.io/distroless/python3-debian10
 
 LABEL name="cli" \

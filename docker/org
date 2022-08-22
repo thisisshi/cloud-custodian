@@ -39,14 +39,9 @@ RUN . /usr/local/bin/activate && \
 
 RUN mkdir /output
 
-LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
-
 # Install c7n-org
 ADD tools/c7n_org /src/tools/c7n_org
 RUN . /usr/local/bin/activate && cd tools/c7n_org && $HOME/.poetry/bin/poetry install
-
-LABEL "org.opencontainers.image.title"="org"
-LABEL "org.opencontainers.image.description"="Cloud Custodian Management Rules Engine"
 
 FROM ubuntu:22.04
 
@@ -72,3 +67,7 @@ ENV LC_ALL="C.UTF-8" LANG="C.UTF-8"
 VOLUME ["/home/custodian"]
 ENTRYPOINT ["/usr/local/bin/c7n-org"]
 CMD ["--help"]
+
+LABEL "org.opencontainers.image.title"="org"
+LABEL "org.opencontainers.image.description"="Cloud Custodian Management Rules Engine"
+LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
