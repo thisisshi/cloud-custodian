@@ -27,8 +27,10 @@ log = logging.getLogger("dockerpkg")
 
 BUILD_STAGE = """\
 # Dockerfiles are generated from tools/dev/dockerpkg.py
-ARG POETRY_VERSION="1.1.14"
+
 FROM {base_build_image} as build-env
+
+ARG POETRY_VERSION="1.1.14"
 
 # pre-requisite distro deps, and build env setup
 RUN adduser --disabled-login --gecos "" custodian
