@@ -17,6 +17,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.7"
 kubernetes = "^10.0.1"
+click = "^8.1.3"
 
 [tool.poetry.dev-dependencies]
 c7n = {path = "../..", develop = true}
@@ -26,3 +27,6 @@ vcrpy = "^4.0.2"
 [build-system]
 requires = ["poetry>=0.12", "setuptools"]
 build-backend = "poetry.masonry.api"
+
+[tool.poetry.scripts]
+"c7n-adm" = "c7n_kube.cli:cli"
