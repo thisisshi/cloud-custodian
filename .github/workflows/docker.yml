@@ -1,6 +1,6 @@
 name: "Docker Build"
 env:
-  repository: "sonnyshi"
+  repository: "cloudcustodian"
   job_metadata: '
     {
       "c7n": {
@@ -47,7 +47,7 @@ jobs:
       - name: ${{ matrix.image }} build and push
         uses: ./.github/composites/docker-build-push
         env:
-          HUB_USER: sonnyshi
+          HUB_USER: c7nbuild
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
           dockerfile: "docker/${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}"
