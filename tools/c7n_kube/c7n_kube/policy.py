@@ -96,7 +96,7 @@ class ValidatingControllerMode(K8sEventMode):
             return True
 
         resource = request['resource']['resource']
-        subresource = request['subResource']
+        subresource = request.get('subResource')
 
         result = []
 
