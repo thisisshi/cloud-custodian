@@ -16,7 +16,7 @@ logging.basicConfig()
 log.setLevel(logging.INFO)
 
 
-HOST = "127.0.0.1"
+HOST = "0.0.0.0"
 
 cert_location = os.environ.get("CERT_LOCATION", "cert.pem")
 key_location = os.environ.get("KEY_LOCATION", "key.pem")
