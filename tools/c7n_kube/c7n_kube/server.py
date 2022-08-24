@@ -3,10 +3,6 @@ import os
 import http.server
 
 from c7n.config import Config
-from c7n.handler import init_config
-from c7n.policy import PolicyCollection
-from c7n.resources import load_resources
-from c7n.structure import StructureParser
 from c7n.loader import DirectoryLoader
 
 import logging
@@ -17,31 +13,6 @@ log.setLevel(logging.INFO)
 
 
 HOST = "0.0.0.0"
-
-cert_location = os.environ.get("CERT_LOCATION", "cert.pem")
-key_location = os.environ.get("KEY_LOCATION", "key.pem")
-
-cert_location = "/etc/certs/cert.pem"
-key_location = "/etc/certs/key.pem"
-
-
-def dispatch_event(event):
-    global policy_config, policy_data
-    if policy_config is None:
-        with open('config.json') as f:
-            policy_data = json.load(f)
-        policy_config = init_config(policy_data)
-        load_resources(StructureParser().get_resource_types(policy_data))
-
-    if not policy_data or not policy_data.get('policies'):
-        return False
-
-    policies = PolicyCollection.from_data(policy_data, policy_config)
-    for p in policies:
-        p.validate()
-        p.push(event)
-
-    return True
 
 
 class AdmissionControllerServer(http.server.HTTPServer):
