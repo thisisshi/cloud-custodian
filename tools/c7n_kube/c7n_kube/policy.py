@@ -16,6 +16,8 @@ class ValidatingControllerMode(K8sEventMode):
     """
     Validating Admission Controller Mode
 
+    Actions are not compatible with Validating Admission Controller Mode
+
     Define matches, which are AND'd together across categories but are
     OR'd together within the same category, e.g.
 
@@ -28,6 +30,27 @@ class ValidatingControllerMode(K8sEventMode):
 
     will match any event where the resources is pods and the operation is
     either CREATE or UPDATE
+
+    Include a description to provide a message on failure:
+
+    .. example::
+
+      policies:
+        - name: 'oui'
+          resource: 'k8s.deployment'
+          description: 'All deployments must only have label:foo'
+          mode:
+            type: k8s-validating-controller
+            match:
+              on-match: deny
+              scope: Namespaced
+              resources:
+                - deployments
+          filters:
+            - type: value
+              key: keys(metadata.labels)
+              value: ['foo']
+              op: ne
     """
 
     schema = type_schema(
@@ -37,7 +60,7 @@ class ValidatingControllerMode(K8sEventMode):
             'match': {
                 'type': 'object',
                 'properties': {
-                    'action': {'enum': ['allow', 'deny']},
+                    'on-match': {'enum': ['allow', 'deny']},
                     'scope': {'enum': ['Cluster', 'Namespaced']},
                     'group': {'type': 'array', 'items': {'type': 'string'}},
                     # this should probably just default to the c7n resource type?
@@ -119,14 +142,13 @@ class ValidatingControllerMode(K8sEventMode):
         matched = []
         matches = self.policy.data['mode']['match']
         for k, v in matches.items():
-            if k == 'action':
+            if k == 'on-match':
                 continue
             if v:
                 matched.append(self.handlers[k](self, request, v))
         return all(matched)
 
     def run_resource_set(self, event, resources):
-        from c7n.actions import EventAction
         with self.policy.ctx as ctx:
             ctx.metrics.put_metric(
                 'ResourceCount', len(resources), 'Count', Scope="Policy", buffer=False
@@ -138,23 +160,11 @@ class ValidatingControllerMode(K8sEventMode):
                 )
 
             ctx.output.write_file('resources.json', dumps(resources, indent=2))
-
-            for action in self.policy.resource_manager.actions:
-                self.policy.log.info(
-                    "policy:%s invoking action:%s resources:%d",
-                    self.policy.name,
-                    action.name,
-                    len(resources),
-                )
-                if isinstance(action, EventAction):
-                    results = action.process(resources, event)
-                else:
-                    results = action.process(resources)
-                ctx.output.write_file("action-%s" % action.name, dumps(results))
+            # we dont run any actions for validating admission controllers
         return resources
 
     def run(self, event, _):
-        action = self.policy.data['mode']['match'].get('action', 'deny')
+        action = self.policy.data['mode']['match'].get('on-match', 'deny')
 
         if not self.policy.is_runnable(event):
             return self.policy.name, True
@@ -176,4 +186,4 @@ class ValidatingControllerMode(K8sEventMode):
         elif action == 'deny' and not resources:
             allow = True
 
-        return self.policy.name, allow
+        return self.policy, allow

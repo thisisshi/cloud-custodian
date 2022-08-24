@@ -16,7 +16,7 @@ logging.basicConfig()
 log.setLevel(logging.INFO)
 
 
-HOST = "0.0.0.0"
+HOST = "127.0.0.1"
 
 cert_location = os.environ.get("CERT_LOCATION", "cert.pem")
 key_location = os.environ.get("KEY_LOCATION", "key.pem")
@@ -88,10 +88,14 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
         results = []
         failed_policies = []
         for p in self.server.policy_collection.policies:
-            policy_name, allow = p.push(req)
+            policy, allow = p.push(req)
             results.append(allow)
             if allow is False:
-                failed_policies.append(policy_name)
+                failed_policies.append(
+                    {
+                        policy.name: policy.data.get('description')
+                    }
+                )
 
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
