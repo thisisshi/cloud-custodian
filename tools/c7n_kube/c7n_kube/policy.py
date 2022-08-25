@@ -60,7 +60,6 @@ class ValidatingControllerMode(K8sEventMode):
             'match': {
                 'type': 'object',
                 'properties': {
-                    'required': ['operations'],
                     'on-match': {'enum': ['allow', 'deny']},
                     'scope': {'enum': ['Cluster', 'Namespaced']},
                     'group': {'type': 'array', 'items': {'type': 'string'}},
