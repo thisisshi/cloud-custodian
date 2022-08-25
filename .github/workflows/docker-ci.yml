@@ -17,6 +17,6 @@ jobs:
           HUB_USER: c7nbuild
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
-          dockerfile: "docker/c7n"
           name: c7n
           push: false
+          platforms: linux/amd64

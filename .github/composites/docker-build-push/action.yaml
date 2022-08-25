@@ -2,14 +2,14 @@ name: 'Build and Publish Docker Image'
 description: 'Build and Publish Docker Image'
 inputs:
   repository:
-    description: 'docker hub repository'
+    description: 'Docker hub repository'
     required: true
     default: 'cloudcustodian'
   name:
-    description: 'image name'
+    description: 'image name, should match dockerfile name'
     required: true
   push:
-    description: 'push image: true/false'
+    description: 'Push image: true/false'
     required: true
     default: false
   poetry_version:
@@ -102,7 +102,7 @@ runs:
 
     # actually push the multi arch image
     - name: Push
-      if: "${{ inputs.push == 'true' }}"
+      if: ${{ inputs.push == true }}
       uses: docker/build-push-action@v3.1.1
       with:
         context: .

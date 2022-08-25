@@ -25,6 +25,6 @@ jobs:
           HUB_USER: c7nbuild
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
-          name: "${{ matrix.image }}"
+          name: ${{ matrix.image }}
           push: true
-          platforms: "linux/arm64,linux/amd64"
+          platforms: linux/arm64,linux/amd64
