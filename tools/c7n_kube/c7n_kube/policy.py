@@ -184,9 +184,11 @@ class ValidatingControllerMode(K8sEventMode):
         elif action == 'deny' and not resources:
             allow = True
 
-        log.info(
-            f'''{'not' if allow is False else ''}{action}ing admission because
-            on-match:{action}, matched:{len(resources)}'''
-        )
+        if allow:
+            verb = 'allowing'
+        else:
+            verb = 'denying'
+
+        log.info(f'{verb} admission because on-match:{action}, matched:{len(resources)}')
 
         return self.policy, allow
