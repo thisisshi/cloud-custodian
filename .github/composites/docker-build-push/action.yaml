@@ -97,7 +97,7 @@ runs:
                           pytest -p no:terraform -v tests/test_docker.py
     # actually push the multi arch image
     - name: Push
-      # if: ${{ inputs.push == true }}
+      if: ${{ inputs.push == true }}
       uses: docker/build-push-action@v3.1.1
       with:
         context: .
@@ -109,13 +109,12 @@ runs:
         labels: ${{ steps.meta.outputs.labels }}
         file: "docker/${{ inputs.name }}"
     - name: Install cosign
-      # if: ${{ inputs.push == true }}
+      if: ${{ inputs.push == true }}
       uses: sigstore/cosign-installer@main
       with:
         cosign-release: 'v1.11.0'
-
     - name: Sign
-      # if: ${{ inputs.push == true }}
+      if: ${{ inputs.push == true }}
       shell: bash
       env:
         COSIGN_EXPERIMENTAL: "true"
