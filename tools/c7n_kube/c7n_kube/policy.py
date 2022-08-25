@@ -184,6 +184,7 @@ class ValidatingControllerMode(K8sEventMode):
         if not matched:
             log.warning("Event not matched, skipping")
             return self.policy.name, True
+        log.info("Event Matched")
 
         resources = [event['request']['object']]
         # we want to inspect the thing getting deleted, not null

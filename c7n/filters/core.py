@@ -346,11 +346,12 @@ class Or(BooleanGroupFilter):
 
     def process_set(self, resources, event):
         rtype_id = self.get_resource_type_id()
-        resource_map = {r[rtype_id]: r for r in resources}
+        compiled = jmespath.compile(rtype_id)
+        resource_map = {compiled.search(r): r for r in resources}
         results = set()
         for f in self.filters:
             results = results.union([
-                r[rtype_id] for r in f.process(resources, event)])
+                compiled.search(r) for r in f.process(resources, event)])
         return [resource_map[r_id] for r_id in results]
 
 
@@ -390,7 +391,8 @@ class Not(BooleanGroupFilter):
 
     def process_set(self, resources, event):
         rtype_id = self.get_resource_type_id()
-        resource_map = {r[rtype_id]: r for r in resources}
+        compiled = jmespath.compile(rtype_id)
+        resource_map = {compiled.search(r): r for r in resources}
         sweeper = AnnotationSweeper(rtype_id, resources)
 
         for f in self.filters:
@@ -399,7 +401,7 @@ class Not(BooleanGroupFilter):
                 break
 
         before = set(resource_map.keys())
-        after = {r[rtype_id] for r in resources}
+        after = {compiled.search(r) for r in resources}
         results = before - after
         sweeper.sweep([])
 
