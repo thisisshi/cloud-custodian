@@ -139,24 +139,47 @@ class ValidatingControllerMode(K8sEventMode):
     }
 
     def _filter_event(self, request):
+
+        scope = None
+        version = None
+        group = None
+        resources = None
+
         model = self.policy.resource_manager.get_model()
         mode = self.policy.data['mode']['match']
 
-        # set default values based on our models
-        value = {
+        # custom resources have to be treated a bit differently
+        crds = ('custom-namespaced-resource', 'custom-cluster-resource',)
+        if self.policy.resource_manager.type in crds:
+            query = self.policy.data.get('query')
+            version = [query['version'].lower()]
+            group = [query['group'].lower()]
+            resources = [query['plural'].lower()]
+            scope = 'Cluster'
+            if self.policy.resource_manager.type == 'custom-namespaced-resource':
+                scope = 'Namespaced'
+        else:
+            # set default values based on our models
+            resources = [model.name.lower()]
+            group = [model.group.lower()]
+            version = [model.version.lower()]
+            scope = 'Namespaced' if model.namespaced else 'Cluster'
+
+        match_ = {
             'operations': mode.get('operations'),
-            'resources': mode.get('resources') or [model.name.lower()],
-            'group': mode.get('group') or [model.group.lower()],
-            'apiVersions': mode.get('apiVersions') or [model.version.lower()],
-            'scope': mode.get('scope') or (
-                'Namespaced' if model.namespaced else 'Cluster')
+            'resources': mode.get('resources') or resources,
+            'group': mode.get('group') or group,
+            'apiVersions': mode.get('apiVersions') or version,
+            'scope': mode.get('scope') or scope,
         }
-        log.info(f"Matching event against:{value}")
+
+        log.info(f"Matching event against:{match_}")
         matched = []
-        for k, v in value.items():
+        for k, v in match_.items():
             if not v:
                 continue
             matched.append(self.handlers[k](self, request, v))
+
         return all(matched)
 
     def run_resource_set(self, event, resources):
