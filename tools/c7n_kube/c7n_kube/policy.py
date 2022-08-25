@@ -152,10 +152,9 @@ class ValidatingControllerMode(K8sEventMode):
         }
         matched = []
         for k, v in value.items():
-            if k == 'on-match':
+            if not v:
                 continue
-            if v:
-                matched.append(self.handlers[k](self, request, model, v))
+            matched.append(self.handlers[k](self, request, model, v))
         return all(matched)
 
     def run_resource_set(self, event, resources):
