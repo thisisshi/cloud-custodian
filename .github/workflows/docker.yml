@@ -2,13 +2,11 @@ name: "Docker Build"
 on:
   push:
     branches:
-      - master
+      - docker-buildx3
     tags:
       # todo: update for 1.0
       - 0.*
-
 jobs:
-
   Publish:
     strategy:
       matrix:
@@ -27,8 +25,7 @@ jobs:
           HUB_USER: sonnyshi
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
-          image: ${{ matrix.image }}
-          name: ${{ matrix.image }}
+          name: "${{ matrix.image }}"
           push: true
           platform: "linux/arm64,linux/amd64"
           repository: sonnyshi
