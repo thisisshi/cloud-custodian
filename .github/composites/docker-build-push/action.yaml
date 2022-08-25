@@ -1,9 +1,6 @@
 name: 'Build and Publish Docker Image'
 description: 'Build and Publish Docker Image'
 inputs:
-  custodian_image_var:
-    description: 'env var name for custodian image'
-    required: true
   repository:
     description: 'docker hub repository'
     required: true
