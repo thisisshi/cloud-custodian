@@ -2,10 +2,10 @@ name: "Docker Build CI"
 on:
   push:
     branches:
-      - master
+      - docker-buildx3
   pull_request:
     branches:
-      - master
+      - docker-buildx3
 jobs:
   Test:
     runs-on: ubuntu-latest
@@ -14,9 +14,10 @@ jobs:
       - name: c7n build and test
         uses: ./.github/composites/docker-build-push
         env:
-          HUB_USER: c7nbuild
+          HUB_USER: sonnyshi
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
           dockerfile: "docker/c7n"
           name: c7n
           push: false
+          repository: sonnyshi
