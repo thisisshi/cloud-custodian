@@ -45,8 +45,8 @@ class ValidatingControllerMode(K8sEventMode):
     """
 
     schema = type_schema(
-        'k8s-validating-controller',
-        required=['match'],
+        'k8s-validator',
+        required=['operations'],
         **{
             'on-match': {'enum': ['allow', 'deny']},
             'operations': {
