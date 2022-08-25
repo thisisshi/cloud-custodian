@@ -30,7 +30,8 @@ runs:
     - name: test
       shell: bash
       run: |
-        image_var=CUSTODIAN_${${{inputs.name}}//[-]/_}_IMAGE
+        image_var=${{inputs.name}}
+        image_var=CUSTODIAN_${image_var//[-]/_}_IMAGE
         echo $image_var
         image_var=${image_var^^}
         echo $image_var
