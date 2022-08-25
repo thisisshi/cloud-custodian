@@ -140,7 +140,7 @@ class ValidatingControllerMode(K8sEventMode):
 
     def _filter_event(self, request):
         model = self.policy.resource_manager.get_model()
-        mode = self.policy.data.get('mode')
+        mode = self.policy.data['mode']['match']
 
         # set default values based on our models
         value = {
