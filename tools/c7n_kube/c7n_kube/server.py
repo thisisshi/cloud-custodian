@@ -59,7 +59,7 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
         results = []
         failed_policies = []
         for p in self.server.policy_collection.policies:
-            policy, allow = p.push(req)
+            policy, allow, resources = p.push(req)
             results.append(allow)
             if allow is False:
                 failed_policies.append(

@@ -157,12 +157,12 @@ class ValidatingControllerMode(K8sEventMode):
         action = self.policy.data['mode'].get('on-match', 'deny')
 
         if not self.policy.is_runnable(event):
-            return self.policy.name, True
+            return self.policy.name, True, []
         log.info(f"Got event:{event}")
         matched = self._filter_event(event['request'])
         if not matched:
             log.warning("Event not matched, skipping")
-            return self.policy.name, True
+            return self.policy.name, True, []
         log.info("Event Matched")
 
         resources = [event['request']['object']]
@@ -191,4 +191,4 @@ class ValidatingControllerMode(K8sEventMode):
 
         log.info(f'{verb} admission because on-match:{action}, matched:{len(resources)}')
 
-        return self.policy, allow
+        return self.policy, allow, resources
