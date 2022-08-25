@@ -173,7 +173,7 @@ class ValidatingControllerMode(K8sEventMode):
         resources = self.policy.resource_manager.filter_resources(resources, event)
         resources = self.run_resource_set(event, resources)
 
-        log.info(f"filtered from 1 to:{len(resources)}")
+        log.info(f"Filtered from 1 to {len(resources)} resource(s)")
 
         if action == 'allow' and resources:
             allow = True
@@ -183,5 +183,7 @@ class ValidatingControllerMode(K8sEventMode):
             allow = False
         elif action == 'deny' and not resources:
             allow = True
+
+        log.info(f"{allow}ing admission because on-match:{action}, matched:{len(resources)}")
 
         return self.policy, allow
