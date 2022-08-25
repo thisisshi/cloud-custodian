@@ -144,9 +144,9 @@ class ValidatingControllerMode(K8sEventMode):
         # set default values based on our models
         value = {
             'operations': self.policy.data.get('operations'),
-            'resources': self.policy.data.get('resources') or [model.name],
-            'group': self.policy.data.get('group') or [model.group],
-            'apiVersions': self.policy.data.get('apiVersions') or [model.version],
+            'resources': self.policy.data.get('resources') or [model.name.lower()],
+            'group': self.policy.data.get('group') or [model.group.lower()],
+            'apiVersions': self.policy.data.get('apiVersions') or [model.version.lower()],
             'scope': self.policy.data.get('scope') or (
                 'Namespaced' if model.namespaced else 'Cluster')
         }
@@ -155,7 +155,7 @@ class ValidatingControllerMode(K8sEventMode):
         for k, v in value.items():
             if not v:
                 continue
-            matched.append(self.handlers[k](self, request, v.lower()))
+            matched.append(self.handlers[k](self, request, v))
         return all(matched)
 
     def run_resource_set(self, event, resources):
