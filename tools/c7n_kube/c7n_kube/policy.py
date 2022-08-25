@@ -143,9 +143,10 @@ class ValidatingControllerMode(K8sEventMode):
 
         # set default values based on our models
         value = {
+            'operations': self.policy.data.get('operations'),
             'resources': self.policy.data.get('resources') or [model.name],
-            'groups': self.policy.data.get('groups') or [model.group],
-            'api_versions': self.policy.data.get('api_versions') or [model.version],
+            'group': self.policy.data.get('group') or [model.group],
+            'apiVersions': self.policy.data.get('apiVersions') or [model.version],
             'scope': self.policy.data.get('scope') or (
                 'Namespaced' if model.namespaced else 'Cluster')
         }
