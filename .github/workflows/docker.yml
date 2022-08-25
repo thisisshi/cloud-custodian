@@ -1,22 +1,4 @@
 name: "Docker Build"
-env:
-  job_metadata: '
-    {
-      "c7n": {
-        "custodian_image_var": "CUSTODIAN_C7N_IMAGE"
-      },
-      "c7n-org": {
-        "custodian_image_var": "CUSTODIAN_C7NORG_IMAGE"
-      },
-      "mailer": {
-        "custodian_image_var": "CUSTODIAN_MAILER_IMAGE"
-      },
-      "policystream": {
-        "custodian_image_var": "CUSTODIAN_POLICYSTREAM_IMAGE"
-      }
-  }'
-
-
 on:
   push:
     branches:
@@ -24,9 +6,7 @@ on:
     tags:
       # todo: update for 1.0
       - 0.*
-
 jobs:
-
   Publish:
     strategy:
       matrix:
@@ -45,8 +25,6 @@ jobs:
           HUB_USER: c7nbuild
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
-          image: ${{ matrix.image }}
           name: "${{ matrix.image }}"
-          custodian_image_var: "${{ fromJSON(env.job_metadata)[matrix.image]['custodian_image_var'] }}"
           push: true
           platform: "linux/arm64,linux/amd64"

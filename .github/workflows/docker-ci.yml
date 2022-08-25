@@ -8,22 +8,15 @@ on:
       - master
 jobs:
   Test:
-    strategy:
-      matrix:
-        image:
-          - c7n
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: ${{ matrix.image }} build and push
+      - name: c7n build and test
         uses: ./.github/composites/docker-build-push
         env:
           HUB_USER: c7nbuild
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
-          dockerfile: "docker/cli"
-          image: ${{ matrix.image }}
-          name: cli
-          custodian_image_var: CUSTODIAN_CLI_IMAGE
+          dockerfile: "docker/c7n"
+          name: c7n
           push: false
