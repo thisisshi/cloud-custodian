@@ -14,7 +14,7 @@ class PersistentVolume(QueryResourceManager):
         patch = 'patch_persistent_volume'
         delete = 'delete_persistent_volume'
         enum_spec = ('list_persistent_volume', 'items', None)
-        name = 'persistentvolumeclaims'
+        plural = 'persistentvolumeclaims'
 
 
 @resources.register('volume-claim')
@@ -25,4 +25,4 @@ class PersistentVolumeClaim(QueryResourceManager):
         patch = 'patch_namespaced_persistent_volume_claim'
         delete = 'delete_namespaced_persistent_volume_claim'
         enum_spec = ('list_persistent_volume_claim_for_all_namespaces', 'items', None)
-        name = 'persistentvolumeclaims'
+        plural = 'persistentvolumeclaims'

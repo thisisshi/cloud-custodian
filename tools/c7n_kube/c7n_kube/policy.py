@@ -59,55 +59,27 @@ class ValidatingControllerMode(K8sEventMode):
     )
 
     def _handle_scope(self, request, value):
-        if value == '*':
-            return True
-        elif request.get('namespace') and value == 'Namespaced':
+        if request.get('namespace') and value == 'Namespaced':
             return True
         elif request.get('namespace') and value == 'Cluster':
             return False
+        elif not request.get('namespace') and value == 'Cluster':
+            return True
         return False
 
     def _handle_group(self, request, value):
-        if '*' in value:
-            return True
         group = request['resource']['group']
         if group == '' and 'core' in value:
             return True
-        return group in value
+        return group == value
 
     def _handle_resources(self, request, value):
-        if '*' in value or "*/*" in value:
-            return True
-
         resource = request['resource']['resource']
-        subresource = request.get('subResource')
-
-        result = []
-
-        for v in value:
-            split = v.split('/')
-            if len(split) == 2:
-                # Matching all resources, but only specific subresources
-                if split[0] == "*" and request['subresource'] == split[1]:
-                    result.append(True)
-                # Matching a specific resource and any subresource
-                elif split[0] == resource and split[1] == '*':
-                    result.append(True)
-                # Matching a specific resource and subresource
-                elif split[0] == resource and split[1] == subresource:
-                    result.append(True)
-                else:
-                    result.append(False)
-            elif len(split) == 1:
-                result.append(resource == split[0])
-
-        return any(result)
+        return resource == value
 
     def _handle_api_versions(self, request, value):
-        if '*' in value:
-            return True
         version = request['resource']['version']
-        return version in value
+        return version == value
 
     def _handle_operations(self, request, value):
         if '*' in value:
@@ -135,17 +107,17 @@ class ValidatingControllerMode(K8sEventMode):
         crds = ('custom-namespaced-resource', 'custom-cluster-resource',)
         if self.policy.resource_manager.type in crds:
             query = self.policy.data['query'][0]
-            version = [query['version'].lower()]
-            group = [query['group'].lower()]
-            resources = [query['plural'].lower()]
+            version = query['version'].lower()
+            group = query['group'].lower()
+            resources = query['plural'].lower()
             scope = 'Cluster'
             if self.policy.resource_manager.type == 'custom-namespaced-resource':
                 scope = 'Namespaced'
         else:
             # set default values based on our models
-            resources = [model.name.lower()]
-            group = [model.group.lower()]
-            version = [model.version.lower()]
+            resources = model.plural.lower()
+            group = model.group.lower()
+            version = model.version.lower()
             scope = 'Namespaced' if model.namespaced else 'Cluster'
 
         return {
