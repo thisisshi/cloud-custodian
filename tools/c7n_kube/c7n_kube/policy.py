@@ -184,7 +184,12 @@ class ValidatingControllerMode(K8sEventMode):
         if not matched:
             log.warning("Event not matched, skipping")
             return self.policy.name, True
+
         resources = [event['request']['object']]
+        # we want to inspect the thing getting deleted, not null
+        if event['request']['operation'] == 'DELETE':
+            resources = [event['request']['oldObject']]
+
         resources = self.policy.resource_manager.filter_resources(resources, event)
         resources = self.run_resource_set(event, resources)
 
