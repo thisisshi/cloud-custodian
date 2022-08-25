@@ -134,7 +134,7 @@ class ValidatingControllerMode(K8sEventMode):
         'scope': _handle_scope,
         'group': _handle_scope,
         'resources': _handle_resources,
-        'api_versions': _handle_api_versions,
+        'apiVersions': _handle_api_versions,
         'operations': _handle_operations,
     }
 
