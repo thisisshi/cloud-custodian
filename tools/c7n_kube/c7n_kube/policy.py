@@ -150,7 +150,7 @@ class ValidatingControllerMode(K8sEventMode):
         # custom resources have to be treated a bit differently
         crds = ('custom-namespaced-resource', 'custom-cluster-resource',)
         if self.policy.resource_manager.type in crds:
-            query = self.policy.data.get('query')
+            query = self.policy.data['query'][0]
             version = [query['version'].lower()]
             group = [query['group'].lower()]
             resources = [query['plural'].lower()]
