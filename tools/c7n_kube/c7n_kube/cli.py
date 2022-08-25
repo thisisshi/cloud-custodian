@@ -3,9 +3,7 @@ import logging
 
 from c7n_kube.server import init
 
-log = logging.getLogger('c7n_kube.cli')
-c7n_log = logging.getLogger('custodian')
-c7n_log.setLevel(logging.INFO)
+log = logging.getLogger('custodian.k8s.cli')
 logging.basicConfig(
     # TODO: make this configurable
     level=logging.INFO,

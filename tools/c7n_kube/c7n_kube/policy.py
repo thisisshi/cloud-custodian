@@ -4,7 +4,7 @@ from c7n.policy import PolicyExecutionMode, execution
 from c7n.utils import type_schema, dumps
 
 
-log = logging.getLogger('c7n_kube.policy')
+log = logging.getLogger('custodian.k8s.policy')
 
 
 class K8sEventMode(PolicyExecutionMode):
