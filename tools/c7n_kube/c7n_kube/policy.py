@@ -151,12 +151,11 @@ class ValidatingControllerMode(K8sEventMode):
                 'Namespaced' if model.namespaced else 'Cluster')
         }
         matched = []
-        matches = self.policy.data['mode']['match']
-        for k, v in matches.items():
+        for k, v in value.items():
             if k == 'on-match':
                 continue
             if v:
-                matched.append(self.handlers[k](self, request, model, value))
+                matched.append(self.handlers[k](self, request, model, v))
         return all(matched)
 
     def run_resource_set(self, event, resources):
