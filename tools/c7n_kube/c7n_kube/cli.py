@@ -59,7 +59,7 @@ def cli():
     parser.add_argument('--port', type=int, help='Server port', nargs='?', default=PORT)
     parser.add_argument('--policy-dir', type=str, required=True, help='policy directory')
     parser.add_argument(
-        '--generate', type=bool, default=False,
+        '--generate', default=False, action="store_true",
         help='Generate a k8s manifest for ValidatingWebhookConfiguration')
     args = parser.parse_args()
     if args.generate:
