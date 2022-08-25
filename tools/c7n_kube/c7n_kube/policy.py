@@ -150,6 +150,7 @@ class ValidatingControllerMode(K8sEventMode):
             'scope': self.policy.data.get('scope') or (
                 'Namespaced' if model.namespaced else 'Cluster')
         }
+        log.info(f"Matching event against:{value}")
         matched = []
         for k, v in value.items():
             if not v:
