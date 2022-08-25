@@ -29,7 +29,7 @@ class ValidatingControllerMode(K8sEventMode):
     .. example::
 
       policies:
-        - name: 'oui'
+        - name: 'require-only-label-foo'
           resource: 'k8s.deployment'
           description: 'All deployments must only have label:foo'
           mode:
