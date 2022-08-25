@@ -138,8 +138,7 @@ class ValidatingControllerMode(K8sEventMode):
         'operations': _handle_operations,
     }
 
-    def _filter_event(self, request):
-
+    def get_match_values(self):
         scope = None
         version = None
         group = None
@@ -165,14 +164,17 @@ class ValidatingControllerMode(K8sEventMode):
             version = [model.version.lower()]
             scope = 'Namespaced' if model.namespaced else 'Cluster'
 
-        match_ = {
+        result = {
             'operations': mode.get('operations'),
             'resources': mode.get('resources') or resources,
             'group': mode.get('group') or group,
             'apiVersions': mode.get('apiVersions') or version,
             'scope': mode.get('scope') or scope,
         }
+        return result
 
+    def _filter_event(self, request):
+        match_ = self.get_match_values()
         log.info(f"Matching event against:{match_}")
         matched = []
         for k, v in match_.items():
