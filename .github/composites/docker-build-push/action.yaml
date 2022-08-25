@@ -33,7 +33,6 @@ runs:
         image_var=${{inputs.name}}
         image_var=CUSTODIAN_${image_var//[-]/_}_IMAGE
         image_var=${image_var^^}
-        echo $image_var
         export ${image_var}=foo
         echo ${!image_var}
     - name: Set up QEMU
@@ -101,12 +100,12 @@ runs:
         image_var=${{inputs.name}}
         image_var=CUSTODIAN_${image_var//[-]/_}_IMAGE
         image_var=${image_var^^}
+        export ${image_var}="$(echo $tags | cut -d ',' -f 1)"
 
         python -m venv .
         . bin/activate && poetry install
         . bin/activate && pip install docker
         . bin/activate && TEST_DOCKER=yes \
-                          ${!image_var}="$(echo $tags | cut -d ',' -f 1)" \
                           pytest -p no:terraform -v tests/test_docker.py
 
     # actually push the multi arch image
