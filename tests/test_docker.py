@@ -18,8 +18,8 @@ except ImportError:
 
 TEST_DOCKER = docker and os.environ.get("TEST_DOCKER", "no") == "yes"
 
-CUSTODIAN_ORG_IMAGE = os.environ.get("CUSTODIAN_ORG_IMAGE")
-CUSTODIAN_IMAGE = os.environ.get("CUSTODIAN_CLI_IMAGE")
+CUSTODIAN_ORG_IMAGE = os.environ.get("CUSTODIAN_C7N_ORG_IMAGE")
+CUSTODIAN_IMAGE = os.environ.get("CUSTODIAN_C7N_IMAGE")
 CUSTODIAN_MAILER_IMAGE = os.environ.get("CUSTODIAN_MAILER_IMAGE")
 CUSTODIAN_PSTREAM_IMAGE = os.environ.get("CUSTODIAN_POLICYSTREAM_IMAGE")
 

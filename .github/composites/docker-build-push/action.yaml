@@ -2,137 +2,112 @@ name: 'Build and Publish Docker Image'
 description: 'Build and Publish Docker Image'
 
 inputs:
-  CUSTODIAN_IMAGE_VAR:
-    description: 'env var name for custodian image'
-    required: true
-  dockerfile:
-    description: 'Dockerfile to build'
-    required: true
   repository:
     description: 'docker hub repository'
     required: true
-  image:
-    description: 'image'
-    required: true
+    default: 'cloudcustodian'
   name:
     description: 'image name'
     required: true
-  description:
-    description: 'image description'
-    required: true
   push:
-    description: 'true/false'
+    description: 'push image: true/false'
     required: true
     default: false
+  poetry_version:
+    description: "Poetry Version to use"
+    default: "1.1.14"
+  trivy_version:
+    description: "trivy version to use"
+    default: "0.5.4"
+  platforms:
+    description: "Platforms to build, e.g. linux/arm64,linux/amd64"
+    default: "linux/amd64"
 runs:
   using: "composite"
   steps:
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
-
     - name: Set up Docker Buildx
       id: buildx
       uses: docker/setup-buildx-action@v1
-
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v1
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v2
       with:
-        python-version: 3.8
-
-    - name: Install Docker Build Env
-      # bin directory is in .dockerignore
-      shell: bash
-      run: |
-        python -m pip install --upgrade pip click
-        mkdir -p bin
-        wget -q -O bin/trivy.tgz https://github.com/aquasecurity/trivy/releases/download/v0.5.4/trivy_0.5.4_Linux-64bit.tar.gz
-        cd bin && tar xzf trivy.tgz
-
+        python-version: "3.10"
+    # until we get read only credentials, we'll only login if we're pushing
+    # note that we can hit rate limits on pulling though
     - name: Login to Docker Hub
-      if: github.event_name != 'pull_request'
+      if: "${{ inputs.push == 'true' }}"
       uses: docker/login-action@v1
       with:
         username: ${{ env.HUB_USER }}
         password: ${{ env.HUB_TOKEN }}
-
-    - name: determine tags
-      shell: bash
-      id: calctags
-      run: |
-        python tools/dev/dockerpkg.py tags -t auto
-
     - name: Docker meta
       id: meta
       uses: docker/metadata-action@v3
       with:
-        # list of Docker images to use as base name for tags
         images: |
-          ${{ inputs.repository }}/${{ inputs.image }}
-        labels: |
-          org.opencontainers.image.documentation=https://cloudcustodian.io/docs
-          # we overwrite the default labels here, defaults are description:github description and title:"cloud-custodian"
-          org.opencontainers.image.description=${{ inputs.description }}
-          org.opencontainers.image.title=${{ inputs.name }}
+          ${{ inputs.repository }}/${{ inputs.name }}
         tags: |
-          # this is a hack to get around the fact that passing in tags with a new line character doesnt work
-          # ensure that we dont have more than 5 tags at a time
-          ${{ steps.calctags.outputs.tag0 }}
-          ${{ steps.calctags.outputs.tag1 }}
-          ${{ steps.calctags.outputs.tag2 }}
-          ${{ steps.calctags.outputs.tag3 }}
-          ${{ steps.calctags.outputs.tag4 }}
-        sep-tags: ' '
-
+          type=semver,pattern={raw}
+          type=raw,value=latest
+        sep-tags: ','
     # build a single platform image first in order to actually load the image from buildx
     # manifests are not supported yet
     # https://github.com/docker/buildx/issues/166
     # https://github.com/docker/buildx/issues/59
     - name: Build
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v3.1.1
       with:
         context: .
+        build-args: |
+          POETRY_VERSION=${{ inputs.poetry_version }}
         push: false
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         # makes the image available in docker, e.g. docker images inspect
         load: true
-        file: ${{ inputs.dockerfile }}
-
+        file: "docker/${{ inputs.name }}"
     - name: scan
       shell: bash
       env:
         tags: ${{ steps.meta.outputs.tags }}
       run: |
-        wget -q -O bin/trivy.tgz https://github.com/aquasecurity/trivy/releases/download/v0.5.4/trivy_0.5.4_Linux-64bit.tar.gz
+        mkdir -p bin
+        wget -q -O bin/trivy.tgz https://github.com/aquasecurity/trivy/releases/download/v${{ inputs.trivy_version }}/trivy_${{ inputs.trivy_version }}_Linux-64bit.tar.gz
         cd bin && tar xzf trivy.tgz
         ./trivy $(echo $tags | cut -d ',' -f 1)
         cd ..
-
     - name: test
       shell: bash
       env:
         tags: ${{ steps.meta.outputs.tags }}
       run : |
-        curl -sL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python - -y --version 1.1.14
+        curl -sL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python - -y --version ${{ inputs.poetry_version }}
+
+        image_var=${{inputs.name}}
+        image_var=CUSTODIAN_${image_var//[-]/_}_IMAGE
+        image_var=${image_var^^}
+        export ${image_var}="$(echo $tags | cut -d ',' -f 1)"
+
         python -m venv .
         . bin/activate && poetry install
         . bin/activate && pip install docker
         . bin/activate && TEST_DOCKER=yes \
-                          ${{ inputs.CUSTODIAN_IMAGE_VAR }}="$(echo $tags | cut -d ',' -f 1)" \
                           pytest -p no:terraform -v tests/test_docker.py
-
     # actually push the multi arch image
     - name: Push
       # if: ${{ inputs.push == true }}
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v3.1.1
       with:
         context: .
+        build-args: |
+          POETRY_VERSION=${{ inputs.poetry_version }}
         push: true
-        platforms: linux/amd64,linux/arm64
+        platforms: ${{ inputs.platforms }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        file: ${{ inputs.dockerfile }}
-
+        file: "docker/${{ inputs.name }}"
     - name: Install cosign
       # if: ${{ inputs.push == true }}
       uses: sigstore/cosign-installer@main

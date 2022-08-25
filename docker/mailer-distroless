@@ -2,12 +2,14 @@
 
 FROM debian:10-slim as build-env
 
+ARG POETRY_VERSION="1.1.14"
+
 # pre-requisite distro deps, and build env setup
 RUN adduser --disabled-login --gecos "" custodian
 RUN apt-get --yes update
 RUN apt-get --yes install build-essential curl python3-venv python3-dev     --no-install-recommends
 RUN python3 -m venv /usr/local
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py     | python3 - -y --version 1.1.14
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py     | python3 - -y --version ${POETRY_VERSION}
 
 WORKDIR /src
 
@@ -40,6 +42,7 @@ RUN mkdir /output
 # Install c7n-mailer
 ADD tools/c7n_mailer /src/tools/c7n_mailer
 RUN . /usr/local/bin/activate && cd tools/c7n_mailer && $HOME/.poetry/bin/poetry install
+
 
 FROM gcr.io/distroless/python3-debian10
 

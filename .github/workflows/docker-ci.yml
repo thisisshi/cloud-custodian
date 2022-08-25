@@ -1,42 +1,22 @@
 name: "Docker Build CI"
-env:
-  repository: "sonnyshi"
-  job_metadata: '
-    {
-      "c7n": {
-        "name": "cli",
-        "description": "Cloud Management Rules Engine",
-        "custodian_image_var": "CUSTODIAN_CLI_IMAGE"
-      }
-  }'
-
-
-on: push
-
+on:
+  push:
+    branches:
+      - docker-buildx2
+  pull_request:
+    branches:
+      - docker-buildx2
 jobs:
-
   Test:
-    strategy:
-      matrix:
-        image:
-          - c7n
-        flavor:
-          - ""
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: ${{ matrix.image }} ${{ matrix.flavor }} build and push
+      - name: c7n build and test
         uses: ./.github/composites/docker-build-push
         env:
           HUB_USER: sonnyshi
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
-          FLAVOR: ${{ matrix.flavor }}
         with:
-          dockerfile: "docker/${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}${{ matrix.flavor && format('-{0}', matrix.flavor) || matrix.flavor }}"
-          repository: ${{ env.repository }}
-          image: ${{ matrix.image }}
-          name: "${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}"
-          description: "${{ fromJSON(env.job_metadata)[matrix.image]['description'] }}"
-          CUSTODIAN_IMAGE_VAR: "${{ fromJSON(env.job_metadata)[matrix.image]['custodian_image_var'] }}"
+          dockerfile: "docker/c7n"
+          name: c7n
           push: false
