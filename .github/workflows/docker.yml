@@ -27,4 +27,4 @@ jobs:
         with:
           name: "${{ matrix.image }}"
           push: true
-          platform: "linux/arm64,linux/amd64"
+          platforms: "linux/arm64,linux/amd64"
