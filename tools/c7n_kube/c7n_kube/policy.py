@@ -60,6 +60,7 @@ class ValidatingControllerMode(K8sEventMode):
             'match': {
                 'type': 'object',
                 'properties': {
+                    'required': ['operations'],
                     'on-match': {'enum': ['allow', 'deny']},
                     'scope': {'enum': ['Cluster', 'Namespaced']},
                     'group': {'type': 'array', 'items': {'type': 'string'}},
@@ -139,13 +140,23 @@ class ValidatingControllerMode(K8sEventMode):
     }
 
     def _filter_event(self, request):
+        model = self.policy.resource_manager.get_model()
+
+        # set default values based on our models
+        value = {
+            'resources': self.policy.data.get('resources') or [model.name],
+            'groups': self.policy.data.get('groups') or [model.group],
+            'api_versions': self.policy.data.get('api_versions') or [model.version],
+            'scope': self.policy.data.get('scope') or (
+                'Namespaced' if model.namespaced else 'Cluster')
+        }
         matched = []
         matches = self.policy.data['mode']['match']
         for k, v in matches.items():
             if k == 'on-match':
                 continue
             if v:
-                matched.append(self.handlers[k](self, request, v))
+                matched.append(self.handlers[k](self, request, model, value))
         return all(matched)
 
     def run_resource_set(self, event, resources):
