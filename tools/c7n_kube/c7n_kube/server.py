@@ -8,7 +8,7 @@ from c7n.loader import DirectoryLoader
 import logging
 
 log = logging.getLogger("c7n_kube.server")
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 
 
 HOST = "0.0.0.0"

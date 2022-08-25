@@ -173,6 +173,8 @@ class ValidatingControllerMode(K8sEventMode):
         resources = self.policy.resource_manager.filter_resources(resources, event)
         resources = self.run_resource_set(event, resources)
 
+        log.info(f"filtered from 1 to:{len(resources)}")
+
         if action == 'allow' and resources:
             allow = True
         elif action == 'allow' and not resources:
