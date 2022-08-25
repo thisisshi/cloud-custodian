@@ -162,6 +162,8 @@ class ValidatingControllerMode(K8sEventMode):
             if not v:
                 continue
             matched.append(self.handlers[k](self, request, v))
+
+        log.info(matched)
         return all(matched)
 
     def run_resource_set(self, event, resources):
