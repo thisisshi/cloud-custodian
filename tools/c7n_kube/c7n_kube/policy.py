@@ -11,25 +11,18 @@ class K8sEventMode(PolicyExecutionMode):
     pass
 
 
-@execution.register('k8s-validating-controller')
+@execution.register('k8s-validator')
 class ValidatingControllerMode(K8sEventMode):
     """
     Validating Admission Controller Mode
 
     Actions are not compatible with Validating Admission Controller Mode
 
-    Define matches, which are AND'd together across categories but are
-    OR'd together within the same category, e.g.
+    Define operations to monitor:
 
-    match:
-        resources:
-          - pods
-        operations:
-          - CREATE
-          - UPDATE
-
-    will match any event where the resources is pods and the operation is
-    either CREATE or UPDATE
+    operations:
+      - CREATE
+      - UPDATE
 
     Include a description to provide a message on failure:
 
@@ -41,11 +34,9 @@ class ValidatingControllerMode(K8sEventMode):
           description: 'All deployments must only have label:foo'
           mode:
             type: k8s-validating-controller
-            match:
-              on-match: deny
-              scope: Namespaced
-              resources:
-                - deployments
+            on-match: deny
+            operations:
+            - CREATE
           filters:
             - type: value
               key: keys(metadata.labels)
@@ -57,18 +48,11 @@ class ValidatingControllerMode(K8sEventMode):
         'k8s-validating-controller',
         required=['match'],
         **{
-            'match': {
-                'type': 'object',
-                'properties': {
-                    'on-match': {'enum': ['allow', 'deny']},
-                    'scope': {'enum': ['Cluster', 'Namespaced']},
-                    'group': {'type': 'array', 'items': {'type': 'string'}},
-                    # this should probably just default to the c7n resource type?
-                    'resources': {'type': 'array', 'items': {'type': 'string'}},
-                    'apiVersions': {'type': 'array', 'items': {'type': 'string'}},
-                    'operations': {
-                        'type': 'array',
-                        'items': {'enum': ['CREATE', 'UPDATE', 'DELETE', 'CONNECT']}}
+            'on-match': {'enum': ['allow', 'deny']},
+            'operations': {
+                'type': 'array',
+                'items': {
+                    'enum': ['CREATE', 'UPDATE', 'DELETE', 'CONNECT']
                 }
             }
         }
@@ -87,7 +71,7 @@ class ValidatingControllerMode(K8sEventMode):
         if '*' in value:
             return True
         group = request['resource']['group']
-        if value == '' and group == 'core':
+        if group == '' and 'core' in value:
             return True
         return group in value
 
@@ -145,7 +129,7 @@ class ValidatingControllerMode(K8sEventMode):
         resources = None
 
         model = self.policy.resource_manager.get_model()
-        mode = self.policy.data['mode']['match']
+        mode = self.policy.data['mode']
 
         # custom resources have to be treated a bit differently
         crds = ('custom-namespaced-resource', 'custom-cluster-resource',)
@@ -164,14 +148,13 @@ class ValidatingControllerMode(K8sEventMode):
             version = [model.version.lower()]
             scope = 'Namespaced' if model.namespaced else 'Cluster'
 
-        result = {
+        return {
             'operations': mode.get('operations'),
-            'resources': mode.get('resources') or resources,
-            'group': mode.get('group') or group,
-            'apiVersions': mode.get('apiVersions') or version,
-            'scope': mode.get('scope') or scope,
+            'resources': resources,
+            'group': group,
+            'apiVersions': version,
+            'scope': scope,
         }
-        return result
 
     def _filter_event(self, request):
         match_ = self.get_match_values()
@@ -181,7 +164,6 @@ class ValidatingControllerMode(K8sEventMode):
             if not v:
                 continue
             matched.append(self.handlers[k](self, request, v))
-
         return all(matched)
 
     def run_resource_set(self, event, resources):
@@ -200,7 +182,7 @@ class ValidatingControllerMode(K8sEventMode):
         return resources
 
     def run(self, event, _):
-        action = self.policy.data['mode']['match'].get('on-match', 'deny')
+        action = self.policy.data['mode'].get('on-match', 'deny')
 
         if not self.policy.is_runnable(event):
             return self.policy.name, True
