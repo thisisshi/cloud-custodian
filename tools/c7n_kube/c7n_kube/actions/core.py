@@ -3,7 +3,7 @@
 
 import logging
 
-from c7n.actions import Action as BaseAction, EventAction
+from c7n.actions import Action as BaseAction
 from c7n.utils import local_session, chunks, type_schema
 from c7n.exceptions import PolicyValidationError
 
