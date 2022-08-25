@@ -19,11 +19,12 @@ jobs:
       - name: ${{ matrix.image }} build and push
         uses: ./.github/composites/docker-build-push
         env:
-          HUB_USER: c7nbuild
+          HUB_USER: sonnyshi
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
-          dockerfile: "docker/cli"
+          dockerfile: "docker/c7n"
           image: ${{ matrix.image }}
           name: cli
           custodian_image_var: CUSTODIAN_CLI_IMAGE
           push: false
+          repository: sonnyshi
