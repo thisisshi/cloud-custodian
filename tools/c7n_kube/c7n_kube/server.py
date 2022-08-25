@@ -7,8 +7,7 @@ from c7n.loader import DirectoryLoader
 
 import logging
 
-log = logging.getLogger("server")
-logging.basicConfig()
+log = logging.getLogger("c7n_kube.server")
 log.setLevel(logging.INFO)
 
 

@@ -1,6 +1,13 @@
 import argparse
+import logging
 
 from c7n_kube.server import init
+
+log = logging.getLogger('c7n_kube.cli')
+logging.basicConfig(
+    # TODO: make this configurable
+    level=logging.INFO,
+    format="%(asctime)s: %(name)s:%(levelname)s %(message)s")
 
 
 PORT = '8800'
