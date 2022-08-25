@@ -201,7 +201,7 @@ class Image:
 
 
 ImageMap = {
-    "docker/cli": Image(
+    "docker/c7n": Image(
         dict(
             name="cli",
             repo="c7n",
@@ -211,7 +211,7 @@ ImageMap = {
         build=[BUILD_STAGE],
         target=[TARGET_UBUNTU_STAGE, TARGET_CLI],
     ),
-    "docker/org": Image(
+    "docker/c7n-org": Image(
         dict(
             name="org",
             repo="c7n-org",

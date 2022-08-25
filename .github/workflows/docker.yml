@@ -1,22 +1,17 @@
 name: "Docker Build"
 env:
-  repository: "cloudcustodian"
   job_metadata: '
     {
       "c7n": {
-        "name": "cli",
-        "custodian_image_var": "CUSTODIAN_CLI_IMAGE"
+        "custodian_image_var": "CUSTODIAN_C7N_IMAGE"
       },
       "c7n-org": {
-        "name": "org",
-        "custodian_image_var": "CUSTODIAN_ORG_IMAGE"
+        "custodian_image_var": "CUSTODIAN_C7NORG_IMAGE"
       },
       "mailer": {
-        "name": "mailer",
         "custodian_image_var": "CUSTODIAN_MAILER_IMAGE"
       },
       "policystream": {
-        "name": "policystream",
         "custodian_image_var": "CUSTODIAN_POLICYSTREAM_IMAGE"
       }
   }'
@@ -50,9 +45,8 @@ jobs:
           HUB_USER: c7nbuild
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
-          dockerfile: "docker/${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}"
-          repository: ${{ env.repository }}
           image: ${{ matrix.image }}
-          name: "${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}"
+          name: "${{ matrix.image }}"
           custodian_image_var: "${{ fromJSON(env.job_metadata)[matrix.image]['custodian_image_var'] }}"
           push: true
+          platform: "linux/arm64,linux/amd64"

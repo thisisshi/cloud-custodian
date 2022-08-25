@@ -1,15 +1,4 @@
 name: "Docker Build CI"
-env:
-  repository: "cloudcustodian"
-  job_metadata: '
-    {
-      "c7n": {
-        "name": "cli",
-        "custodian_image_var": "CUSTODIAN_CLI_IMAGE"
-      }
-  }'
-
-
 on:
   push:
     branches:
@@ -17,30 +6,24 @@ on:
   pull_request:
     branches:
       - master
-
 jobs:
-
   Test:
     strategy:
       matrix:
         image:
           - c7n
-        flavor:
-          - ""
 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: ${{ matrix.image }} ${{ matrix.flavor }} build and push
+      - name: ${{ matrix.image }} build and push
         uses: ./.github/composites/docker-build-push
         env:
           HUB_USER: c7nbuild
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
-          FLAVOR: ${{ matrix.flavor }}
         with:
-          dockerfile: "docker/${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}${{ matrix.flavor && format('-{0}', matrix.flavor) || matrix.flavor }}"
-          repository: ${{ env.repository }}
+          dockerfile: "docker/cli"
           image: ${{ matrix.image }}
-          name: "${{ fromJSON(env.job_metadata)[matrix.image]['name'] }}"
-          custodian_image_var: "${{ fromJSON(env.job_metadata)[matrix.image]['custodian_image_var'] }}"
+          name: cli
+          custodian_image_var: CUSTODIAN_CLI_IMAGE
           push: false

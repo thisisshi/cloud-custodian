@@ -4,15 +4,10 @@ inputs:
   custodian_image_var:
     description: 'env var name for custodian image'
     required: true
-  dockerfile:
-    description: 'Dockerfile to build'
-    required: true
   repository:
     description: 'docker hub repository'
     required: true
-  image:
-    description: 'image'
-    required: true
+    default: 'cloudcustodian'
   name:
     description: 'image name'
     required: true
@@ -26,6 +21,9 @@ inputs:
   trivy_version:
     description: "trivy version to use"
     default: "0.5.4"
+  platforms:
+    description: "Platforms to build, e.g. linux/arm64,linux/amd64"
+    default: "linux/amd64"
 runs:
   using: "composite"
   steps:
@@ -34,16 +32,10 @@ runs:
     - name: Set up Docker Buildx
       id: buildx
       uses: docker/setup-buildx-action@v1
-    - name: Set up Python 3.8
+    - name: Set up Python 3.10
       uses: actions/setup-python@v1
       with:
-        python-version: 3.8
-    - name: Install Docker Build Env
-      # bin directory is in .dockerignore
-      shell: bash
-      run: |
-        python -m pip install --upgrade pip click
-        mkdir -p bin
+        python-version: 3.10
 
     - name: Login to Docker Hub
       uses: docker/login-action@v1
@@ -51,27 +43,15 @@ runs:
         username: ${{ env.HUB_USER }}
         password: ${{ env.HUB_TOKEN }}
 
-    - name: determine tags
-      shell: bash
-      id: calctags
-      run: |
-        python tools/dev/dockerpkg.py tags -t auto
-        echo "::set-output name=tags::$(python tools/dev/dockerpkg.py tags -t auto)"
-
     - name: Docker meta
       id: meta
       uses: docker/metadata-action@v3
       with:
         images: |
-          ${{ inputs.repository }}/${{ inputs.image }}
+          ${{ inputs.repository }}/${{ inputs.name }}
         tags: |
-          # this is a hack to get around the fact that passing in tags with a new line character doesnt work
-          # ensure that we dont have more than 5 tags at a time
-          ${{ steps.calctags.outputs.tag0 }}
-          ${{ steps.calctags.outputs.tag1 }}
-          ${{ steps.calctags.outputs.tag2 }}
-          ${{ steps.calctags.outputs.tag3 }}
-          ${{ steps.calctags.outputs.tag4 }}
+          type=semver,pattern={raw}
+          type=raw,value=latest
         sep-tags: ','
 
     # build a single platform image first in order to actually load the image from buildx
@@ -89,13 +69,14 @@ runs:
         labels: ${{ steps.meta.outputs.labels }}
         # makes the image available in docker, e.g. docker images inspect
         load: true
-        file: ${{ inputs.dockerfile }}
+        file: "docker/${{ inputs.name }}"
 
     - name: scan
       shell: bash
       env:
         tags: ${{ steps.meta.outputs.tags }}
       run: |
+        mkdir -p bin
         wget -q -O bin/trivy.tgz https://github.com/aquasecurity/trivy/releases/download/v${{ inputs.trivy_version }}/trivy_${{ inputs.trivy_version }}_Linux-64bit.tar.gz
         cd bin && tar xzf trivy.tgz
         ./trivy $(echo $tags | cut -d ',' -f 1)
@@ -107,11 +88,12 @@ runs:
         tags: ${{ steps.meta.outputs.tags }}
       run : |
         curl -sL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python - -y --version ${{ inputs.poetry_version }}
+        image_var=CUSTODIAN_${${{inputs.name}}//[-]/_}_IMAGE
         python -m venv .
         . bin/activate && poetry install
         . bin/activate && pip install docker
         . bin/activate && TEST_DOCKER=yes \
-                          ${{ inputs.custodian_image_var }}="$(echo $tags | cut -d ',' -f 1)" \
+                          ${image_var^^}="$(echo $tags | cut -d ',' -f 1)" \
                           pytest -p no:terraform -v tests/test_docker.py
 
     # actually push the multi arch image
@@ -123,7 +105,7 @@ runs:
         build-args: |
           POETRY_VERSION=${{ inputs.poetry_version }}
         push: true
-        platforms: linux/amd64,linux/arm64
+        platforms: ${{ inputs.platforms }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        file: ${{ inputs.dockerfile }}
+        file: "docker/${{ inputs.name }}"
