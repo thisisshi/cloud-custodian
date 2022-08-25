@@ -75,7 +75,6 @@ class ValidatingControllerMode(K8sEventMode):
     )
 
     def _handle_scope(self, request, value):
-        log.info(f"Handling scope, {value}")
         if value == '*':
             return True
         elif request.get('namespace') and value == 'Namespaced':
@@ -85,7 +84,6 @@ class ValidatingControllerMode(K8sEventMode):
         return False
 
     def _handle_group(self, request, value):
-        log.info(f"Handling group, {value}")
         if '*' in value:
             return True
         group = request['resource']['group']
@@ -94,7 +92,6 @@ class ValidatingControllerMode(K8sEventMode):
         return group in value
 
     def _handle_resources(self, request, value):
-        log.info(f"Handling resources, {value}")
         if '*' in value or "*/*" in value:
             return True
 
@@ -123,21 +120,19 @@ class ValidatingControllerMode(K8sEventMode):
         return any(result)
 
     def _handle_api_versions(self, request, value):
-        log.info(f"Handling api versions {value}")
         if '*' in value:
             return True
         version = request['resource']['version']
         return version in value
 
     def _handle_operations(self, request, value):
-        log.info(f"Handling operations {value}")
         if '*' in value:
             return True
         return request['operation'] in value
 
     handlers = {
         'scope': _handle_scope,
-        'group': _handle_scope,
+        'group': _handle_group,
         'resources': _handle_resources,
         'apiVersions': _handle_api_versions,
         'operations': _handle_operations,
@@ -162,8 +157,6 @@ class ValidatingControllerMode(K8sEventMode):
             if not v:
                 continue
             matched.append(self.handlers[k](self, request, v))
-
-        log.info(matched)
         return all(matched)
 
     def run_resource_set(self, event, resources):
