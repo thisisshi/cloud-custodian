@@ -140,14 +140,15 @@ class ValidatingControllerMode(K8sEventMode):
 
     def _filter_event(self, request):
         model = self.policy.resource_manager.get_model()
+        mode = self.policy.data.get('mode')
 
         # set default values based on our models
         value = {
-            'operations': self.policy.data.get('operations'),
-            'resources': self.policy.data.get('resources') or [model.name.lower()],
-            'group': self.policy.data.get('group') or [model.group.lower()],
-            'apiVersions': self.policy.data.get('apiVersions') or [model.version.lower()],
-            'scope': self.policy.data.get('scope') or (
+            'operations': mode.get('operations'),
+            'resources': mode.get('resources') or [model.name.lower()],
+            'group': mode.get('group') or [model.group.lower()],
+            'apiVersions': mode.get('apiVersions') or [model.version.lower()],
+            'scope': mode.get('scope') or (
                 'Namespaced' if model.namespaced else 'Cluster')
         }
         log.info(f"Matching event against:{value}")
