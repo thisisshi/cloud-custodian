@@ -33,7 +33,7 @@ class ValidatingControllerMode(K8sEventMode):
           resource: 'k8s.deployment'
           description: 'All deployments must only have label:foo'
           mode:
-            type: k8s-validating-controller
+            type: k8s-validator
             on-match: deny
             operations:
             - CREATE
