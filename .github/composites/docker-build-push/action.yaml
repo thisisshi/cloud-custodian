@@ -48,7 +48,7 @@ runs:
         elif '${{ github.ref }}' == 'refs/heads/master':
           print('::set-output name=tag::dev')
         # Pull requests dont get pushed so this should be fine
-        elif '${{ github.ref }}.startswith('refs/pull'):
+        elif '${{ github.ref }}'.startswith('refs/pull'):
           # ref looks like: refs/pull/$pr_number/merge
           id = '${{ github.ref }}'.split('/')[-2]
           print(f'::set-output name=tag::pr-{id}')
