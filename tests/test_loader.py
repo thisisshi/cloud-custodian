@@ -94,3 +94,14 @@ class TestDirectoryLoader(BaseTest):
 
             with self.assertRaises(PolicyValidationError):
                 dir_loader.load_directory(temp_dir)
+
+    def test_dir_loader_bad_policy(self):
+        dir_loader = loader.DirectoryLoader(Config.empty())
+        with tempfile.TemporaryDirectory() as temp_dir:
+            with open(f"{temp_dir}/policy.yaml", "w+") as f:
+                json.dump(
+                    {"policies": [{'foo': 'test', 'resource': 's3'}]}, f
+                )
+
+            with self.assertRaises(PolicyValidationError):
+                dir_loader.load_directory(temp_dir)
