@@ -38,6 +38,9 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
         return res
 
     def do_GET(self):
+        """
+        Returns application/json list of your policies
+        """
         self.send_response(200)
         self.end_headers()
         result = []
@@ -46,6 +49,9 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(result).encode('utf-8'))
 
     def do_POST(self):
+        """
+        Entrypoint for kubernetes webhook
+        """
         req = self.get_request_body()
         log.info(req)
         try:
@@ -59,13 +65,25 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
 
         results = []
         failed_policies = []
+        warn_policies = []
         for p in self.server.policy_collection.policies:
-            policy, allow, resources = p.push(req)
-            results.append(allow)
-            if allow is False:
+            result, resources = p.push(req)
+            if result in ('allow', 'warn'):
+                results.append(1)
+            else:
+                results.append(0)
+            if result == 'deny':
                 failed_policies.append(
                     {
-                        policy.name: policy.data.get('description')
+                        "name": p.name,
+                        "description": p.data.get('description', '')
+                    }
+                )
+            if result == 'warn':
+                warn_policies.append(
+                    {
+                        "name": p.name,
+                        "description": p.data.get('description', '')
                     }
                 )
 
@@ -73,22 +91,29 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
         self.wfile.write(self.admission_response(
-            req=req,
+            uid=req['request']['uid'],
             allow=all(results),
-            failed_policies=failed_policies).encode('utf-8'))
+            failed_policies=failed_policies,
+            warn_policies=warn_policies
+        ).encode('utf-8'))
 
-    def admission_response(self, req, allow=False, failed_policies=None):
+    def admission_response(self, uid, allow=False, failed_policies=None, warn_policies=None):
         code = 200 if allow else 400
         message = 'OK'
+        warnings = []
         if failed_policies:
             message = f'Failed admission due to policies:{json.dumps(failed_policies)}'
+        if warn_policies:
+            for p in warn_policies:
+                warnings.append(f"{p['name']}:{p['description']}")
 
         return json.dumps({
             "apiVersion": "admission.k8s.io/v1",
             "kind": "AdmissionReview",
             "response": {
                 "allowed": allow,
-                "uid": req["request"]["uid"],
+                "warnings": warnings,
+                "uid": uid,
                 "status": {
                     "code": code,
                     "message": message

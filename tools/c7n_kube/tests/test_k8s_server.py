@@ -151,6 +151,7 @@ class TestServer(KubeTest):
                 'response': {
                     'allowed': True,
                     'uid': '662c3df2-ade6-4165-b395-770857bc17b7',
+                    'warnings': [],
                     'status': {
                         'code': 200,
                         'message': 'OK'
@@ -257,5 +258,33 @@ class TestServer(KubeTest):
             res.json()['response']['status']['message'].split(':', 1)[-1]
         )
         self.assertEqual(len(failures), 2)
-        self.assertEqual(failures[0], {'test-validator': 'description 1'})
-        self.assertEqual(failures[1], {'test-validator-2': 'description 2'})
+        self.assertEqual(failures[0], {'name': 'test-validator', 'description': 'description 1'})
+        self.assertEqual(failures[1], {'name': 'test-validator-2', 'description': 'description 2'})
+
+    def test_server_onmatch_warn(self):
+        policies = {
+            'policies': [
+                {
+                    'name': 'test-validator-pod',
+                    'resource': 'k8s.pod',
+                    'description': 'description deployment',
+                    'mode': {
+                        'type': 'k8s-validator',
+                        'on-match': 'warn',
+                        'operations': [
+                            'CREATE',
+                        ]
+                    }
+                },
+            ]
+        }
+        port = 8093
+        self._server(port, policies)
+        event = self.get_event('create_pod')
+        res = requests.post(f'http://0.0.0.0:{port}', json=event)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(res.json()['response']['allowed'])
+        self.assertEqual(
+            res.json()['response']['warnings'],
+            ['test-validator-pod:description deployment']
+        )

@@ -30,9 +30,9 @@ class TestAdmissionControllerMode(KubeTest):
         match_values = policy.get_execution_mode().get_match_values()
         self.assertEqual(expected, match_values)
         event = self.get_event('create_pod')
-        policy, result, resources = policy.push(event)
+        result, resources = policy.push(event)
         self.assertEqual(len(resources), 1)
-        self.assertTrue(result)
+        self.assertEqual(result, 'allow')
         self.assertEqual(policy.name, 'test-validator')
 
     def test_kube_event_filter(self):
@@ -60,9 +60,9 @@ class TestAdmissionControllerMode(KubeTest):
             }, session_factory=factory
         )
         event = self.get_event('create_pod')
-        policy, result, resources = policy.push(event)
+        result, resources = policy.push(event)
         self.assertEqual(len(resources), 1)
-        self.assertFalse(result)
+        self.assertEqual(result, 'deny')
         self.assertEqual(policy.name, 'test-event-filter')
 
     def test_kube_delete_event(self):
@@ -85,7 +85,7 @@ class TestAdmissionControllerMode(KubeTest):
             }, session_factory=factory
         )
         event = self.get_event('delete_pod')
-        policy, result, resources = policy.push(event)
+        result, resources = policy.push(event)
         self.assertTrue(resources)
-        self.assertFalse(result)
+        self.assertEqual(result, 'deny')
         self.assertEqual(policy.name, 'test-delete-pod')

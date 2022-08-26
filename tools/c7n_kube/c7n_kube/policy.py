@@ -50,7 +50,7 @@ class ValidatingControllerMode(K8sEventMode):
         'k8s-validator',
         required=['operations'],
         **{
-            'on-match': {'enum': ['allow', 'deny']},
+            'on-match': {'enum': ['allow', 'deny', 'warn']},
             'operations': {
                 'type': 'array',
                 'items': {
@@ -159,12 +159,12 @@ class ValidatingControllerMode(K8sEventMode):
         action = self.policy.data['mode'].get('on-match', 'deny')
 
         if not self.policy.is_runnable(event):
-            return self.policy.name, True, []
+            return True, []
         log.info(f"Got event:{event}")
         matched = self._filter_event(event['request'])
         if not matched:
             log.warning("Event not matched, skipping")
-            return self.policy.name, True, []
+            return True, []
         log.info("Event Matched")
 
         resources = [event['request']['object']]
@@ -178,19 +178,23 @@ class ValidatingControllerMode(K8sEventMode):
         log.info(f"Filtered from 1 to {len(resources)} resource(s)")
 
         if action == 'allow' and resources:
-            allow = True
+            result = 'allow'
         elif action == 'allow' and not resources:
-            allow = False
+            result = 'deny'
         elif action == 'deny' and resources:
-            allow = False
+            result = 'deny'
         elif action == 'deny' and not resources:
-            allow = True
+            result = 'allow'
+        elif action == 'warn' and resources:
+            result = 'warn'
+        elif action == 'warn' and not resources:
+            result = 'allow'
 
-        if allow:
+        if result:
             verb = 'allowing'
         else:
             verb = 'denying'
 
         log.info(f'{verb} admission because on-match:{action}, matched:{len(resources)}')
 
-        return self.policy, allow, resources
+        return result, resources
