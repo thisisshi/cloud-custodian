@@ -43,12 +43,10 @@ class TestAdmissionControllerMode(KubeTest):
                 'resource': 'k8s.pod',
                 'mode': {
                     'type': 'k8s-validator',
-                    'match': {
-                        'on-match': 'deny',
-                        'operations': [
-                            'CREATE',
-                        ]
-                    }
+                    'on-match': 'deny',
+                    'operations': [
+                        'CREATE',
+                    ]
                 },
                 'filters': [
                     {
@@ -75,12 +73,10 @@ class TestAdmissionControllerMode(KubeTest):
                 'resource': 'k8s.pod',
                 'mode': {
                     'type': 'k8s-validator',
-                    'match': {
-                        'on-match': 'deny',
-                        'operations': [
-                            'DELETE'
-                        ]
-                    }
+                    'on-match': 'deny',
+                    'operations': [
+                        'DELETE'
+                    ]
                 },
                 'filters': [
                     # we should be able to filter on the attribbutes of the resource to be deleted
