@@ -672,10 +672,9 @@ def get_service_region_map(regions, resource_types, provider='aws'):
             normalized_types.append(r[len(provider) + 1:])
         else:
             normalized_types.append(r)
-
     resource_service_map = {
         r: clouds[provider].resources.get(r).resource_type.service
-        for r in normalized_types if r != 'account'}
+        for r in normalized_types if r != 'account' and r}
     # support for govcloud and china, we only utilize these regions if they
     # are explicitly passed in on the cli.
     partition_regions = {}

@@ -87,7 +87,6 @@ class PolicyCollection:
         results = self.policies
         results = self._filter_by_patterns(results, policy_patterns)
         results = self._filter_by_resource_types(results, resource_types)
-        results = self._filter_by_providers(results, providers)
         results = self._filter_by_modes(results, modes)
         # next line brings the result set in the original order of self.policies
         results = [x for x in self.policies if x in results]
@@ -153,29 +152,6 @@ class PolicyCollection:
                 'Resource type "{}" '
                 'did not match any policies.').format(resource_type))
 
-        return results
-
-    def _filter_by_providers(self, policies, providers):
-        """
-        Takes a list of policies and returns only those matching a given provider
-        """
-        if not providers:
-            return policies
-        results = []
-        for provider in providers:
-            result = self._filter_by_provider(policies, provider)
-            results.extend(x for x in result if x not in results)
-        return results
-
-    def _filter_by_provider(self, policies, provider):
-        results = []
-        for policy in policies:
-            if policy.provider_name == provider:
-                results.append(policy)
-        if not results:
-            self.log.warning((
-                'Provider type "{}" '
-                'did not match any policies.').format(provider))
         return results
 
     def _filter_by_modes(self, policies, modes):
