@@ -2,7 +2,7 @@ name: "Docker Build"
 on:
   push:
     branches:
-      - master
+      - docker-buildx3
     tags:
       # todo: update for 1.0
       - 0.*
@@ -22,9 +22,10 @@ jobs:
       - name: ${{ matrix.image }} build and push
         uses: ./.github/composites/docker-build-push
         env:
-          HUB_USER: c7nbuild
+          HUB_USER: sonnyshi
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
           name: ${{ matrix.image }}
           push: true
           platforms: linux/arm64,linux/amd64
+          repository: sonnyshi
