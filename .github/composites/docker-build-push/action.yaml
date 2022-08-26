@@ -42,12 +42,15 @@ runs:
       id: get_tag
       shell: bash
       run: |
-        if [ "${{ github.ref }}" = "refs/heads/master" ];
-        then
-          echo "::set-output name=tag::latest";
-        else
-          echo "::set-output name=tag::dev";
-        fi
+        echo "
+        if '${{ github.ref }}'.startswith('refs/tags'):
+          print('::set-output name=tag::latest')
+        elif '${{ github.ref }}' == 'refs/heads/master':
+          print('::set-output name=tag::dev')
+        else:
+          id = '${{ github.ref }}.split('/')[-1]
+          print(f'::set-output name=tag::{id}')
+        " | python
 
     - name: Docker meta
       id: meta
