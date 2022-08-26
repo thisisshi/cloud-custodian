@@ -42,7 +42,7 @@ runs:
       id: get_tag
       shell: bash
       run: |
-        if [ "${{ github.ref }}} = "refs/heads/master" ];
+        if [ "${{ github.ref }}" = "refs/heads/master" ];
         then
           echo "::set-output name=tag::latest";
         else
