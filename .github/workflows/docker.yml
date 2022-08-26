@@ -16,15 +16,16 @@ jobs:
           - mailer
           - policystream
 
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: ${{ matrix.image }} build and push
-        uses: ./.github/composites/docker-build-push
-        env:
-          HUB_USER: c7nbuild
-          HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
-        with:
-          name: ${{ matrix.image }}
-          push: true
-          platforms: linux/arm64,linux/amd64
+    use_cache:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - name: ${{ matrix.image }} build and push
+          uses: ./.github/composites/docker-build-push
+          env:
+            HUB_USER: c7nbuild
+            HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
+          with:
+            name: ${{ matrix.image }}
+            push: true
+            platforms: linux/arm64,linux/amd64
