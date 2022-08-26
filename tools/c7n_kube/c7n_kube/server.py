@@ -81,7 +81,7 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
         code = 200 if allow else 400
         message = 'OK'
         if failed_policies:
-            message = f'Failed admission due to policies:{failed_policies}'
+            message = f'Failed admission due to policies:{json.dumps(failed_policies)}'
 
         return json.dumps({
             "apiVersion": "admission.k8s.io/v1",
