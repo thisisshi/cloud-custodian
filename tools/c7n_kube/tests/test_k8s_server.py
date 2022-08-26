@@ -129,8 +129,9 @@ class TestServer(KubeTest):
         policies = {
             'policies': []
         }
-        self._server(8088, policies)
-        res = requests.get('http://0.0.0.0:8088')
+        port = 8088
+        self._server(port, policies)
+        res = requests.get(f'http://0.0.0.0:{port}')
         self.assertEqual(res.json(), [])
         self.assertEqual(res.status_code, 200)
 
@@ -138,7 +139,7 @@ class TestServer(KubeTest):
         policies = {
             'policies': []
         }
-        port = 8088
+        port = 8089
         self._server(port, policies)
         event = self.get_event('create_pod')
         res = requests.post(f'http://0.0.0.0:{port}', json=event)
@@ -175,7 +176,7 @@ class TestServer(KubeTest):
                 }
             ]
         }
-        port = 8088
+        port = 8090
         self._server(port, policies)
         event = self.get_event('create_pod')
         res = requests.post(f'http://0.0.0.0:{port}', json=event)
@@ -198,7 +199,7 @@ class TestServer(KubeTest):
                 }
             ]
         }
-        port = 8088
+        port = 8091
         self._server(port, policies)
         event = self.get_event('create_pod')
         res = requests.post(f'http://0.0.0.0:{port}', json=event)
@@ -246,7 +247,7 @@ class TestServer(KubeTest):
                 }
             ]
         }
-        port = 8088
+        port = 8092
         self._server(port, policies)
         event = self.get_event('create_pod')
         res = requests.post(f'http://0.0.0.0:{port}', json=event)
