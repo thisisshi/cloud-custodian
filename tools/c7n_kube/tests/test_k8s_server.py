@@ -37,7 +37,7 @@ class TestServer(KubeTest):
                 json.dump(policies, f)
             server_thread = threading.Thread(
                 target=TestAdmissionControllerServer(
-                    server_address=('0.0.0.0', port),
+                    server_address=('localhost', port),
                     RequestHandlerClass=AdmissionControllerHandler,
                     policy_dir=temp_dir,
                     bind_and_activate=True,
@@ -62,7 +62,7 @@ class TestServer(KubeTest):
                     {"policies": [{'name': 'test3', 'resource': 'ebs'}]}, f
                 )
             server = TestAdmissionControllerServer(
-                server_address=('0.0.0.0', 8080),
+                server_address=('localhost', 8080),
                 RequestHandlerClass=AdmissionControllerHandler,
                 policy_dir=temp_dir
             )
@@ -84,7 +84,7 @@ class TestServer(KubeTest):
                     {"policies": [{'name': 'test3', 'resource': 'k8s.service'}]}, f
                 )
             server = TestAdmissionControllerServer(
-                server_address=('0.0.0.0', 8082),
+                server_address=('localhost', 8082),
                 RequestHandlerClass=AdmissionControllerHandler,
                 policy_dir=temp_dir
             )
@@ -128,7 +128,7 @@ class TestServer(KubeTest):
                     {"policies": [{'name': 'test3', 'resource': 'k8s.service'}]}, f
                 )
             server = TestAdmissionControllerServer(
-                server_address=('0.0.0.0', 8080),
+                server_address=('localhost', 8080),
                 RequestHandlerClass=AdmissionControllerHandler,
                 policy_dir=temp_dir
             )
@@ -141,7 +141,7 @@ class TestServer(KubeTest):
             'policies': []
         }
         port = self._server(policies)
-        res = requests.get(f'http://0.0.0.0:{port}')
+        res = requests.get(f'http://localhost:{port}')
         self.assertEqual(res.json(), [])
         self.assertEqual(res.status_code, 200)
 
@@ -162,7 +162,7 @@ class TestServer(KubeTest):
             ]
         }
         port = self._server(policies)
-        res = requests.get(f'http://0.0.0.0:{port}')
+        res = requests.get(f'http://localhost:{port}')
         self.assertEqual(res.json(), policies['policies'])
         self.assertEqual(res.status_code, 200)
 
@@ -172,7 +172,7 @@ class TestServer(KubeTest):
         }
         port = self._server(policies)
         event = self.get_event('create_pod')
-        res = requests.post(f'http://0.0.0.0:{port}', json=event)
+        res = requests.post(f'http://localhost:{port}', json=event)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(
             {
@@ -209,7 +209,7 @@ class TestServer(KubeTest):
         }
         port = self._server(policies)
         event = self.get_event('create_pod')
-        res = requests.post(f'http://0.0.0.0:{port}', json=event)
+        res = requests.post(f'http://localhost:{port}', json=event)
         self.assertEqual(res.status_code, 200)
         self.assertFalse(res.json()['response']['allowed'])
 
@@ -231,7 +231,7 @@ class TestServer(KubeTest):
         }
         port = self._server(policies)
         event = self.get_event('create_pod')
-        res = requests.post(f'http://0.0.0.0:{port}', json=event)
+        res = requests.post(f'http://localhost:{port}', json=event)
         self.assertEqual(res.status_code, 200)
         self.assertTrue(res.json()['response']['allowed'])
 
@@ -278,7 +278,7 @@ class TestServer(KubeTest):
         }
         port = self._server(policies)
         event = self.get_event('create_pod')
-        res = requests.post(f'http://0.0.0.0:{port}', json=event)
+        res = requests.post(f'http://localhost:{port}', json=event)
         self.assertEqual(res.status_code, 200)
         self.assertFalse(res.json()['response']['allowed'])
         failures = json.loads(
@@ -307,7 +307,7 @@ class TestServer(KubeTest):
         }
         port = self._server(policies)
         event = self.get_event('create_pod')
-        res = requests.post(f'http://0.0.0.0:{port}', json=event)
+        res = requests.post(f'http://localhost:{port}', json=event)
         self.assertEqual(res.status_code, 200)
         self.assertTrue(res.json()['response']['allowed'])
         self.assertEqual(
@@ -321,7 +321,7 @@ class TestServer(KubeTest):
             init(port, 'policies', serve_forever=False)
             patched.assert_called_once()
             patched.assert_called_with(
-                server_address=('0.0.0.0', port),
+                server_address=('localhost', port),
                 RequestHandlerClass=AdmissionControllerHandler,
                 policy_dir='policies'
             )
@@ -330,6 +330,6 @@ class TestServer(KubeTest):
     def test_server_bad_post(self):
         policies = {'policies': []}
         port = self._server(policies)
-        res = requests.post(f'http://0.0.0.0:{port}', data='bad data')
+        res = requests.post(f'http://localhost:{port}', data='bad data')
         self.assertEqual(res.status_code, 400)
         self.assertEqual(res.json(), {'error': 'Expecting value: line 1 column 1 (char 0)'})
