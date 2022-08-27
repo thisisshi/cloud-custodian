@@ -68,7 +68,7 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
         warn_policies = []
         for p in self.server.policy_collection.policies:
             result, resources = p.push(req)
-            if result in ('allow', 'warn'):
+            if result in ('allow', 'warn',):
                 results.append(1)
             else:
                 results.append(0)
@@ -92,15 +92,14 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         response = self.admission_response(
             uid=req['request']['uid'],
-            allow=all(results),
             failed_policies=failed_policies,
             warn_policies=warn_policies
         )
         log.info(response)
         self.wfile.write(response.encode('utf-8'))
 
-    def admission_response(self, uid, allow=False, failed_policies=None, warn_policies=None):
-        code = 200 if allow else 400
+    def admission_response(self, uid, failed_policies=None, warn_policies=None):
+        code = 200 if failed_policies else 400
         message = 'OK'
         warnings = []
         if failed_policies:
@@ -113,7 +112,7 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
             "apiVersion": "admission.k8s.io/v1",
             "kind": "AdmissionReview",
             "response": {
-                "allowed": allow,
+                "allowed": False if failed_policies else True,
                 "warnings": warnings,
                 "uid": uid,
                 "status": {

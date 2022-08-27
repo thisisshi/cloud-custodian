@@ -190,7 +190,7 @@ class ValidatingControllerMode(K8sEventMode):
         elif action == 'warn' and not resources:
             result = 'allow'
 
-        if result:
+        if result in ('allow', 'warn',):
             verb = 'allowing'
         else:
             verb = 'denying'
