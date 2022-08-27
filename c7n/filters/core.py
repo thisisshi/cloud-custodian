@@ -624,6 +624,7 @@ class ValueFilter(BaseValueFilter):
             else:
                 v, r = self.process_value_type(self.v, r, i)
                 self.vtype = self.vtype.split('_')[0]
+                return value_match(r, v)
         else:
             v = self.v
             return value_match(r, v)
