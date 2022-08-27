@@ -50,10 +50,10 @@ class TestAdmissionControllerMode(KubeTest):
                 'filters': [
                     {
                         'type': 'event',
-                        'key': 'request.userInfo.groups',
-                        'value': 'system:masters',
-                        'op': 'in',
-                        'value_type': 'swap'
+                        'key': 'request.object.spec.containers[].image',
+                        'value': 'nginx',
+                        'op': 'eq',
+                        'value_type': 'any_normalize'
                     }
                 ]
             }, session_factory=factory

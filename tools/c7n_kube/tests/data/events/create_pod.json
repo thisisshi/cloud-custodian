@@ -183,6 +183,7 @@
                }
             ],
             "containers":[
+              {"image": "ubuntu"},
                {
                   "name":"web",
                   "image":"nginx",

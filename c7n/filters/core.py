@@ -96,10 +96,14 @@ OPERATORS = {
     'intersect': intersect}
 
 
-VALUE_TYPES = [
+_VALUE_TYPES = [
     'age', 'integer', 'expiration', 'normalize', 'size',
     'cidr', 'cidr_size', 'swap', 'resource_count', 'expr',
-    'unique_size', 'date', 'version']
+    'unique_size', 'date', 'version', 'each', 'any']
+
+VALUE_TYPES = _VALUE_TYPES + [
+    f'each_{i}' for i in _VALUE_TYPES if i not in ('resource_count', 'each', 'any')] + [
+    f'any_{i}' for i in _VALUE_TYPES if i not in ('resource_count', 'each', 'any')]
 
 
 class FilterRegistry(PluginRegistry):
@@ -558,6 +562,28 @@ class ValueFilter(BaseValueFilter):
         return super(ValueFilter, self).get_resource_value(k, i, self.data.get('value_regex'))
 
     def match(self, i):
+
+        def value_match(r, v):
+            # Value match
+            if r is None and v == 'absent':
+                return True
+            elif r is not None and v == 'present':
+                return True
+            elif v == 'not-null' and r:
+                return True
+            elif v == 'empty' and not r:
+                return True
+            elif self.op:
+                op = OPERATORS[self.op]
+                try:
+                    return op(r, v)
+                except TypeError:
+                    return False
+            elif r == v:
+                return True
+
+            return False
+
         if self.v is None and len(self.data) == 1:
             [(self.k, self.v)] = self.data.items()
         elif self.v is None and not hasattr(self, 'content_initialized'):
@@ -582,29 +608,25 @@ class ValueFilter(BaseValueFilter):
 
         # value type conversion
         if self.vtype is not None:
-            v, r = self.process_value_type(self.v, r, i)
+            if self.vtype.startswith('each'):
+                self.vtype = self.vtype.split('_')[0]
+                result = []
+                for each in r:
+                    v, r = self.process_value_type(self.v, each, i)
+                    result.append(value_match(r, v))
+                return all(result)
+            elif self.vtype.startswith('any'):
+                result = []
+                for each in r:
+                    v, r = self.process_value_type(self.v, each, i)
+                    result.append(value_match(r, v))
+                return any(result)
+            else:
+                v, r = self.process_value_type(self.v, r, i)
+                self.vtype = self.vtype.split('_')[0]
         else:
             v = self.v
-
-        # Value match
-        if r is None and v == 'absent':
-            return True
-        elif r is not None and v == 'present':
-            return True
-        elif v == 'not-null' and r:
-            return True
-        elif v == 'empty' and not r:
-            return True
-        elif self.op:
-            op = OPERATORS[self.op]
-            try:
-                return op(r, v)
-            except TypeError:
-                return False
-        elif r == v:
-            return True
-
-        return False
+            return value_match(r, v)
 
     def process_value_type(self, sentinel, value, resource):
         if self.vtype == 'normalize' and isinstance(value, str):
@@ -671,6 +693,10 @@ class ValueFilter(BaseValueFilter):
             s = ComparableVersion(sentinel)
             v = ComparableVersion(value)
             return s, v
+
+        # no op for 'each'
+        elif self.vtype == 'each':
+            return sentinel, value
 
         return sentinel, value
 
