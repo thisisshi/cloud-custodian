@@ -123,7 +123,7 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
         })
 
 
-def init(port, policy_dir):
+def init(port, policy_dir, serve_forever=True):
     server = AdmissionControllerServer(
         server_address=(HOST, port),
         RequestHandlerClass=AdmissionControllerHandler,
@@ -132,3 +132,6 @@ def init(port, policy_dir):
     log.info(f"Serving at {HOST} {port}")
     while True:
         server.serve_forever()
+        # for testing purposes
+        if not serve_forever:
+            break

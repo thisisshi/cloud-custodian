@@ -8,8 +8,10 @@ import time
 
 import requests
 
+from unittest.mock import patch
+
 from c7n_kube.server import \
-    AdmissionControllerServer, AdmissionControllerHandler
+    AdmissionControllerServer, AdmissionControllerHandler, init
 
 from common_kube import KubeTest
 
@@ -291,3 +293,15 @@ class TestServer(KubeTest):
             res.json()['response']['warnings'],
             ['test-validator-pod:description deployment']
         )
+
+    def test_server_init(self):
+        with patch('c7n_kube.server.AdmissionControllerServer') as patched:
+            port = self.find_port()
+            init(port, 'policies', serve_forever=False)
+            patched.assert_called_once()
+            patched.assert_called_with(
+                server_address=('0.0.0.0', port),
+                RequestHandlerClass=AdmissionControllerHandler,
+                policy_dir='policies'
+            )
+            patched.return_value.serve_forever.assert_called_once()
