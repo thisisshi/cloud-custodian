@@ -33,7 +33,6 @@ class TestAdmissionControllerMode(KubeTest):
         result, resources = policy.push(event)
         self.assertEqual(len(resources), 1)
         self.assertEqual(result, 'allow')
-        self.assertEqual(policy.name, 'test-validator')
 
     def test_kube_event_filter(self):
         factory = self.replay_flight_data()
@@ -63,7 +62,6 @@ class TestAdmissionControllerMode(KubeTest):
         result, resources = policy.push(event)
         self.assertEqual(len(resources), 1)
         self.assertEqual(result, 'deny')
-        self.assertEqual(policy.name, 'test-event-filter')
 
     def test_kube_delete_event(self):
         factory = self.replay_flight_data()
@@ -88,4 +86,73 @@ class TestAdmissionControllerMode(KubeTest):
         result, resources = policy.push(event)
         self.assertTrue(resources)
         self.assertEqual(result, 'deny')
-        self.assertEqual(policy.name, 'test-delete-pod')
+
+    def test_validator_warn_event(self):
+        factory = self.replay_flight_data()
+        policy = self.load_policy(
+            {
+                'name': 'test-warn-pod',
+                'resource': 'k8s.pod',
+                'mode': {
+                    'type': 'k8s-validator',
+                    'on-match': 'warn',
+                    'operations': [
+                        'CREATE'
+                    ]
+                }
+            }, session_factory=factory
+        )
+        event = self.get_event('create_pod')
+        result, resources = policy.push(event)
+        self.assertTrue(resources)
+        self.assertEqual(result, 'warn')
+
+    def test_validator_warn_event_no_results(self):
+        factory = self.replay_flight_data()
+        policy = self.load_policy(
+            {
+                'name': 'test-warn-pod',
+                'resource': 'k8s.pod',
+                'mode': {
+                    'type': 'k8s-validator',
+                    'on-match': 'warn',
+                    'operations': [
+                        'CREATE'
+                    ]
+                },
+                'filters': [
+                    {'foo': 'bar'}
+                ]
+            }, session_factory=factory
+        )
+        event = self.get_event('create_pod')
+        result, resources = policy.push(event)
+        self.assertEqual(len(resources), 0)
+        self.assertEqual(result, 'allow')
+
+    def test_validator_allow_crd(self):
+        factory = self.replay_flight_data()
+        policy = self.load_policy(
+            {
+                'name': 'no-custom-resource-for-you',
+                'resource': 'k8s.custom-namespaced-resource',
+                'query': [
+                    {
+                        'plural': 'policyreports',
+                        'group': 'wgpolicyk8s.io',
+                        'version': 'v1alpha2'
+                    }
+                ],
+                'mode': {
+                    'type': 'k8s-validator',
+                    'on-match': 'deny',
+                    'operations': ['CREATE']
+                }
+
+            },
+            session_factory=factory,
+        )
+        event = self.get_event('create_policyreport')
+        result, resources = policy.push(event)
+        self.assertEqual(result, 'deny')
+        self.assertEqual(len(resources), 1)
