@@ -90,12 +90,14 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        self.wfile.write(self.admission_response(
+        response = self.admission_response(
             uid=req['request']['uid'],
             allow=all(results),
             failed_policies=failed_policies,
             warn_policies=warn_policies
-        ).encode('utf-8'))
+        )
+        log.info(response)
+        self.wfile.write(response.encode('utf-8'))
 
     def admission_response(self, uid, allow=False, failed_policies=None, warn_policies=None):
         code = 200 if allow else 400

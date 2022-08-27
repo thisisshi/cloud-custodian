@@ -1,6 +1,7 @@
 # Copyright The Cloud Custodian Authors.
 # SPDX-License-Identifier: Apache-2.0
 import json
+import socket
 import tempfile
 import threading
 import time
@@ -21,7 +22,14 @@ class TestAdmissionControllerServer(AdmissionControllerServer):
 
 class TestServer(KubeTest):
 
-    def _server(self, port, policies):
+    def find_port(self):
+        sock = socket.socket()
+        sock.bind(('', 0))
+        _, port = sock.getsockname()
+        return port
+
+    def _server(self, policies):
+        port = self.find_port()
         with tempfile.TemporaryDirectory() as temp_dir:
             with open(f"{temp_dir}/policy.yaml", "w+") as f:
                 json.dump(policies, f)
@@ -35,6 +43,7 @@ class TestServer(KubeTest):
             )
             server_thread.start()
             time.sleep(1)
+        return port
 
     def test_server_load_non_k8s_policies(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -129,8 +138,7 @@ class TestServer(KubeTest):
         policies = {
             'policies': []
         }
-        port = 8088
-        self._server(port, policies)
+        port = self._server(policies)
         res = requests.get(f'http://0.0.0.0:{port}')
         self.assertEqual(res.json(), [])
         self.assertEqual(res.status_code, 200)
@@ -139,8 +147,7 @@ class TestServer(KubeTest):
         policies = {
             'policies': []
         }
-        port = 8089
-        self._server(port, policies)
+        port = self._server(policies)
         event = self.get_event('create_pod')
         res = requests.post(f'http://0.0.0.0:{port}', json=event)
         self.assertEqual(res.status_code, 200)
@@ -177,8 +184,7 @@ class TestServer(KubeTest):
                 }
             ]
         }
-        port = 8090
-        self._server(port, policies)
+        port = self._server(policies)
         event = self.get_event('create_pod')
         res = requests.post(f'http://0.0.0.0:{port}', json=event)
         self.assertEqual(res.status_code, 200)
@@ -200,8 +206,7 @@ class TestServer(KubeTest):
                 }
             ]
         }
-        port = 8091
-        self._server(port, policies)
+        port = self._server(policies)
         event = self.get_event('create_pod')
         res = requests.post(f'http://0.0.0.0:{port}', json=event)
         self.assertEqual(res.status_code, 200)
@@ -248,8 +253,7 @@ class TestServer(KubeTest):
                 }
             ]
         }
-        port = 8092
-        self._server(port, policies)
+        port = self._server(policies)
         event = self.get_event('create_pod')
         res = requests.post(f'http://0.0.0.0:{port}', json=event)
         self.assertEqual(res.status_code, 200)
@@ -278,8 +282,7 @@ class TestServer(KubeTest):
                 },
             ]
         }
-        port = 8093
-        self._server(port, policies)
+        port = self._server(policies)
         event = self.get_event('create_pod')
         res = requests.post(f'http://0.0.0.0:{port}', json=event)
         self.assertEqual(res.status_code, 200)
