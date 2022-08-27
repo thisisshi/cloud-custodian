@@ -305,3 +305,10 @@ class TestServer(KubeTest):
                 policy_dir='policies'
             )
             patched.return_value.serve_forever.assert_called_once()
+
+    def test_server_bad_post(self):
+        policies = {'policies': []}
+        port = self._server(policies)
+        res = requests.post(f'http://0.0.0.0:{port}', data='bad data')
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.json(), {'error': 'Expecting value: line 1 column 1 (char 0)'})
