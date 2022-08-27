@@ -99,7 +99,7 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
         self.wfile.write(response.encode('utf-8'))
 
     def admission_response(self, uid, failed_policies=None, warn_policies=None):
-        code = 200 if failed_policies else 400
+        code = 200 if len(failed_policies) == 0 else 400
         message = 'OK'
         warnings = []
         if failed_policies:
