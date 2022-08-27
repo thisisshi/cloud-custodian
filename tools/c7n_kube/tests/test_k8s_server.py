@@ -145,6 +145,27 @@ class TestServer(KubeTest):
         self.assertEqual(res.json(), [])
         self.assertEqual(res.status_code, 200)
 
+    def test_server_handle_get_policies(self):
+        policies = {
+            'policies': [
+                {
+                    'name': 'test-validator',
+                    'resource': 'k8s.pod',
+                    'mode': {
+                        'type': 'k8s-validator',
+                        'on-match': 'deny',
+                        'operations': [
+                            'CREATE',
+                        ]
+                    }
+                }
+            ]
+        }
+        port = self._server(policies)
+        res = requests.get(f'http://0.0.0.0:{port}')
+        self.assertEqual(res.json(), policies['policies'])
+        self.assertEqual(res.status_code, 200)
+
     def test_server_handle_post_no_policies(self):
         policies = {
             'policies': []
