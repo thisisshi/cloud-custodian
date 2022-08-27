@@ -321,7 +321,7 @@ class TestServer(KubeTest):
             init(port, 'policies', serve_forever=False)
             patched.assert_called_once()
             patched.assert_called_with(
-                server_address=('localhost', port),
+                server_address=('0.0.0.0', port),
                 RequestHandlerClass=AdmissionControllerHandler,
                 policy_dir='policies'
             )
