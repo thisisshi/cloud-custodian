@@ -1,4 +1,4 @@
-# C pyright The Cloud Custodian Authors.
+# Copyright The Cloud Custodian Authors.
 # SPDX-License-Identifier: Apache-2.0
 """
 Resource Filtering Logic
@@ -695,7 +695,7 @@ class ValueFilter(BaseValueFilter):
             v = ComparableVersion(value)
             return s, v
 
-        # no op for 'each'
+        # no op for 'each' or 'any'
         elif self.vtype in ('each', 'any',):
             return sentinel, value
 
