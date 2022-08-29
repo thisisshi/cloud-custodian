@@ -40,9 +40,8 @@ runs:
 
     - name: Get Tag
       id: get_tag
-      shell: bash
+      shell: python
       run: |
-        echo "
         if '${{ github.ref }}'.startswith('refs/tags'):
           print('::set-output name=tag::latest')
         elif '${{ github.ref }}' == 'refs/heads/master':
@@ -56,7 +55,6 @@ runs:
           # this should just be the branch
           id = '${{ github.ref }}'.split('/')[-1]
           print(f'::set-output name=tag::{id}')
-        " | python
 
     - name: Docker meta
       id: meta
