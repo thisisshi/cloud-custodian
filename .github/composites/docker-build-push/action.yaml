@@ -2,21 +2,21 @@ name: 'Build and Publish Docker Image'
 description: 'Build and Publish Docker Image'
 inputs:
   repository:
-    description: 'docker hub repository'
+    description: 'Docker hub repository'
     required: true
     default: 'cloudcustodian'
   name:
-    description: 'image name'
+    description: 'Image name, should match dockerfile name'
     required: true
   push:
-    description: 'push image: true/false'
+    description: 'Push image: true/false'
     required: true
     default: false
   poetry_version:
     description: "Poetry Version to use"
     default: "1.1.14"
   trivy_version:
-    description: "trivy version to use"
+    description: "Trivy version to use"
     default: "0.5.4"
   platforms:
     description: "Platforms to build, e.g. linux/arm64,linux/amd64"

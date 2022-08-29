@@ -558,27 +558,5 @@ def generate():
         p.write_text(image.render())
 
 
-@cli.command()
-@click.option("-t", "--tag", help="Static tag for the image")
-def tags(tag):
-    """Get tags"""
-    tags = get_env_tags(tag)
-    flavor = os.environ.get("FLAVOR")
-    result = []
-    if flavor:
-        for t in tags:
-            result.append(f"{flavor}-{t}")
-    else:
-        result = tags
-
-    # we shouldn't ever have more than 5 tags
-    for i in range(0, 5):
-        try:
-            val = result[i]
-        except IndexError:
-            val = ""
-        click.echo(f"::set-output name=tag{i}::{val}")
-
-
 if __name__ == "__main__":
     cli()
