@@ -160,7 +160,7 @@ runs:
         COSIGN_EXPERIMENTAL: "true"
         TAGS: ${{ steps.meta.outputs.tags }}
       run: |
-        tags=($TAGS)
+        tags=(${TAGS//,/ })
         for i in "${tags[@]}"
         do
           docker pull $i
