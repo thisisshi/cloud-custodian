@@ -38,8 +38,7 @@ RUN apt-get --yes update
 RUN apt-get --yes install build-essential curl python3-venv python3-dev \
     --no-install-recommends
 RUN python3 -m venv /usr/local
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py \
-    | GET_POETRY_IGNORE_DEPRECATION=1 python3 - -y --version {poetry_version}
+RUN curl -sSL https://install.python-poetry.org | python3 - -y --version {poetry_version}
 
 WORKDIR /src
 
