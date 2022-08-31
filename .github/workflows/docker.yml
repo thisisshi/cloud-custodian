@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - main
     tags:
       # todo: update for 1.0
       - 0.*
