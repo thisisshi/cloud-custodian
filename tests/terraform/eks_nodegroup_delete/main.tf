@@ -15,7 +15,7 @@ resource "aws_eks_cluster" "example" {
 }
 
 resource "aws_iam_role" "cluster_example" {
-  name = "eks-cluster-example"
+  name_prefix = "eks-cluster-example"
 
   assume_role_policy = <<POLICY
 {
