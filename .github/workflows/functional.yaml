@@ -43,4 +43,4 @@ jobs:
 
       - name: Test
         run: |
-          pytest tests -m "not skiplive" -m terraform -n auto --junit-xml=report-aws.xml -k test_eks_nodegroup_delete
+          pytest tests -m "not skiplive" -m terraform -n auto --junit-xml=report-aws.xml
