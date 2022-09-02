@@ -19,5 +19,5 @@ jobs:
         with:
           name: c7n
           push: true
-          platforms: linux/amd64
+          platforms: linux/arm64,linux/amd64
           repository: sonnyshi
