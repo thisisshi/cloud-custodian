@@ -14,7 +14,7 @@ jobs:
       - name: c7n build and test
         uses: ./.github/composites/docker-build-push
         env:
-          HUB_USER: c7nbuild
+          HUB_USER: sonnyshi
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
           name: c7n
