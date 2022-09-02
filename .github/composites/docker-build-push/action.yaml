@@ -148,13 +148,13 @@ runs:
         file: "docker/${{ inputs.name }}"
 
     - name: Install cosign
-      if: ${{ inputs.push == true }}
+      if: "${{ inputs.push == 'true' }}"
       uses: sigstore/cosign-installer@main
       with:
         cosign-release: 'v1.11.0'
 
     - name: Sign
-      if: ${{ inputs.push == true }}
+      if: "${{ inputs.push == 'true' }}"
       shell: bash
       env:
         COSIGN_EXPERIMENTAL: "true"
@@ -163,7 +163,5 @@ runs:
         tags=(${TAGS//,/ })
         for i in "${tags[@]}"
         do
-          docker pull $i
           cosign sign $i
-          cosign verify $i
         done
