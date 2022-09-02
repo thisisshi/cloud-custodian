@@ -39,7 +39,7 @@ jobs:
 
       - name: Install Requirements
         run: |
-          pip install --cache-dir=./.pip-cache -qr requirements.txt
+          pip install --cache-dir=./.pip-cache -r requirements.txt
 
       - name: Test
         run: |
