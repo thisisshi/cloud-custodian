@@ -1,11 +1,8 @@
 name: "Functional Tests"
 
 env:
+  terraform_version: "0.13.4"
   C7N_FUNCTIONAL: true
-
-inputs:
-  terraform_version:
-    default: "0.13.4"
 
 on:
   push:
@@ -32,7 +29,7 @@ jobs:
 
       - name: Install Terraform
         run: |
-          wget -q https://releases.hashicorp.com/terraform/${{ inputs.terraform_version }}/terraform_${{ inputs.terraform_version}}_linux_amd64.zip
+          wget -q https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip
           unzip -qq terraform*.zip
           mv terraform /usr/local/bin
           mkdir -p .tfcache
