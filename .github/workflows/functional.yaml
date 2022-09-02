@@ -1,0 +1,46 @@
+name: "Functional Tests"
+
+env:
+  C7N_FUNCTIONAL: true
+
+inputs:
+  terraform_version:
+    default: "0.13.4"
+
+on:
+  push:
+    branches:
+      - functional-testing
+
+jobs:
+  Functional:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@4
+        with:
+          python-version: 3.10
+      - uses: aws-actions/configure-aws-credentials@v1.7.0
+        with:
+          role-to-assume: arn:aws:iam::532725030595:role/GithubActionsTest
+          aws-region: us-east-1
+
+      - name: Sanity Check
+        run: |
+          pip install awscli
+          aws sts get-caller-identity
+
+      - name: Install Terraform
+        run: |
+          wget -q https://releases.hashicorp.com/terraform/${{ inputs.terraform_version }}/terraform_${{ inputs.terraform_version}}_linux_amd64.zip
+          unzip -qq terraform*.zip
+          mv terraform /usr/local/bin
+          mkdir -p .tfcache
+
+      - name: Install Requirements
+        run: |
+          pip install --cache-dir=./.pip-cache -qr requirements.txt
+
+      - name: Test
+        run: |
+          pytest tests -m "not skiplive" -m terraform -n auto --junit-xml=report-aws.xml
