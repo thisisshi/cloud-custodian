@@ -22,8 +22,7 @@ jobs:
         with:
           python-version: "3.8"
 
-      - id: 'AWS Login'
-        uses: aws-actions/configure-aws-credentials@v1.7.0
+      - uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
           role-to-assume: arn:aws:iam::532725030595:role/GithubActionsTest
           aws-region: us-east-1
@@ -62,8 +61,7 @@ jobs:
         with:
           python-version: "3.8"
 
-      - id: 'GCP Login'
-        name: 'Authenticate to Google Cloud'
+      - name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v0.4.0'
         with:
           export_environment_variables: true
