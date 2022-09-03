@@ -7,116 +7,49 @@
                 "Instances": [
                     {
                         "AmiLaunchIndex": 0,
-                        "ImageId": "ami-0d7734f53f491186b",
-                        "InstanceId": "i-017e55c722d539f90",
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-03cb92101465ddb80",
                         "InstanceType": "t2.micro",
                         "LaunchTime": {
                             "__class__": "datetime",
                             "year": 2022,
-                            "month": 8,
-                            "day": 4,
-                            "hour": 11,
-                            "minute": 33,
-                            "second": 49,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 15,
+                            "second": 55,
                             "microsecond": 0
                         },
                         "Monitoring": {
                             "State": "disabled"
                         },
                         "Placement": {
-                            "AvailabilityZone": "us-east-1f",
+                            "AvailabilityZone": "us-east-1c",
                             "GroupName": "",
                             "Tenancy": "default"
                         },
-                        "PrivateDnsName": "ip-10-0-1-168.ec2.internal",
-                        "PrivateIpAddress": "10.0.1.168",
+                        "PrivateDnsName": "",
                         "ProductCodes": [],
                         "PublicDnsName": "",
                         "State": {
-                            "Code": 16,
-                            "Name": "running"
+                            "Code": 48,
+                            "Name": "terminated"
                         },
-                        "StateTransitionReason": "",
-                        "SubnetId": "subnet-0e172a55c20169303",
-                        "VpcId": "vpc-00255c1f52c0a88d6",
+                        "StateTransitionReason": "User initiated (2022-09-03 17:43:41 GMT)",
                         "Architecture": "x86_64",
-                        "BlockDeviceMappings": [
-                            {
-                                "DeviceName": "/dev/xvda",
-                                "Ebs": {
-                                    "AttachTime": {
-                                        "__class__": "datetime",
-                                        "year": 2022,
-                                        "month": 8,
-                                        "day": 4,
-                                        "hour": 11,
-                                        "minute": 33,
-                                        "second": 49,
-                                        "microsecond": 0
-                                    },
-                                    "DeleteOnTermination": true,
-                                    "Status": "attached",
-                                    "VolumeId": "vol-0f1ee2360fa73f764"
-                                }
-                            }
-                        ],
-                        "ClientToken": "78C6248B-3FFA-4B29-874F-0AE73674F2C4",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "F99A0CEA-A043-451F-9C8D-C6C05F63EBB8",
                         "EbsOptimized": false,
                         "EnaSupport": true,
                         "Hypervisor": "xen",
-                        "NetworkInterfaces": [
-                            {
-                                "Attachment": {
-                                    "AttachTime": {
-                                        "__class__": "datetime",
-                                        "year": 2022,
-                                        "month": 8,
-                                        "day": 4,
-                                        "hour": 11,
-                                        "minute": 33,
-                                        "second": 49,
-                                        "microsecond": 0
-                                    },
-                                    "AttachmentId": "eni-attach-0fded6ac2e059ed5d",
-                                    "DeleteOnTermination": true,
-                                    "DeviceIndex": 0,
-                                    "Status": "attached",
-                                    "NetworkCardIndex": 0
-                                },
-                                "Description": "",
-                                "Groups": [
-                                    {
-                                        "GroupName": "default",
-                                        "GroupId": "sg-09c6a03dec497a6b0"
-                                    }
-                                ],
-                                "Ipv6Addresses": [],
-                                "MacAddress": "16:b2:be:00:93:87",
-                                "NetworkInterfaceId": "eni-004e46d428e6b695a",
-                                "OwnerId": "644160558196",
-                                "PrivateIpAddress": "10.0.1.168",
-                                "PrivateIpAddresses": [
-                                    {
-                                        "Primary": true,
-                                        "PrivateIpAddress": "10.0.1.168"
-                                    }
-                                ],
-                                "SourceDestCheck": true,
-                                "Status": "in-use",
-                                "SubnetId": "subnet-0e172a55c20169303",
-                                "VpcId": "vpc-00255c1f52c0a88d6",
-                                "InterfaceType": "interface"
-                            }
-                        ],
+                        "NetworkInterfaces": [],
                         "RootDeviceName": "/dev/xvda",
                         "RootDeviceType": "ebs",
-                        "SecurityGroups": [
-                            {
-                                "GroupName": "default",
-                                "GroupId": "sg-09c6a03dec497a6b0"
-                            }
-                        ],
-                        "SourceDestCheck": true,
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
                         "VirtualizationType": "hvm",
                         "CpuOptions": {
                             "CoreCount": 1,
@@ -129,7 +62,7 @@
                             "Configured": false
                         },
                         "MetadataOptions": {
-                            "State": "applied",
+                            "State": "pending",
                             "HttpTokens": "optional",
                             "HttpPutResponseHopLimit": 1,
                             "HttpEndpoint": "enabled",
@@ -144,17 +77,12 @@
                         "UsageOperationUpdateTime": {
                             "__class__": "datetime",
                             "year": 2022,
-                            "month": 8,
-                            "day": 4,
-                            "hour": 11,
-                            "minute": 33,
-                            "second": 49,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 15,
+                            "second": 55,
                             "microsecond": 0
-                        },
-                        "PrivateDnsNameOptions": {
-                            "HostnameType": "ip-name",
-                            "EnableResourceNameDnsARecord": false,
-                            "EnableResourceNameDnsAAAARecord": false
                         },
                         "MaintenanceOptions": {
                             "AutoRecovery": "default"
@@ -162,123 +90,62 @@
                     }
                 ],
                 "OwnerId": "644160558196",
-                "ReservationId": "r-0cb1509e933be4992"
+                "ReservationId": "r-08d8dd23a713b194d"
             },
             {
                 "Groups": [],
                 "Instances": [
                     {
                         "AmiLaunchIndex": 0,
-                        "ImageId": "ami-0d7734f53f491186b",
-                        "InstanceId": "i-0daf36c03bf9c5e75",
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-0cc6ae02630e8a9ac",
                         "InstanceType": "t2.micro",
                         "LaunchTime": {
                             "__class__": "datetime",
                             "year": 2022,
-                            "month": 8,
-                            "day": 4,
-                            "hour": 11,
-                            "minute": 33,
-                            "second": 49,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 28,
+                            "second": 17,
                             "microsecond": 0
                         },
                         "Monitoring": {
                             "State": "disabled"
                         },
                         "Placement": {
-                            "AvailabilityZone": "us-east-1f",
+                            "AvailabilityZone": "us-east-1a",
                             "GroupName": "",
                             "Tenancy": "default"
                         },
-                        "PrivateDnsName": "ip-10-0-1-15.ec2.internal",
-                        "PrivateIpAddress": "10.0.1.15",
+                        "PrivateDnsName": "",
                         "ProductCodes": [],
                         "PublicDnsName": "",
                         "State": {
-                            "Code": 16,
-                            "Name": "running"
+                            "Code": 48,
+                            "Name": "terminated"
                         },
-                        "StateTransitionReason": "",
-                        "SubnetId": "subnet-0e172a55c20169303",
-                        "VpcId": "vpc-00255c1f52c0a88d6",
+                        "StateTransitionReason": "User initiated (2022-09-03 17:29:20 GMT)",
                         "Architecture": "x86_64",
-                        "BlockDeviceMappings": [
-                            {
-                                "DeviceName": "/dev/xvda",
-                                "Ebs": {
-                                    "AttachTime": {
-                                        "__class__": "datetime",
-                                        "year": 2022,
-                                        "month": 8,
-                                        "day": 4,
-                                        "hour": 11,
-                                        "minute": 33,
-                                        "second": 49,
-                                        "microsecond": 0
-                                    },
-                                    "DeleteOnTermination": true,
-                                    "Status": "attached",
-                                    "VolumeId": "vol-07fccc8f6c75d1d1c"
-                                }
-                            }
-                        ],
-                        "ClientToken": "5671183C-7176-4D0F-93C7-E0703AA88F2B",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "2B1340EC-13FD-4467-AF9C-A1AA6AE02619",
                         "EbsOptimized": false,
                         "EnaSupport": true,
                         "Hypervisor": "xen",
-                        "NetworkInterfaces": [
-                            {
-                                "Attachment": {
-                                    "AttachTime": {
-                                        "__class__": "datetime",
-                                        "year": 2022,
-                                        "month": 8,
-                                        "day": 4,
-                                        "hour": 11,
-                                        "minute": 33,
-                                        "second": 49,
-                                        "microsecond": 0
-                                    },
-                                    "AttachmentId": "eni-attach-005f4b0f31ceb16b1",
-                                    "DeleteOnTermination": true,
-                                    "DeviceIndex": 0,
-                                    "Status": "attached",
-                                    "NetworkCardIndex": 0
-                                },
-                                "Description": "",
-                                "Groups": [
-                                    {
-                                        "GroupName": "default",
-                                        "GroupId": "sg-09c6a03dec497a6b0"
-                                    }
-                                ],
-                                "Ipv6Addresses": [],
-                                "MacAddress": "16:2f:ca:48:69:fd",
-                                "NetworkInterfaceId": "eni-0d3a0342e5b7b9403",
-                                "OwnerId": "644160558196",
-                                "PrivateIpAddress": "10.0.1.15",
-                                "PrivateIpAddresses": [
-                                    {
-                                        "Primary": true,
-                                        "PrivateIpAddress": "10.0.1.15"
-                                    }
-                                ],
-                                "SourceDestCheck": true,
-                                "Status": "in-use",
-                                "SubnetId": "subnet-0e172a55c20169303",
-                                "VpcId": "vpc-00255c1f52c0a88d6",
-                                "InterfaceType": "interface"
-                            }
-                        ],
+                        "NetworkInterfaces": [],
                         "RootDeviceName": "/dev/xvda",
                         "RootDeviceType": "ebs",
-                        "SecurityGroups": [
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "Tags": [
                             {
-                                "GroupName": "default",
-                                "GroupId": "sg-09c6a03dec497a6b0"
+                                "Key": "action_tag",
+                                "Value": "This EC2 instance has had less than 5 percent CPU utilization for over 5 days: stop@2022/06/03"
                             }
                         ],
-                        "SourceDestCheck": true,
                         "VirtualizationType": "hvm",
                         "CpuOptions": {
                             "CoreCount": 1,
@@ -291,7 +158,7 @@
                             "Configured": false
                         },
                         "MetadataOptions": {
-                            "State": "applied",
+                            "State": "pending",
                             "HttpTokens": "optional",
                             "HttpPutResponseHopLimit": 1,
                             "HttpEndpoint": "enabled",
@@ -306,17 +173,12 @@
                         "UsageOperationUpdateTime": {
                             "__class__": "datetime",
                             "year": 2022,
-                            "month": 8,
-                            "day": 4,
-                            "hour": 11,
-                            "minute": 33,
-                            "second": 49,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 28,
+                            "second": 17,
                             "microsecond": 0
-                        },
-                        "PrivateDnsNameOptions": {
-                            "HostnameType": "ip-name",
-                            "EnableResourceNameDnsARecord": false,
-                            "EnableResourceNameDnsAAAARecord": false
                         },
                         "MaintenanceOptions": {
                             "AutoRecovery": "default"
@@ -324,36 +186,1014 @@
                     }
                 ],
                 "OwnerId": "644160558196",
-                "ReservationId": "r-076e7b153ee60b37a"
+                "ReservationId": "r-099bb517d768819df"
             },
             {
                 "Groups": [],
                 "Instances": [
                     {
                         "AmiLaunchIndex": 0,
-                        "ImageId": "ami-0d7734f53f491186b",
-                        "InstanceId": "i-0ecfe7c50cf2f76b2",
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-037113c2828b9635c",
                         "InstanceType": "t2.micro",
                         "LaunchTime": {
                             "__class__": "datetime",
                             "year": 2022,
-                            "month": 8,
-                            "day": 4,
-                            "hour": 11,
-                            "minute": 33,
-                            "second": 49,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 28,
+                            "second": 17,
                             "microsecond": 0
                         },
                         "Monitoring": {
                             "State": "disabled"
                         },
                         "Placement": {
-                            "AvailabilityZone": "us-east-1f",
+                            "AvailabilityZone": "us-east-1a",
                             "GroupName": "",
                             "Tenancy": "default"
                         },
-                        "PrivateDnsName": "ip-10-0-1-124.ec2.internal",
-                        "PrivateIpAddress": "10.0.1.124",
+                        "PrivateDnsName": "",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 48,
+                            "Name": "terminated"
+                        },
+                        "StateTransitionReason": "User initiated (2022-09-03 17:29:28 GMT)",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "145C18DC-AFF0-4749-9A7D-9A683EADDD1E",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [],
+                        "RootDeviceName": "/dev/xvda",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "Tags": [
+                            {
+                                "Key": "action_tag",
+                                "Value": "This EC2 instance has had less than 5 percent CPU utilization for over 5 days: stop@9999/06/03"
+                            }
+                        ],
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 1
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        },
+                        "MetadataOptions": {
+                            "State": "pending",
+                            "HttpTokens": "optional",
+                            "HttpPutResponseHopLimit": 1,
+                            "HttpEndpoint": "enabled",
+                            "HttpProtocolIpv6": "disabled",
+                            "InstanceMetadataTags": "disabled"
+                        },
+                        "EnclaveOptions": {
+                            "Enabled": false
+                        },
+                        "PlatformDetails": "Linux/UNIX",
+                        "UsageOperation": "RunInstances",
+                        "UsageOperationUpdateTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 28,
+                            "second": 17,
+                            "microsecond": 0
+                        },
+                        "MaintenanceOptions": {
+                            "AutoRecovery": "default"
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "ReservationId": "r-0d0d1e115856e37e6"
+            },
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-0312a8f2ed01c4781",
+                        "InstanceType": "t2.micro",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 28,
+                            "second": 17,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1a",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 48,
+                            "Name": "terminated"
+                        },
+                        "StateTransitionReason": "User initiated (2022-09-03 17:29:28 GMT)",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "D0441DF8-EE25-42E1-80ED-6C2907428448",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [],
+                        "RootDeviceName": "/dev/xvda",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "Tags": [
+                            {
+                                "Key": "action_tag",
+                                "Value": "This EC2 instance has had less than 5 percent CPU utilization for over 5 days: stop@2022/06/33"
+                            }
+                        ],
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 1
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        },
+                        "MetadataOptions": {
+                            "State": "pending",
+                            "HttpTokens": "optional",
+                            "HttpPutResponseHopLimit": 1,
+                            "HttpEndpoint": "enabled",
+                            "HttpProtocolIpv6": "disabled",
+                            "InstanceMetadataTags": "disabled"
+                        },
+                        "EnclaveOptions": {
+                            "Enabled": false
+                        },
+                        "PlatformDetails": "Linux/UNIX",
+                        "UsageOperation": "RunInstances",
+                        "UsageOperationUpdateTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 28,
+                            "second": 17,
+                            "microsecond": 0
+                        },
+                        "MaintenanceOptions": {
+                            "AutoRecovery": "default"
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "ReservationId": "r-0b453d408fcc0d6ad"
+            },
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-013dfe602f65dc15b",
+                        "InstanceType": "t2.micro",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 28,
+                            "second": 17,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1a",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 48,
+                            "Name": "terminated"
+                        },
+                        "StateTransitionReason": "User initiated (2022-09-03 17:29:28 GMT)",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "D4FB2642-3369-4B76-9FF4-DE356FE10D1A",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [],
+                        "RootDeviceName": "/dev/xvda",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "Tags": [
+                            {
+                                "Key": "action_tag",
+                                "Value": "This EC2 instance has had less than 5 percent CPU utilization for over 5 days: stop@2022/33/03"
+                            }
+                        ],
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 1
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        },
+                        "MetadataOptions": {
+                            "State": "pending",
+                            "HttpTokens": "optional",
+                            "HttpPutResponseHopLimit": 1,
+                            "HttpEndpoint": "enabled",
+                            "HttpProtocolIpv6": "disabled",
+                            "InstanceMetadataTags": "disabled"
+                        },
+                        "EnclaveOptions": {
+                            "Enabled": false
+                        },
+                        "PlatformDetails": "Linux/UNIX",
+                        "UsageOperation": "RunInstances",
+                        "UsageOperationUpdateTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 28,
+                            "second": 17,
+                            "microsecond": 0
+                        },
+                        "MaintenanceOptions": {
+                            "AutoRecovery": "default"
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "ReservationId": "r-06cf33421e8e9b287"
+            },
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-079ca844e323047c2",
+                        "InstanceId": "i-072907162ec986f90",
+                        "InstanceType": "t3.micro",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 46,
+                            "second": 10,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1a",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 48,
+                            "Name": "terminated"
+                        },
+                        "StateTransitionReason": "User initiated (2022-09-03 17:46:31 GMT)",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "f5b60c11-d6f7-5a21-18e4-9566f58bf925",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [],
+                        "RootDeviceName": "/dev/sda1",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "Tags": [
+                            {
+                                "Key": "App",
+                                "Value": "Testing"
+                            },
+                            {
+                                "Key": "aws:ec2launchtemplate:id",
+                                "Value": "lt-06062935f0f90517a"
+                            },
+                            {
+                                "Key": "aws:autoscaling:groupName",
+                                "Value": "terraform-20220903174602116700000003"
+                            },
+                            {
+                                "Key": "aws:ec2launchtemplate:version",
+                                "Value": "1"
+                            }
+                        ],
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 2
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        },
+                        "MetadataOptions": {
+                            "State": "pending",
+                            "HttpTokens": "required",
+                            "HttpPutResponseHopLimit": 1,
+                            "HttpEndpoint": "enabled",
+                            "HttpProtocolIpv6": "disabled",
+                            "InstanceMetadataTags": "disabled"
+                        },
+                        "EnclaveOptions": {
+                            "Enabled": false
+                        },
+                        "PlatformDetails": "Linux/UNIX",
+                        "UsageOperation": "RunInstances",
+                        "UsageOperationUpdateTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 46,
+                            "second": 10,
+                            "microsecond": 0
+                        },
+                        "MaintenanceOptions": {
+                            "AutoRecovery": "default"
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "RequesterId": "644160558196",
+                "ReservationId": "r-0813e0ec61d1ee1f4"
+            },
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-079ca844e323047c2",
+                        "InstanceId": "i-0ed726aaf8efdd8b2",
+                        "InstanceType": "t3.medium",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 46,
+                            "second": 8,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1a",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 48,
+                            "Name": "terminated"
+                        },
+                        "StateTransitionReason": "User initiated (2022-09-03 17:46:39 GMT)",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "db160c11-d6d7-6d2a-84bf-89c7a0b8fb7e",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [],
+                        "RootDeviceName": "/dev/sda1",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "Tags": [
+                            {
+                                "Key": "aws:autoscaling:groupName",
+                                "Value": "terraform-20220903174602191400000003"
+                            },
+                            {
+                                "Key": "Owner",
+                                "Value": "Kapil"
+                            },
+                            {
+                                "Key": "aws:ec2launchtemplate:id",
+                                "Value": "lt-092c6c15bf472c858"
+                            },
+                            {
+                                "Key": "App",
+                                "Value": "Testing"
+                            },
+                            {
+                                "Key": "aws:ec2launchtemplate:version",
+                                "Value": "1"
+                            }
+                        ],
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 2
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        },
+                        "MetadataOptions": {
+                            "State": "pending",
+                            "HttpTokens": "optional",
+                            "HttpPutResponseHopLimit": 1,
+                            "HttpEndpoint": "enabled",
+                            "HttpProtocolIpv6": "disabled",
+                            "InstanceMetadataTags": "disabled"
+                        },
+                        "EnclaveOptions": {
+                            "Enabled": false
+                        },
+                        "PlatformDetails": "Linux/UNIX",
+                        "UsageOperation": "RunInstances",
+                        "UsageOperationUpdateTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 46,
+                            "second": 8,
+                            "microsecond": 0
+                        },
+                        "MaintenanceOptions": {
+                            "AutoRecovery": "default"
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "RequesterId": "644160558196",
+                "ReservationId": "r-0cc1d8573c349f294"
+            },
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-07c78abffdc4ed555",
+                        "InstanceType": "t2.micro",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 59,
+                            "second": 36,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1d",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 48,
+                            "Name": "terminated"
+                        },
+                        "StateTransitionReason": "User initiated (2022-09-03 18:00:31 GMT)",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "329191BF-1335-4BE0-A709-7DD1843F6241",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [],
+                        "RootDeviceName": "/dev/xvda",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "Tags": [
+                            {
+                                "Key": "action_tag",
+                                "Value": "This EC2 instance has had less than 5 percent CPU utilization for over 5 days: stop@2022/06/33"
+                            }
+                        ],
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 1
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        },
+                        "MetadataOptions": {
+                            "State": "pending",
+                            "HttpTokens": "optional",
+                            "HttpPutResponseHopLimit": 1,
+                            "HttpEndpoint": "enabled",
+                            "HttpProtocolIpv6": "disabled",
+                            "InstanceMetadataTags": "disabled"
+                        },
+                        "EnclaveOptions": {
+                            "Enabled": false
+                        },
+                        "PlatformDetails": "Linux/UNIX",
+                        "UsageOperation": "RunInstances",
+                        "UsageOperationUpdateTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 59,
+                            "second": 36,
+                            "microsecond": 0
+                        },
+                        "MaintenanceOptions": {
+                            "AutoRecovery": "default"
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "ReservationId": "r-09f8927b4aeb854a8"
+            },
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-0875b6c213323146a",
+                        "InstanceType": "t2.micro",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 59,
+                            "second": 36,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1d",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 48,
+                            "Name": "terminated"
+                        },
+                        "StateTransitionReason": "User initiated (2022-09-03 18:00:20 GMT)",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "13677237-3EB5-40F1-AB9D-14A76FF88092",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [],
+                        "RootDeviceName": "/dev/xvda",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "Tags": [
+                            {
+                                "Key": "action_tag",
+                                "Value": "This EC2 instance has had less than 5 percent CPU utilization for over 5 days: stop@2022/06/03"
+                            }
+                        ],
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 1
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        },
+                        "MetadataOptions": {
+                            "State": "pending",
+                            "HttpTokens": "optional",
+                            "HttpPutResponseHopLimit": 1,
+                            "HttpEndpoint": "enabled",
+                            "HttpProtocolIpv6": "disabled",
+                            "InstanceMetadataTags": "disabled"
+                        },
+                        "EnclaveOptions": {
+                            "Enabled": false
+                        },
+                        "PlatformDetails": "Linux/UNIX",
+                        "UsageOperation": "RunInstances",
+                        "UsageOperationUpdateTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 59,
+                            "second": 36,
+                            "microsecond": 0
+                        },
+                        "MaintenanceOptions": {
+                            "AutoRecovery": "default"
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "ReservationId": "r-0dbcad8f73b4d0c4a"
+            },
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-0b96555e45e4f0599",
+                        "InstanceType": "t2.micro",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 48,
+                            "second": 5,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1d",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 48,
+                            "Name": "terminated"
+                        },
+                        "StateTransitionReason": "User initiated (2022-09-03 17:48:59 GMT)",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "01DD005E-D855-42FF-B52D-B95900552E37",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [],
+                        "RootDeviceName": "/dev/xvda",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 1
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        },
+                        "MetadataOptions": {
+                            "State": "pending",
+                            "HttpTokens": "optional",
+                            "HttpPutResponseHopLimit": 1,
+                            "HttpEndpoint": "enabled",
+                            "HttpProtocolIpv6": "disabled",
+                            "InstanceMetadataTags": "disabled"
+                        },
+                        "EnclaveOptions": {
+                            "Enabled": false
+                        },
+                        "PlatformDetails": "Linux/UNIX",
+                        "UsageOperation": "RunInstances",
+                        "UsageOperationUpdateTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 48,
+                            "second": 5,
+                            "microsecond": 0
+                        },
+                        "MaintenanceOptions": {
+                            "AutoRecovery": "default"
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "ReservationId": "r-00fbad4048a4af4b9"
+            },
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-09aca4a9963d825a6",
+                        "InstanceType": "t2.micro",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 48,
+                            "second": 5,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1d",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 48,
+                            "Name": "terminated"
+                        },
+                        "StateTransitionReason": "User initiated (2022-09-03 17:48:59 GMT)",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "C8718C67-8560-416A-8856-879504B50A3A",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [],
+                        "RootDeviceName": "/dev/xvda",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 1
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        },
+                        "MetadataOptions": {
+                            "State": "pending",
+                            "HttpTokens": "optional",
+                            "HttpPutResponseHopLimit": 1,
+                            "HttpEndpoint": "enabled",
+                            "HttpProtocolIpv6": "disabled",
+                            "InstanceMetadataTags": "disabled"
+                        },
+                        "EnclaveOptions": {
+                            "Enabled": false
+                        },
+                        "PlatformDetails": "Linux/UNIX",
+                        "UsageOperation": "RunInstances",
+                        "UsageOperationUpdateTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 48,
+                            "second": 5,
+                            "microsecond": 0
+                        },
+                        "MaintenanceOptions": {
+                            "AutoRecovery": "default"
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "ReservationId": "r-0b3e7e539b1c1fef2"
+            },
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-0415738bddbbbac01",
+                        "InstanceType": "t2.micro",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 59,
+                            "second": 36,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1d",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 48,
+                            "Name": "terminated"
+                        },
+                        "StateTransitionReason": "User initiated (2022-09-03 18:00:31 GMT)",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "5B25B9E8-672E-4F4E-AC24-46C6F185F233",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [],
+                        "RootDeviceName": "/dev/xvda",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "Tags": [
+                            {
+                                "Key": "action_tag",
+                                "Value": "This EC2 instance has had less than 5 percent CPU utilization for over 5 days: stop@2022/33/03"
+                            }
+                        ],
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 1
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        },
+                        "MetadataOptions": {
+                            "State": "pending",
+                            "HttpTokens": "optional",
+                            "HttpPutResponseHopLimit": 1,
+                            "HttpEndpoint": "enabled",
+                            "HttpProtocolIpv6": "disabled",
+                            "InstanceMetadataTags": "disabled"
+                        },
+                        "EnclaveOptions": {
+                            "Enabled": false
+                        },
+                        "PlatformDetails": "Linux/UNIX",
+                        "UsageOperation": "RunInstances",
+                        "UsageOperationUpdateTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 59,
+                            "second": 36,
+                            "microsecond": 0
+                        },
+                        "MaintenanceOptions": {
+                            "AutoRecovery": "default"
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "ReservationId": "r-0a7d1f0ab38ed560e"
+            },
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-076eade7d931332de",
+                        "InstanceType": "t2.micro",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 48,
+                            "second": 5,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1d",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "ip-10-0-1-110.ec2.internal",
+                        "PrivateIpAddress": "10.0.1.110",
                         "ProductCodes": [],
                         "PublicDnsName": "",
                         "State": {
@@ -361,8 +1201,8 @@
                             "Name": "running"
                         },
                         "StateTransitionReason": "",
-                        "SubnetId": "subnet-0e172a55c20169303",
-                        "VpcId": "vpc-00255c1f52c0a88d6",
+                        "SubnetId": "subnet-0be904d22de5e83b0",
+                        "VpcId": "vpc-08f723014684d4151",
                         "Architecture": "x86_64",
                         "BlockDeviceMappings": [
                             {
@@ -371,20 +1211,20 @@
                                     "AttachTime": {
                                         "__class__": "datetime",
                                         "year": 2022,
-                                        "month": 8,
-                                        "day": 4,
-                                        "hour": 11,
-                                        "minute": 33,
-                                        "second": 49,
+                                        "month": 9,
+                                        "day": 3,
+                                        "hour": 17,
+                                        "minute": 48,
+                                        "second": 6,
                                         "microsecond": 0
                                     },
                                     "DeleteOnTermination": true,
                                     "Status": "attached",
-                                    "VolumeId": "vol-0d2b762057cf67207"
+                                    "VolumeId": "vol-0c83659b9d65d344e"
                                 }
                             }
                         ],
-                        "ClientToken": "1EB6F15E-842A-4A68-914B-818224E485B4",
+                        "ClientToken": "613E7FF8-7C0C-4868-A8E6-4439EEEE07C6",
                         "EbsOptimized": false,
                         "EnaSupport": true,
                         "Hypervisor": "xen",
@@ -394,14 +1234,14 @@
                                     "AttachTime": {
                                         "__class__": "datetime",
                                         "year": 2022,
-                                        "month": 8,
-                                        "day": 4,
-                                        "hour": 11,
-                                        "minute": 33,
-                                        "second": 49,
+                                        "month": 9,
+                                        "day": 3,
+                                        "hour": 17,
+                                        "minute": 48,
+                                        "second": 5,
                                         "microsecond": 0
                                     },
-                                    "AttachmentId": "eni-attach-025d5e6d9b9d22787",
+                                    "AttachmentId": "eni-attach-04368a69599c535c7",
                                     "DeleteOnTermination": true,
                                     "DeviceIndex": 0,
                                     "Status": "attached",
@@ -411,24 +1251,24 @@
                                 "Groups": [
                                     {
                                         "GroupName": "default",
-                                        "GroupId": "sg-09c6a03dec497a6b0"
+                                        "GroupId": "sg-0a412511bf3caa995"
                                     }
                                 ],
                                 "Ipv6Addresses": [],
-                                "MacAddress": "16:46:43:6b:2a:4d",
-                                "NetworkInterfaceId": "eni-0d6d13c72ac812cae",
+                                "MacAddress": "12:00:78:4a:ee:5b",
+                                "NetworkInterfaceId": "eni-093c359141fb69ad7",
                                 "OwnerId": "644160558196",
-                                "PrivateIpAddress": "10.0.1.124",
+                                "PrivateIpAddress": "10.0.1.110",
                                 "PrivateIpAddresses": [
                                     {
                                         "Primary": true,
-                                        "PrivateIpAddress": "10.0.1.124"
+                                        "PrivateIpAddress": "10.0.1.110"
                                     }
                                 ],
                                 "SourceDestCheck": true,
                                 "Status": "in-use",
-                                "SubnetId": "subnet-0e172a55c20169303",
-                                "VpcId": "vpc-00255c1f52c0a88d6",
+                                "SubnetId": "subnet-0be904d22de5e83b0",
+                                "VpcId": "vpc-08f723014684d4151",
                                 "InterfaceType": "interface"
                             }
                         ],
@@ -437,7 +1277,7 @@
                         "SecurityGroups": [
                             {
                                 "GroupName": "default",
-                                "GroupId": "sg-09c6a03dec497a6b0"
+                                "GroupId": "sg-0a412511bf3caa995"
                             }
                         ],
                         "SourceDestCheck": true,
@@ -468,11 +1308,11 @@
                         "UsageOperationUpdateTime": {
                             "__class__": "datetime",
                             "year": 2022,
-                            "month": 8,
-                            "day": 4,
-                            "hour": 11,
-                            "minute": 33,
-                            "second": 49,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 48,
+                            "second": 5,
                             "microsecond": 0
                         },
                         "PrivateDnsNameOptions": {
@@ -486,7 +1326,463 @@
                     }
                 ],
                 "OwnerId": "644160558196",
-                "ReservationId": "r-0306be6c4abf309e0"
+                "ReservationId": "r-016cf041d8f9a8540"
+            },
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-087f88903294b5730",
+                        "InstanceType": "t2.micro",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 59,
+                            "second": 36,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1d",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 48,
+                            "Name": "terminated"
+                        },
+                        "StateTransitionReason": "User initiated (2022-09-03 18:00:31 GMT)",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "E4E234AA-68F3-47D4-B0EA-7C97F285C387",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [],
+                        "RootDeviceName": "/dev/xvda",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "Tags": [
+                            {
+                                "Key": "action_tag",
+                                "Value": "This EC2 instance has had less than 5 percent CPU utilization for over 5 days: stop@9999/06/03"
+                            }
+                        ],
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 1
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        },
+                        "MetadataOptions": {
+                            "State": "pending",
+                            "HttpTokens": "optional",
+                            "HttpPutResponseHopLimit": 1,
+                            "HttpEndpoint": "enabled",
+                            "HttpProtocolIpv6": "disabled",
+                            "InstanceMetadataTags": "disabled"
+                        },
+                        "EnclaveOptions": {
+                            "Enabled": false
+                        },
+                        "PlatformDetails": "Linux/UNIX",
+                        "UsageOperation": "RunInstances",
+                        "UsageOperationUpdateTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 59,
+                            "second": 36,
+                            "microsecond": 0
+                        },
+                        "MaintenanceOptions": {
+                            "AutoRecovery": "default"
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "ReservationId": "r-000f907aad0ab557b"
+            },
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-0b81d2d2b0232b3f4",
+                        "InstanceType": "t2.micro",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 48,
+                            "second": 9,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1f",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 48,
+                            "Name": "terminated"
+                        },
+                        "StateTransitionReason": "User initiated (2022-09-03 17:49:03 GMT)",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "7C524230-B891-4E58-98CB-D5296CEC1794",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [],
+                        "RootDeviceName": "/dev/xvda",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 1
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        },
+                        "MetadataOptions": {
+                            "State": "pending",
+                            "HttpTokens": "optional",
+                            "HttpPutResponseHopLimit": 1,
+                            "HttpEndpoint": "enabled",
+                            "HttpProtocolIpv6": "disabled",
+                            "InstanceMetadataTags": "disabled"
+                        },
+                        "EnclaveOptions": {
+                            "Enabled": false
+                        },
+                        "PlatformDetails": "Linux/UNIX",
+                        "UsageOperation": "RunInstances",
+                        "UsageOperationUpdateTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 48,
+                            "second": 9,
+                            "microsecond": 0
+                        },
+                        "MaintenanceOptions": {
+                            "AutoRecovery": "default"
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "ReservationId": "r-01cf2b62b18980332"
+            },
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-0296b5977b1d825d1",
+                        "InstanceType": "t2.micro",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 48,
+                            "second": 9,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1f",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 48,
+                            "Name": "terminated"
+                        },
+                        "StateTransitionReason": "User initiated (2022-09-03 17:49:03 GMT)",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "BD14306C-59E2-4974-A9D2-4D8C54818C27",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [],
+                        "RootDeviceName": "/dev/xvda",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 1
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        },
+                        "MetadataOptions": {
+                            "State": "pending",
+                            "HttpTokens": "optional",
+                            "HttpPutResponseHopLimit": 1,
+                            "HttpEndpoint": "enabled",
+                            "HttpProtocolIpv6": "disabled",
+                            "InstanceMetadataTags": "disabled"
+                        },
+                        "EnclaveOptions": {
+                            "Enabled": false
+                        },
+                        "PlatformDetails": "Linux/UNIX",
+                        "UsageOperation": "RunInstances",
+                        "UsageOperationUpdateTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 48,
+                            "second": 9,
+                            "microsecond": 0
+                        },
+                        "MaintenanceOptions": {
+                            "AutoRecovery": "default"
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "ReservationId": "r-0542f467fabb824ea"
+            },
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-0da87775e747c5194",
+                        "InstanceType": "t2.micro",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 48,
+                            "second": 9,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1f",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 48,
+                            "Name": "terminated"
+                        },
+                        "StateTransitionReason": "User initiated (2022-09-03 17:49:04 GMT)",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "34DBF1D9-308E-4EDE-AAF5-5629E2E2F394",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [],
+                        "RootDeviceName": "/dev/xvda",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 1
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        },
+                        "MetadataOptions": {
+                            "State": "pending",
+                            "HttpTokens": "optional",
+                            "HttpPutResponseHopLimit": 1,
+                            "HttpEndpoint": "enabled",
+                            "HttpProtocolIpv6": "disabled",
+                            "InstanceMetadataTags": "disabled"
+                        },
+                        "EnclaveOptions": {
+                            "Enabled": false
+                        },
+                        "PlatformDetails": "Linux/UNIX",
+                        "UsageOperation": "RunInstances",
+                        "UsageOperationUpdateTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 48,
+                            "second": 9,
+                            "microsecond": 0
+                        },
+                        "MaintenanceOptions": {
+                            "AutoRecovery": "default"
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "ReservationId": "r-053ad4ec59c2610bd"
+            },
+            {
+                "Groups": [],
+                "Instances": [
+                    {
+                        "AmiLaunchIndex": 0,
+                        "ImageId": "ami-0b9d78a673552de50",
+                        "InstanceId": "i-00df1356a6851748e",
+                        "InstanceType": "t2.micro",
+                        "LaunchTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 17,
+                            "second": 27,
+                            "microsecond": 0
+                        },
+                        "Monitoring": {
+                            "State": "disabled"
+                        },
+                        "Placement": {
+                            "AvailabilityZone": "us-east-1f",
+                            "GroupName": "",
+                            "Tenancy": "default"
+                        },
+                        "PrivateDnsName": "",
+                        "ProductCodes": [],
+                        "PublicDnsName": "",
+                        "State": {
+                            "Code": 48,
+                            "Name": "terminated"
+                        },
+                        "StateTransitionReason": "User initiated (2022-09-03 17:43:41 GMT)",
+                        "Architecture": "x86_64",
+                        "BlockDeviceMappings": [],
+                        "ClientToken": "1E4F40E2-A6B3-4246-9914-4559A1081F77",
+                        "EbsOptimized": false,
+                        "EnaSupport": true,
+                        "Hypervisor": "xen",
+                        "NetworkInterfaces": [],
+                        "RootDeviceName": "/dev/xvda",
+                        "RootDeviceType": "ebs",
+                        "SecurityGroups": [],
+                        "StateReason": {
+                            "Code": "Client.UserInitiatedShutdown",
+                            "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                        },
+                        "VirtualizationType": "hvm",
+                        "CpuOptions": {
+                            "CoreCount": 1,
+                            "ThreadsPerCore": 1
+                        },
+                        "CapacityReservationSpecification": {
+                            "CapacityReservationPreference": "open"
+                        },
+                        "HibernationOptions": {
+                            "Configured": false
+                        },
+                        "MetadataOptions": {
+                            "State": "pending",
+                            "HttpTokens": "optional",
+                            "HttpPutResponseHopLimit": 1,
+                            "HttpEndpoint": "enabled",
+                            "HttpProtocolIpv6": "disabled",
+                            "InstanceMetadataTags": "disabled"
+                        },
+                        "EnclaveOptions": {
+                            "Enabled": false
+                        },
+                        "PlatformDetails": "Linux/UNIX",
+                        "UsageOperation": "RunInstances",
+                        "UsageOperationUpdateTime": {
+                            "__class__": "datetime",
+                            "year": 2022,
+                            "month": 9,
+                            "day": 3,
+                            "hour": 17,
+                            "minute": 17,
+                            "second": 27,
+                            "microsecond": 0
+                        },
+                        "MaintenanceOptions": {
+                            "AutoRecovery": "default"
+                        }
+                    }
+                ],
+                "OwnerId": "644160558196",
+                "ReservationId": "r-000e1b4da9afeeb24"
             }
         ],
         "ResponseMetadata": {}

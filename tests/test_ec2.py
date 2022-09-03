@@ -34,6 +34,16 @@ def test_ec2_stop_protection_enabled(test, ec2_stop_protection_enabled):
                 {'State.Name': 'running'},
                 {'type': 'stop-protected'},
             ],
+            'actions': [
+                {
+                    'type': 'modify-instance-attribute',
+                    'attributes': {
+                        'DisableApiStop': {
+                            'Value': False
+                        }
+                    }
+                }
+            ]
         },
         session_factory=session_factory,
         config={'region': aws_region},
@@ -44,6 +54,10 @@ def test_ec2_stop_protection_enabled(test, ec2_stop_protection_enabled):
     test.assertEqual(
         resources[0]['InstanceId'],
         ec2_stop_protection_enabled['aws_instance.stop_protection.id'])
+    client = session_factory().client('ec2')
+    result = client.describe_instance_attribute(
+        Attribute='disableApiStop', InstanceId=resources[0]['InstanceId'])
+    test.assertFalse(result['DisableApiStop']['Value'])
 
 
 @terraform('ec2_stop_protection_disabled')
