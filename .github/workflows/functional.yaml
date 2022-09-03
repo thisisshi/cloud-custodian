@@ -10,7 +10,7 @@ on:
       - functional-testing
 
 jobs:
-  Functional:
+  AWS:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -44,3 +44,62 @@ jobs:
       - name: Test
         run: |
           pytest tests -m "not skiplive" -m terraform -n auto --junit-xml=report-aws.xml
+
+      - name: JUnit Report Action
+        uses: mikepenz/action-junit-report@v3.3.3
+        if: always()
+        with:
+          report_paths: 'report-aws.xml'
+
+
+  GCP:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4.2.0
+        with:
+          python-version: "3.10"
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0.4.0'
+        with:
+          workload_identity_provider: 'projects/18998076121/locations/global/workloadIdentityPools/github-actions-pool'
+          service_account: 'github-actions@sonny-sandbox.iam.gserviceaccount.com'
+
+      - name: Sanity Check
+        run: |
+          sudo apt-get install apt-transport-https ca-certificates gnupg -y
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+          sudo apt-get update -y && sudo apt-get install google-cloud-cli -y
+          gcloud init
+          gcloud auth list
+
+      - name: Install Terraform
+        run: |
+          wget -q https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip
+          unzip -qq terraform*.zip
+          mv terraform /usr/local/bin
+          mkdir -p .tfcache
+
+      - name: Install Requirements
+        run: |
+          pip install -qr requirements.txt -r tools/c7n_gcp/requirements.txt
+          python setup.py -q install
+          mkdir tools/c7n_gcp/reports
+          python tools/c7n_gcp/setup.py -q install
+          pip install git+https://github.com/cloud-custodian/pytest-terraform.git@better-logging
+
+      - name: Test
+        run: |
+          pytest tools/c7n_gcp/tests -s -v --junit-xml=tools/c7n_gcp/reports -m terraform -n auto
+
+      - name: JUnit Report Action
+        uses: mikepenz/action-junit-report@v3.3.3
+        if: always()
+        with:
+          report_paths: 'tools/c7n_gcp/reports/*'
