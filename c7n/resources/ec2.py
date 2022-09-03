@@ -2332,20 +2332,3 @@ class AutoscalingSpotFleetRequest(AutoscalingBase):
             SpotFleetRequestId=resource['SpotFleetRequestId'],
             TargetCapacity=desired,
         )
-
-
-@actions.register('modify-instance-attribute')
-class ModifyInstanceAttribute(BaseAction):
-    """
-    Modify an Instance attribute
-    """
-
-    schema = type_schema('modify-instance-attribute', attributes={'type': 'object'})
-    permissions = ('ec2:ModifyInstanceAttribute',)
-
-    def process(self, resources):
-        client = utils.local_session(self.manager.session_factory).client('ec2')
-        for r in resources:
-            client.modify_instance_attribute(
-                InstanceId=r['InstanceId'], **self.data['attributes']
-            )
