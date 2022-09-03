@@ -65,8 +65,8 @@ jobs:
       - id: 'GCP Login'
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v0.4.0'
-        export_environment_variables: true
         with:
+          export_environment_variables: true
           workload_identity_provider: 'projects/18998076121/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
           service_account: 'github-actions@sonny-sandbox.iam.gserviceaccount.com'
 
