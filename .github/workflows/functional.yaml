@@ -1,4 +1,4 @@
-name: "Functional Tests"
+name: "Functional"
 
 env:
   terraform_version: "1.2.8"
@@ -76,18 +76,20 @@ jobs:
 
       - name: Install Requirements
         run: |
-          pip install -qr requirements.txt -r tools/c7n_gcp/requirements.txt
+          pip install -qr requirements.txt
           python setup.py -q install
-          mkdir tools/c7n_gcp/reports
-          python tools/c7n_gcp/setup.py -q install
+          cd tools/c7n_gcp
+          pip install -r requirements.txt
+          python setup.py -q install
           pip install git+https://github.com/cloud-custodian/pytest-terraform.git@better-logging
 
       - name: Test
         run: |
-          pytest tools/c7n_gcp/tests -s -v --junit-xml=tools/c7n_gcp/reports -m terraform -n auto
+          pwd
+          pytest tests -s -v --junit-xml=report-gcp.xml -m terraform -n auto
 
       - name: JUnit Report Action
         uses: mikepenz/action-junit-report@v3.3.3
         if: always()
         with:
-          report_paths: 'tools/c7n_gcp/reports/*'
+          report_paths: 'report-gcp.xml'
