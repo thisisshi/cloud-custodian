@@ -1,5 +1,9 @@
+resource "random_id" "id" {
+	  byte_length = 8
+}
+
 resource "aws_eks_cluster" "example" {
-  name     = "example3"
+  name     = "example-${random_id.id.hex}"
   role_arn = aws_iam_role.cluster_example.arn
 
   vpc_config {
