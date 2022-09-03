@@ -85,11 +85,11 @@ jobs:
 
       - name: Test
         run: |
-          pwd
+          cd tools/c7n_gcp
           pytest tests -s -v --junit-xml=report-gcp.xml -m terraform -n auto
 
       - name: JUnit Report Action
         uses: mikepenz/action-junit-report@v3.3.3
         if: always()
         with:
-          report_paths: 'report-gcp.xml'
+          report_paths: '/home/runner/work/cloud-custodian/cloud-custodian/report-gcp.xml'
