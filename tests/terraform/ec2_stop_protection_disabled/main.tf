@@ -15,5 +15,5 @@ resource "aws_instance" "stop_protection" {
   ami              = data.aws_ami.amazon_linux.id
   instance_type    = "t2.micro"
   subnet_id        = aws_subnet.example.id
-  disable_api_stop = false
+  disable_api_stop = true
 }
