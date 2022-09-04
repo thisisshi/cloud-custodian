@@ -32,11 +32,14 @@ def test_ec2_stop_protection_enabled(test, ec2_stop_protection_enabled):
             'resource': 'ec2',
             'filters': [
                 {
-                    'or': [
-                        {'InstanceId': ec2_stop_protection_enabled['aws_instance.termination_protection.id']},  # noqa
-                        {'InstanceId': ec2_stop_protection_enabled['aws_instance.no_protection.id']},  # noqa
-                        {'InstanceId': ec2_stop_protection_enabled['aws_instance.stop_protection.id']},  # noqa
-                    ]
+                    'type': 'value',
+                    'op': 'in',
+                    'key': 'InstanceId',
+                    'value': [
+                        ec2_stop_protection_enabled['aws_instance.termination_protection.id'],
+                        ec2_stop_protection_enabled['aws_instance.no_protection.id'],
+                        ec2_stop_protection_enabled['aws_instance.stop_protection.id'],
+                    ],
                 },
                 {'State.Name': 'running'},
                 {'type': 'stop-protected'},
@@ -71,11 +74,14 @@ def test_ec2_stop_protection_disabled(test, ec2_stop_protection_disabled):
             'resource': 'ec2',
             'filters': [
                 {
-                    'or': [
-                        {'InstanceId': ec2_stop_protection_disabled['aws_instance.termination_protection.id']},  # noqa
-                        {'InstanceId': ec2_stop_protection_disabled['aws_instance.no_protection.id']},  # noqa
-                        {'InstanceId': ec2_stop_protection_disabled['aws_instance.stop_protection.id']},  # noqa
-                    ]
+                    'type': 'value',
+                    'op': 'in',
+                    'key': 'InstanceId',
+                    'value': [
+                        ec2_stop_protection_disabled['aws_instance.termination_protection.id'],
+                        ec2_stop_protection_disabled['aws_instance.no_protection.id'],
+                        ec2_stop_protection_disabled['aws_instance.stop_protection.id'],
+                    ],
                 },
                 {'State.Name': 'running'},
                 {'not': [{'type': 'stop-protected'}]},
