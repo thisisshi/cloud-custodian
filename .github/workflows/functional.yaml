@@ -69,6 +69,13 @@ jobs:
           workload_identity_provider: 'projects/18998076121/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
           service_account: 'github-actions@sonny-sandbox.iam.gserviceaccount.com'
 
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v0'
+
+      - name: 'Sanity Check'
+        run: |
+          gcloud projects list
+
       - name: Install Terraform
         run: |
           wget -q https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip
