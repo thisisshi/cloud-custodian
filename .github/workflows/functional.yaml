@@ -63,6 +63,7 @@ jobs:
           python-version: "3.8"
 
       - name: 'Authenticate to Google Cloud'
+        id: auth
         uses: 'google-github-actions/auth@v0.4.0'
         with:
           export_environment_variables: true
@@ -74,6 +75,9 @@ jobs:
 
       - name: 'Sanity Check'
         run: |
+          env
+          echo ${{ steps.auth.output.credentials_file_path }}
+          gcloud auth application-default login
           gcloud projects list
 
       - name: Install Terraform
