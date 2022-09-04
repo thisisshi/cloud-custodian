@@ -3861,8 +3861,8 @@ def test_s3_encryption_audit(test, aws_s3_encryption_audit):
     assert actual_names == expected_names
 
 
+@terraform('s3_ownership', scope='class')
 class TestBucketOwnership:
-    @terraform('s3_ownership')
     def test_s3_ownership_empty(self, test, s3_ownership):
         test.patch(s3.S3, "executor_factory", MainThreadExecutor)
         test.patch(s3.BucketOwnershipControls, "executor_factory", MainThreadExecutor)
@@ -3890,7 +3890,6 @@ class TestBucketOwnership:
         assert len(resources) == 1
         assert resources[0]["Name"] == bucket_name
 
-    @terraform('s3_ownership')
     def test_s3_ownership_defined(self, test, s3_ownership):
         test.patch(s3.S3, "executor_factory", MainThreadExecutor)
         test.patch(s3.BucketOwnershipControls, "executor_factory", MainThreadExecutor)
@@ -3920,7 +3919,6 @@ class TestBucketOwnership:
         assert len(resources) == 2
         assert {r["Name"] for r in resources} == bucket_names
 
-    @terraform('s3_ownership')
     def test_s3_access_analyzer_filter_with_no_results(self, test, s3_ownership):
         test.patch(s3.S3, "executor_factory", MainThreadExecutor)
         test.patch(s3.BucketOwnershipControls, "executor_factory", MainThreadExecutor)
