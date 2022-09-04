@@ -3921,9 +3921,11 @@ class TestBucketOwnership:
         assert {r["Name"] for r in resources} == bucket_names
 
     @terraform('s3_ownership')
-    def test_s3_access_analyzer_filter_with_no_results(self, test):
-        factory = test.replay_flight_data("test_s3_iam_analyzers")
+    def test_s3_access_analyzer_filter_with_no_results(self, test, s3_ownership):
+        test.patch(s3.S3, "executor_factory", MainThreadExecutor)
+        test.patch(s3.BucketOwnershipControls, "executor_factory", MainThreadExecutor)
         test.patch(s3, "S3_AUGMENT_TABLE", [])
+        factory = test.replay_flight_data("test_s3_iam_analyzers")
         p = test.load_policy({
             'name': 'check-s3',
             'resource': 'aws.s3',
