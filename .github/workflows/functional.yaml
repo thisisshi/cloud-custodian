@@ -94,6 +94,7 @@ jobs:
       - name: Test
         run: |
           cd tools/c7n_gcp
+          gcloud auth login --brief --cred-file=${{ steps.auth.outputs.credentials_file_path }}
           pytest tests -s -v --junit-xml=report-gcp.xml -m terraform -n auto
 
       - name: JUnit Report Action
