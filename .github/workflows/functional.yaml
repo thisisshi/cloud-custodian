@@ -95,6 +95,7 @@ jobs:
           report_paths: '/home/runner/work/cloud-custodian/cloud-custodian/report-gcp.xml'
 
   Azure:
+    if: false
     runs-on: ubuntu-latest
     permissions:
       id-token: write
