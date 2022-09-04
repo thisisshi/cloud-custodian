@@ -77,7 +77,6 @@ jobs:
         run: |
           env
           echo ${{ steps.auth.output.credentials_file_path }}
-          gcloud auth application-default login
           gcloud projects list
 
       - name: Install Terraform
