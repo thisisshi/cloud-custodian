@@ -25,6 +25,7 @@ def test_pubsub_topic_query(test, pubsub_topic):
     # resources = policy.run()
     # topic_names = [r['name'] for r in resources]
     # assert topic_name in topic_names
+    pass
 
 
 @terraform('pubsub_subscription')
