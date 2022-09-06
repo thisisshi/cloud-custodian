@@ -31,12 +31,15 @@ def test_pubsub_topic_query(test, pubsub_topic):
 @terraform('pubsub_subscription')
 def test_pubsub_subscription_query(test, pubsub_subscription):
     import logging
+    import json
+    import os
     log = logging.getLogger('test')
     # subscription_name = pubsub_subscription['google_pubsub_subscription.c7n.id']
-    session_factory = test.replay_flight_data('pubsub-subscription-query')
-    client = session_factory().client('pubsub', 'v1', 'projects.topics')
-    result = client.execute_query('list', {'project': 'projects/sonny-sandbox'})
-    log.info(result)
+    # session_factory = test.replay_flight_data('pubsub-subscription-query')
+    creds = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
+    with open(creds, 'r') as f:
+        foo = json.load(f)
+        log.error(json.dumps(foo))
 
     # policy = test.load_policy(
     #     {'name': 'gcp-pubsub-subscription-dryrun',
