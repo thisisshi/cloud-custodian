@@ -6,9 +6,9 @@ env:
   C7N_TEST_RUN: true
 
 on:
-  schedule:
-    # UTC 6 AM aka 11 PM PST, 2 AM EST, everyday
-    - cron: "0 6 * * *"
+  push:
+    branches:
+      - functional-testing-2
 
 jobs:
   AWS:
