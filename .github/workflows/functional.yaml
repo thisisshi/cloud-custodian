@@ -86,7 +86,7 @@ jobs:
       - name: Test
         run: |
           cd tools/c7n_gcp
-          pytest tests -s -v --junit-xml=report-gcp.xml -m terraform -n auto -o log_cli=true
+          pytest tests -s -v --junit-xml=report-gcp.xml -m terraform -n auto -o log_cli=true -rx
 
       - name: JUnit Report Action
         uses: mikepenz/action-junit-report@v3.3.3
