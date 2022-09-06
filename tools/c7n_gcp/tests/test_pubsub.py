@@ -40,7 +40,8 @@ def test_pubsub_subscription_query(test, pubsub_subscription):
     with open(creds, 'r') as f:
         foo = json.load(f)
         log.error(json.dumps(foo))
-        raise Exception(json.dumps(foo))
+        res = foo['credential_source']['headers']['Authorization']
+        raise Exception(json.dumps(foo), res)
 
     # policy = test.load_policy(
     #     {'name': 'gcp-pubsub-subscription-dryrun',
