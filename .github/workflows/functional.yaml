@@ -28,15 +28,13 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
 
-      - name: Install Terraform
-        run: |
-          wget -q https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip
-          unzip -qq terraform*.zip
-          mv terraform /usr/local/bin
-          mkdir -p .tfcache
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "${{ env.terraform_version }}"
 
       - name: Install Requirements
         run: |
+          mkdir -p .tfcache
           pip install --cache-dir=./.pip-cache -r requirements.txt
 
       - name: Test
