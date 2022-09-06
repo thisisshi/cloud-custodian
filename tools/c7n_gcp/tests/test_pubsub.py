@@ -35,7 +35,7 @@ def test_pubsub_subscription_query(test, pubsub_subscription):
     # subscription_name = pubsub_subscription['google_pubsub_subscription.c7n.id']
     session_factory = test.replay_flight_data('pubsub-subscription-query')
     client = session_factory().client('pubsub', 'v1', 'projects.topics')
-    result = client.execute_query('list')
+    result = client.execute_query('list', {})
     log.info(result)
 
     # policy = test.load_policy(
