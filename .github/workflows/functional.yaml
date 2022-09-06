@@ -73,6 +73,7 @@ jobs:
           unzip -qq terraform*.zip
           mv terraform /usr/local/bin
           mkdir -p .tfcache
+          cat $GOOGLE_APPLICATION_CREDENTIALS
 
       - name: Install Requirements
         run: |
