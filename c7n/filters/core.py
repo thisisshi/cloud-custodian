@@ -993,6 +993,10 @@ class ReduceFilter(BaseValueFilter):
             return sorted(items, key=key, reverse=(self.order == 'desc'))
 
 
+class FakeModel:
+    id = 'c7n:_id'
+
+
 class FakeFilterRegistry(FilterRegistry):
 
     def __init__(self, *args, **kw):
@@ -1004,20 +1008,41 @@ class FakeFilterRegistry(FilterRegistry):
         self.register('event', EventFilter)
         self.register('reduce', ReduceFilter)
 
+    def parse(self, data, manager):
+        results = []
+        for d in data:
+            results.append(self.factory(d, manager))
+        return results
+
 
 class FakeResourceManager(ResourceManager):
     filter_registry = FakeFilterRegistry('fake')
 
-    class FakeModel:
-        id = 'c7n:_id'
-
     def get_model(self):
-        return self.FakeModel()
+        return FakeModel()
 
 
 class ListValueFilter(ValueFilter):
     """
     Filter on attributes on items on a list
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: find-task-def-not-using-registry
+            resource: aws.ecs-task-definition
+            filters:
+              - not:
+                - type: value-list
+                  key: containerDefinitions
+                  value:
+                    - not:
+                      - type: value
+                        key: image
+                        value: "${account_id}.dkr.ecr.us-east-2.amazonaws.com.*"
+                        op: regex
     """
 
     def _get_schema():
@@ -1076,13 +1101,13 @@ class ListValueFilter(ValueFilter):
         frm = FakeResourceManager(self.manager.ctx, data={'filters': self.data['value']})
         for r in resources:
             list_values = compiled.search(r)
-            for idx, r in enumerate(list_values):
-                r['c7n:_id'] = idx
+            for idx, list_value in enumerate(list_values):
+                list_value['c7n:_id'] = idx
             if not list_values:
                 continue
             resources = frm.filter_resources(list_values, event)
+            for idx, list_value in enumerate(list_values):
+                list_value.pop('c7n:_id')
             if resources:
                 result.append(r)
-            for idx, r in enumerate(list_values):
-                r.pop('c7n:_id')
         return result
