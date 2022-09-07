@@ -1008,46 +1008,67 @@ class FakeFilterRegistry(FilterRegistry):
 class FakeResourceManager(ResourceManager):
     filter_registry = FakeFilterRegistry('fake')
 
+    class FakeModel:
+        id = 'c7n:_id'
+
+    def get_model(self):
+        return self.FakeModel()
+
 
 class ListValueFilter(ValueFilter):
     """
     Filter on attributes on items on a list
     """
 
+    def _get_schema():
+        base_filters = [
+            {'$ref': '#/definitions/filters/event'},
+            {'$ref': '#/definitions/filters/reduce'},
+            {'$ref': '#/definitions/filters/value'},
+            {'$ref': '#/definitions/filters/valuekv'},
+            {
+                'enum': [
+                    'value',
+                    'or',
+                    'and',
+                    'not',
+                    'event',
+                    'reduce',
+                ]
+            }
+        ]
+        any_of = []
+        any_of.extend(base_filters)
+
+        for i in ('and', 'or', 'not',):
+            any_of.append(
+                {
+                    'additional_properties': False,
+                    'properties': {
+                        i: {
+                            'type': 'array',
+                            'items': {
+                                'anyOf': base_filters
+                            }
+                        }
+                    },
+                    'type': 'object'
+                }
+            )
+
+        schema = {
+            'items': {
+                'anyOf': any_of
+            },
+            'type': 'array',
+        }
+        return schema
+
     schema = type_schema(
         'value-list',
         key={'type': 'string'},
-        value={
-            'type': 'array',
-            'items': {
-                'anyOf': [
-                    {
-                        'type': 'object',
-                        'properties': {
-                            'or': {'type': 'object'},
-                            'and': {'type': 'object'},
-                            'not': {'type': 'object'},
-                        }
-                    },
-                    ValueFilter.schema,
-                    EventFilter.schema,
-                    AgeFilter.schema,
-                    ReduceFilter.schema,
-                ]
-            }
-        }
+        value=_get_schema()
     )
-
-    def process_sub_filter(self, resources, event, subfilter):
-        breakpoint()
-        # For the resource_count filter we operate on the full set of resources.
-        if subfilter.get('value_type') == 'resource_count':
-            op = OPERATORS[self.data.get('op')]
-            if op(len(resources), self.data.get('value')):
-                return resources
-            return []
-
-        return super(ValueFilter, self).process(resources, event)
 
     def process(self, resources, event=None):
         compiled = jmespath.compile(self.data['key'])
@@ -1055,9 +1076,13 @@ class ListValueFilter(ValueFilter):
         frm = FakeResourceManager(self.manager.ctx, data={'filters': self.data['value']})
         for r in resources:
             list_values = compiled.search(r)
+            for idx, r in enumerate(list_values):
+                r['c7n:_id'] = idx
             if not list_values:
                 continue
             resources = frm.filter_resources(list_values, event)
             if resources:
                 result.append(r)
+            for idx, r in enumerate(list_values):
+                r.pop('c7n:_id')
         return result
