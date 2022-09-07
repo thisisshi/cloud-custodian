@@ -20,6 +20,7 @@ import jmespath
 
 from c7n.element import Element
 from c7n.exceptions import PolicyValidationError
+from c7n.manager import ResourceManager
 from c7n.registry import PluginRegistry
 from c7n.resolver import ValuesFrom
 from c7n.utils import set_annotation, type_schema, parse_cidr, parse_date
@@ -112,6 +113,7 @@ class FilterRegistry(PluginRegistry):
         self.register('not', Not)
         self.register('event', EventFilter)
         self.register('reduce', ReduceFilter)
+        self.register('value-list', ListValueFilter)
 
     def parse(self, data, manager):
         results = []
@@ -989,3 +991,73 @@ class ReduceFilter(BaseValueFilter):
             return items[::-1]
         else:
             return sorted(items, key=key, reverse=(self.order == 'desc'))
+
+
+class FakeFilterRegistry(FilterRegistry):
+
+    def __init__(self, *args, **kw):
+        super(FilterRegistry, self).__init__(*args, **kw)
+        self.register('value', ValueFilter)
+        self.register('or', Or)
+        self.register('and', And)
+        self.register('not', Not)
+        self.register('event', EventFilter)
+        self.register('reduce', ReduceFilter)
+
+
+class FakeResourceManager(ResourceManager):
+    filter_registry = FakeFilterRegistry('fake')
+
+
+class ListValueFilter(ValueFilter):
+    """
+    Filter on attributes on items on a list
+    """
+
+    schema = type_schema(
+        'value-list',
+        key={'type': 'string'},
+        value={
+            'type': 'array',
+            'items': {
+                'anyOf': [
+                    {
+                        'type': 'object',
+                        'properties': {
+                            'or': {'type': 'object'},
+                            'and': {'type': 'object'},
+                            'not': {'type': 'object'},
+                        }
+                    },
+                    ValueFilter.schema,
+                    EventFilter.schema,
+                    AgeFilter.schema,
+                    ReduceFilter.schema,
+                ]
+            }
+        }
+    )
+
+    def process_sub_filter(self, resources, event, subfilter):
+        breakpoint()
+        # For the resource_count filter we operate on the full set of resources.
+        if subfilter.get('value_type') == 'resource_count':
+            op = OPERATORS[self.data.get('op')]
+            if op(len(resources), self.data.get('value')):
+                return resources
+            return []
+
+        return super(ValueFilter, self).process(resources, event)
+
+    def process(self, resources, event=None):
+        compiled = jmespath.compile(self.data['key'])
+        result = []
+        frm = FakeResourceManager(self.manager.ctx, data={'filters': self.data['value']})
+        for r in resources:
+            list_values = compiled.search(r)
+            if not list_values:
+                continue
+            resources = frm.filter_resources(list_values, event)
+            if resources:
+                result.append(r)
+        return result
