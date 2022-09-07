@@ -1459,5 +1459,121 @@ class TestReduceFilter(BaseFilterTest):
         )
 
 
+class ValueListFilterTest(BaseFilterTest):
+
+    def get_manager(self):
+        class Manager:
+            ctx = unittest.mock.MagicMock()
+        return Manager()
+
+    def instance(self, id_, list_):
+        return {
+            'id': id_,
+            'list_elements': list_
+        }
+
+    def resources(self, lists):
+        result = []
+        for i in range(len(lists)):
+            result.append(self.instance(i, lists[i]))
+        return result
+
+    def test_value_list_filter(self):
+        resources = self.resources(
+            [
+                [{'foo': 'bar', 'bar': '0'}],
+                [{'foo': 'bar', 'bar': '1'}],
+                [{'foo': 'bar', 'bar': '2'}]
+            ]
+        )
+        f = filters.factory(
+            {
+                'type': 'value-list',
+                'key': 'list_elements',
+                'value': [
+                    {'foo': 'bar'}
+                ]
+            }, manager=self.get_manager()
+        )
+        res = f.process(resources)
+        self.assertEqual(len(res), 3)
+
+    def test_value_list_filter_match_1(self):
+        resources = self.resources(
+            [
+                [{'foo': 'bar', 'bar': '0'}],
+                [{'foo': 'bar', 'bar': '1'}],
+                [{'foo': 'bar', 'bar': '2'}]
+            ]
+        )
+        f = filters.factory(
+            {
+                'type': 'value-list',
+                'key': 'list_elements',
+                'value': [
+                    {'foo': 'bar'},
+                    {'bar': '1'}
+                ]
+            }, manager=self.get_manager()
+        )
+        res = f.process(resources)
+        self.assertEqual(len(res), 1)
+
+    def test_value_list_filter_match_bool(self):
+        resources = self.resources(
+            [
+                [{'foo': 'bar', 'bar': '0'}],
+                [{'foo': 'bar', 'bar': '1'}],
+                [{'foo': 'bar', 'bar': '2'}]
+            ]
+        )
+        f = filters.factory(
+            {
+                'type': 'value-list',
+                'key': 'list_elements',
+                'value': [
+                    {'foo': 'bar'},
+                    {'or': [
+                        {'bar': '1'},
+                        {'bar': '0'}
+                    ]}
+                ]
+            }, manager=self.get_manager()
+        )
+        res = f.process(resources)
+        self.assertEqual(len(res), 2)
+
+    def test_value_list_filter_match_regex(self):
+        resources = self.resources(
+            [
+                [{'foo': 'bar', 'bar': 'c7n'}],
+                [{'foo': 'bar', 'bar': 'myregistry.com/c7n'}],
+                [{'foo': 'bar', 'bar': 'myregistry.com/c7n'}]
+            ]
+        )
+        f = filters.factory(
+            {
+                'type': 'value-list',
+                'key': 'list_elements',
+                'value': [
+                    {'foo': 'bar'},
+                    {
+                        'not': [
+                            {
+                                'type': 'value',
+                                'key': 'bar',
+                                'value': 'myregistry.com/.*',
+                                'op': 'regex'
+                            }
+                        ]
+                    }
+                ]
+            }, manager=self.get_manager()
+        )
+        res = f.process(resources)
+        self.assertEqual(len(res), 1)
+        self.assertEqual(res[0]['list_elements'][0]['bar'], 'nginx')
+
+
 if __name__ == "__main__":
     unittest.main()
