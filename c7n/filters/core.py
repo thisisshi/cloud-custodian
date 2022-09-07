@@ -1008,12 +1008,6 @@ class FakeFilterRegistry(FilterRegistry):
         self.register('event', EventFilter)
         self.register('reduce', ReduceFilter)
 
-    def parse(self, data, manager):
-        results = []
-        for d in data:
-            results.append(self.factory(d, manager))
-        return results
-
 
 class FakeResourceManager(ResourceManager):
     filter_registry = FakeFilterRegistry('fake')
