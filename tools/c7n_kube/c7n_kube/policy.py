@@ -141,6 +141,7 @@ class ValidatingControllerMode(K8sEventMode):
         return all(matched)
 
     def run_resource_set(self, event, resources):
+        from c7n_kube.actions.core import EventAction
         with self.policy.ctx as ctx:
             ctx.metrics.put_metric(
                 'ResourceCount', len(resources), 'Count', Scope="Policy", buffer=False
@@ -152,7 +153,18 @@ class ValidatingControllerMode(K8sEventMode):
                 )
 
             ctx.output.write_file('resources.json', dumps(resources, indent=2))
-            # we dont run any actions for validating admission controllers
+            for action in self.policy.resource_manager.actions:
+                self.policy.log.info(
+                    "policy:%s invoking action:%s resources:%d",
+                    self.policy.name,
+                    action.name,
+                    len(resources),
+                )
+                if isinstance(action, EventAction):
+                    results = action.process(resources, event)
+                else:
+                    results = action.process(resources)
+                ctx.output.write_file("action-%s" % action.name, dumps(results))
         return resources
 
     def run(self, event, _):

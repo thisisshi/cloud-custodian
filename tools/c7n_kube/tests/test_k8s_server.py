@@ -333,3 +333,44 @@ class TestServer(KubeTest):
         res = requests.post(f'http://localhost:{port}', data='bad data')
         self.assertEqual(res.status_code, 400)
         self.assertEqual(res.json(), {'error': 'Expecting value: line 1 column 1 (char 0)'})
+
+    def test_server_response_with_patch(self):
+        policies = {
+            'policies': [
+                {
+                    'name': 'label-pod',
+                    'resource': 'k8s.pod',
+                    'description': 'warning goes here',
+                    'mode': {
+                        'type': 'k8s-validator',
+                        'on-match': 'warn',
+                        'operations': ['CREATE']
+                    },
+                    'actions': [
+                        {
+                            'type': 'event-label',
+                            'labels': {
+                                'foo': 'bar',
+                                'role': 'different role',
+                                'test': None
+                            }
+                        }
+                    ]
+
+                },
+            ]
+        }
+        port = self._server(policies)
+        event = self.get_event('create_pod')
+        res = requests.post(f'http://localhost:{port}', json=event)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(res.json()['response']['allowed'])
+        self.assertEqual(
+            res.json()['response']['warnings'],
+            ['label-pod:warning goes here']
+        )
+        self.assertEqual(res.json()['response']['patchType'], 'JSONPatch')
+        self.assertEqual(
+            res.json()['response']['patch'],
+            "W3sib3AiOiAicmVtb3ZlIiwgInBhdGgiOiAiL21ldGFkYXRhL2xhYmVscy90ZXN0In0sIHsib3AiOiAiYWRkIiwgInBhdGgiOiAiL21ldGFkYXRhL2xhYmVscy9mb28iLCAidmFsdWUiOiAiYmFyIn0sIHsib3AiOiAicmVwbGFjZSIsICJwYXRoIjogIi9tZXRhZGF0YS9sYWJlbHMvcm9sZSIsICJ2YWx1ZSI6ICJkaWZmZXJlbnQgcm9sZSJ9XQ=="  # noqa
+        )
