@@ -1576,6 +1576,36 @@ class ValueListFilterTest(BaseFilterTest):
         self.assertEqual(len(res), 1)
         self.assertEqual(res[0]['list_elements'][0]['bar'], 'c7n')
 
+    def test_value_list_filter_match_empty(self):
+        resources = self.resources(
+            [
+                [{'foo': 'bar', 'bar': 'c7n'}],
+                [{'foo': 'bar', 'bar': 'myregistry.com/c7n'}],
+                [{'foo': 'bar', 'bar': 'myregistry.com/c7n'}]
+            ]
+        )
+        f = filters.factory(
+            {
+                'type': 'value-list',
+                'key': 'baz',
+                'value': [
+                    {'foo': 'bar'},
+                    {
+                        'not': [
+                            {
+                                'type': 'value',
+                                'key': 'bar',
+                                'value': 'myregistry.com/.*',
+                                'op': 'regex'
+                            }
+                        ]
+                    }
+                ]
+            }, manager=self.get_manager()
+        )
+        res = f.process(resources)
+        self.assertEqual(len(res), 0)
+
 
 if __name__ == "__main__":
     unittest.main()

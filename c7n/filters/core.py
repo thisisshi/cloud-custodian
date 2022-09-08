@@ -1095,10 +1095,10 @@ class ListValueFilter(ValueFilter):
         frm = FakeResourceManager(self.manager.ctx, data={'filters': self.data['value']})
         for r in resources:
             list_values = compiled.search(r)
-            for idx, list_value in enumerate(list_values):
-                list_value['c7n:_id'] = idx
             if not list_values:
                 continue
+            for idx, list_value in enumerate(list_values):
+                list_value['c7n:_id'] = idx
             resources = frm.filter_resources(list_values, event)
             for idx, list_value in enumerate(list_values):
                 list_value.pop('c7n:_id')
