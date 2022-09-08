@@ -1572,7 +1572,7 @@ class ValueListFilterTest(BaseFilterTest):
         )
         res = f.process(resources)
         self.assertEqual(len(res), 1)
-        self.assertEqual(res[0]['list_elements'][0]['bar'], 'nginx')
+        self.assertEqual(res[0]['list_elements'][0]['bar'], 'c7n')
 
 
 if __name__ == "__main__":
