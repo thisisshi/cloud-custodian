@@ -64,6 +64,21 @@ class LabelAction(PatchAction):
 class EventLabelAction(EventAction):
     """
     Label a resource on event
+
+    .. code-block:: yaml
+
+        policies:
+          - name: 'label-foo-on-creation'
+            resource: 'k8s.deployment'
+            mode:
+              type: k8s-validator
+              on-match: allow
+              operations:
+                - CREATE
+            actions:
+              - type: event-label
+                labels:
+                  foo: bar
     """
 
     schema = type_schema('event-label', labels={'type': 'object'}, required=['labels'])
@@ -99,14 +114,30 @@ class EventLabelAction(EventAction):
 class AutoLabelUser(EventLabelAction):
     """
     Label the user that triggered the event
+
+    Default label key is OwnerContact, set 'key' to specify a different one
+
+    .. code-block:: yaml
+
+        policies:
+          - name: 'auto-label-creator'
+            resource: 'k8s.deployment'
+            mode:
+              type: k8s-validator
+              on-match: allow
+              operations:
+                - CREATE
+            actions:
+              - type: auto-label-user
+                key: owner
     """
 
-    schema = type_schema('auto-label-user', tag={'type': 'string'})
+    schema = type_schema('auto-label-user', key={'type': 'string'})
 
     def get_labels(self, event):
-        tag_key = self.data.get('tag', 'OwnerContact')
+        label_key = self.data.get('key', 'OwnerContact')
         event_owner = event['request']['userInfo']['username']
-        return {tag_key: event_owner}
+        return {label_key: event_owner}
 
     @classmethod
     def register_resources(klass, registry, resource_class):
