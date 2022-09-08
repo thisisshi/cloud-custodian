@@ -22,7 +22,7 @@ HOST = '0.0.0.0'
 
 TEMPLATE = {
     "apiVersion": "admissionregistration.k8s.io/v1",
-    "kind": "ValidatingWebhookConfiguration",
+    "kind": "MutatingWebhookConfiguration",
     "metadata": {
         "name": "c7n-admission"
     },
