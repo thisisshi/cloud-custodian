@@ -55,7 +55,7 @@ class TestK8sCli(KubeTest):
 
         expected = {
             'apiVersion': 'admissionregistration.k8s.io/v1',
-            'kind': 'ValidatingWebhookConfiguration',
+            'kind': 'MutatingWebhookConfiguration',
             'metadata': {
                 'name': 'c7n-admission'
             },
