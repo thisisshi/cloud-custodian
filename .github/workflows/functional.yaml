@@ -6,6 +6,7 @@ env:
   C7N_TEST_RUN: true
 
 on:
+  workflow_dispatch: {}
   schedule:
     # UTC 6 AM aka 11 PM PST, 2 AM EST, everyday
     - cron: "0 6 * * *"
