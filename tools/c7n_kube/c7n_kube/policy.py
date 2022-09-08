@@ -68,8 +68,9 @@ class ValidatingControllerMode(K8sEventMode):
         for a in actions:
             if not isinstance(a, EventAction):
                 errors.append(a.type)
-        raise PolicyValidationError(
-            f"Only Event Based actions are allowed: {errors} are not compatible")
+        if errors:
+            raise PolicyValidationError(
+                f"Only Event Based actions are allowed: {errors} are not compatible")
 
     def _handle_scope(self, request, value):
         if request.get('namespace') and value == 'Namespaced':

@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 from common_kube import KubeTest
 
+from c7n.exceptions import PolicyValidationError
+
 
 class TestAdmissionControllerMode(KubeTest):
     def test_kube_admission_policy(self):
@@ -225,3 +227,28 @@ class TestAdmissionControllerMode(KubeTest):
             resources[0]['c7n:patches'],
             [{"op": "add", "path": "/metadata/labels/OwnerContact", "value": "kubernetes-admin"}]
         )
+
+    def test_validator_action_validate(self):
+        factory = self.replay_flight_data()
+        with self.assertRaises(PolicyValidationError):
+            policy = self.load_policy(
+                {
+                    'name': 'label-pod',
+                    'resource': 'k8s.pod',
+                    'mode': {
+                        'type': 'k8s-validator',
+                        'on-match': 'allow',
+                        'operations': ['CREATE']
+                    },
+                    'actions': [
+                        {
+                            'type': 'label',
+                            'labels': {
+                                'foo': 'bar'
+                            }
+                        }
+                    ]
+
+                },
+                session_factory=factory,
+            )
