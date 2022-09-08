@@ -19,7 +19,7 @@ from random import sample
 import jmespath
 
 from c7n.element import Element
-from c7n.exceptions import PolicyValidationError
+from c7n.exceptions import PolicyValidationError, PolicyExecutionError
 from c7n.manager import ResourceManager
 from c7n.registry import PluginRegistry
 from c7n.resolver import ValuesFrom
@@ -1097,6 +1097,8 @@ class ListValueFilter(ValueFilter):
             list_values = compiled.search(r)
             if not list_values:
                 continue
+            if not isinstance(list_values, list):
+                raise PolicyExecutionError(f'{list_values} is not a list')
             for idx, list_value in enumerate(list_values):
                 list_value['c7n:_id'] = idx
             resources = frm.filter_resources(list_values, event)

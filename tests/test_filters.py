@@ -8,7 +8,7 @@ import random
 import unittest
 import os
 
-from c7n.exceptions import PolicyValidationError
+from c7n.exceptions import PolicyValidationError, PolicyExecutionError
 from c7n.executor import MainThreadExecutor
 from c7n import filters as base_filters
 from c7n.resources.ec2 import filters
@@ -1606,6 +1606,22 @@ class ValueListFilterTest(BaseFilterTest):
         )
         res = f.process(resources)
         self.assertEqual(len(res), 0)
+
+    def test_value_list_filter_match_non_list_value(self):
+        resources = self.resources(
+            [1, 2, 3]
+        )
+        f = filters.factory(
+            {
+                'type': 'value-list',
+                'key': 'id',
+                'value': [
+                    {'foo': 'bar'},
+                ]
+            }, manager=self.get_manager()
+        )
+        with self.assertRaises(PolicyExecutionError):
+            f.process(resources)
 
 
 if __name__ == "__main__":
