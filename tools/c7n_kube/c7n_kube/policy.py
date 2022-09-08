@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import logging
 
+from c7n.exceptions import PolicyValidationError
 from c7n.policy import PolicyExecutionMode, execution
 from c7n.utils import type_schema, dumps
 
@@ -59,6 +60,16 @@ class ValidatingControllerMode(K8sEventMode):
             }
         }
     )
+
+    def validate(self):
+        from c7n_kube.actions.core import EventAction
+        actions = self.policy.resource_manager.actions
+        errors = []
+        for a in actions:
+            if not isinstance(a, EventAction):
+                errors.append(a.type)
+        raise PolicyValidationError(
+            f"Only Event Based actions are allowed: {errors} are not compatible")
 
     def _handle_scope(self, request, value):
         if request.get('namespace') and value == 'Namespaced':
@@ -141,7 +152,6 @@ class ValidatingControllerMode(K8sEventMode):
         return all(matched)
 
     def run_resource_set(self, event, resources):
-        from c7n_kube.actions.core import EventAction
         with self.policy.ctx as ctx:
             ctx.metrics.put_metric(
                 'ResourceCount', len(resources), 'Count', Scope="Policy", buffer=False
@@ -160,10 +170,7 @@ class ValidatingControllerMode(K8sEventMode):
                     action.name,
                     len(resources),
                 )
-                if isinstance(action, EventAction):
-                    results = action.process(resources, event)
-                else:
-                    results = action.process(resources)
+                results = action.process(resources, event)
                 ctx.output.write_file("action-%s" % action.name, dumps(results))
         return resources
 
