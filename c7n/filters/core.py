@@ -1104,7 +1104,8 @@ class ListValueFilter(ValueFilter):
             for idx, list_value in enumerate(list_values):
                 list_value.pop('c7n:_id')
             if resources:
-                r['c7n:ValueListMatches'] = [
-                    f'{self.data["key"]}[{str(i)}]' for i in matched_indicies]
+                annotations = [f'{self.data["key"]}[{str(i)}]' for i in matched_indicies]
+                r.setdefault('c7n:ValueListMatches', [])
+                r['c7n:ValueListMatches'].extend(annotations)
                 result.append(r)
         return result
