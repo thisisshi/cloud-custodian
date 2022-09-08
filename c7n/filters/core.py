@@ -1100,8 +1100,11 @@ class ListValueFilter(ValueFilter):
             for idx, list_value in enumerate(list_values):
                 list_value['c7n:_id'] = idx
             resources = frm.filter_resources(list_values, event)
+            matched_indicies = [r['c7n:_id'] for r in resources]
             for idx, list_value in enumerate(list_values):
                 list_value.pop('c7n:_id')
             if resources:
+                r['c7n:ListValueMatches'] = [
+                    f'{self.data["key"]}[{str(i)}]' for i in matched_indicies]
                 result.append(r)
         return result
