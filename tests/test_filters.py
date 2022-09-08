@@ -1464,7 +1464,9 @@ class ValueListFilterTest(BaseFilterTest):
     def get_manager(self):
         class Manager:
             ctx = unittest.mock.MagicMock()
-        return Manager()
+        m = Manager()
+        m.ctx.options.cache = None
+        return m
 
     def instance(self, id_, list_):
         return {
