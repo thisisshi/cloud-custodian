@@ -219,3 +219,41 @@ class TestEventAction(TestAdmissionControllerMode):
                 }
             ]
         )
+
+    def test_validator_action_event_patch_delete(self):
+        factory = self.replay_flight_data()
+        policy = self.load_policy(
+            {
+                'name': 'change-image',
+                'resource': 'k8s.pod',
+                'mode': {
+                    'type': 'k8s-validator',
+                    'on-match': 'allow',
+                    'operations': ['CREATE']
+                },
+                'actions': [
+                    {
+                        'type': 'event-patch',
+                        'key': 'spec.containers[].image',
+                        'delete': True
+                    }
+                ]
+
+            },
+            session_factory=factory,
+        )
+        event = self.get_event('create_pod')
+        result, resources = policy.push(event)
+        breakpoint()
+        self.assertEqual(
+            resources[0]['c7n:patches'],
+            [
+                {
+                    'op': 'remove',
+                    'path': '/spec/containers/0/image',
+                {
+                    'op': 'remove',
+                    'path': '/spec/containers/1/image',
+                }
+            ]
+        )

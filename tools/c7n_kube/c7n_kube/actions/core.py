@@ -183,8 +183,14 @@ class EventPatchAction(EventAction):
         'event-patch',
         key={'type': 'string'},
         value={'type': 'string'},
-        required=['key', 'value']
+        delete={'type': 'boolean'},
+        required=['key']
     )
+
+    def validate(self):
+        if not self.data.get('delete', False):
+            if 'value' not in self.data:
+                raise PolicyValidationError("value is required when delete is False")
 
     def get_value(self, resource, event):
 
@@ -211,12 +217,14 @@ class EventPatchAction(EventAction):
         src = copy.deepcopy(resource)
         dst = copy.deepcopy(src)
 
-        value = self.get_value(resource, event)
+        if self.data.get('delete', False):
+            compiled = jq.compile(f'del(.{self.data["key"]})')
+        else:
+            value = self.get_value(resource, event)
+            compiled = jq.compile(f'.{self.data["key"]}|={value}')
 
-        compiled = jq.compile(f'.{self.data["key"]}|={value}')
         dst = compiled.input(dst).first()
         patch = jsonpatch.make_patch(src, dst)
-
         resource.setdefault('c7n:patches', [])
         resource['c7n:patches'].extend(patch.patch)
 
