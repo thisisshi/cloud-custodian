@@ -196,7 +196,7 @@ class TestEventAction(TestAdmissionControllerMode):
                     {
                         'type': 'event-patch',
                         'key': 'spec.containers[].image',
-                        'value': '"prefix-{resource:kind}-"+.+"-{event:kind}"'
+                        'value': 'if (. | startswith("nginx")) == true then . else "prefix-"+. end'  # noqa
                     }
                 ]
 
@@ -211,11 +211,7 @@ class TestEventAction(TestAdmissionControllerMode):
                 {
                     'op': 'replace',
                     'path': '/spec/containers/0/image',
-                    'value': 'prefix-Pod-ubuntu-AdmissionReview'},
-                {
-                    'op': 'replace',
-                    'path': '/spec/containers/1/image',
-                    'value': 'prefix-Pod-nginx-AdmissionReview'
+                    'value': 'prefix-ubuntu'
                 }
             ]
         )
@@ -244,13 +240,13 @@ class TestEventAction(TestAdmissionControllerMode):
         )
         event = self.get_event('create_pod')
         result, resources = policy.push(event)
-        breakpoint()
         self.assertEqual(
             resources[0]['c7n:patches'],
             [
                 {
                     'op': 'remove',
                     'path': '/spec/containers/0/image',
+                },
                 {
                     'op': 'remove',
                     'path': '/spec/containers/1/image',
