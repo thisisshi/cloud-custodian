@@ -1,7 +1,12 @@
 # Copyright The Cloud Custodian Authors.
-# SPDX-License-Identifier: Apache-2.0
-
+# SPD-License-Identifier: Apache-2.0
+import copy
 import logging
+
+import jmespath
+import jq
+import jsonpatch
+import re
 
 from c7n.actions import Action as BaseAction
 from c7n.utils import local_session, chunks, type_schema
@@ -158,3 +163,67 @@ class DeleteResource(DeleteAction):
             hasattr(model, 'delete') and
                 hasattr(model, 'namespaced')):
             resource_class.action_registry.register('delete', klass)
+
+
+class EventPatchAction(EventAction):
+    """
+    Given a jq expression set the value
+
+    .. code-block:: yaml
+
+      policies:
+        - name: foo
+          actions:
+            - type: event-patch
+              key: spec.containers[0].name
+              value: 'prefix-{value}'
+    """
+
+    schema = type_schema(
+        'event-patch',
+        key={'type': 'string'},
+        value={'type': 'string'},
+        required=['key', 'value']
+    )
+
+    def get_value(self, resource, event):
+
+        def extract_value(original, regex, resource):
+            for i in regex.finditer(original):
+                element = i.group()
+                search_path = element.split(':', 1)[-1]
+                search_path = search_path.rsplit('}', 1)[0]
+                found = jmespath.search(search_path, resource)
+                original = original.replace(element, found)
+            return original
+
+        original = self.data['value']
+        event_compiled = re.compile(r'{event:[\w.\[\]\d]*}')
+        resource_compiled = re.compile(r'{resource:[\w.\[\]\d]*}')
+        if resource_compiled.findall(original):
+            original = extract_value(original, resource_compiled, resource)
+        if event_compiled.findall(original):
+            original = extract_value(original, event_compiled, event)
+        return original
+
+    def process_resource(self, resource, event):
+
+        src = copy.deepcopy(resource)
+        dst = copy.deepcopy(src)
+
+        value = self.get_value(resource, event)
+
+        compiled = jq.compile(f'.{self.data["key"]}|={value}')
+        dst = compiled.input(dst).first()
+        patch = jsonpatch.make_patch(src, dst)
+
+        resource.setdefault('c7n:patches', [])
+        resource['c7n:patches'].extend(patch.patch)
+
+    def process(self, resources, event):
+        for r in resources:
+            self.process_resource(r, event)
+
+    @classmethod
+    def register_resources(klass, registry, resource_class):
+        resource_class.action_registry.register('event-patch', klass)

@@ -231,7 +231,7 @@ class TestAdmissionControllerMode(KubeTest):
     def test_validator_action_validate(self):
         factory = self.replay_flight_data()
         with self.assertRaises(PolicyValidationError):
-            policy = self.load_policy(
+            self.load_policy(
                 {
                     'name': 'label-pod',
                     'resource': 'k8s.pod',
@@ -252,3 +252,42 @@ class TestAdmissionControllerMode(KubeTest):
                 },
                 session_factory=factory,
             )
+
+    def test_validator_action_event_patch(self):
+        factory = self.replay_flight_data()
+        policy = self.load_policy(
+            {
+                'name': 'label-pod',
+                'resource': 'k8s.pod',
+                'mode': {
+                    'type': 'k8s-validator',
+                    'on-match': 'allow',
+                    'operations': ['CREATE']
+                },
+                'actions': [
+                    {
+                        'type': 'event-patch',
+                        'key': 'spec.containers[].image',
+                        'value': '"prefix-{resource:kind}-"+.+"-{event:kind}"'
+                    }
+                ]
+
+            },
+            session_factory=factory,
+        )
+        event = self.get_event('create_pod')
+        result, resources = policy.push(event)
+        self.assertEqual(
+            resources[0]['c7n:patches'],
+            [
+                {
+                    'op': 'replace',
+                    'path': '/spec/containers/0/image',
+                    'value': 'prefix-Pod-ubuntu-AdmissionReview'},
+                {
+                    'op': 'replace',
+                    'path': '/spec/containers/1/image',
+                    'value': 'prefix-Pod-nginx-AdmissionReview'
+                }
+            ]
+        )
