@@ -171,18 +171,18 @@ class EventPatchAction(EventAction):
 
     .. code-block:: yaml
 
-        name: patch-image-registry
-        resource: k8s.pod
-        mode:
-          type: k8s-validator
-          on-match: allow
-          operations:
-          - CREATE
-        actions:
-        - type: event-patch
-          key: spec.containers[].image
-          value: '"https://myregistry.com/"+."'
-          value: 'if (. | startswith("prefix-")) == true then . else "prefix-"+. end'
+        policies:
+            name: patch-image-registry
+            resource: k8s.pod
+            mode:
+              type: k8s-validator
+              on-match: allow
+              operations:
+              - CREATE
+            actions:
+            - type: event-patch
+              key: spec.containers[].image
+              value: 'if (. | startswith("prefix-")) == true then . else "prefix-"+. end'
     """
 
     schema = type_schema(
