@@ -1,5 +1,5 @@
 # Copyright The Cloud Custodian Authors.
-# SPD-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: Apache-2.0
 import copy
 import logging
 
