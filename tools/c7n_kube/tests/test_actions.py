@@ -104,7 +104,8 @@ class TestEventAction(TestAdmissionControllerMode):
                         'labels': {
                             'foo': 'bar',
                             'role': 'different role',
-                            'test': None
+                            'test': None,
+                            'bar': '{event:request.uid}'
                         }
                     }
                 ]
@@ -116,15 +117,19 @@ class TestEventAction(TestAdmissionControllerMode):
         result, resources = policy.push(event)
         self.assertEqual(result, 'allow')
         self.assertEqual(len(resources), 1)
-        self.assertEqual(len(resources[0]['c7n:patches']), 3)
-        self.assertEqual(
-            resources[0]['c7n:patches'],
-            [
-                {'op': 'remove', 'path': '/metadata/labels/test'},
-                {"op": "add", "path": "/metadata/labels/foo", "value": "bar"},
-                {"op": "replace", "path": "/metadata/labels/role", "value": "different role"},
-            ]
-        )
+        self.assertEqual(len(resources[0]['c7n:patches']), 4)
+        expected = [
+            {'op': 'remove', 'path': '/metadata/labels/test'},
+            {
+                "op": "add",
+                "path": "/metadata/labels/bar",
+                "value": "662c3df2-ade6-4165-b395-770857bc17b7"
+            },
+            {"op": "add", "path": "/metadata/labels/foo", "value": "bar"},
+            {"op": "replace", "path": "/metadata/labels/role", "value": "different role"},
+        ]
+        for patch in resources[0]['c7n:patches']:
+            self.assertTrue(patch in expected)
 
     def test_validator_event_auto_label_user(self):
         factory = self.replay_flight_data()
@@ -196,6 +201,7 @@ class TestEventAction(TestAdmissionControllerMode):
                     {
                         'type': 'event-patch',
                         'key': 'spec.containers[].image',
+                        'expr': True,
                         'value': 'if (. | startswith("nginx")) == true then . else "prefix-"+. end'  # noqa
                     }
                 ]
@@ -250,6 +256,46 @@ class TestEventAction(TestAdmissionControllerMode):
                 {
                     'op': 'remove',
                     'path': '/spec/containers/1/image',
+                }
+            ]
+        )
+
+    def test_validator_action_event_not_expression(self):
+        factory = self.replay_flight_data()
+        policy = self.load_policy(
+            {
+                'name': 'change-image',
+                'resource': 'k8s.pod',
+                'mode': {
+                    'type': 'k8s-validator',
+                    'on-match': 'allow',
+                    'operations': ['CREATE']
+                },
+                'actions': [
+                    {
+                        'type': 'event-patch',
+                        'key': 'spec.containers[].imagePullPolicy',
+                        'value': 'IfNotPresent'
+                    }
+                ]
+
+            },
+            session_factory=factory,
+        )
+        event = self.get_event('create_pod')
+        result, resources = policy.push(event)
+        self.assertEqual(
+            resources[0]['c7n:patches'],
+            [
+                {
+                    'op': 'add',
+                    'path': '/spec/containers/0/imagePullPolicy',
+                    'value': 'IfNotPresent'
+                },
+                {
+                    'op': 'replace',
+                    'path': '/spec/containers/1/imagePullPolicy',
+                    'value': 'IfNotPresent'
                 }
             ]
         )

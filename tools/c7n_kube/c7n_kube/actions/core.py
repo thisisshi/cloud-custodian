@@ -18,10 +18,27 @@ log = logging.getLogger('custodian.k8s.actions')
 
 
 class Action(BaseAction):
-    pass
+    def get_value(self, original, resource, event={}):
+
+        def extract_value(original, regex, resource):
+            for i in regex.finditer(original):
+                element = i.group()
+                search_path = element.split(':', 1)[-1]
+                search_path = search_path.rsplit('}', 1)[0]
+                found = jmespath.search(search_path, resource)
+                original = original.replace(element, found)
+            return original
+
+        event_compiled = re.compile(r'{event:[\w.\[\]\d]*}')
+        resource_compiled = re.compile(r'{resource:[\w.\[\]\d]*}')
+        if resource_compiled.findall(original):
+            original = extract_value(original, resource_compiled, resource)
+        if event_compiled.findall(original):
+            original = extract_value(original, event_compiled, event)
+        return original
 
 
-class EventAction(BaseAction):
+class EventAction(Action):
     pass
 
 
@@ -167,7 +184,21 @@ class DeleteResource(DeleteAction):
 
 class EventPatchAction(EventAction):
     """
-    Given a jq expression set the value
+    Patches an object with the k8s-validator mode
+
+    To define an attribute or list of atteibutes to modify, specify a
+    jq expression to the key and define a value.
+
+    The following special tokens are available to reference resources,
+    events, and the current key's value:
+
+    - `.`: The current value at a given key, when using the `.` token, set
+      expr: true to ensure that the expression is evaluated correctly
+    - `{resource:$jmespath}` The value on the resource at a given jmespath
+    - `{event:$jmespath}` The value on the event at a given jmespath
+
+    For instance, to patch a pod on CREATE to use a certain prefix, such
+    as to ensure that all images come from a given registry:
 
     .. code-block:: yaml
 
@@ -183,6 +214,27 @@ class EventPatchAction(EventAction):
             - type: event-patch
               key: spec.containers[].image
               value: 'if (. | startswith("prefix-")) == true then . else "prefix-"+. end'
+              # This is a jq expression so we need to set expr to true
+              expr: true
+
+
+    Or, to set the ImagePullPolicy to always:
+
+    .. code-block:: yaml
+
+        policies:
+            name: patch-image-registry
+            resource: k8s.pod
+            mode:
+              type: k8s-validator
+              on-match: allow
+              operations:
+              - CREATE
+            actions:
+            - type: event-patch
+              key: spec.containers[].imagePullPolicy
+              value: Always
+
     """
 
     schema = type_schema(
@@ -190,6 +242,7 @@ class EventPatchAction(EventAction):
         key={'type': 'string'},
         value={'type': 'string'},
         delete={'type': 'boolean'},
+        expr={'type': 'boolean'},
         required=['key']
     )
 
@@ -197,26 +250,6 @@ class EventPatchAction(EventAction):
         if not self.data.get('delete', False):
             if 'value' not in self.data:
                 raise PolicyValidationError("value is required when delete is False")
-
-    def get_value(self, resource, event):
-
-        def extract_value(original, regex, resource):
-            for i in regex.finditer(original):
-                element = i.group()
-                search_path = element.split(':', 1)[-1]
-                search_path = search_path.rsplit('}', 1)[0]
-                found = jmespath.search(search_path, resource)
-                original = original.replace(element, found)
-            return original
-
-        original = self.data['value']
-        event_compiled = re.compile(r'{event:[\w.\[\]\d]*}')
-        resource_compiled = re.compile(r'{resource:[\w.\[\]\d]*}')
-        if resource_compiled.findall(original):
-            original = extract_value(original, resource_compiled, resource)
-        if event_compiled.findall(original):
-            original = extract_value(original, event_compiled, event)
-        return original
 
     def process_resource(self, resource, event):
 
@@ -226,7 +259,9 @@ class EventPatchAction(EventAction):
         if self.data.get('delete', False):
             compiled = jq.compile(f'del(.{self.data["key"]})')
         else:
-            value = self.get_value(resource, event)
+            value = self.get_value(self.data['value'], resource, event)
+            if not self.data.get('expr', False):
+                value = f'"{value}"'
             compiled = jq.compile(f'.{self.data["key"]}|={value}')
 
         dst = compiled.input(dst).first()
