@@ -193,7 +193,7 @@ class EventPatchAction(EventAction):
     events, and the current key's value:
 
     - `.`: The current value at a given key, when using the `.` token, set
-      expr: true to ensure that the expression is evaluated correctly
+      expr: jq to ensure that the expression is evaluated correctly
     - `{resource:$jmespath}` The value on the resource at a given jmespath
     - `{event:$jmespath}` The value on the event at a given jmespath
 
@@ -213,9 +213,10 @@ class EventPatchAction(EventAction):
             actions:
             - type: event-patch
               key: spec.containers[].image
+              # note the usage of double quotes
               value: 'if (. | startswith("prefix-")) == true then . else "prefix-"+. end'
               # This is a jq expression so we need to set expr to true
-              expr: true
+              expr: jq
 
 
     Or, to set the ImagePullPolicy to always:
@@ -234,6 +235,7 @@ class EventPatchAction(EventAction):
             - type: event-patch
               key: spec.containers[].imagePullPolicy
               value: Always
+              expr: raw  # defaults to raw
 
     """
 
@@ -242,7 +244,7 @@ class EventPatchAction(EventAction):
         key={'type': 'string'},
         value={'type': 'string'},
         delete={'type': 'boolean'},
-        expr={'type': 'boolean'},
+        expr={'enum': ['jq', 'raw']},
         required=['key']
     )
 
@@ -260,7 +262,7 @@ class EventPatchAction(EventAction):
             compiled = jq.compile(f'del(.{self.data["key"]})')
         else:
             value = self.get_value(self.data['value'], resource, event)
-            if not self.data.get('expr', False):
+            if self.data.get('expr', 'raw') == 'raw':
                 value = f'"{value}"'
             compiled = jq.compile(f'.{self.data["key"]}|={value}')
 

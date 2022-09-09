@@ -201,7 +201,7 @@ class TestEventAction(TestAdmissionControllerMode):
                     {
                         'type': 'event-patch',
                         'key': 'spec.containers[].image',
-                        'expr': True,
+                        'expr': 'jq',
                         'value': 'if (. | startswith("nginx")) == true then . else "prefix-"+. end'  # noqa
                     }
                 ]
