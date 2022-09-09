@@ -1490,7 +1490,7 @@ class ValueListFilterTest(BaseFilterTest):
         )
         f = filters.factory(
             {
-                'type': 'value-list',
+                'type': 'list-item',
                 'key': 'list_elements',
                 'value': [
                     {'foo': 'bar'}
@@ -1510,7 +1510,7 @@ class ValueListFilterTest(BaseFilterTest):
         )
         f = filters.factory(
             {
-                'type': 'value-list',
+                'type': 'list-item',
                 'key': 'list_elements',
                 'value': [
                     {'foo': 'bar'},
@@ -1531,7 +1531,7 @@ class ValueListFilterTest(BaseFilterTest):
         )
         f = filters.factory(
             {
-                'type': 'value-list',
+                'type': 'list-item',
                 'key': 'list_elements',
                 'value': [
                     {'foo': 'bar'},
@@ -1555,7 +1555,7 @@ class ValueListFilterTest(BaseFilterTest):
         )
         f = filters.factory(
             {
-                'type': 'value-list',
+                'type': 'list-item',
                 'key': 'list_elements',
                 'value': [
                     {'foo': 'bar'},
@@ -1587,7 +1587,7 @@ class ValueListFilterTest(BaseFilterTest):
         )
         f = filters.factory(
             {
-                'type': 'value-list',
+                'type': 'list-item',
                 'key': 'baz',
                 'value': [
                     {'foo': 'bar'},
@@ -1613,7 +1613,7 @@ class ValueListFilterTest(BaseFilterTest):
         )
         f = filters.factory(
             {
-                'type': 'value-list',
+                'type': 'list-item',
                 'key': 'id',
                 'value': [
                     {'foo': 'bar'},

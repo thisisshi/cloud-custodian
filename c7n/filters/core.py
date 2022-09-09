@@ -113,7 +113,7 @@ class FilterRegistry(PluginRegistry):
         self.register('not', Not)
         self.register('event', EventFilter)
         self.register('reduce', ReduceFilter)
-        self.register('value-list', ListValueFilter)
+        self.register('list-item', ListItemFilter)
 
     def parse(self, data, manager):
         results = []
@@ -1016,7 +1016,7 @@ class FakeResourceManager(ResourceManager):
         return FakeModel()
 
 
-class ListValueFilter(ValueFilter):
+class ListItemFilter(ValueFilter):
     """
     Filter on attributes on items on a list
 
@@ -1029,7 +1029,7 @@ class ListValueFilter(ValueFilter):
             resource: aws.ecs-task-definition
             filters:
               - not:
-                - type: value-list
+                - type: list-item
                   key: containerDefinitions
                   value:
                     - not:
@@ -1084,7 +1084,7 @@ class ListValueFilter(ValueFilter):
         return schema
 
     schema = type_schema(
-        'value-list',
+        'list-item',
         key={'type': 'string'},
         value=_get_schema()
     )
