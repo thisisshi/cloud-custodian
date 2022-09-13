@@ -53,14 +53,14 @@ class EventEnsureRegistryAction(EventAction):
         return resource['spec']['template']['spec']['containers']
 
     def get_init_containers(self, resource):
-        return resource['spec']['template']['spec']['initContainers']
+        return resource['spec']['template']['spec'].get('initContainers', [])
 
     def process(self, resources, event):
         prefix_match = re.compile(r'^[^/]+')
         for resource in resources:
             src = copy.deepcopy(resource)
             dst = copy.deepcopy(src)
-            containers = self.get_container(dst)
+            containers = self.get_containers(dst)
             init_containers = self.get_init_containers(dst)
             containers.extend(init_containers)
             for container in containers:
