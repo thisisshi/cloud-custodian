@@ -22,7 +22,7 @@ jobs:
       - name: ${{ matrix.image }} build and push
         uses: ./.github/composites/docker-build-push
         env:
-          HUB_USER: c7nbuild
+          HUB_USER: sonnyshi
           HUB_TOKEN: ${{ secrets.DOCKER_CI_HUB_TOKEN }}
         with:
           name: ${{ matrix.image }}
