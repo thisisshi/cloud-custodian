@@ -66,7 +66,7 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
 
         failed_policies = []
         warn_policies = []
-        patches = None
+        patches = []
 
         for p in self.server.policy_collection.policies:
             result, resources = p.push(req)
@@ -87,13 +87,15 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
                 )
 
             if resources and result in ('allow', 'warn',):
-                patches = resources[0].get('c7n:patches')
-                if patches:
-                    patches = base64.b64encode(json.dumps(patches).encode('utf-8')).decode()
+                patches.extend(resources[0].get('c7n:patches', []))
 
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
+
+        if patches:
+            patches = base64.b64encode(json.dumps(patches).encode('utf-8')).decode()
+
         response = self.admission_response(
             uid=req['request']['uid'],
             failed_policies=failed_policies,
