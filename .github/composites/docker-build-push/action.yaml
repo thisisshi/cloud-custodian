@@ -65,7 +65,7 @@ runs:
         images: |
           ${{ inputs.repository }}/${{ inputs.name }}
         tags: |
-          type=semver,pattern={raw}
+          type=ref,event=tag
           type=raw,value=${{ steps.get_tag.outputs.tag }}
         sep-tags: ','
 
