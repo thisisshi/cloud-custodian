@@ -671,7 +671,6 @@ class DaxSubnetFilter(SubnetFilter):
         return super(DaxSubnetFilter, self).process(resources)
 
 
-@Table.filter_registry.register('consecutive-backups')
 class TableConsecutiveBackups(Filter):
     """Returns tables where number of consective daily backups is
     equal to/or greater than n days.
