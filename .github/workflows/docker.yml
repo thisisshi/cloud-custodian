@@ -28,3 +28,4 @@ jobs:
           name: ${{ matrix.image }}
           push: true
           platforms: linux/arm64,linux/amd64
+          repository: sonnyshi
