@@ -24,4 +24,4 @@ class EventEnsureRegistryAction(EventEnsureRegistryAction):
         return resource['spec']['containers']
 
     def get_init_containers(self, resource):
-        return resource['spec']['initContainers']
+        return resource['spec'].get('initContainers', [])
