@@ -203,7 +203,7 @@ class EventPatchAction(EventAction):
     .. code-block:: yaml
 
         policies:
-            name: patch-image-registry
+          - name: patch-image-registry
             resource: k8s.pod
             mode:
               type: k8s-validator
@@ -224,7 +224,7 @@ class EventPatchAction(EventAction):
     .. code-block:: yaml
 
         policies:
-            name: patch-image-registry
+          - name: patch-image-registry
             resource: k8s.pod
             mode:
               type: k8s-validator
