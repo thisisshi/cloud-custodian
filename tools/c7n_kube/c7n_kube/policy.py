@@ -122,6 +122,9 @@ class ValidatingControllerMode(K8sEventMode):
             version = model.version.lower()
             scope = 'Namespaced' if model.namespaced else 'Cluster'
 
+        if group == 'core':
+            group = ''
+
         return {
             'operations': mode.get('operations'),
             'resources': resources,

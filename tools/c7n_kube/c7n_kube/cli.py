@@ -22,7 +22,7 @@ HOST = '0.0.0.0'
 
 TEMPLATE = {
     "apiVersion": "admissionregistration.k8s.io/v1",
-    "kind": "ValidatingWebhookConfiguration",
+    "kind": "MutatingWebhookConfiguration",
     "metadata": {
         "name": "c7n-admission"
     },
@@ -57,7 +57,7 @@ def _parser():
     parser.add_argument('--port', type=int, help='Server port', nargs='?', default=PORT)
     parser.add_argument('--policy-dir', type=str, required=True, help='policy directory')
     parser.add_argument(
-        '--on-exception', type=str.lower, required=True, default='warn',
+        '--on-exception', type=str.lower, required=False, default='warn',
         choices=['warn', 'deny'],
         help='warn or deny on policy exceptions')
     parser.add_argument(
