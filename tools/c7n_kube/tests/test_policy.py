@@ -23,7 +23,7 @@ class TestAdmissionControllerMode(KubeTest):
         expected = {
             'operations': ['CREATE', 'DELETE'],
             'resources': policy.resource_manager.get_model().plural.lower(),
-            'group': policy.resource_manager.get_model().group.lower(),
+            'group': '',
             'apiVersions': policy.resource_manager.get_model().version.lower(),
             'scope': 'Namespaced' if policy.resource_manager.get_model().namespaced else 'Cluster'
         }

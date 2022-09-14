@@ -55,7 +55,7 @@ class TestK8sCli(KubeTest):
 
         expected = {
             'apiVersion': 'admissionregistration.k8s.io/v1',
-            'kind': 'ValidatingWebhookConfiguration',
+            'kind': 'MutatingWebhookConfiguration',
             'metadata': {
                 'name': 'c7n-admission'
             },
@@ -69,7 +69,7 @@ class TestK8sCli(KubeTest):
                                 'DELETE'
                             ],
                             'scope': '*',
-                            'apiGroups': ['core', 'wgpolicyk8s.io'],
+                            'apiGroups': ['', 'wgpolicyk8s.io'],
                             'apiVersions': ['v1', 'v1alpha2'],
                             'resources': ['pods', 'policyreports']
                         }
