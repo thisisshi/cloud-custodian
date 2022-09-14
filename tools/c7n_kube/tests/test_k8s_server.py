@@ -8,7 +8,7 @@ import time
 
 import requests
 
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from c7n_kube.server import \
     AdmissionControllerServer, AdmissionControllerHandler, init
@@ -30,22 +30,22 @@ class TestServer(KubeTest):
         _, port = sock.getsockname()
         return port
 
-    def _server(self, policies):
+    def _server(self, policies, on_exception='warn'):
         port = self.find_port()
         with tempfile.TemporaryDirectory() as temp_dir:
             with open(f"{temp_dir}/policy.yaml", "w+") as f:
                 json.dump(policies, f)
-            server_thread = threading.Thread(
-                target=TestAdmissionControllerServer(
-                    server_address=('localhost', port),
-                    RequestHandlerClass=AdmissionControllerHandler,
-                    policy_dir=temp_dir,
-                    bind_and_activate=True,
-                ).handle_request
+            server = TestAdmissionControllerServer(
+                server_address=('localhost', port),
+                RequestHandlerClass=AdmissionControllerHandler,
+                policy_dir=temp_dir,
+                bind_and_activate=True,
+                on_exception=on_exception,
             )
+            server_thread = threading.Thread(target=server.handle_request)
             server_thread.start()
             time.sleep(1)
-        return port
+        return server, port
 
     def test_server_load_non_k8s_policies(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -140,7 +140,7 @@ class TestServer(KubeTest):
         policies = {
             'policies': []
         }
-        port = self._server(policies)
+        server, port = self._server(policies)
         res = requests.get(f'http://localhost:{port}')
         self.assertEqual(res.json(), [])
         self.assertEqual(res.status_code, 200)
@@ -161,7 +161,7 @@ class TestServer(KubeTest):
                 }
             ]
         }
-        port = self._server(policies)
+        server, port = self._server(policies)
         res = requests.get(f'http://localhost:{port}')
         self.assertEqual(res.json(), policies['policies'])
         self.assertEqual(res.status_code, 200)
@@ -170,7 +170,7 @@ class TestServer(KubeTest):
         policies = {
             'policies': []
         }
-        port = self._server(policies)
+        server, port = self._server(policies)
         event = self.get_event('create_pod')
         res = requests.post(f'http://localhost:{port}', json=event)
         self.assertEqual(res.status_code, 200)
@@ -207,7 +207,7 @@ class TestServer(KubeTest):
                 }
             ]
         }
-        port = self._server(policies)
+        server, port = self._server(policies)
         event = self.get_event('create_pod')
         res = requests.post(f'http://localhost:{port}', json=event)
         self.assertEqual(res.status_code, 200)
@@ -229,7 +229,7 @@ class TestServer(KubeTest):
                 }
             ]
         }
-        port = self._server(policies)
+        server, port = self._server(policies)
         event = self.get_event('create_pod')
         res = requests.post(f'http://localhost:{port}', json=event)
         self.assertEqual(res.status_code, 200)
@@ -276,7 +276,7 @@ class TestServer(KubeTest):
                 }
             ]
         }
-        port = self._server(policies)
+        server, port = self._server(policies)
         event = self.get_event('create_pod')
         res = requests.post(f'http://localhost:{port}', json=event)
         self.assertEqual(res.status_code, 200)
@@ -305,7 +305,7 @@ class TestServer(KubeTest):
                 },
             ]
         }
-        port = self._server(policies)
+        server, port = self._server(policies)
         event = self.get_event('create_pod')
         res = requests.post(f'http://localhost:{port}', json=event)
         self.assertEqual(res.status_code, 200)
@@ -323,13 +323,106 @@ class TestServer(KubeTest):
             patched.assert_called_with(
                 server_address=('0.0.0.0', port),
                 RequestHandlerClass=AdmissionControllerHandler,
-                policy_dir='policies'
+                policy_dir='policies',
+                on_exception='warn'
             )
             patched.return_value.serve_forever.assert_called_once()
 
     def test_server_bad_post(self):
         policies = {'policies': []}
-        port = self._server(policies)
+        server, port = self._server(policies)
         res = requests.post(f'http://localhost:{port}', data='bad data')
         self.assertEqual(res.status_code, 400)
         self.assertEqual(res.json(), {'error': 'Expecting value: line 1 column 1 (char 0)'})
+
+    def test_server_bad_policy_execution_warn(self):
+        policies = {
+            'policies': [
+                {
+                    'name': 'test-validator-pod',
+                    'resource': 'k8s.pod',
+                    'description': 'description deployment',
+                    'mode': {
+                        'type': 'k8s-validator',
+                        'on-match': 'warn',
+                        'operations': [
+                            'CREATE',
+                        ]
+                    }
+                },
+            ]
+        }
+        server, port = self._server(policies)
+
+        server.policy_collection = MagicMock()
+        server.policy_collection.policies = []
+
+        mock_policy_1 = MagicMock()
+        mock_policy_1.name = 'test-validator-pod'
+        mock_policy_1.push.side_effect = Exception('foo')
+
+        mock_policy_2 = MagicMock()
+        mock_policy_2.name = 'test-validator-pod-2'
+        mock_policy_2.push.side_effect = Exception('bar')
+
+        server.policy_collection.policies.append(mock_policy_1)
+        server.policy_collection.policies.append(mock_policy_2)
+
+        event = self.get_event('create_pod')
+        res = requests.post(f'http://localhost:{port}', json=event)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(
+            res.json()['response']['warnings'],
+            [
+                'test-validator-pod:Error in executing policy: foo',
+                'test-validator-pod-2:Error in executing policy: bar'
+            ]
+        )
+
+    def test_server_bad_policy_execution_deny(self):
+        policies = {
+            'policies': [
+                {
+                    'name': 'test-validator-pod',
+                    'resource': 'k8s.pod',
+                    'description': 'description deployment',
+                    'mode': {
+                        'type': 'k8s-validator',
+                        'on-match': 'warn',
+                        'operations': [
+                            'CREATE',
+                        ]
+                    }
+                },
+            ]
+        }
+        server, port = self._server(policies, on_exception='deny')
+
+        server.policy_collection = MagicMock()
+        server.policy_collection.policies = []
+
+        mock_policy_1 = MagicMock()
+        mock_policy_1.name = 'test-validator-pod'
+        mock_policy_1.push.side_effect = Exception('foo')
+
+        mock_policy_2 = MagicMock()
+        mock_policy_2.name = 'test-validator-pod-2'
+        mock_policy_2.push.side_effect = Exception('bar')
+
+        server.policy_collection.policies.append(mock_policy_1)
+        server.policy_collection.policies.append(mock_policy_2)
+
+        event = self.get_event('create_pod')
+        res = requests.post(f'http://localhost:{port}', json=event)
+        self.assertEqual(res.status_code, 200)
+        self.assertFalse(res.json()['response']['allowed'])
+        failures = json.loads(
+            res.json()['response']['status']['message'].split(':', 1)[-1]
+        )
+        self.assertEqual(
+            failures,
+            [
+                {"name": "test-validator-pod", "description": "Error in executing policy: foo"},
+                {"name": "test-validator-pod-2", "description": "Error in executing policy: bar"}
+            ]
+        )

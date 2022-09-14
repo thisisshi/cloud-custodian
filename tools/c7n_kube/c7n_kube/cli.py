@@ -57,6 +57,10 @@ def _parser():
     parser.add_argument('--port', type=int, help='Server port', nargs='?', default=PORT)
     parser.add_argument('--policy-dir', type=str, required=True, help='policy directory')
     parser.add_argument(
+        '--on-exception', type=str.lower, required=True, default='warn',
+        choices=['warn', 'deny'],
+        help='warn or deny on policy exceptions')
+    parser.add_argument(
         '--endpoint', default=None,
         help='Endpoint for webhook, used for generating manfiest')
     parser.add_argument(
@@ -96,7 +100,7 @@ def cli():
 
         print(yaml.dump(TEMPLATE))
     else:
-        init(args.port, args.policy_dir)
+        init(args.port, args.policy_dir, args.on_exception)
 
 
 if __name__ == '__main__':

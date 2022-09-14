@@ -101,6 +101,7 @@ class TestK8sCli(KubeTest):
         patched_args.port = 9000
         patched_args.generate = False
         patched_args.policy_dir = 'policies'
+        patched_args.on_exception = 'warn'
         patched_parser.return_value.parse_args.return_value = patched_args
         cli()
-        patched_init.assert_called_once_with(9000, 'policies')
+        patched_init.assert_called_once_with(9000, 'policies', 'warn')
