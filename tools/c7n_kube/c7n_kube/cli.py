@@ -88,7 +88,7 @@ def cli():
             operations.extend(mvals['operations'])
             groups.append(mvals['group'])
             api_versions.append(mvals['apiVersions'])
-            resources.append(mvals['resources'])
+            resources.extend(mvals['resources'])
 
         TEMPLATE['webhooks'][0]['rules'][0]['operations'] = sorted(list(set(operations)))
         TEMPLATE['webhooks'][0]['rules'][0]['apiGroups'] = sorted(list(set(groups)))

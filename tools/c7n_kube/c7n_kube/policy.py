@@ -50,6 +50,7 @@ class ValidatingControllerMode(K8sEventMode):
         'k8s-validator',
         required=['operations'],
         **{
+            'subresource': {'type': 'array', 'items': {'type': 'string'}},
             'on-match': {'enum': ['allow', 'deny', 'warn']},
             'operations': {
                 'type': 'array',
@@ -76,7 +77,11 @@ class ValidatingControllerMode(K8sEventMode):
         return group == value
 
     def _handle_resources(self, request, value):
+        value = value[0]
         resource = request['resource']['resource']
+        if len(value.split('/', 1)) == 2:
+            parent, sub = value.split('/', 1)
+            return sub == request['resourceSubResource'] and parent == resource
         return resource == value
 
     def _handle_api_versions(self, request, value):
@@ -100,7 +105,9 @@ class ValidatingControllerMode(K8sEventMode):
         scope = None
         version = None
         group = None
-        resources = None
+        resource = None
+
+        subresources = self.policy.data.get('mode', {}).get('subresource', [])
 
         model = self.policy.resource_manager.get_model()
         mode = self.policy.data['mode']
@@ -111,19 +118,27 @@ class ValidatingControllerMode(K8sEventMode):
             query = self.policy.data['query'][0]
             version = query['version'].lower()
             group = query['group'].lower()
-            resources = query['plural'].lower()
+            resource = query['plural'].lower()
             scope = 'Cluster'
             if self.policy.resource_manager.type == 'custom-namespaced-resource':
                 scope = 'Namespaced'
         else:
             # set default values based on our models
-            resources = model.plural.lower()
+            resource = model.plural.lower()
             group = model.group.lower()
             version = model.version.lower()
             scope = 'Namespaced' if model.namespaced else 'Cluster'
 
         if group == 'core':
             group = ''
+
+        resources = []
+
+        resources.append(resource)
+
+        if subresources:
+            for s in subresources:
+                resources.append(f'{resource}/{s}')
 
         return {
             'operations': mode.get('operations'),

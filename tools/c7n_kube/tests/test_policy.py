@@ -22,7 +22,7 @@ class TestAdmissionControllerMode(KubeTest):
         )
         expected = {
             'operations': ['CREATE', 'DELETE'],
-            'resources': policy.resource_manager.get_model().plural.lower(),
+            'resources': [policy.resource_manager.get_model().plural.lower()],
             'group': '',
             'apiVersions': policy.resource_manager.get_model().version.lower(),
             'scope': 'Namespaced' if policy.resource_manager.get_model().namespaced else 'Cluster'
@@ -156,3 +156,33 @@ class TestAdmissionControllerMode(KubeTest):
         result, resources = policy.push(event)
         self.assertEqual(result, 'deny')
         self.assertEqual(len(resources), 1)
+
+    def test_sub_resource_pod_exec(self):
+        factory = self.replay_flight_data()
+        policy = self.load_policy(
+            {
+                'name': 'test-deny-pod-exec-based-on-group',
+                'resource': 'k8s.pod',
+                'mode': {
+                    'type': 'k8s-validator',
+                    'subresource': 'exec',
+                    'on-match': 'deny',
+                    'operations': [
+                        'CONNECT'
+                    ]
+                },
+                'filters': [
+                    {
+                        'type': 'event',
+                        'key': 'request.userInfo.groups',
+                        'value': 'allow-exec',
+                        'op': 'not-in',
+                        'value_type': 'swap'
+                    }
+                ]
+            }, session_factory=factory
+        )
+        event = self.get_event('connect_pod_exec_options')
+        result, resources = policy.push(event)
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(result, 'deny')
