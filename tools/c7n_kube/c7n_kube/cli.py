@@ -1,8 +1,10 @@
 # Copyright The Cloud Custodian Authors.
 # SPDX-License-Identifier: Apache-2.0
-import os
 import argparse
 import logging
+import os
+import pkg_resources
+
 import yaml
 
 from c7n_kube.server import init
@@ -24,7 +26,15 @@ TEMPLATE = {
     "apiVersion": "admissionregistration.k8s.io/v1",
     "kind": "MutatingWebhookConfiguration",
     "metadata": {
-        "name": "c7n-admission"
+        "name": "c7n-admission",
+        "labels": {
+            "app.kubernetes.io/name": "c7n-adm",
+            "app.kubernetes.io/instance": "c7n-adm",
+            "app.kubernetes.io/version": pkg_resources.get_distribution("c7n_kube").version,
+            "app.kubernetes.io/component": "AdmissionController",
+            "app.kubernetes.io/part-of": "c7n_kube",
+            "app.kubernetes.io/managed-by": "c7n"
+        }
     },
     "webhooks": [
         {
