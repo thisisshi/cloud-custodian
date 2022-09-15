@@ -165,7 +165,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'resource': 'k8s.pod',
                 'mode': {
                     'type': 'k8s-validator',
-                    'subresource': 'exec',
+                    'subresource': ['exec'],
                     'on-match': 'deny',
                     'operations': [
                         'CONNECT'
@@ -183,6 +183,37 @@ class TestAdmissionControllerMode(KubeTest):
             }, session_factory=factory
         )
         event = self.get_event('connect_pod_exec_options')
+        result, resources = policy.push(event)
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(result, 'deny')
+
+    def test_sub_resource_pod_attach_exec(self):
+        # policy should be able to handle multiple subresources
+        factory = self.replay_flight_data()
+        policy = self.load_policy(
+            {
+                'name': 'test-deny-pod-exec-based-on-group',
+                'resource': 'k8s.pod',
+                'mode': {
+                    'type': 'k8s-validator',
+                    'subresource': ['exec', 'attach'],
+                    'on-match': 'deny',
+                    'operations': [
+                        'CONNECT'
+                    ]
+                },
+                'filters': [
+                    {
+                        'type': 'event',
+                        'key': 'request.userInfo.groups',
+                        'value': 'allow-exec',
+                        'op': 'not-in',
+                        'value_type': 'swap'
+                    }
+                ]
+            }, session_factory=factory
+        )
+        event = self.get_event('connect_pod_attach_options')
         result, resources = policy.push(event)
         self.assertEqual(len(resources), 1)
         self.assertEqual(result, 'deny')
