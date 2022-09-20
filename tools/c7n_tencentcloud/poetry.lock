@@ -60,7 +60,7 @@ crt = ["awscrt (==0.14.0)"]
 
 [[package]]
 name = "c7n"
-version = "0.9.18"
+version = "0.9.19"
 description = "Cloud Custodian - Policy Rules Engine"
 category = "dev"
 optional = false
@@ -426,7 +426,7 @@ widechars = ["wcwidth"]
 
 [[package]]
 name = "tencentcloud-sdk-python"
-version = "3.0.735"
+version = "3.0.736"
 description = "Tencent Cloud SDK for Python"
 category = "main"
 optional = false
@@ -810,8 +810,8 @@ tabulate = [
     {file = "tabulate-0.8.10.tar.gz", hash = "sha256:6c57f3f3dd7ac2782770155f3adb2db0b1a269637e42f27599925e64b114f519"},
 ]
 tencentcloud-sdk-python = [
-    {file = "tencentcloud-sdk-python-3.0.735.tar.gz", hash = "sha256:4108a596ea1e5916045ac36a4d3f0f5b3cc8a80e089deb77c0e81d2869c49a59"},
-    {file = "tencentcloud_sdk_python-3.0.735-py2.py3-none-any.whl", hash = "sha256:32313a8f519c314690a2b6931ed361fb5c31ab22ef73b560c591eb597d4462d4"},
+    {file = "tencentcloud-sdk-python-3.0.736.tar.gz", hash = "sha256:24ad07ed68bebdfcf0666e1d287801295edd8a04f544cf6aa9b8022fe217720b"},
+    {file = "tencentcloud_sdk_python-3.0.736-py2.py3-none-any.whl", hash = "sha256:e3e646beb5fa2e004eb88ed49716debe044b308b2c59dac49e9b8986d59d708a"},
 ]
 tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
