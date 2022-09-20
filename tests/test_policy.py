@@ -264,8 +264,8 @@ class PolicyMetaLint(BaseTest):
             'AwsEcsTask',
             'AwsBackupRecoveryPoint',
             # https://github.com/cloud-custodian/cloud-custodian/issues/7775
-            'AwsBackupPlan',
-            'AwsBackupVault',
+            'AwsBackupBackupPlan',
+            'AwsBackupBackupVault',
             # q2 2022
             'AwsRdsDbSecurityGroup',
             # q1 2022
