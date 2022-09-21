@@ -74,7 +74,7 @@ importlib-metadata==4.12.0; python_version < "3.8" and python_version >= "3.7"
 isodate==0.6.1; python_version >= "3.6"
 jmespath==1.0.1; python_version >= "3.7"
 msal-extensions==1.0.0; python_version >= "3.7"
-msal==1.18.0; python_version >= "3.7"
+msal==1.19.0; python_version >= "3.7"
 msrest==0.7.1; python_version >= "3.6"
 msrestazure==0.6.4
 netaddr==0.7.20
