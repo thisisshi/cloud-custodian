@@ -3,6 +3,7 @@
 #
 from c7n_kube.query import QueryResourceManager, TypeInfo
 from c7n_kube.provider import resources
+from c7n_kube.resources.apps.deployment import EventEnsureRegistryAction
 
 
 @resources.register('replica-set')
@@ -15,3 +16,8 @@ class ReplicaSet(QueryResourceManager):
         delete = 'delete_namespaced_replica_set'
         enum_spec = ('list_replica_set_for_all_namespaces', 'items', None)
         plural = 'replicasets'
+
+
+@ReplicaSet.action_registry.register('event-ensure-registry')
+class EventEnsureRegistryAction(EventEnsureRegistryAction):
+    pass
