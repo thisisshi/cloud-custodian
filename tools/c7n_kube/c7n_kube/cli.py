@@ -1,8 +1,10 @@
 # Copyright The Cloud Custodian Authors.
 # SPDX-License-Identifier: Apache-2.0
-import os
 import argparse
 import logging
+import os
+import pkg_resources
+
 import yaml
 
 from c7n_kube.server import init
@@ -24,7 +26,15 @@ TEMPLATE = {
     "apiVersion": "admissionregistration.k8s.io/v1",
     "kind": "MutatingWebhookConfiguration",
     "metadata": {
-        "name": "c7n-admission"
+        "name": "c7n-admission",
+        "labels": {
+            "app.kubernetes.io/name": "c7n-adm",
+            "app.kubernetes.io/instance": "c7n-adm",
+            "app.kubernetes.io/version": pkg_resources.get_distribution("c7n_kube").version,
+            "app.kubernetes.io/component": "AdmissionController",
+            "app.kubernetes.io/part-of": "c7n_kube",
+            "app.kubernetes.io/managed-by": "c7n"
+        }
     },
     "webhooks": [
         {
@@ -57,6 +67,10 @@ def _parser():
     parser.add_argument('--port', type=int, help='Server port', nargs='?', default=PORT)
     parser.add_argument('--policy-dir', type=str, required=True, help='policy directory')
     parser.add_argument(
+        '--on-exception', type=str.lower, required=False, default='warn',
+        choices=['warn', 'deny'],
+        help='warn or deny on policy exceptions')
+    parser.add_argument(
         '--endpoint', default=None,
         help='Endpoint for webhook, used for generating manfiest')
     parser.add_argument(
@@ -84,7 +98,7 @@ def cli():
             operations.extend(mvals['operations'])
             groups.append(mvals['group'])
             api_versions.append(mvals['apiVersions'])
-            resources.append(mvals['resources'])
+            resources.extend(mvals['resources'])
 
         TEMPLATE['webhooks'][0]['rules'][0]['operations'] = sorted(list(set(operations)))
         TEMPLATE['webhooks'][0]['rules'][0]['apiGroups'] = sorted(list(set(groups)))
@@ -96,7 +110,7 @@ def cli():
 
         print(yaml.dump(TEMPLATE))
     else:
-        init(args.port, args.policy_dir)
+        init(args.port, args.policy_dir, args.on_exception)
 
 
 if __name__ == '__main__':
