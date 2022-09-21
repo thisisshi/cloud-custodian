@@ -86,7 +86,7 @@ class EventLabelAction(EventAction):
     def get_labels(self, event):
         return self.data['labels']
 
-    def process_labels(self, resource, labels):
+    def process_labels(self, resource, event, labels):
         remove = []
         for k, v in labels.items():
             if v is None:
@@ -94,6 +94,12 @@ class EventLabelAction(EventAction):
         resource.setdefault('c7n:patches', [])
         src = copy.deepcopy(resource)
         dst = copy.deepcopy(src)
+
+        for k, v in labels.items():
+            if v is None:
+                continue
+            labels[k] = self.get_value(v, resource, event)
+
         dst.get('metadata', {}).get('labels', {}).update(labels)
         for r in remove:
             if r in dst.get('metadata', {}).get('labels', {}):
@@ -104,7 +110,7 @@ class EventLabelAction(EventAction):
     def process(self, resources, event):
         for r in resources:
             labels = self.get_labels(event)
-            self.process_labels(r, labels)
+            self.process_labels(r, event, labels)
 
     @classmethod
     def register_resources(klass, registry, resource_class):

@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 from common_kube import KubeTest
 
-from c7n.exceptions import PolicyValidationError
-
 
 class TestAdmissionControllerMode(KubeTest):
     def test_kube_admission_policy(self):

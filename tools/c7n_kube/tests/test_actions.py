@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from common_kube import KubeTest
+from test_policy import TestAdmissionControllerMode
+
+from c7n.exceptions import PolicyValidationError
 
 
 class TestDeleteAction(KubeTest):
@@ -80,3 +83,219 @@ class TestPatchAction(KubeTest):
         deployments = client.list_deployment_for_all_namespaces().to_dict()['items']
         hello_node_deployment = [d for d in deployments if d['metadata']['name'] == 'hello-node'][0]
         self.assertEqual(hello_node_deployment['spec']['replicas'], 2)
+
+
+class TestEventAction(TestAdmissionControllerMode):
+
+    def test_validator_event_label(self):
+        factory = self.replay_flight_data()
+        policy = self.load_policy(
+            {
+                'name': 'label-pod',
+                'resource': 'k8s.pod',
+                'mode': {
+                    'type': 'k8s-validator',
+                    'on-match': 'allow',
+                    'operations': ['CREATE']
+                },
+                'actions': [
+                    {
+                        'type': 'event-label',
+                        'labels': {
+                            'foo': 'bar',
+                            'role': 'different role',
+                            'test': None,
+                            'bar': '{event:request.uid}'
+                        }
+                    }
+                ]
+
+            },
+            session_factory=factory,
+        )
+        event = self.get_event('create_pod')
+        result, resources = policy.push(event)
+        self.assertEqual(result, 'allow')
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(len(resources[0]['c7n:patches']), 4)
+        expected = [
+            {'op': 'remove', 'path': '/metadata/labels/test'},
+            {
+                "op": "add",
+                "path": "/metadata/labels/bar",
+                "value": "662c3df2-ade6-4165-b395-770857bc17b7"
+            },
+            {"op": "add", "path": "/metadata/labels/foo", "value": "bar"},
+            {"op": "replace", "path": "/metadata/labels/role", "value": "different role"},
+        ]
+        for patch in resources[0]['c7n:patches']:
+            self.assertTrue(patch in expected)
+
+    def test_validator_event_auto_label_user(self):
+        factory = self.replay_flight_data()
+        policy = self.load_policy(
+            {
+                'name': 'label-pod',
+                'resource': 'k8s.pod',
+                'mode': {
+                    'type': 'k8s-validator',
+                    'on-match': 'allow',
+                    'operations': ['CREATE']
+                },
+                'actions': [
+                    {
+                        'type': 'auto-label-user',
+                    }
+                ]
+
+            },
+            session_factory=factory,
+        )
+        event = self.get_event('create_pod')
+        result, resources = policy.push(event)
+        self.assertEqual(result, 'allow')
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(len(resources[0]['c7n:patches']), 1)
+        self.assertEqual(
+            resources[0]['c7n:patches'],
+            [{"op": "add", "path": "/metadata/labels/OwnerContact", "value": "kubernetes-admin"}]
+        )
+
+    def test_validator_action_validate(self):
+        factory = self.replay_flight_data()
+        with self.assertRaises(PolicyValidationError):
+            self.load_policy(
+                {
+                    'name': 'label-pod',
+                    'resource': 'k8s.pod',
+                    'mode': {
+                        'type': 'k8s-validator',
+                        'on-match': 'allow',
+                        'operations': ['CREATE']
+                    },
+                    'actions': [
+                        {
+                            'type': 'label',
+                            'labels': {
+                                'foo': 'bar'
+                            }
+                        }
+                    ]
+
+                },
+                session_factory=factory,
+            )
+
+    def test_validator_action_event_patch(self):
+        factory = self.replay_flight_data()
+        policy = self.load_policy(
+            {
+                'name': 'change-image',
+                'resource': 'k8s.pod',
+                'mode': {
+                    'type': 'k8s-validator',
+                    'on-match': 'allow',
+                    'operations': ['CREATE']
+                },
+                'actions': [
+                    {
+                        'type': 'event-patch',
+                        'key': 'spec.containers[].image',
+                        'expr': 'jq',
+                        'value': 'if (. | startswith("nginx")) == true then . else "prefix-"+. end'  # noqa
+                    }
+                ]
+
+            },
+            session_factory=factory,
+        )
+        event = self.get_event('create_pod')
+        result, resources = policy.push(event)
+        self.assertEqual(
+            resources[0]['c7n:patches'],
+            [
+                {
+                    'op': 'replace',
+                    'path': '/spec/containers/0/image',
+                    'value': 'prefix-ubuntu'
+                }
+            ]
+        )
+
+    def test_validator_action_event_patch_delete(self):
+        factory = self.replay_flight_data()
+        policy = self.load_policy(
+            {
+                'name': 'change-image',
+                'resource': 'k8s.pod',
+                'mode': {
+                    'type': 'k8s-validator',
+                    'on-match': 'allow',
+                    'operations': ['CREATE']
+                },
+                'actions': [
+                    {
+                        'type': 'event-patch',
+                        'key': 'spec.containers[].image',
+                        'delete': True
+                    }
+                ]
+
+            },
+            session_factory=factory,
+        )
+        event = self.get_event('create_pod')
+        result, resources = policy.push(event)
+        self.assertEqual(
+            resources[0]['c7n:patches'],
+            [
+                {
+                    'op': 'remove',
+                    'path': '/spec/containers/0/image',
+                },
+                {
+                    'op': 'remove',
+                    'path': '/spec/containers/1/image',
+                }
+            ]
+        )
+
+    def test_validator_action_event_not_expression(self):
+        factory = self.replay_flight_data()
+        policy = self.load_policy(
+            {
+                'name': 'change-image',
+                'resource': 'k8s.pod',
+                'mode': {
+                    'type': 'k8s-validator',
+                    'on-match': 'allow',
+                    'operations': ['CREATE']
+                },
+                'actions': [
+                    {
+                        'type': 'event-patch',
+                        'key': 'spec.containers[].imagePullPolicy',
+                        'value': 'IfNotPresent'
+                    }
+                ]
+
+            },
+            session_factory=factory,
+        )
+        event = self.get_event('create_pod')
+        result, resources = policy.push(event)
+        self.assertEqual(
+            resources[0]['c7n:patches'],
+            [
+                {
+                    'op': 'add',
+                    'path': '/spec/containers/0/imagePullPolicy',
+                    'value': 'IfNotPresent'
+                },
+                {
+                    'op': 'replace',
+                    'path': '/spec/containers/1/imagePullPolicy',
+                    'value': 'IfNotPresent'
+                }
+            ]
+        )

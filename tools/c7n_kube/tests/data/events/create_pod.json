@@ -185,6 +185,22 @@
             ],
             "containers":[
                {
+                  "name":"other",
+                  "image":"ubuntu",
+                  "ports":[
+                     {
+                        "name":"ubuntu",
+                        "containerPort":80,
+                        "protocol":"TCP"
+                     },
+                     {
+                        "name":"test",
+                        "containerPort":80,
+                        "protocol":"TCP"
+                     }
+                  ]
+               },
+               {
                   "name":"web",
                   "image":"nginx",
                   "ports":[
