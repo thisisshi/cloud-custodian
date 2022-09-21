@@ -3,6 +3,7 @@
 
 import argparse
 import json
+import pkg_resources
 import tempfile
 
 from common_kube import KubeTest
@@ -53,11 +54,21 @@ class TestK8sCli(KubeTest):
             ]
         }
 
+        version = pkg_resources.get_distribution("c7n_kube").version
+
         expected = {
             'apiVersion': 'admissionregistration.k8s.io/v1',
             'kind': 'MutatingWebhookConfiguration',
             'metadata': {
-                'name': 'c7n-admission'
+                'name': 'c7n-admission',
+                'labels': {
+                    'app.kubernetes.io/name': 'c7n-adm',
+                    'app.kubernetes.io/instance': 'c7n-adm',
+                    'app.kubernetes.io/version': version,
+                    'app.kubernetes.io/component': 'AdmissionController',
+                    'app.kubernetes.io/part-of': 'c7n_kube',
+                    'app.kubernetes.io/managed-by': 'c7n'
+                }
             },
             'webhooks': [
                 {
@@ -69,7 +80,7 @@ class TestK8sCli(KubeTest):
                                 'DELETE'
                             ],
                             'scope': '*',
-                            'apiGroups': ['core', 'wgpolicyk8s.io'],
+                            'apiGroups': ['', 'wgpolicyk8s.io'],
                             'apiVersions': ['v1', 'v1alpha2'],
                             'resources': ['pods', 'policyreports']
                         }
@@ -101,6 +112,7 @@ class TestK8sCli(KubeTest):
         patched_args.port = 9000
         patched_args.generate = False
         patched_args.policy_dir = 'policies'
+        patched_args.on_exception = 'warn'
         patched_parser.return_value.parse_args.return_value = patched_args
         cli()
-        patched_init.assert_called_once_with(9000, 'policies')
+        patched_init.assert_called_once_with(9000, 'policies', 'warn')
