@@ -61,8 +61,17 @@ There are three main components to a policy:
 * Filters: criteria to produce a specific subset of resources
 * Actions: directives to take on the filtered set of resources
 
-In the example below, we will write a policy that filters for pods with a label "custodian"
-and deletes it:
+First, lets create a pod resource that we want to target with the policy:
+
+.. code-block:: bash
+
+   ❯ kubectl run nginx --image=nginx --labels=name=custodian
+   ❯ kubectl get pod -o wide --show-labels
+    NAME    READY   STATUS    RESTARTS   AGE   IP           NODE     NOMINATED NODE   READINESS GATES   LABELS
+    nginx   1/1     Running   0          24s   10.0.1.224   worker   <none>           <none>            name=custodian
+
+Now in the example below, we will write a policy that filters for pods with a
+label "custodian" and deletes it:
 
 Filename: ``custodian.yml``
 

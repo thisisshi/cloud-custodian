@@ -71,8 +71,10 @@ def _parser():
         choices=['warn', 'deny'],
         help='warn or deny on policy exceptions')
     parser.add_argument(
-        '--endpoint', default=None,
-        help='Endpoint for webhook, used for generating manfiest')
+        '--endpoint',
+        help='Endpoint for webhook, used for generating manfiest',
+        required=True,
+    )
     parser.add_argument(
         '--generate', default=False, action="store_true",
         help='Generate a k8s manifest for ValidatingWebhookConfiguration')
@@ -94,6 +96,16 @@ def cli():
         api_versions = []
         resources = []
         for p in policy_collection:
+            execution_mode = p.get_execution_mode()
+            # We only support `k8s-validator` policies for the admission
+            # controller.
+            if execution_mode.type != 'k8s-validator':
+                policy = execution_mode.policy
+                type_ = execution_mode.type
+                log.warning(
+                    f"skipping policy {policy.name} with type {type_}, should be k8s-validator"
+                )
+                continue
             mvals = p.get_execution_mode().get_match_values()
             operations.extend(mvals['operations'])
             groups.append(mvals['group'])
