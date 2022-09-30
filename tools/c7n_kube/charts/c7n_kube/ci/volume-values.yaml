@@ -1,0 +1,6 @@
+policies:
+  volume:
+    configMap:
+      name: a-config-map
+  volumeMount:
+    readOnly: true

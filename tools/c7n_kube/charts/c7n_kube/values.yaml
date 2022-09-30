@@ -1,1 +1,6 @@
+action: warn
 port: 8080
+image:
+  repository: cloudcustodian/c7n-kube
+  tag: latest
+policies: {}

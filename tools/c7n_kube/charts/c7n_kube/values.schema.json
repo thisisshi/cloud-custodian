@@ -4,8 +4,36 @@
     "properties": {
         "global": {},
 
+        "action": {
+            "type": "string",
+            "enum": ["warn", "deny"]
+        },
         "caBundle": {
             "type": "string"
+        },
+        "image": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "repository": { "type": "string" },
+                "tag": { "type": "string" }
+            },
+            "required": [
+                "repository",
+                "tag"
+            ]
+        },
+        "policies": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "volume": {},
+                "volumeMount": {}
+            },
+            "required": [
+                "volume",
+                "volumeMount"
+            ]
         },
         "port": {
             "type": "integer"

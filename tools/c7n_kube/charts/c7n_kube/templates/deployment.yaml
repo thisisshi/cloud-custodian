@@ -15,19 +15,29 @@ spec:
     spec:
       containers:
         - name: web
-          image: gh.io/c7n_kube:latest
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           command:
-            - python
+            - c7n-kube
           args:
-            - one
-            - two
+            - --port
+            - "{{ .Values.port }}"
+            - --policy-dir
+            - /etc/c7n/policies
+            - --on-exception
+            - {{ .Values.action }}
+            - --endpoint
+            - /mutation
           ports:
             - name: http
               containerPort: {{ .Values.port }}
           volumeMounts:
-            - name: policies
-              mountPath: /etc/c7n/policies
+            - mountPath: /etc/c7n/policies
+              name: policies
+              {{- with .Values.policies.volumeMount }}
+              {{- . | toYaml | nindent 14 }}
+              {{- end }}
       volumes:
         - name: policies
-          configMap:
-            name: policies
+          {{- with .Values.policies.volume }}
+          {{- . | toYaml | nindent 10 }}
+          {{- end }}
