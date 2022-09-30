@@ -13,6 +13,7 @@ jobs:
       matrix:
         image:
           - c7n
+          - c7n-kube
           - c7n-org
           - mailer
           - policystream

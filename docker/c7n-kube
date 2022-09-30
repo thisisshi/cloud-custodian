@@ -39,9 +39,13 @@ RUN . /usr/local/bin/activate && \
 
 RUN mkdir /output
 
+# Install c7n-kube
+ADD tools/c7n_kube /src/tools/c7n_kube
+RUN . /usr/local/bin/activate && cd tools/c7n_kube && poetry install
+
 FROM ubuntu:22.04
 
-LABEL name="cli" \
+LABEL name="kube" \
       repository="http://github.com/cloud-custodian/cloud-custodian"
 
 COPY --from=build-env /src /src
@@ -61,9 +65,9 @@ USER custodian
 WORKDIR /home/custodian
 ENV LC_ALL="C.UTF-8" LANG="C.UTF-8"
 VOLUME ["/home/custodian"]
-ENTRYPOINT ["/usr/local/bin/custodian"]
+ENTRYPOINT ["/usr/local/bin/c7n-kube"]
 CMD ["--help"]
 
-LABEL "org.opencontainers.image.title"="cli"
-LABEL "org.opencontainers.image.description"="Cloud Management Rules Engine"
+LABEL "org.opencontainers.image.title"="kube"
+LABEL "org.opencontainers.image.description"="Cloud Custodian Kubernetes Hooks"
 LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"

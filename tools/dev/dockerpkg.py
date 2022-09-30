@@ -38,7 +38,7 @@ RUN apt-get --yes update
 RUN apt-get --yes install --no-install-recommends build-essential curl python3-venv python3-dev
 RUN python3 -m venv /usr/local
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/install.python-poetry.org/main/install-poetry.py | python3 - -y --version {poetry_version}
-ARG PATH="/root/.local/bin:$PATH"
+ENV PATH="/root/.local/bin:$PATH"
 WORKDIR /src
 
 # Add core & aws packages
@@ -124,6 +124,17 @@ LABEL "org.opencontainers.image.description"="Cloud Management Rules Engine"
 LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
 """
 
+BUILD_KUBE = """\
+# Install c7n-kube
+ADD tools/c7n_kube /src/tools/c7n_kube
+RUN . /usr/local/bin/activate && cd tools/c7n_kube && poetry install
+"""
+
+TARGET_KUBE = """\
+LABEL "org.opencontainers.image.title"="kube"
+LABEL "org.opencontainers.image.description"="Cloud Custodian Kubernetes Hooks"
+LABEL "org.opencontainers.image.documentation"="https://cloudcustodian.io/docs"
+"""
 
 BUILD_ORG = """\
 # Install c7n-org
@@ -208,6 +219,16 @@ ImageMap = {
         ),
         build=[BUILD_STAGE],
         target=[TARGET_UBUNTU_STAGE, TARGET_CLI],
+    ),
+    "docker/c7n-kube": Image(
+        dict(
+            name="kube",
+            repo="c7n",
+            description="Cloud Custodian Kubernetes Hooks",
+            entrypoint="/usr/local/bin/c7n-kube",
+        ),
+        build=[BUILD_STAGE, BUILD_KUBE],
+        target=[TARGET_UBUNTU_STAGE, TARGET_KUBE],
     ),
     "docker/c7n-org": Image(
         dict(
