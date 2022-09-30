@@ -1,0 +1,17 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "global": {},
+
+        "caBundle": {
+            "type": "string"
+        },
+        "port": {
+            "type": "integer"
+        }
+    },
+    "required": [
+        "port"
+    ]
+}
