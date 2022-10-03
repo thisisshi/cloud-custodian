@@ -11,7 +11,7 @@ kind: Certificate
 metadata:
   name: {{ include "c7n_kube.certificate_name" . }}
 spec:
-  secretName: {{ include "c7n_kube.secret_name" . }}
+  secretName: {{ include "c7n_kube.certificate_name" . }}-cert-key
   dnsNames:
   - {{ include "c7n_kube.certificate_name" . }}.{{ .Release.Namespace }}
   issuerRef:
