@@ -12,7 +12,10 @@ with open(cli, encoding='utf-8') as f:
     exec(f.read())
 
 
-def _assert_pkg_ok(runner, pkg, command='gen-frozensetup', check_file='setup.py', cached=False):
+def _assert_pkg_ok(
+    runner, pkg, command='gen-frozensetup', check_file='setup.py',
+    cached=False, check_diff=True
+):
     base = Path(__file__).parent.parent.parent.parent / pkg
 
     with open(base / check_file) as f:
@@ -21,6 +24,10 @@ def _assert_pkg_ok(runner, pkg, command='gen-frozensetup', check_file='setup.py'
     result = runner.invoke(cli, [command, '-p', base])
     assert result.exit_code == 0
     cached = ' --cached ' if cached else ' '
+
+    if not check_diff:
+        return
+
     git_diff_command = list(f"git diff{cached}{base}/{check_file}".split(' '))
     diff = subprocess.check_output(
         git_diff_command,
@@ -28,6 +35,10 @@ def _assert_pkg_ok(runner, pkg, command='gen-frozensetup', check_file='setup.py'
     )
     # we should get a git diff as a result of running the command
     assert diff
+
+    if cached == ' --cached':
+        # clean up the git diff
+        subprocess.run(f'git rm --cached {check_file}'.split(' '))
 
     # clean up the setup.py file for a clean diff
     with open(base / check_file, "w") as f:
@@ -91,5 +102,5 @@ def test_generate_setup():
     for pkg in PKG_SET:
         _assert_pkg_ok(
             runner, pkg, check_file='poetry.lock',
-            command='gen-setup', cached=True
+            command='gen-setup', cached=True, check_diff=False
         )
