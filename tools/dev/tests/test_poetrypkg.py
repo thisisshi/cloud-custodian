@@ -11,6 +11,23 @@ cli = Path(__file__).parent.parent / "poetrypkg.py"
 with open(cli, encoding='utf-8') as f:
     exec(f.read())
 
+PKG_SET = (
+    '.',
+    'tools/c7n_gcp',
+    'tools/c7n_kube',
+    'tools/c7n_openstack',
+    'tools/c7n_mailer',
+    'tools/c7n_logexporter',
+    'tools/c7n_policystream',
+    'tools/c7n_trailcreator',
+    'tools/c7n_org',
+    'tools/c7n_sphinxext',
+    'tools/c7n_terraform',
+    'tools/c7n_awscc',
+    'tools/c7n_tencentcloud',
+    'tools/c7n_azure',
+)
+
 
 def _assert_pkg_ok(
     runner, pkg, command='gen-frozensetup', check_file='setup.py',
@@ -52,22 +69,6 @@ def test_generate_frozen_deps():
     Ensures that the gen-frozendeps command works and creates a git diff
     """
 
-    PKG_SET = (
-        '.',
-        'tools/c7n_gcp',
-        'tools/c7n_kube',
-        'tools/c7n_openstack',
-        'tools/c7n_mailer',
-        'tools/c7n_logexporter',
-        'tools/c7n_policystream',
-        'tools/c7n_trailcreator',
-        'tools/c7n_org',
-        'tools/c7n_sphinxext',
-        'tools/c7n_terraform',
-        'tools/c7n_awscc',
-        'tools/c7n_tencentcloud',
-        'tools/c7n_azure',
-    )
     runner = CliRunner()
 
     for pkg in PKG_SET:
@@ -81,22 +82,6 @@ def test_generate_setup():
     Ensures that the gen-setup command works
     """
 
-    PKG_SET = (
-        '.',
-        'tools/c7n_gcp',
-        'tools/c7n_kube',
-        'tools/c7n_openstack',
-        'tools/c7n_mailer',
-        'tools/c7n_logexporter',
-        'tools/c7n_policystream',
-        'tools/c7n_trailcreator',
-        'tools/c7n_org',
-        'tools/c7n_sphinxext',
-        'tools/c7n_terraform',
-        'tools/c7n_awscc',
-        'tools/c7n_tencentcloud',
-        'tools/c7n_azure',
-    )
     runner = CliRunner()
 
     for pkg in PKG_SET:
