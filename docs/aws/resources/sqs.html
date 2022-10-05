@@ -1509,6 +1509,11 @@
 <li class="toctree-l4"><a class="reference internal" href="catalog-portfolio.html#actions">Actions</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="catalog-product.html">aws.catalog-product</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="catalog-product.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="catalog-product.html#actions">Actions</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="group-shield.html">shield resources</a><ul>
@@ -5917,6 +5922,8 @@ to include a filter</p>
 <section id="set-encryption">
 <span id="aws-sqs-actions-set-encryption"></span><h3>set-encryption<a class="headerlink" href="#set-encryption" title="Permalink to this headline">¶</a></h3>
 <p>Action to set encryption key on SQS queue</p>
+<p>you can also optionally set data key ‘reuse-period’, or use with
+the service managed encryption by not specifying a key.</p>
 <dl class="field-list simple">
 <dt class="field-odd">example</dt>
 <dd class="field-odd"><p></p></dd>
@@ -5933,13 +5940,19 @@ to include a filter</p>
 </div>
 <div class="toggle docutils container">
 <div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span><span class="w"></span>
 <span class="w">  </span><span class="nt">key</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
+<span class="w">  </span><span class="nt">reuse-period</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">maximum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">86400</span><span class="w"></span>
+<span class="w">    </span><span class="nt">minimum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span><span class="w"></span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">integer</span><span class="w"></span>
 <span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set-encryption</span><span class="w"></span>
 <span class="nt">required</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">key</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span><span class="w"></span>
 </pre></div>
 </div>
 </div>
