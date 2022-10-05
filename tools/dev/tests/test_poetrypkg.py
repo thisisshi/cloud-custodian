@@ -12,32 +12,34 @@ with open(cli, encoding='utf-8') as f:
     exec(f.read())
 
 
+def _assert_pkg_ok(runner, pkg, command='gen-frozensetup', check_file='setup.py', cached=False):
+    base = Path(__file__).parent.parent.parent.parent / pkg
+
+    with open(base / check_file) as f:
+        original = f.read()
+
+    result = runner.invoke(cli, [command, '-p', base])
+    assert result.exit_code == 0
+    cached = ' --cached ' if cached else ' '
+    git_diff_command = list(f"git diff{cached}{base}/{check_file}".split(' '))
+    diff = subprocess.check_output(
+        git_diff_command,
+        stderr=subprocess.STDOUT,
+    )
+    # we should get a git diff as a result of running the command
+    assert diff
+
+    # clean up the setup.py file for a clean diff
+    with open(base / check_file, "w") as f:
+        f.write(original)
+
+
 @pytest.mark.skipif(sys.version_info <= (3, 8), reason="Developer Python minimum is 3.8")
 @pytest.mark.skipif(sys.platform == 'win32', reason="No Windows support")
 def test_generate_frozen_deps():
     """
     Ensures that the gen-frozendeps command works and creates a git diff
     """
-
-    def _assert_pkg_ok(pkg):
-        base = Path(__file__).parent.parent.parent.parent / pkg
-
-        with open(base / "setup.py") as f:
-            original = f.read()
-
-        result = runner.invoke(cli, ['gen-frozensetup', '-p', base])
-        assert result.exit_code == 0
-        gitdiff = subprocess.check_output(
-            f"git diff {base}/setup.py".split(' '),
-            stderr=subprocess.STDOUT,
-        )
-        # not the most exact check, but at the end of generating the frozen
-        # deps the git diff should have changed
-        assert gitdiff
-
-        # clean up the setup.py file for a clean diff
-        with open(base / "setup.py", "w") as f:
-            f.write(original)
 
     PKG_SET = (
         '.',
@@ -58,4 +60,36 @@ def test_generate_frozen_deps():
     runner = CliRunner()
 
     for pkg in PKG_SET:
-        _assert_pkg_ok(pkg)
+        _assert_pkg_ok(runner, pkg)
+
+
+@pytest.mark.skipif(sys.version_info <= (3, 8), reason="Developer Python minimum is 3.8")
+@pytest.mark.skipif(sys.platform == 'win32', reason="No Windows support")
+def test_generate_setup():
+    """
+    Ensures that the gen-setup command works
+    """
+
+    PKG_SET = (
+        '.',
+        'tools/c7n_gcp',
+        'tools/c7n_kube',
+        'tools/c7n_openstack',
+        'tools/c7n_mailer',
+        'tools/c7n_logexporter',
+        'tools/c7n_policystream',
+        'tools/c7n_trailcreator',
+        'tools/c7n_org',
+        'tools/c7n_sphinxext',
+        'tools/c7n_terraform',
+        'tools/c7n_awscc',
+        'tools/c7n_tencentcloud',
+        'tools/c7n_azure',
+    )
+    runner = CliRunner()
+
+    for pkg in PKG_SET:
+        _assert_pkg_ok(
+            runner, pkg, check_file='poetry.lock',
+            command='gen-setup', cached=True
+        )
