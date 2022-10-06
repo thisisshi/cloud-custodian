@@ -9,7 +9,6 @@ from c7n.manager import resources
 from c7n.tags import universal_augment
 from c7n.query import ConfigSource, DescribeSource, QueryResourceManager, TypeInfo
 from c7n.utils import local_session, type_schema
-import boto3
 
 from .aws import shape_validate, Arn
 
@@ -122,7 +121,7 @@ class Status(ValueFilter):
 
 @CloudTrail.filter_registry.register('log-metric-filter-pattern')
 class LogMetricFilterPattern(Filter):
-    
+
     """
     If pattern entered is found then resource will pass if not then resource will fail
 
@@ -142,7 +141,8 @@ class LogMetricFilterPattern(Filter):
                             required= ['required_pattern'])
 
     schema_alias = False
-    permissions = ('cloudtrail:DescribeTrails','cloudwatch:DescribeAlarms','logs:DescribeMetricFilters', 'sns:ListSubscriptions')
+    permissions = ('cloudtrail:DescribeTrails', 'cloudtrail:GetTrailStatus', 'cloudtrail:GetEventSelectors',
+                   'cloudwatch:DescribeAlarms', 'logs:DescribeMetricFilters', 'sns:ListSubscriptions')
     annotation_key = 'c7n:CheckForMultiTrailMfaLogin'
 
     def process(self, resources,event=None):
@@ -154,13 +154,13 @@ class LogMetricFilterPattern(Filter):
         match_alarms_actions =[]
         grouped_trails = get_trail_groups(self.manager.session_factory, resources)
         for region, (client, trails) in grouped_trails.items():
-            #-Ensure there is at least one multi-region CloudTrail
+            # Ensure there is at least one multi-region CloudTrail
             if not grouped_trails:
                 self.log.info('No cloudtrails have been created')
                 return resources
             else:
                 for t in trails:
-                    if t['IsMultiRegionTrail'] == True:
+                    if t['IsMultiRegionTrail']:
                         trails_w_multiregion.append(t)
                 if not trails_w_multiregion:
                     self.log.info('No multi-region cloudtrail exists')
@@ -170,57 +170,54 @@ class LogMetricFilterPattern(Filter):
                     for t in trails_w_multiregion:
                         # -Ensure multi-region CloudTrail is active
                         status = client.get_trail_status(Name=t['TrailARN'])
-                        if status['IsLogging'] == True:
+                        if status['IsLogging']:
                             trails_w_activeStatus.append(t)
                     if not trails_w_activeStatus:
                         self.log.info('Ensure multi-region trail is logging')
                         return resources
                     else:
-                        # -Ensure multi-region CloudTrail captures all management events
-                        # -Ensure there is at least one event selector with IncludeManagementEvents set to "true" and "ReadWriteType" set to "All"
+                        # Ensure multi-region CloudTrail captures all management events
+                        # Ensure there is at least one event selector with IncludeManagementEvents set to "true" and "ReadWriteType" set to "All"
                         for t in trails_w_activeStatus:
                             selectors = client.get_event_selectors(TrailName=t['TrailARN'])
                             if 'EventSelectors' in selectors.keys():
                                 event_selectors = selectors['EventSelectors'][0]
-                                if event_selectors['IncludeManagementEvents'] == True and event_selectors['ReadWriteType'] == 'All':
+                                if event_selectors['IncludeManagementEvents'] and event_selectors['ReadWriteType'] == 'All':
                                     trails_w_IncludeManagementEvents.append(t)
                         if not trails_w_IncludeManagementEvents:
-                            self.log.info('Mulit-region trail must have event selectors IncludeManagementEvents == True and ReadWriteType = All')
+                            self.log.info('Multi-region trail must have event selectors IncludeManagementEvents == True and ReadWriteType = All')
                             return resources
                         else:
                             client_logs = local_session(self.manager.session_factory).client(
                             'logs', region_name=region)
-                            #client_logs = boto3.client('logs')
                             for t in trails_w_IncludeManagementEvents:
-                                #parse log group arn for name
+                                # parse log group arn for name
                                 if 'CloudWatchLogsLogGroupArn' in t.keys():
                                     log_group_name = t['CloudWatchLogsLogGroupArn'].split(':')[6]
-                                    # -Get a list of associated metric filters for the CloudWatch Logs Group ARN
+                                    # Get a list of associated metric filters for the CloudWatch Logs Group ARN
                                     log_group_names.append(log_group_name)
-                            if  not log_group_names:
-                                self.log.info('No metric filter associated with log group. Metric filter must be { ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) } ')
+                            if not log_group_names:
+                                self.log.info('No metric filter associated with log group. Metric filter must be %s', self.data.get('required_pattern'))
                                 return resources
                             else:
                                 for name in log_group_names:
                                     metric_filters_log_group = client_logs.describe_metric_filters(logGroupName=name)['metricFilters']
-                                    # -Look for this filter pattern in the CloudWatch Metric Alarm:
+                                    # Look for this filter pattern in the CloudWatch Metric Alarm:
                                     if metric_filters_log_group:
                                         for f in metric_filters_log_group:
                                             pattern = self.data.get('required_pattern')
                                             if f['filterPattern'] == pattern:
                                                 filters_matched.append(f)
                                 if not filters_matched:
-                                    #fail here
-                                    self.log.info('No metric filter match. Metric filter must be { ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) } ')
+                                    self.log.info('No metric filter match. Metric filter must be %s', self.data.get('required_pattern'))
                                     return resources
                                 else:
                                     client_cw = local_session(self.manager.session_factory).client(
                             'cloudwatch', region_name=region)
-                                    #client_cw = boto3.client('cloudwatch')
                                     alarms = client_cw.describe_alarms()['MetricAlarms']
-                                    for f in filters_matched:        
+                                    for f in filters_matched:
                                         metric_name = f["metricTransformations"][0]["metricName"]
-                                        # -Ensure that an alarm exists for the above metric
+                                        # Ensure that an alarm exists for the above metric
                                         for a in alarms:
                                             if a['MetricName'] == metric_name:
                                                 for arn in a['AlarmActions']:
@@ -231,7 +228,6 @@ class LogMetricFilterPattern(Filter):
                                     else:
                                         client_sns = local_session(self.manager.session_factory).client(
                             'sns', region_name=region)
-                                        #client_sns = boto3.client('sns')
                                         sns_subscriptions = client_sns.list_subscriptions()['Subscriptions']
                                         if not sns_subscriptions:
                                             self.log.info('No sns subscription tied to metric alarm')
@@ -242,8 +238,8 @@ class LogMetricFilterPattern(Filter):
                                                     return resources
                                                 else:
                                                     return []
-                                    
-    
+
+
     def __call__(self, r):
         return self.match(r[self.annotation_key])
 
