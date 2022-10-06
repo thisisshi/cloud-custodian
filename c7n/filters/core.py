@@ -442,6 +442,7 @@ class ComparableVersion(version.LooseVersion):
         except TypeError:
             return False
 
+
 class ValueFilter(BaseValueFilter):
     """Generic value filter using jmespath
     """
