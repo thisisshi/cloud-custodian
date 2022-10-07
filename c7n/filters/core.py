@@ -346,12 +346,19 @@ class Or(BooleanGroupFilter):
 
     def process_set(self, resources, event):
         rtype_id = self.get_resource_type_id()
-        compiled = jmespath.compile(rtype_id)
-        resource_map = {compiled.search(r): r for r in resources}
+        if '.' in rtype_id:
+            compiled = jmespath.compile(rtype_id)
+            resource_map = {compiled.search(r): r for r in resources}
+        else:
+            resource_map = {r[rtype_id]: r for r in resources}
         results = set()
         for f in self.filters:
-            results = results.union([
-                compiled.search(r) for r in f.process(resources, event)])
+            if '.' in rtype_id:
+                results = results.union([
+                    compiled.search(r) for r in f.process(resources, event)])
+            else:
+                results = results.union([
+                    r[rtype_id] for r in f.process(resources, event)])
         return [resource_map[r_id] for r_id in results]
 
 

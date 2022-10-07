@@ -7,6 +7,9 @@ import http.server
 from c7n.config import Config
 from c7n.loader import DirectoryLoader
 
+from c7n_kube.utils import evaluate_result
+from c7n_kube.exceptions import EventNotMatchedException, PolicyNotRunnableException
+
 import logging
 
 log = logging.getLogger("c7n_kube.server")
@@ -33,6 +36,7 @@ class AdmissionControllerServer(http.server.HTTPServer):
 
 
 class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
+
     def get_request_body(self):
         token = self.rfile.read(int(self.headers["Content-length"]))
         res = token.decode("utf-8")
@@ -71,7 +75,18 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
             warning_message = None
             deny_message = None
             try:
-                result, resources = p.push(req)
+                resources = p.push(req)
+                action = p.data['mode'].get('on-match', 'deny')
+                result = evaluate_result(action, resources)
+                if result in ('allow', 'warn',):
+                    verb = 'allowing'
+                else:
+                    verb = 'denying'
+
+                log.info(f'{verb} admission because on-match:{action}, matched:{len(resources)}')
+            except (PolicyNotRunnableException, EventNotMatchedException, ):
+                result = 'allow'
+                resources = []
             except Exception as e:
                 # if a policy fails we simply warn
                 result = self.server.on_exception
@@ -79,6 +94,7 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
                     warning_message = f"Error in executing policy: {str(e)}"
                 if result == 'deny':
                     deny_message = f"Error in executing policy: {str(e)}"
+
             if result == 'deny':
                 failed_policies.append(
                     {
@@ -97,7 +113,7 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        response = self.admission_response(
+        response = self.create_admission_response(
             uid=req['request']['uid'],
             failed_policies=failed_policies,
             warn_policies=warn_policies
@@ -105,7 +121,7 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
         log.info(response)
         self.wfile.write(response.encode('utf-8'))
 
-    def admission_response(self, uid, failed_policies=None, warn_policies=None):
+    def create_admission_response(self, uid, failed_policies=None, warn_policies=None):
         code = 200 if len(failed_policies) == 0 else 400
         message = 'OK'
         warnings = []

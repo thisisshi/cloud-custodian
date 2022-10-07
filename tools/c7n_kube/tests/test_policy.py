@@ -1,6 +1,7 @@
 # Copyright The Cloud Custodian Authors.
 # SPDX-License-Identifier: Apache-2.0
 from common_kube import KubeTest
+from c7n_kube.utils import evaluate_result
 
 
 class TestAdmissionControllerMode(KubeTest):
@@ -30,8 +31,9 @@ class TestAdmissionControllerMode(KubeTest):
         match_values = policy.get_execution_mode().get_match_values()
         self.assertEqual(expected, match_values)
         event = self.get_event('create_pod')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
         self.assertEqual(len(resources), 1)
+        result = evaluate_result('allow', resources)
         self.assertEqual(result, 'allow')
 
     def test_kube_event_filter(self):
@@ -59,8 +61,9 @@ class TestAdmissionControllerMode(KubeTest):
             }, session_factory=factory
         )
         event = self.get_event('create_pod')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
         self.assertEqual(len(resources), 1)
+        result = evaluate_result('deny', resources)
         self.assertEqual(result, 'deny')
 
     def test_kube_delete_event(self):
@@ -83,8 +86,9 @@ class TestAdmissionControllerMode(KubeTest):
             }, session_factory=factory
         )
         event = self.get_event('delete_pod')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
         self.assertTrue(resources)
+        result = evaluate_result('deny', resources)
         self.assertEqual(result, 'deny')
 
     def test_validator_warn_event(self):
@@ -103,8 +107,9 @@ class TestAdmissionControllerMode(KubeTest):
             }, session_factory=factory
         )
         event = self.get_event('create_pod')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
         self.assertTrue(resources)
+        result = evaluate_result('warn', resources)
         self.assertEqual(result, 'warn')
 
     def test_validator_warn_event_no_results(self):
@@ -126,8 +131,9 @@ class TestAdmissionControllerMode(KubeTest):
             }, session_factory=factory
         )
         event = self.get_event('create_pod')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
         self.assertEqual(len(resources), 0)
+        result = evaluate_result('warn', resources)
         self.assertEqual(result, 'allow')
 
     def test_validator_allow_crd(self):
@@ -153,9 +159,10 @@ class TestAdmissionControllerMode(KubeTest):
             session_factory=factory,
         )
         event = self.get_event('create_policyreport')
-        result, resources = policy.push(event)
-        self.assertEqual(result, 'deny')
+        resources = policy.push(event)
         self.assertEqual(len(resources), 1)
+        result = evaluate_result('deny', resources)
+        self.assertEqual(result, 'deny')
 
     def test_sub_resource_pod_exec(self):
         factory = self.replay_flight_data()
@@ -183,8 +190,9 @@ class TestAdmissionControllerMode(KubeTest):
             }, session_factory=factory
         )
         event = self.get_event('connect_pod_exec_options')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
         self.assertEqual(len(resources), 1)
+        result = evaluate_result('deny', resources)
         self.assertEqual(result, 'deny')
 
     def test_sub_resource_pod_attach_exec(self):
@@ -214,6 +222,7 @@ class TestAdmissionControllerMode(KubeTest):
             }, session_factory=factory
         )
         event = self.get_event('connect_pod_attach_options')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
         self.assertEqual(len(resources), 1)
+        result = evaluate_result('deny', resources)
         self.assertEqual(result, 'deny')

@@ -2,15 +2,15 @@
 
 FROM debian:10-slim as build-env
 
-ARG POETRY_VERSION="1.1.15"
+ARG POETRY_VERSION="1.2.1"
 
 # pre-requisite distro deps, and build env setup
 RUN adduser --disabled-login --gecos "" custodian
 RUN apt-get --yes update
 RUN apt-get --yes install --no-install-recommends build-essential curl python3-venv python3-dev
 RUN python3 -m venv /usr/local
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/install.python-poetry.org/main/install-poetry.py | python3 - -y --version ${POETRY_VERSION}
-ENV PATH="/root/.local/bin:$PATH"
+RUN curl -sSL https://install.python-poetry.org | python3 - -y --version ${POETRY_VERSION}
+ARG PATH="/root/.local/bin:$PATH"
 WORKDIR /src
 
 # Add core & aws packages
@@ -30,9 +30,11 @@ ADD tools/c7n_kube /src/tools/c7n_kube
 RUN rm -R tools/c7n_kube/tests
 ADD tools/c7n_openstack /src/tools/c7n_openstack
 RUN rm -R tools/c7n_openstack/tests
+ADD tools/c7n_tencentcloud /src/tools/c7n_tencentcloud
+RUN rm -R tools/c7n_tencentcloud/tests
 
 # Install requested providers
-ARG providers="gcp kube openstack azure"
+ARG providers="gcp kube openstack tencentcloud azure"
 RUN . /usr/local/bin/activate && \
     for pkg in $providers; do cd tools/c7n_$pkg && \
     poetry install && cd ../../; done
