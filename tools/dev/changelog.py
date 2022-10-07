@@ -224,6 +224,9 @@ def main(path, output, since, end, user):
             continue
         if user:
             message = "%s - %s - %s" % (cdate.strftime("%Y/%m/%d"), commit.author.name, message)
+        if category.startswith('tools/') or category.startswith('c7n_'):
+            category = category.replace('tools/', '')
+            category = category.replace('c7n_', '')
         groups.setdefault(category, []).append(message)
         count += 1
 
