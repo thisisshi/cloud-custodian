@@ -1,4 +1,0 @@
-apiVersion: v2
-name: c7n_kube
-version: 0.1.0
-appVersion: 0.1.0
