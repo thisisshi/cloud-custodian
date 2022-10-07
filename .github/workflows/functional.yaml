@@ -61,7 +61,7 @@ jobs:
       - name: Bootstrap poetry
         shell: bash
         run: |
-          curl -sSL https://install.python-poetry.org | python3 - --version $POETRY_VERSION -y
+          curl -sSL https://install.python-poetry.org | python3 - --version 1.2.1 -y
       - name: Install c7n
         shell: bash
         run: |
