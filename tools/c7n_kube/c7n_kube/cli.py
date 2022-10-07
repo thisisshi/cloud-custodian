@@ -28,8 +28,8 @@ TEMPLATE = {
     "metadata": {
         "name": "c7n-admission",
         "labels": {
-            "app.kubernetes.io/name": "c7n-adm",
-            "app.kubernetes.io/instance": "c7n-adm",
+            "app.kubernetes.io/name": "c7n-kates",
+            "app.kubernetes.io/instance": "c7n-kates",
             "app.kubernetes.io/version": pkg_resources.get_distribution("c7n_kube").version,
             "app.kubernetes.io/component": "AdmissionController",
             "app.kubernetes.io/part-of": "c7n_kube",

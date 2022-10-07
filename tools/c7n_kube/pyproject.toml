@@ -28,4 +28,4 @@ requires = ["poetry>=0.12", "setuptools"]
 build-backend = "poetry.masonry.api"
 
 [tool.poetry.scripts]
-"c7n-adm" = "c7n_kube.cli:cli"
+"c7n-kates" = "c7n_kube.cli:cli"

@@ -92,7 +92,7 @@ class PolicyCollection:
     def __add__(self, other):
         return self.__class__(self.policies + other.policies, self.options)
 
-    def filter(self, policy_patterns=[], resource_types=[], providers=[], modes=[]):
+    def filter(self, policy_patterns=(), resource_types=(), modes=()):
         results = self.policies
         results = self._filter_by_patterns(results, policy_patterns)
         results = self._filter_by_resource_types(results, resource_types)
@@ -185,7 +185,7 @@ class PolicyCollection:
                 results.append(policy)
         if not results:
             self.log.warning((
-                'Modes type "{}" '
+                'Filter by modes type "{}" '
                 'did not match any policies.').format(mode))
         return results
 
