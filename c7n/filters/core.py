@@ -353,8 +353,12 @@ class Or(BooleanGroupFilter):
             resource_map = {r[rtype_id]: r for r in resources}
         results = set()
         for f in self.filters:
-            results = results.union([
-                compiled.search(r) for r in f.process(resources, event)])
+            if '.' in rtype_id:
+                results = results.union([
+                    compiled.search(r) for r in f.process(resources, event)])
+            else:
+                results = results.union([
+                    r[rtype_id] for r in f.process(resources, event)])
         return [resource_map[r_id] for r_id in results]
 
 
