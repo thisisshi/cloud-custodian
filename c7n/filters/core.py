@@ -350,7 +350,7 @@ class Or(BooleanGroupFilter):
             compiled = jmespath.compile(rtype_id)
             resource_map = {compiled.search(r): r for r in resources}
         else:
-            resource_map = {compiled.search(r[rtype_id]): r for r in resources}
+            resource_map = {r[rtype_id]: r for r in resources}
         results = set()
         for f in self.filters:
             results = results.union([
