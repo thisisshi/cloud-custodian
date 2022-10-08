@@ -1,0 +1,8 @@
+caBundle: blahblahblah
+
+policies:
+  volume:
+    configMap:
+      name: policies
+  volumeMount:
+    readOnly: true

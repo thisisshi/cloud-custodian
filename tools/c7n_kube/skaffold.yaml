@@ -1,0 +1,24 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+
+build:
+  artifacts:
+  - context: ../../
+    docker:
+      dockerfile: ../../docker/c7n-kube
+    image: c7n-kube
+
+deploy:
+  helm:
+    releases:
+      - artifactOverrides:
+          image: c7n-kube
+        chartPath: ../../../c7n-helm-charts/c7n_kube/
+        imageStrategy:
+          fqn: {}
+        name: c7n-kube
+        valuesFiles:
+          - .skaffold/values.yaml
+  kubectl:
+    manifests:
+      - .skaffold/templates/*.yaml
