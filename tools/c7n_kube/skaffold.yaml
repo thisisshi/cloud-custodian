@@ -1,6 +1,23 @@
+
+
+---
+
 apiVersion: skaffold/v2beta29
 kind: Config
+metadata:
+  name: create-namespace
+deploy:
+  kubectl:
+    manifests:
+      - .skaffold/namespace.yaml
 
+---
+apiVersion: skaffold/v2beta29
+kind: Config
+requires:
+  - configs: [create-namespace]
+metadata:
+  name: deploy
 build:
   artifacts:
   - context: ../../
@@ -9,6 +26,11 @@ build:
     image: c7n-kube
 
 deploy:
+  kubectl:
+    defaultNamespace: c7n-system
+    manifests:
+      - .skaffold/templates/*.yaml
+
   helm:
     releases:
       - artifactOverrides:
@@ -17,8 +39,6 @@ deploy:
         imageStrategy:
           fqn: {}
         name: c7n-kube
+        namespace: c7n-system
         valuesFiles:
           - .skaffold/values.yaml
-  kubectl:
-    manifests:
-      - .skaffold/templates/*.yaml

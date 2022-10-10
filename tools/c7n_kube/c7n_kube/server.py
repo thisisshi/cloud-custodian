@@ -1,5 +1,6 @@
 # Copyright The Cloud Custodian Authors.
 # SPDX-License-Identifier: Apache-2.0
+from functools import cache
 import json
 import os
 import http.server
@@ -146,14 +147,33 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
         })
 
 
-def init(port, policy_dir, on_exception='warn', serve_forever=True):
+def init(
+    port, policy_dir, on_exception='warn', serve_forever=True,
+    *, cert_path=None, cert_key_path=None, ca_cert_path=None,
+):
+    tls_opts = cert_path, cert_key_path
+    use_tls = cert_path, cert_key_path
+    if use_tls and not (cert_path and cert_key_path):
+        raise Exception("must include all three TLS options")
+
     server = AdmissionControllerServer(
         server_address=(HOST, port),
         RequestHandlerClass=AdmissionControllerHandler,
         policy_dir=policy_dir,
         on_exception=on_exception,
     )
-    log.info(f"Serving at {HOST} {port}")
+
+    if use_tls:
+        import ssl
+        server.socket = ssl.wrap_socket(
+            server.socket,
+            server_side=True,
+            certfile=cert_path,
+            keyfile=cert_key_path,
+            ca_certs=ca_cert_path,
+        )
+
+    log.info(f"Serving at http{'s' if use_tls else ''}://{HOST}:{port}")
     while True:
         server.serve_forever()
         # for testing purposes
