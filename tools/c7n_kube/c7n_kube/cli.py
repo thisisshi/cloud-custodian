@@ -97,13 +97,13 @@ def cli():
         resources = []
         for p in policy_collection:
             execution_mode = p.get_execution_mode()
-            # We only support `k8s-validator` policies for the admission
+            # We only support `k8s-controller` policies for the admission
             # controller.
-            if execution_mode.type != 'k8s-validator':
+            if execution_mode.type != 'k8s-controller':
                 policy = execution_mode.policy
                 type_ = execution_mode.type
                 log.warning(
-                    f"skipping policy {policy.name} with type {type_}, should be k8s-validator"
+                    f"skipping policy {policy.name} with type {type_}, should be k8s-controller"
                 )
                 continue
             mvals = p.get_execution_mode().get_match_values()
