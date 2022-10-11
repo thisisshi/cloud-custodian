@@ -65,8 +65,8 @@ jobs:
       - name: Install c7n
         shell: bash
         run: |
-          python -m venv venv
-          python -m pip install --upgrade pip
+          python3 -m venv venv
+          python3 -m pip install --upgrade pip
           . venv/bin/activate && pip install -U wheel
           . venv/bin/activate && make install-poetry
           . venv/bin/activate && poetry run pip install -r tools/dev/requirements.txt
