@@ -72,8 +72,8 @@ jobs:
       - name: pkg-increment
         shell: bash
         run: |
-          make pkg-increment
-          make pkg-rebase
+          poetry shell && make pkg-increment
+          poetry shell && make pkg-rebase
       - name: Get Version
         id: get_version
         shell: python
