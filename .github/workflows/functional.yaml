@@ -67,14 +67,14 @@ jobs:
         run: |
           python3 -m venv venv
           python3 -m pip install --upgrade pip
-          . venv/bin/activate && pip install -U wheel
-          . venv/bin/activate && make install-poetry
-          . venv/bin/activate && poetry run pip install -r tools/dev/requirements.txt
+          pip install -U wheel
+          make install-poetry
+          pip install -r tools/dev/requirements.txt
       - name: pkg-increment
         shell: bash
         run: |
-          . venv/bin/activate && make pkg-increment
-          . venv/bin/activate && make pkg-rebase
+          make pkg-increment
+          make pkg-rebase
       - name: Get Version
         id: get_version
         shell: python
