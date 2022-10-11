@@ -65,15 +65,16 @@ jobs:
       - name: Install c7n
         shell: bash
         run: |
+          python -m venv venv
           python -m pip install --upgrade pip
-          pip install -U wheel
-          make install-poetry
-          poetry run pip install -r tools/dev/requirements.txt
+          . venv/bin/activate && pip install -U wheel
+          . venv/bin/activate && make install-poetry
+          . venv/bin/activate && poetry run pip install -r tools/dev/requirements.txt
       - name: pkg-increment
         shell: bash
         run: |
-          poetry shell && make pkg-increment
-          poetry shell && make pkg-rebase
+          . venv/bin/activate && make pkg-increment
+          . venv/bin/activate && make pkg-rebase
       - name: Get Version
         id: get_version
         shell: python
