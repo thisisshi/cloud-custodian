@@ -31,7 +31,7 @@ class AdmissionControllerServer(http.server.HTTPServer):
         self.directory_loader = DirectoryLoader(Config.empty())
         policy_collection = self.directory_loader.load_directory(
             os.path.abspath(self.policy_dir))
-        self.policy_collection = policy_collection.filter(modes=['k8s-validator'])
+        self.policy_collection = policy_collection.filter(modes=['k8s-controller'])
         log.info(f"Loaded {len(self.policy_collection)} policies")
         super().__init__(*args, **kwargs)
 

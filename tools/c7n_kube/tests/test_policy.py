@@ -12,7 +12,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-validator',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-controller',
                     'on-match': 'allow',
                     'operations': [
                         'CREATE',
@@ -43,7 +43,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-event-filter',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-controller',
                     'on-match': 'deny',
                     'operations': [
                         'CREATE',
@@ -73,7 +73,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-delete-pod',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-controller',
                     'on-match': 'deny',
                     'operations': [
                         'DELETE'
@@ -98,7 +98,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-warn-pod',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-controller',
                     'on-match': 'warn',
                     'operations': [
                         'CREATE'
@@ -119,7 +119,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-warn-pod',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-controller',
                     'on-match': 'warn',
                     'operations': [
                         'CREATE'
@@ -150,7 +150,7 @@ class TestAdmissionControllerMode(KubeTest):
                     }
                 ],
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-controller',
                     'on-match': 'deny',
                     'operations': ['CREATE']
                 }
@@ -171,7 +171,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-deny-pod-exec-based-on-group',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-controller',
                     'subresource': ['exec'],
                     'on-match': 'deny',
                     'operations': [
@@ -203,7 +203,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-deny-pod-exec-based-on-group',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-controller',
                     'subresource': ['exec', 'attach'],
                     'on-match': 'deny',
                     'operations': [
