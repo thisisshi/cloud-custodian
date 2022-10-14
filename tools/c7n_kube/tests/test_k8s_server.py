@@ -101,7 +101,7 @@ class TestServer(KubeTest):
                                 'name': 'test',
                                 'resource': 'k8s.pod',
                                 'mode': {
-                                    'type': 'k8s-validator',
+                                    'type': 'k8s-admission',
                                     'operations': ['CREATE']
                                 }
                             }
@@ -116,7 +116,7 @@ class TestServer(KubeTest):
                                 'name': 'test2',
                                 'resource': 'k8s.deployment',
                                 'mode': {
-                                    'type': 'k8s-validator',
+                                    'type': 'k8s-admission',
                                     'operations': ['CREATE']
                                 }
                             }
@@ -152,7 +152,7 @@ class TestServer(KubeTest):
                     'name': 'test-validator',
                     'resource': 'k8s.pod',
                     'mode': {
-                        'type': 'k8s-validator',
+                        'type': 'k8s-admission',
                         'on-match': 'deny',
                         'operations': [
                             'CREATE',
@@ -198,7 +198,7 @@ class TestServer(KubeTest):
                     'name': 'test-validator',
                     'resource': 'k8s.pod',
                     'mode': {
-                        'type': 'k8s-validator',
+                        'type': 'k8s-admission',
                         'on-match': 'deny',
                         'operations': [
                             'CREATE',
@@ -220,7 +220,7 @@ class TestServer(KubeTest):
                     'name': 'test-validator',
                     'resource': 'k8s.pod',
                     'mode': {
-                        'type': 'k8s-validator',
+                        'type': 'k8s-admission',
                         'on-match': 'allow',
                         'operations': [
                             'CREATE',
@@ -243,7 +243,7 @@ class TestServer(KubeTest):
                     'resource': 'k8s.deployment',
                     'description': 'description deployment',
                     'mode': {
-                        'type': 'k8s-validator',
+                        'type': 'k8s-admission',
                         'on-match': 'deny',
                         'operations': [
                             'CREATE',
@@ -255,7 +255,7 @@ class TestServer(KubeTest):
                     'resource': 'k8s.pod',
                     'description': 'description 1',
                     'mode': {
-                        'type': 'k8s-validator',
+                        'type': 'k8s-admission',
                         'on-match': 'deny',
                         'operations': [
                             'CREATE',
@@ -267,7 +267,7 @@ class TestServer(KubeTest):
                     'description': 'description 2',
                     'resource': 'k8s.pod',
                     'mode': {
-                        'type': 'k8s-validator',
+                        'type': 'k8s-admission',
                         'on-match': 'deny',
                         'operations': [
                             'CREATE',
@@ -296,7 +296,7 @@ class TestServer(KubeTest):
                     'resource': 'k8s.pod',
                     'description': 'description deployment',
                     'mode': {
-                        'type': 'k8s-validator',
+                        'type': 'k8s-admission',
                         'on-match': 'warn',
                         'operations': [
                             'CREATE',
@@ -343,7 +343,7 @@ class TestServer(KubeTest):
                     'resource': 'k8s.pod',
                     'description': 'description deployment',
                     'mode': {
-                        'type': 'k8s-validator',
+                        'type': 'k8s-admission',
                         'on-match': 'warn',
                         'operations': [
                             'CREATE',
@@ -387,7 +387,7 @@ class TestServer(KubeTest):
                     'resource': 'k8s.pod',
                     'description': 'description deployment',
                     'mode': {
-                        'type': 'k8s-validator',
+                        'type': 'k8s-admission',
                         'on-match': 'warn',
                         'operations': [
                             'CREATE',

@@ -30,44 +30,14 @@ class AdmissionControllerServer(http.server.HTTPServer):
         self.directory_loader = DirectoryLoader(Config.empty())
         policy_collection = self.directory_loader.load_directory(
             os.path.abspath(self.policy_dir))
-        self.policy_collection = policy_collection.filter(modes=['k8s-validator'])
+        self.policy_collection = policy_collection.filter(modes=['k8s-admission'])
         log.info(f"Loaded {len(self.policy_collection)} policies")
         super().__init__(*args, **kwargs)
 
 
 class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
 
-    def get_request_body(self):
-        token = self.rfile.read(int(self.headers["Content-length"]))
-        res = token.decode("utf-8")
-        return res
-
-    def do_GET(self):
-        """
-        Returns application/json list of your policies
-        """
-        self.send_response(200)
-        self.end_headers()
-        result = []
-        for p in self.server.policy_collection.policies:
-            result.append(p.data)
-        self.wfile.write(json.dumps(result).encode('utf-8'))
-
-    def do_POST(self):
-        """
-        Entrypoint for kubernetes webhook
-        """
-        req = self.get_request_body()
-        log.info(req)
-        try:
-            req = json.loads(req)
-        except Exception as e:
-            self.send_response(400)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
-            return
-
+    def run_policies(self, req):
         failed_policies = []
         warn_policies = []
         for p in self.server.policy_collection.policies:
@@ -109,6 +79,40 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
                         "description": warning_message or p.data.get('description', '')
                     }
                 )
+        return failed_policies, warn_policies
+
+    def get_request_body(self):
+        token = self.rfile.read(int(self.headers["Content-length"]))
+        res = token.decode("utf-8")
+        return res
+
+    def do_GET(self):
+        """
+        Returns application/json list of your policies
+        """
+        self.send_response(200)
+        self.end_headers()
+        result = []
+        for p in self.server.policy_collection.policies:
+            result.append(p.data)
+        self.wfile.write(json.dumps(result).encode('utf-8'))
+
+    def do_POST(self):
+        """
+        Entrypoint for kubernetes webhook
+        """
+        req = self.get_request_body()
+        log.info(req)
+        try:
+            req = json.loads(req)
+        except Exception as e:
+            self.send_response(400)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+            return
+
+        failed_policies, warn_policies = self.run_policies(req)
 
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')

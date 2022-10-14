@@ -12,7 +12,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-validator',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'on-match': 'allow',
                     'operations': [
                         'CREATE',
@@ -43,7 +43,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-event-filter',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'on-match': 'deny',
                     'operations': [
                         'CREATE',
@@ -73,7 +73,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-delete-pod',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'on-match': 'deny',
                     'operations': [
                         'DELETE'
@@ -98,7 +98,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-warn-pod',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'on-match': 'warn',
                     'operations': [
                         'CREATE'
@@ -119,7 +119,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-warn-pod',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'on-match': 'warn',
                     'operations': [
                         'CREATE'
@@ -150,7 +150,7 @@ class TestAdmissionControllerMode(KubeTest):
                     }
                 ],
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'on-match': 'deny',
                     'operations': ['CREATE']
                 }
@@ -171,7 +171,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-deny-pod-exec-based-on-group',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'subresource': ['exec'],
                     'on-match': 'deny',
                     'operations': [
@@ -180,11 +180,15 @@ class TestAdmissionControllerMode(KubeTest):
                 },
                 'filters': [
                     {
-                        'type': 'event',
-                        'key': 'request.userInfo.groups',
-                        'value': 'allow-exec',
-                        'op': 'not-in',
-                        'value_type': 'swap'
+                        "not": [
+                            {
+                                'type': 'event',
+                                'key': 'request.userInfo.groups',
+                                'value': 'allow-exec',
+                                'op': 'in',
+                                'value_type': 'swap'
+                            }
+                        ]
                     }
                 ]
             }, session_factory=factory
@@ -203,7 +207,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-deny-pod-exec-based-on-group',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'subresource': ['exec', 'attach'],
                     'on-match': 'deny',
                     'operations': [
@@ -212,11 +216,15 @@ class TestAdmissionControllerMode(KubeTest):
                 },
                 'filters': [
                     {
-                        'type': 'event',
-                        'key': 'request.userInfo.groups',
-                        'value': 'allow-exec',
-                        'op': 'not-in',
-                        'value_type': 'swap'
+                        'or': [
+                            {
+                                'type': 'event',
+                                'key': 'request.userInfo.groups',
+                                'value': 'allow-exec',
+                                'op': 'not-in',
+                                'value_type': 'swap'
+                            }
+                        ]
                     }
                 ]
             }, session_factory=factory
