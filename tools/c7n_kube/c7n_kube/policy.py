@@ -15,7 +15,7 @@ class K8sEventMode(PolicyExecutionMode):
     pass
 
 
-@execution.register('k8s-controller')
+@execution.register('k8s-admission')
 class ValidatingControllerMode(K8sEventMode):
     """
     Validating Admission Controller Mode
@@ -37,7 +37,7 @@ class ValidatingControllerMode(K8sEventMode):
           resource: 'k8s.deployment'
           description: 'All deployments must only have label:foo'
           mode:
-            type: k8s-controller
+            type: k8s-admission
             on-match: deny
             operations:
             - CREATE
@@ -49,7 +49,7 @@ class ValidatingControllerMode(K8sEventMode):
     """
 
     schema = type_schema(
-        'k8s-controller',
+        'k8s-admission',
         required=['operations'],
         **{
             'subresource': {'type': 'array', 'items': {'type': 'string'}},
