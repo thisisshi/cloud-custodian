@@ -27,7 +27,7 @@ class TestK8sCli(KubeTest):
                     'name': 'test-validator',
                     'resource': 'k8s.pod',
                     'mode': {
-                        'type': 'k8s-controller',
+                        'type': 'k8s-admission',
                         'on-match': 'allow',
                         'operations': [
                             'CREATE',
@@ -46,7 +46,7 @@ class TestK8sCli(KubeTest):
                         }
                     ],
                     'mode': {
-                        'type': 'k8s-controller',
+                        'type': 'k8s-admission',
                         'on-match': 'deny',
                         'operations': ['CREATE']
                     }
