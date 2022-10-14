@@ -10,7 +10,7 @@ contain the recommended labels.
   policies:
     - name: missing-recommended-labels
       mode:
-        type: k8s-validator
+        type: k8s-admission
         on-match: deny
         operations:
           - CREATE

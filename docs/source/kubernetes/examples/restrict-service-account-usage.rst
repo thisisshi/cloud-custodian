@@ -9,7 +9,7 @@ certain service accounts in their spec:
   policies:
     - name: restrict-service-account-usage
       mode:
-        type: k8s-validator
+        type: k8s-admission
         on-match: deny
         operations:
           - CREATE
