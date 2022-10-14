@@ -119,3 +119,105 @@ files (subsequent runs will append to the log by default, rather than
 overwriting it).
 
 See :ref:`filters` for more information on the features of the Value filter used in this sample.
+
+You can also use `custodian schema` to get more information on the filters
+available to you.
+
+.. code-block:: bash
+
+    ❯ custodian schema k8s
+    resources:
+    - k8s.config-map
+    - k8s.custom-cluster-resource
+    - k8s.custom-namespaced-resource
+    - k8s.daemon-set
+    - k8s.deployment
+    - k8s.namespace
+    - k8s.node
+    - k8s.pod
+    - k8s.replica-set
+    - k8s.replication-controller
+    - k8s.secret
+    - k8s.service
+    - k8s.service-account
+    - k8s.stateful-set
+    - k8s.volume
+    - k8s.volume-claim
+
+To understand which values are available for a resource you can use `kubectl`,
+so for example to understand what attributes a persistent volume has on it you
+can run:
+
+.. code-block:: bash
+
+   ❯ kubectl explain persistentvolume --recursive
+    KIND:     PersistentVolume
+    VERSION:  v1
+
+    DESCRIPTION:
+         PersistentVolume (PV) is a storage resource provisioned by an
+         administrator. It is analogous to a node. More info:
+         https://kubernetes.io/docs/concepts/storage/persistent-volumes
+
+    FIELDS:
+       apiVersion   <string>
+       kind <string>
+       metadata     <Object>
+          annotations       <map[string]string>
+          creationTimestamp <string>
+          deletionGracePeriodSeconds        <integer>
+          deletionTimestamp <string>
+          finalizers        <[]string>
+          generateName      <string>
+          generation        <integer>
+          labels    <map[string]string>
+
+     ....
+
+Or if you have a resource already deployed in your cluster and you want to
+figure out how to taret it you can output it to `json` and review the available
+attributes that way:
+
+
+.. code-block:: bash
+
+   ❯ kubectl get pv node-pv-volume -o json
+
+    {
+        "apiVersion": "v1",
+        "kind": "PersistentVolume",
+        "metadata": {
+            "annotations": {
+                "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"PersistentVolume\",\"metadata\":{\"annotations\":{},\"labels\":{\"type\":\"local\"},\"name\":\"node-pv-volume\"},\"spec\":{\"accessModes\":[\"ReadWriteOnce\"],\"capacity\":{\"storage\":\"1Gi\"},\"hostPath\":{\"path\":\"/tmp/k8s\"},\"storageClassName\":\"manual\"}}\n"
+            },
+            "creationTimestamp": "2022-10-14T19:34:45Z",
+            "finalizers": [
+                "kubernetes.io/pv-protection"
+            ],
+            "labels": {
+                "type": "local"
+            },
+            "name": "node-pv-volume",
+            "resourceVersion": "394700",
+            "uid": "ad414486-9fd9-48ac-8cc5-7d6b9c24b524"
+        },
+        "spec": {
+            "accessModes": [
+                "ReadWriteOnce"
+            ],
+            "capacity": {
+                "storage": "1Gi"
+            },
+            "hostPath": {
+                "path": "/tmp/k8s",
+                "type": ""
+            },
+            "persistentVolumeReclaimPolicy": "Retain",
+            "storageClassName": "manual",
+            "volumeMode": "Filesystem"
+        },
+        "status": {
+            "phase": "Available"
+        }
+    }
+
