@@ -33,9 +33,7 @@ deploy:
 
   helm:
     releases:
-      - artifactOverrides:
-          image: c7n-kube
-        chartPath: ../../../c7n-helm-charts/c7n_kube/
+      - chartPath: ../../../helm-charts/charts/c7n-kube/
         imageStrategy:
           fqn: {}
         name: c7n-kube
