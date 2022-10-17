@@ -3,6 +3,8 @@
 from common_kube import KubeTest
 from c7n_kube.utils import evaluate_result
 
+from c7n.exceptions import PolicyValidationError
+
 
 class TestAdmissionControllerMode(KubeTest):
     def test_kube_admission_policy(self):
@@ -164,9 +166,103 @@ class TestAdmissionControllerMode(KubeTest):
         result = evaluate_result('deny', resources)
         self.assertEqual(result, 'deny')
 
+    def test_validator_event_label(self):
+        factory = self.replay_flight_data()
+        policy = self.load_policy(
+            {
+                'name': 'label-pod',
+                'resource': 'k8s.pod',
+                'mode': {
+                    'type': 'k8s-admission',
+                    'on-match': 'allow',
+                    'operations': ['CREATE']
+                },
+                'actions': [
+                    {
+                        'type': 'event-label',
+                        'labels': {
+                            'foo': 'bar',
+                            'role': 'different role',
+                            'test': None
+                        }
+                    }
+                ]
+
+            },
+            session_factory=factory,
+        )
+        event = self.get_event('create_pod')
+        resources = policy.push(event)
+        result = evaluate_result('allow', resources)
+        self.assertEqual(result, 'allow')
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(len(resources[0]['c7n:patches']), 3)
+        self.assertEqual(
+            resources[0]['c7n:patches'],
+            [
+                {'op': 'remove', 'path': '/metadata/labels/test'},
+                {"op": "add", "path": "/metadata/labels/foo", "value": "bar"},
+                {"op": "replace", "path": "/metadata/labels/role", "value": "different role"},
+            ]
+        )
+
+    def test_validator_event_auto_label_user(self):
+        factory = self.replay_flight_data()
+        policy = self.load_policy(
+            {
+                'name': 'label-pod',
+                'resource': 'k8s.pod',
+                'mode': {
+                    'type': 'k8s-admission',
+                    'on-match': 'allow',
+                    'operations': ['CREATE']
+                },
+                'actions': [
+                    {
+                        'type': 'auto-label-user',
+                    }
+                ]
+
+            },
+            session_factory=factory,
+        )
+        event = self.get_event('create_pod')
+        resources = policy.push(event)
+        result = evaluate_result('allow', resources)
+        self.assertEqual(result, 'allow')
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(len(resources[0]['c7n:patches']), 1)
+        self.assertEqual(
+            resources[0]['c7n:patches'],
+            [{"op": "add", "path": "/metadata/labels/OwnerContact", "value": "kubernetes-admin"}]
+        )
+
+    def test_validator_action_validate(self):
+        factory = self.replay_flight_data()
+        with self.assertRaises(PolicyValidationError):
+            self.load_policy(
+                {
+                    'name': 'label-pod',
+                    'resource': 'k8s.pod',
+                    'mode': {
+                        'type': 'k8s-admission',
+                        'on-match': 'allow',
+                        'operations': ['CREATE']
+                    },
+                    'actions': [
+                        {
+                            'type': 'label',
+                            'labels': {
+                                'foo': 'bar'
+                            }
+                        }
+                    ]
+
+                },
+                session_factory=factory,
+            )
+
     def test_sub_resource_pod_exec(self):
-        # the double not in this policy is here to ensure that the core not
-        # filters work in this provider
         factory = self.replay_flight_data()
         policy = self.load_policy(
             {

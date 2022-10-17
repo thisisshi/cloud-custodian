@@ -16,6 +16,10 @@ class Action(BaseAction):
     pass
 
 
+class EventAction(BaseAction):
+    pass
+
+
 class MethodAction(Action):
     method_spec = ()
     chunk_size = 20
