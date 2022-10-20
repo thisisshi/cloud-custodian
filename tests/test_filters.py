@@ -1668,6 +1668,7 @@ class ValueListFilterTest(BaseFilterTest):
         with self.assertRaises(PolicyExecutionError):
             f.process(resources)
 
+
 class AnnotationSweeperTest(unittest.TestCase):
     def test_annotation_sweep_jmespath(self):
         resources = [
