@@ -1,12 +1,10 @@
 # Copyright The Cloud Custodian Authors.
 # SPDX-License-Identifier: Apache-2.0
 
-from c7n_tencentcloud.provider import resources
 from c7n_tencentcloud.query import ResourceTypeInfo, QueryResourceManager
 from c7n_tencentcloud.utils import PageMethod
 
 
-@resources.register("tag")
 class TAG(QueryResourceManager):
     """TAG"""
 
@@ -18,13 +16,15 @@ class TAG(QueryResourceManager):
         taggable = True
         enum_spec = ("GetResources",
                      "Response.ResourceTagMappingList[]",
-                     {
-                         "PaginationToken": "",
-                         "MaxResults": 20
-                     })
+                     {}
+                     )
         paging_def = {
             "method": PageMethod.PaginationToken,
-            "pagination_token_path": "Response.PaginationToken"
+            "pagination_token_path": "Response.PaginationToken",
+            "limit": {
+                "key": "MaxResults",
+                "value": 200
+            }
         }
 
     def get_resource_query_params(self):
@@ -42,12 +42,12 @@ class TAG(QueryResourceManager):
         return self.data.get("query", {})
 
     @staticmethod
-    def get_simple_call_params(resource6_name):
+    def get_simple_call_params(qcs_list):
         """
         get_simple_call_params
         """
         params = {
-            "ResourceList": [resource6_name]
+            "ResourceList": qcs_list
         }
         params.update()
         return params
