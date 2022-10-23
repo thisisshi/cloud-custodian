@@ -94,7 +94,12 @@ class EventLabelAction(EventAction):
         resource.setdefault('c7n:patches', [])
         src = copy.deepcopy(resource)
         dst = copy.deepcopy(src)
-        dst.get('metadata', {}).get('labels', {}).update(labels)
+        # if the key doesnt exist we need to set it else it wont appear
+        # in the patch
+        if dst.get('metadata', {}).get('labels') is None:
+            dst['metadata']['labels'] = labels
+        else:
+            dst.get('metadata', {}).get('labels', {}).update(labels)
         for r in remove:
             if r in dst.get('metadata', {}).get('labels', {}):
                 dst.get('metadata', {}).get('labels', {}).pop(r)
