@@ -223,5 +223,3 @@ attributes that way:
             "phase": "Available"
         }
     }
-
->>>>>>> master
