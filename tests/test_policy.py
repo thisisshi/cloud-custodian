@@ -189,7 +189,8 @@ class PolicyMetaLint(BaseTest):
 
         overrides = overrides.difference(
             {'account', 's3', 'hostedzone', 'log-group', 'rest-api', 'redshift-snapshot',
-             'rest-stage', 'codedeploy-app', 'codedeploy-group', 'fis-template', 'dlm-policy', })
+             'rest-stage', 'codedeploy-app', 'codedeploy-group', 'fis-template', 'dlm-policy',
+             'apigwv2', })
         if overrides:
             raise ValueError("unknown arn overrides in %s" % (", ".join(overrides)))
 
@@ -262,6 +263,10 @@ class PolicyMetaLint(BaseTest):
             'AwsEc2TransitGateway',
             'AwsEcsContainer',
             'AwsEcsTask',
+            'AwsBackupRecoveryPoint',
+            # https://github.com/cloud-custodian/cloud-custodian/issues/7775
+            'AwsBackupBackupPlan',
+            'AwsBackupBackupVault',
             # q2 2022
             'AwsRdsDbSecurityGroup',
             # q1 2022
@@ -331,7 +336,6 @@ class PolicyMetaLint(BaseTest):
         # of a resource.
 
         whitelist = {
-            'AWS::ApiGatewayV2::Api',
             'AWS::ApiGatewayV2::Stage',
             'AWS::AutoScaling::ScalingPolicy',
             'AWS::AutoScaling::ScheduledAction',
@@ -389,6 +393,16 @@ class PolicyMetaLint(BaseTest):
             'AWS::Route53Resolver::ResolverRule',
             'AWS::Route53Resolver::ResolverRuleAssociation',
             'AWS::DMS::EventSubscription',
+            'AWS::GlobalAccelerator::Accelerator',
+            'AWS::Athena::DataCatalog',
+            'AWS::EC2::TransitGatewayAttachment',
+            'AWS::Athena::WorkGroup',
+            'AWS::GlobalAccelerator::EndpointGroup',
+            'AWS::GlobalAccelerator::Listener',
+            'AWS::DMS::Certificate',
+            'AWS::Detective::Graph',
+            'AWS::EC2::TransitGatewayRouteTable',
+            'AWS::AppSync::GraphQLApi',
         }
 
         resource_map = {}

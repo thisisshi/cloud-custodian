@@ -1,8 +1,8 @@
 # Copyright The Cloud Custodian Authors.
 # SPDX-License-Identifier: Apache-2.0
 from common_kube import KubeTest
-
 from c7n.exceptions import PolicyValidationError
+from c7n_kube.utils import evaluate_result
 
 
 class TestAdmissionControllerMode(KubeTest):
@@ -10,10 +10,10 @@ class TestAdmissionControllerMode(KubeTest):
         factory = self.replay_flight_data()
         policy = self.load_policy(
             {
-                'name': 'test-validator',
+                'name': 'test-admission',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'on-match': 'allow',
                     'operations': [
                         'CREATE',
@@ -32,8 +32,9 @@ class TestAdmissionControllerMode(KubeTest):
         match_values = policy.get_execution_mode().get_match_values()
         self.assertEqual(expected, match_values)
         event = self.get_event('create_pod')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
         self.assertEqual(len(resources), 1)
+        result = evaluate_result('allow', resources)
         self.assertEqual(result, 'allow')
 
     def test_kube_event_filter(self):
@@ -43,7 +44,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-event-filter',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'on-match': 'deny',
                     'operations': [
                         'CREATE',
@@ -61,8 +62,9 @@ class TestAdmissionControllerMode(KubeTest):
             }, session_factory=factory
         )
         event = self.get_event('create_pod')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
         self.assertEqual(len(resources), 1)
+        result = evaluate_result('deny', resources)
         self.assertEqual(result, 'deny')
 
     def test_kube_delete_event(self):
@@ -72,7 +74,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-delete-pod',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'on-match': 'deny',
                     'operations': [
                         'DELETE'
@@ -85,18 +87,19 @@ class TestAdmissionControllerMode(KubeTest):
             }, session_factory=factory
         )
         event = self.get_event('delete_pod')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
         self.assertTrue(resources)
+        result = evaluate_result('deny', resources)
         self.assertEqual(result, 'deny')
 
-    def test_validator_warn_event(self):
+    def test_admission_warn_event(self):
         factory = self.replay_flight_data()
         policy = self.load_policy(
             {
                 'name': 'test-warn-pod',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'on-match': 'warn',
                     'operations': [
                         'CREATE'
@@ -105,18 +108,19 @@ class TestAdmissionControllerMode(KubeTest):
             }, session_factory=factory
         )
         event = self.get_event('create_pod')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
         self.assertTrue(resources)
+        result = evaluate_result('warn', resources)
         self.assertEqual(result, 'warn')
 
-    def test_validator_warn_event_no_results(self):
+    def test_admission_warn_event_no_results(self):
         factory = self.replay_flight_data()
         policy = self.load_policy(
             {
                 'name': 'test-warn-pod',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'on-match': 'warn',
                     'operations': [
                         'CREATE'
@@ -128,11 +132,12 @@ class TestAdmissionControllerMode(KubeTest):
             }, session_factory=factory
         )
         event = self.get_event('create_pod')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
         self.assertEqual(len(resources), 0)
+        result = evaluate_result('warn', resources)
         self.assertEqual(result, 'allow')
 
-    def test_validator_allow_crd(self):
+    def test_admission_allow_crd(self):
         factory = self.replay_flight_data()
         policy = self.load_policy(
             {
@@ -146,7 +151,7 @@ class TestAdmissionControllerMode(KubeTest):
                     }
                 ],
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'on-match': 'deny',
                     'operations': ['CREATE']
                 }
@@ -155,18 +160,19 @@ class TestAdmissionControllerMode(KubeTest):
             session_factory=factory,
         )
         event = self.get_event('create_policyreport')
-        result, resources = policy.push(event)
-        self.assertEqual(result, 'deny')
+        resources = policy.push(event)
         self.assertEqual(len(resources), 1)
+        result = evaluate_result('deny', resources)
+        self.assertEqual(result, 'deny')
 
-    def test_validator_event_label(self):
+    def test_admission_event_label(self):
         factory = self.replay_flight_data()
         policy = self.load_policy(
             {
                 'name': 'label-pod',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'on-match': 'allow',
                     'operations': ['CREATE']
                 },
@@ -185,7 +191,8 @@ class TestAdmissionControllerMode(KubeTest):
             session_factory=factory,
         )
         event = self.get_event('create_pod')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
+        result = evaluate_result('allow', resources)
         self.assertEqual(result, 'allow')
         self.assertEqual(len(resources), 1)
         self.assertEqual(len(resources[0]['c7n:patches']), 3)
@@ -198,14 +205,14 @@ class TestAdmissionControllerMode(KubeTest):
             ]
         )
 
-    def test_validator_event_auto_label_user(self):
+    def test_admission_event_auto_label_user(self):
         factory = self.replay_flight_data()
         policy = self.load_policy(
             {
                 'name': 'label-pod',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'on-match': 'allow',
                     'operations': ['CREATE']
                 },
@@ -219,7 +226,8 @@ class TestAdmissionControllerMode(KubeTest):
             session_factory=factory,
         )
         event = self.get_event('create_pod')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
+        result = evaluate_result('allow', resources)
         self.assertEqual(result, 'allow')
         self.assertEqual(len(resources), 1)
         self.assertEqual(len(resources[0]['c7n:patches']), 1)
@@ -228,15 +236,15 @@ class TestAdmissionControllerMode(KubeTest):
             [{"op": "add", "path": "/metadata/labels/OwnerContact", "value": "kubernetes-admin"}]
         )
 
-    def test_validator_action_validate(self):
+    def test_admission_action_validate(self):
         factory = self.replay_flight_data()
         with self.assertRaises(PolicyValidationError):
-            policy = self.load_policy(
+            self.load_policy(
                 {
                     'name': 'label-pod',
                     'resource': 'k8s.pod',
                     'mode': {
-                        'type': 'k8s-validator',
+                        'type': 'k8s-admission',
                         'on-match': 'allow',
                         'operations': ['CREATE']
                     },
@@ -260,7 +268,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-deny-pod-exec-based-on-group',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'subresource': ['exec'],
                     'on-match': 'deny',
                     'operations': [
@@ -269,18 +277,23 @@ class TestAdmissionControllerMode(KubeTest):
                 },
                 'filters': [
                     {
-                        'type': 'event',
-                        'key': 'request.userInfo.groups',
-                        'value': 'allow-exec',
-                        'op': 'not-in',
-                        'value_type': 'swap'
+                        "not": [
+                            {
+                                'type': 'event',
+                                'key': 'request.userInfo.groups',
+                                'value': 'allow-exec',
+                                'op': 'in',
+                                'value_type': 'swap'
+                            }
+                        ]
                     }
                 ]
             }, session_factory=factory
         )
         event = self.get_event('connect_pod_exec_options')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
         self.assertEqual(len(resources), 1)
+        result = evaluate_result('deny', resources)
         self.assertEqual(result, 'deny')
 
     def test_sub_resource_pod_attach_exec(self):
@@ -291,7 +304,7 @@ class TestAdmissionControllerMode(KubeTest):
                 'name': 'test-deny-pod-exec-based-on-group',
                 'resource': 'k8s.pod',
                 'mode': {
-                    'type': 'k8s-validator',
+                    'type': 'k8s-admission',
                     'subresource': ['exec', 'attach'],
                     'on-match': 'deny',
                     'operations': [
@@ -300,16 +313,21 @@ class TestAdmissionControllerMode(KubeTest):
                 },
                 'filters': [
                     {
-                        'type': 'event',
-                        'key': 'request.userInfo.groups',
-                        'value': 'allow-exec',
-                        'op': 'not-in',
-                        'value_type': 'swap'
+                        'or': [
+                            {
+                                'type': 'event',
+                                'key': 'request.userInfo.groups',
+                                'value': 'allow-exec',
+                                'op': 'not-in',
+                                'value_type': 'swap'
+                            }
+                        ]
                     }
                 ]
             }, session_factory=factory
         )
         event = self.get_event('connect_pod_attach_options')
-        result, resources = policy.push(event)
+        resources = policy.push(event)
         self.assertEqual(len(resources), 1)
+        result = evaluate_result('deny', resources)
         self.assertEqual(result, 'deny')

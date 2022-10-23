@@ -115,4 +115,3 @@ Navigate below to your cloud provider and get started with Cloud Custodian!
    developer/tests.rst
    developer/documentation.rst
    developer/packaging.rst
-

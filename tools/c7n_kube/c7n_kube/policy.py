@@ -6,6 +6,7 @@ from c7n.exceptions import PolicyValidationError
 from c7n.policy import PolicyExecutionMode, execution
 from c7n.utils import type_schema, dumps
 
+from c7n_kube.exceptions import EventNotMatchedException, PolicyNotRunnableException
 
 log = logging.getLogger('custodian.k8s.policy')
 
@@ -14,7 +15,7 @@ class K8sEventMode(PolicyExecutionMode):
     pass
 
 
-@execution.register('k8s-validator')
+@execution.register('k8s-admission')
 class ValidatingControllerMode(K8sEventMode):
     """
     Validating Admission Controller Mode
@@ -36,7 +37,7 @@ class ValidatingControllerMode(K8sEventMode):
           resource: 'k8s.deployment'
           description: 'All deployments must only have label:foo'
           mode:
-            type: k8s-validator
+            type: k8s-admission
             on-match: deny
             operations:
             - CREATE
@@ -48,7 +49,7 @@ class ValidatingControllerMode(K8sEventMode):
     """
 
     schema = type_schema(
-        'k8s-validator',
+        'k8s-admission',
         required=['operations'],
         **{
             'subresource': {'type': 'array', 'items': {'type': 'string'}},
@@ -194,15 +195,13 @@ class ValidatingControllerMode(K8sEventMode):
         return resources
 
     def run(self, event, _):
-        action = self.policy.data['mode'].get('on-match', 'deny')
-
         if not self.policy.is_runnable(event):
-            return 'allow', []
+            raise PolicyNotRunnableException()
         log.info(f"Got event:{event}")
         matched = self._filter_event(event['request'])
         if not matched:
             log.warning("Event not matched, skipping")
-            return 'allow', []
+            raise EventNotMatchedException()
         log.info("Event Matched")
 
         resources = [event['request']['object']]
@@ -215,24 +214,4 @@ class ValidatingControllerMode(K8sEventMode):
 
         log.info(f"Filtered from 1 to {len(resources)} resource(s)")
 
-        if action == 'allow' and resources:
-            result = 'allow'
-        elif action == 'allow' and not resources:
-            result = 'deny'
-        elif action == 'deny' and resources:
-            result = 'deny'
-        elif action == 'deny' and not resources:
-            result = 'allow'
-        elif action == 'warn' and resources:
-            result = 'warn'
-        elif action == 'warn' and not resources:
-            result = 'allow'
-
-        if result in ('allow', 'warn',):
-            verb = 'allowing'
-        else:
-            verb = 'denying'
-
-        log.info(f'{verb} admission because on-match:{action}, matched:{len(resources)}')
-
-        return result, resources
+        return resources

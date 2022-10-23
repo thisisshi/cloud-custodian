@@ -5,13 +5,13 @@ Kubernetes Controller Mode
 
 The Kubernetes Provider also supports executing as a Dynamic Admission Controller. This allows
 you to execute and enforce policies on resources as they are created, updated, or deleted. The
-k8s-validator mode must be run as a separate HTTPS web service with the provided ``c7n-adm`` cli.
+k8s-admission mode must be run as a separate HTTPS web service with the provided ``c7n-kates`` cli.
 
 To run policies in this mode, ensure that the cluster has MutatingAdmissionWebhooks enabled. For
 more info, see the `Kubernetes Docs <https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/>`_.
 
 
-.. kubernetes_k8s-validator-install:
+.. kubernetes_k8s-admission-install:
 
 Install the Server
 ------------------
@@ -34,7 +34,7 @@ Next, in your policy directory, create a new policy.yaml file and add the follow
       resource: 'k8s.pod'
       description: 'This is a sample policy'
       mode:
-        type: k8s-validator
+        type: k8s-admission
         on-match: warn
         operations:
           - CREATE
@@ -44,7 +44,7 @@ of your web server, e.g. ``https://example.org``:
 
 .. code-block:: bash
 
-   c7n-adm --policy-dir policies --generate --endpoint $endpoint > webhook.yaml
+   c7n-kates --policy-dir policies --generate --endpoint $endpoint > webhook.yaml
 
 This will create a manifest containing a webhook that will inspect the operations and resource types
 that are applicable to your policies. Next, apply the manifest to your Kubernetes Cluster:
@@ -53,11 +53,11 @@ that are applicable to your policies. Next, apply the manifest to your Kubernete
 
    kubectl apply -f webhook.yaml
 
-Next, on your server, start c7n-adm:
+Next, on your server, start c7n-kates:
 
 .. code-block:: bash
 
-   c7n-adm --policy-dir policies
+   c7n-kates --policy-dir policies
 
 Next, we can apply a pod manifest to see the warning, create a new file ``pod.yaml`` and add the following:
 
@@ -92,7 +92,7 @@ On the server, you should see:
 
 .. code-block:: bash
 
-  c7n-adm --policy-dir policies
+  c7n-kates --policy-dir policies
   2022-09-14 20:33:49,116: c7n_kube.server:INFO Loaded 1 policies
   2022-09-14 20:33:49,314: c7n_kube.server:INFO Serving at 0.0.0.0 8800
   2022-09-14 20:33:50,558: c7n_kube.server:INFO {"kind":"AdmissionReview","apiVersion":"admission.k8s.io/v1","request":{"uid":"2ec4911a-8a9d-4c8d-8aa5-2d3709877fd0","kind":{"group":"","version":"v1","kind":"Pod"},"resource":{"group":"","version":"v1","resource":"pods"},"requestKind":{"group":"","version":"v1","kind":"Pod"},"requestResource":{"group":"","version":"v1","resource":"pods"},"name":"nginx","namespace":"default","operation":"CREATE","userInfo":{"username":"kubernetes-admin","groups":["system:masters","system:authenticated"]},"object":{"kind":"Pod","apiVersion":"v1","metadata":{"name":"nginx","namespace":"default","uid":"eae00ed2-72d2-4ab4-9012-51ba11a284d0","creationTimestamp":"2022-09-14T20:33:50Z","annotations":{"kubectl.kubernetes.io/last-applied-configuration":"{\"apiVersion\":\"v1\",\"kind\":\"Pod\",\"metadata\":{\"annotations\":{},\"name\":\"nginx\",\"namespace\":\"default\"},\"spec\":{\"containers\":[{\"image\":\"nginx:1.14.2\",\"name\":\"nginx\",\"ports\":[{\"containerPort\":80}]}]}}\n"},"managedFields":[{"manager":"kubectl-client-side-apply","operation":"Update","apiVersion":"v1","time":"2022-09-14T20:33:50Z","fieldsType":"FieldsV1","fieldsV1":{"f:metadata":{"f:annotations":{".":{},"f:kubectl.kubernetes.io/last-applied-configuration":{}}},"f:spec":{"f:containers":{"k:{\"name\":\"nginx\"}":{".":{},"f:image":{},"f:imagePullPolicy":{},"f:name":{},"f:ports":{".":{},"k:{\"containerPort\":80,\"protocol\":\"TCP\"}":{".":{},"f:containerPort":{},"f:protocol":{}}},"f:resources":{},"f:terminationMessagePath":{},"f:terminationMessagePolicy":{}}},"f:dnsPolicy":{},"f:enableServiceLinks":{},"f:restartPolicy":{},"f:schedulerName":{},"f:securityContext":{},"f:terminationGracePeriodSeconds":{}}}}]},"spec":{"volumes":[{"name":"kube-api-access-mb9m2","projected":{"sources":[{"serviceAccountToken":{"expirationSeconds":3607,"path":"token"}},{"configMap":{"name":"kube-root-ca.crt","items":[{"key":"ca.crt","path":"ca.crt"}]}},{"downwardAPI":{"items":[{"path":"namespace","fieldRef":{"apiVersion":"v1","fieldPath":"metadata.namespace"}}]}}],"defaultMode":420}}],"containers":[{"name":"nginx","image":"nginx:1.14.2","ports":[{"containerPort":80,"protocol":"TCP"}],"resources":{},"volumeMounts":[{"name":"kube-api-access-mb9m2","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","serviceAccountName":"default","serviceAccount":"default","securityContext":{},"schedulerName":"default-scheduler","tolerations":[{"key":"node.kubernetes.io/not-ready","operator":"Exists","effect":"NoExecute","tolerationSeconds":300},{"key":"node.kubernetes.io/unreachable","operator":"Exists","effect":"NoExecute","tolerationSeconds":300}],"priority":0,"enableServiceLinks":true,"preemptionPolicy":"PreemptLowerPriority"},"status":{"phase":"Pending","qosClass":"BestEffort"}},"oldObject":null,"dryRun":false,"options":{"kind":"CreateOptions","apiVersion":"meta.k8s.io/v1","fieldManager":"kubectl-client-side-apply"}}}
@@ -105,12 +105,12 @@ On the server, you should see:
   10.0.201.111 - - [14/Sep/2022 20:33:50] "POST /?timeout=10s HTTP/1.1" 200 -
   2022-09-14 20:33:50,640: c7n_kube.server:INFO {"apiVersion": "admission.k8s.io/v1", "kind": "AdmissionReview", "response": {"allowed": true, "warnings": ["example-warn-policy:This is a sample policy"], "uid": "2ec4911a-8a9d-4c8d-8aa5-2d3709877fd0", "status": {"code": 200, "message": "OK"}}}
 
-.. kubernetes_k8s-validator-authoring:
+.. kubernetes_k8s-admission-authoring:
 
 Authoring Policies
 ------------------
 
-The ``k8s-validator`` mode supports both built-in resource types in Kubernetes as well as Custom objects
+The ``k8s-admission`` mode supports both built-in resource types in Kubernetes as well as Custom objects
 defined by Custom Resource Definitions. In addition, the mode allows you to specify different behaviors
 ``on-match``: ``allow``, ``deny``, and ``warn``. In addition, you can specify which operations to
 respond to: ``CREATE``, ``UPDATE``, ``DELETE``, and ``CONNECT``.
@@ -119,7 +119,7 @@ For ``CREATE``, ``UPDATE``, and ``CONNECT`` operations, the resource that the po
 the incoming resource, i.e. the new object. In the case of the ``DELETE`` operation, the old object will be
 used.
 
-In addition to the value filter and any other built in filters, ``k8s-validator`` mode policies can also
+In addition to the value filter and any other built in filters, ``k8s-admission`` mode policies can also
 filter resources based on the event itself. For instance:
 
 .. code-block:: yaml
@@ -128,7 +128,7 @@ filter resources based on the event itself. For instance:
      - name: event-filter-example
        resource: k8s.pod
        mode:
-         type: k8s-validator
+         type: k8s-admission
          on-match: deny
          operations:
          - CREATE

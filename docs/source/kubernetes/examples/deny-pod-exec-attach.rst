@@ -10,7 +10,7 @@ metadata such as their groups:
     - name: test-deny-pod-exec-based-on-group
       resource: k8s.pod
       mode:
-        type: k8s-validator
+        type: k8s-admission
         subresource: ['exec', 'attach']
         on-match: deny
         operations:
@@ -32,7 +32,7 @@ to attach or exec to:
     - name: test-deny-pod-exec-based-on-namespace
       resource: k8s.pod
       mode:
-        type: k8s-validator
+        type: k8s-admission
         subresource: ['exec', 'attach']
         on-match: deny
         operations:
@@ -48,7 +48,7 @@ to attach or exec to:
     - name: test-deny-pod-exec-based-on-pod-name
       resource: k8s.pod
       mode:
-        type: k8s-validator
+        type: k8s-admission
         subresource: ['exec', 'attach']
         on-match: deny
         operations:

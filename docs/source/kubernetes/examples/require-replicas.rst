@@ -10,7 +10,7 @@ Require deployments to have at least 3 replicas
     - name: require-at-least-3-replicas
       resource: k8s.deployment
       mode:
-        type: k8s-validator
+        type: k8s-admission
         on-match: deny
         operations:
           - CREATE

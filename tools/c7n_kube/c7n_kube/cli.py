@@ -28,8 +28,8 @@ TEMPLATE = {
     "metadata": {
         "name": "c7n-admission",
         "labels": {
-            "app.kubernetes.io/name": "c7n-adm",
-            "app.kubernetes.io/instance": "c7n-adm",
+            "app.kubernetes.io/name": "c7n-kates",
+            "app.kubernetes.io/instance": "c7n-kates",
             "app.kubernetes.io/version": pkg_resources.get_distribution("c7n_kube").version,
             "app.kubernetes.io/component": "AdmissionController",
             "app.kubernetes.io/part-of": "c7n_kube",
@@ -71,11 +71,16 @@ def _parser():
         choices=['warn', 'deny'],
         help='warn or deny on policy exceptions')
     parser.add_argument(
-        '--endpoint', default=None,
-        help='Endpoint for webhook, used for generating manfiest')
+        '--endpoint',
+        help='Endpoint for webhook, used for generating manfiest',
+        required=True,
+    )
     parser.add_argument(
         '--generate', default=False, action="store_true",
         help='Generate a k8s manifest for ValidatingWebhookConfiguration')
+    parser.add_argument('--cert', help='Path to TLS certifciate')
+    parser.add_argument('--ca-cert', help='Path to the CA certificate')
+    parser.add_argument('--cert-key', help='Path to the certificate\'s private key')
     return parser
 
 
@@ -94,6 +99,16 @@ def cli():
         api_versions = []
         resources = []
         for p in policy_collection:
+            execution_mode = p.get_execution_mode()
+            # We only support `k8s-admission` policies for the admission
+            # controller.
+            if execution_mode.type != 'k8s-admission':
+                policy = execution_mode.policy
+                type_ = execution_mode.type
+                log.warning(
+                    f"skipping policy {policy.name} with type {type_}, should be k8s-admission"
+                )
+                continue
             mvals = p.get_execution_mode().get_match_values()
             operations.extend(mvals['operations'])
             groups.append(mvals['group'])
@@ -110,7 +125,12 @@ def cli():
 
         print(yaml.dump(TEMPLATE))
     else:
-        init(args.port, args.policy_dir, args.on_exception)
+        init(
+            args.port, args.policy_dir, args.on_exception,
+            cert_path=args.cert,
+            cert_key_path=args.cert_key,
+            ca_cert_path=args.ca_cert,
+        )
 
 
 if __name__ == '__main__':
