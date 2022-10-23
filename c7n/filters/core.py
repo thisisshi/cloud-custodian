@@ -106,7 +106,7 @@ VALUE_TYPES = [
 class FilterRegistry(PluginRegistry):
 
     def __init__(self, *args, **kw):
-        super(FilterRegistry, self).__init__(*args, **kw)
+        super().__init__(*args, **kw)
         self.register('value', ValueFilter)
         self.register('or', Or)
         self.register('and', And)
@@ -1022,11 +1022,11 @@ class ReduceFilter(BaseValueFilter):
             return sorted(items, key=key, reverse=(self.order == 'desc'))
 
 
-class FakeModel:
+class ListItemModel:
     id = 'c7n:_id'
 
 
-class FakeFilterRegistry(FilterRegistry):
+class ListItemRegistry(FilterRegistry):
 
     def __init__(self, *args, **kw):
         super(FilterRegistry, self).__init__(*args, **kw)
@@ -1038,29 +1038,48 @@ class FakeFilterRegistry(FilterRegistry):
         self.register('reduce', ReduceFilter)
 
 
-class FakeResourceManager(ResourceManager):
-    filter_registry = FakeFilterRegistry('fake')
+class ListItemResourceManager(ResourceManager):
+    filter_registry = ListItemRegistry('filters')
 
     def get_model(self):
-        return FakeModel()
+        return ListItemModel()
 
 
-class ListItemFilter(ValueFilter):
+class ListItemFilter(Filter):
     """
-    Filter on attributes on items on a list
+    Perform multi attribute filtering on items within a list,
+    for example looking for security groups that have rules which
+    include 0.0.0.0/0 and port 22 open.
 
     :example:
 
     .. code-block:: yaml
 
         policies:
+          - name: security-group-with-22-open-to-world
+            resource: aws.security-group
+            filters:
+              - type: list-item
+                key: IpPermissions
+                attrs:
+                  - type: value
+                    key: IpRanges[].CidrIp
+                    value: '0.0.0.0/0'
+                    op: in
+                    value_type: swap
+                  - type: value
+                    key: FromPort
+                    value: 22
+                  - type: value
+                    key: ToPort
+                    value: 22
           - name: find-task-def-not-using-registry
             resource: aws.ecs-task-definition
             filters:
               - not:
                 - type: list-item
                   key: containerDefinitions
-                  value:
+                  attrs:
                     - not:
                       - type: value
                         key: image
@@ -1115,13 +1134,13 @@ class ListItemFilter(ValueFilter):
     schema = type_schema(
         'list-item',
         key={'type': 'string'},
-        value=_get_schema()
+        attrs=_get_schema()
     )
 
     def process(self, resources, event=None):
         compiled = jmespath.compile(self.data['key'])
         result = []
-        frm = FakeResourceManager(self.manager.ctx, data={'filters': self.data['value']})
+        frm = ListItemResourceManager(self.manager.ctx, data={'filters': self.data['attrs']})
         for r in resources:
             list_values = compiled.search(r)
             if not list_values:

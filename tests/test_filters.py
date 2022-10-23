@@ -1504,7 +1504,7 @@ class TestReduceFilter(BaseFilterTest):
         )
 
 
-class ValueListFilterTest(BaseFilterTest):
+class ListItemFilterTest(BaseFilterTest):
 
     def get_manager(self):
         class Manager:
@@ -1525,7 +1525,7 @@ class ValueListFilterTest(BaseFilterTest):
             result.append(self.instance(i, lists[i]))
         return result
 
-    def test_value_list_filter(self):
+    def test_list_item_filter(self):
         resources = self.resources(
             [
                 [{'foo': 'bar', 'bar': '0'}],
@@ -1537,7 +1537,7 @@ class ValueListFilterTest(BaseFilterTest):
             {
                 'type': 'list-item',
                 'key': 'list_elements',
-                'value': [
+                'attrs': [
                     {'foo': 'bar'}
                 ]
             }, manager=self.get_manager()
@@ -1545,7 +1545,7 @@ class ValueListFilterTest(BaseFilterTest):
         res = f.process(resources)
         self.assertEqual(len(res), 3)
 
-    def test_value_list_filter_match_1(self):
+    def test_list_item_filter_match_1(self):
         resources = self.resources(
             [
                 [{'foo': 'bar', 'bar': '0'}],
@@ -1557,7 +1557,7 @@ class ValueListFilterTest(BaseFilterTest):
             {
                 'type': 'list-item',
                 'key': 'list_elements',
-                'value': [
+                'attrs': [
                     {'foo': 'bar'},
                     {'bar': '1'}
                 ]
@@ -1566,7 +1566,7 @@ class ValueListFilterTest(BaseFilterTest):
         res = f.process(resources)
         self.assertEqual(len(res), 1)
 
-    def test_value_list_filter_match_bool(self):
+    def test_list_item_filter_match_bool(self):
         resources = self.resources(
             [
                 [{'foo': 'bar', 'bar': '0'}],
@@ -1578,7 +1578,7 @@ class ValueListFilterTest(BaseFilterTest):
             {
                 'type': 'list-item',
                 'key': 'list_elements',
-                'value': [
+                'attrs': [
                     {'foo': 'bar'},
                     {'or': [
                         {'bar': '1'},
@@ -1590,7 +1590,7 @@ class ValueListFilterTest(BaseFilterTest):
         res = f.process(resources)
         self.assertEqual(len(res), 2)
 
-    def test_value_list_filter_match_regex(self):
+    def test_list_item_filter_match_regex(self):
         resources = self.resources(
             [
                 [{'foo': 'bar', 'bar': 'c7n'}],
@@ -1602,7 +1602,7 @@ class ValueListFilterTest(BaseFilterTest):
             {
                 'type': 'list-item',
                 'key': 'list_elements',
-                'value': [
+                'attrs': [
                     {'foo': 'bar'},
                     {
                         'not': [
@@ -1622,7 +1622,7 @@ class ValueListFilterTest(BaseFilterTest):
         self.assertEqual(res[0]['list_elements'][0]['bar'], 'c7n')
         self.assertEqual(res[0]['c7n:ValueListMatches'], ['list_elements[0]'])
 
-    def test_value_list_filter_match_empty(self):
+    def test_list_item_filter_match_empty(self):
         resources = self.resources(
             [
                 [{'foo': 'bar', 'bar': 'c7n'}],
@@ -1634,7 +1634,7 @@ class ValueListFilterTest(BaseFilterTest):
             {
                 'type': 'list-item',
                 'key': 'baz',
-                'value': [
+                'attrs': [
                     {'foo': 'bar'},
                     {
                         'not': [
@@ -1652,7 +1652,7 @@ class ValueListFilterTest(BaseFilterTest):
         res = f.process(resources)
         self.assertEqual(len(res), 0)
 
-    def test_value_list_filter_match_non_list_value(self):
+    def test_list_item_filter_match_non_list_value(self):
         resources = self.resources(
             [1, 2, 3]
         )
@@ -1660,7 +1660,7 @@ class ValueListFilterTest(BaseFilterTest):
             {
                 'type': 'list-item',
                 'key': 'id',
-                'value': [
+                'attrs': [
                     {'foo': 'bar'},
                 ]
             }, manager=self.get_manager()
