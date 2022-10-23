@@ -71,7 +71,7 @@ class EventLabelAction(EventAction):
           - name: 'label-foo-on-creation'
             resource: 'k8s.deployment'
             mode:
-              type: k8s-validator
+              type: k8s-admission
               on-match: allow
               operations:
                 - CREATE
@@ -123,7 +123,7 @@ class AutoLabelUser(EventLabelAction):
           - name: 'auto-label-creator'
             resource: 'k8s.deployment'
             mode:
-              type: k8s-validator
+              type: k8s-admission
               on-match: allow
               operations:
                 - CREATE
