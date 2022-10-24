@@ -15,6 +15,7 @@ class ClusterRole(QueryResourceManager):
         delete = 'delete_cluster_role'
         enum_spec = ('list_cluster_role', 'items', None)
         plural = 'clusterroles'
+        namespaced = False
 
 
 @resources.register('role')
@@ -25,6 +26,6 @@ class NamespacedRole(QueryResourceManager):
         version = 'V1'
         patch = 'patch_namespaced_role'
         delete = 'delete_namespaced_role'
-        enum_spec = ('list_namespaced_role', 'items', None)
+        enum_spec = ('list_role_for_all_namespaces', 'items', None)
         plural = 'roles'
         namespaced = True
