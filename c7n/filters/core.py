@@ -1149,13 +1149,13 @@ class ListItemFilter(Filter):
                 raise PolicyExecutionError(f'{list_values} is not a list')
             for idx, list_value in enumerate(list_values):
                 list_value['c7n:_id'] = idx
-            resources = frm.filter_resources(list_values, event)
-            matched_indicies = [r['c7n:_id'] for r in resources]
+            list_resources = frm.filter_resources(list_values, event)
+            matched_indicies = [r['c7n:_id'] for r in list_resources]
             for idx, list_value in enumerate(list_values):
                 list_value.pop('c7n:_id')
-            if resources:
+            if list_resources:
                 annotations = [f'{self.data["key"]}[{str(i)}]' for i in matched_indicies]
-                r.setdefault('c7n:ValueListMatches', [])
-                r['c7n:ValueListMatches'].extend(annotations)
+                r.setdefault('c7n:ListItemMatches', [])
+                r['c7n:ListItemMatches'].extend(annotations)
                 result.append(r)
         return result
