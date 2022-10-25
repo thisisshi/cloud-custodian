@@ -1134,7 +1134,9 @@ class ListItemFilter(Filter):
     schema = type_schema(
         'list-item',
         key={'type': 'string'},
-        attrs=_get_schema()
+        attrs=_get_schema(),
+        count={'type': 'number'},
+        op={'$ref': '#/definitions/filters_common/comparison_operators'},
     )
 
     def process(self, resources, event=None):
@@ -1153,9 +1155,15 @@ class ListItemFilter(Filter):
             matched_indicies = [r['c7n:_id'] for r in list_resources]
             for idx, list_value in enumerate(list_values):
                 list_value.pop('c7n:_id')
-            if list_resources:
-                annotations = [f'{self.data["key"]}[{str(i)}]' for i in matched_indicies]
-                r.setdefault('c7n:ListItemMatches', [])
-                r['c7n:ListItemMatches'].extend(annotations)
-                result.append(r)
+            if self.data.get('count'):
+                count = self.data['count']
+                op = OPERATORS[self.data.get('op', 'eq')]
+                if op(len(list_resources), count):
+                    result.append(r)
+            else:
+                if list_resources:
+                    annotations = [f'{self.data["key"]}[{str(i)}]' for i in matched_indicies]
+                    r.setdefault('c7n:ListItemMatches', [])
+                    r['c7n:ListItemMatches'].extend(annotations)
+                    result.append(r)
         return result

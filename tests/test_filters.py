@@ -1668,6 +1668,28 @@ class ListItemFilterTest(BaseFilterTest):
         with self.assertRaises(PolicyExecutionError):
             f.process(resources)
 
+    def test_list_item_filter_match_count(self):
+        resources = self.resources(
+            [
+                [{'foo': 'bar', 'bar': 'c7n'}, {'foo': 'bar'}, {'foo': 'bar'}, {'foo': 'bar'}],
+                [{'foo': 'bar', 'bar': 'c7n'}, {'foo': 'bar'}, {'foo': 'bar'}],
+                [{'foo': 'bar', 'bar': 'c7n'}, {'foo': 'bar'}],
+            ]
+        )
+        f = filters.factory(
+            {
+                'type': 'list-item',
+                'key': 'list_elements',
+                'count': 3,
+                'op': 'gt',
+                'attrs': [
+                    {'foo': 'bar'},
+                ]
+            }, manager=self.get_manager()
+        )
+        resources = f.process(resources)
+        self.assertEqual(len(resources), 1)
+
 
 class AnnotationSweeperTest(unittest.TestCase):
     def test_annotation_sweep_jmespath(self):
