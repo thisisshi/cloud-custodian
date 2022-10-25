@@ -1148,7 +1148,7 @@ class ListItemFilter(Filter):
             if not list_values:
                 continue
             if not isinstance(list_values, list):
-                raise PolicyExecutionError(f'{list_values} is not a list')
+                raise PolicyExecutionError(f'{list_values} is not a list, filter:{self.data}')
             for idx, list_value in enumerate(list_values):
                 list_value['c7n:_id'] = idx
             list_resources = frm.filter_resources(list_values, event)
