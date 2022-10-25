@@ -17,9 +17,6 @@ log = logging.getLogger("c7n_kube.server")
 log.setLevel(logging.DEBUG)
 
 
-HOST = "0.0.0.0"
-
-
 class AdmissionControllerServer(http.server.HTTPServer):
     """
     Admission Controller Server
@@ -171,7 +168,7 @@ class AdmissionControllerHandler(http.server.BaseHTTPRequestHandler):
 
 
 def init(
-    port, policy_dir, on_exception='warn', serve_forever=True,
+    host, port, policy_dir, on_exception='warn', serve_forever=True,
     *, cert_path=None, cert_key_path=None, ca_cert_path=None,
 ):
     use_tls = any((cert_path, cert_key_path))
@@ -181,7 +178,7 @@ def init(
         )
 
     server = AdmissionControllerServer(
-        server_address=(HOST, port),
+        server_address=(host, port),
         RequestHandlerClass=AdmissionControllerHandler,
         policy_dir=policy_dir,
         on_exception=on_exception,
@@ -196,7 +193,7 @@ def init(
             ca_certs=ca_cert_path,
         )
 
-    log.info(f"Serving at http{'s' if use_tls else ''}://{HOST}:{port}")
+    log.info(f"Serving at http{'s' if use_tls else ''}://{host}:{port}")
     while True:
         server.serve_forever()
         # for testing purposes
