@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Getting Started (Alpha) &mdash; Cloud Custodian  documentation</title>
+  <title>Custodian Kubernetes Support &mdash; Cloud Custodian  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/expand.css" type="text/css" />
@@ -20,9 +20,7 @@
         <script src="../_static/js/expand.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Kubernetes Controller Mode" href="controllermode.html" />
-    <link rel="prev" title="awscc.xray_samplingrule" href="../awscc/resources/xray_samplingrule.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -5226,147 +5224,147 @@
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Kubernetes</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started (Alpha)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#install-kubernetes-plugin">Install Kubernetes Plugin</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#option-1-install-released-packages-to-local-python-environment">Option 1: Install released packages to local Python Environment</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#option-2-install-latest-from-the-repository">Option 2: Install latest from the repository</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../kubernetes/gettingstarted.html">Getting Started (Alpha)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../kubernetes/gettingstarted.html#install-kubernetes-plugin">Install Kubernetes Plugin</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../kubernetes/gettingstarted.html#option-1-install-released-packages-to-local-python-environment">Option 1: Install released packages to local Python Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../kubernetes/gettingstarted.html#option-2-install-latest-from-the-repository">Option 2: Install latest from the repository</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#connecting-to-your-cluster">Connecting to your Cluster</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#write-your-first-policy">Write Your First Policy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#run-your-policy">Run Your Policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kubernetes/gettingstarted.html#connecting-to-your-cluster">Connecting to your Cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kubernetes/gettingstarted.html#write-your-first-policy">Write Your First Policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kubernetes/gettingstarted.html#run-your-policy">Run Your Policy</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="controllermode.html">Kubernetes Controller Mode</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="controllermode.html#install-the-server">Install the Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../kubernetes/controllermode.html">Kubernetes Controller Mode</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../kubernetes/controllermode.html#install-the-server">Install the Server</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="controllermode.html#option-1-manual-installation">Option 1: Manual installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="controllermode.html#option-2-helm-chart">Option 2: Helm chart</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="controllermode.html#testing">Testing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="controllermode.html#authoring-policies">Authoring Policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../kubernetes/controllermode.html#option-1-manual-installation">Option 1: Manual installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../kubernetes/controllermode.html#option-2-helm-chart">Option 2: Helm chart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../kubernetes/controllermode.html#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kubernetes/controllermode.html#authoring-policies">Authoring Policies</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="examples/index.html">Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="examples/deny-pod-exec-attach.html">Denying Pod Exec or Attach</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/require-label-on-event.html">Require Labels on Resources on Creation or Update</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/require-replicas.html">Require Replicas on Deployments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/restrict-service-account-usage.html">Restrict Service Account Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../kubernetes/examples/index.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../kubernetes/examples/deny-pod-exec-attach.html">Denying Pod Exec or Attach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kubernetes/examples/require-label-on-event.html">Require Labels on Resources on Creation or Update</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kubernetes/examples/require-replicas.html">Require Replicas on Deployments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kubernetes/examples/restrict-service-account-usage.html">Restrict Service Account Usage</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tools</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../tools/c7n-org.html">c7n-org: Multi Account Custodian Execution</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-org.html#installation">Installation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-org.html#config-file-generation">Config File Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="c7n-org.html">c7n-org: Multi Account Custodian Execution</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="c7n-org.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="c7n-org.html#config-file-generation">Config File Generation</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-org.html#running-a-policy-with-c7n-org">Running a Policy with c7n-org</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-org.html#selecting-accounts-regions-policies-for-execution">Selecting accounts, regions, policies for execution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-org.html#defining-and-using-variables">Defining and using variables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-org.html#other-commands">Other commands</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-org.html#additional-azure-instructions">Additional Azure Instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-org.html#running-a-policy-with-c7n-org">Running a Policy with c7n-org</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-org.html#selecting-accounts-regions-policies-for-execution">Selecting accounts, regions, policies for execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-org.html#defining-and-using-variables">Defining and using variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-org.html#other-commands">Other commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-org.html#additional-azure-instructions">Additional Azure Instructions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tools/cask.html">cask: easy custodian exec via docker</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../tools/cask.html#install">Install</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/cask.html#run">Run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/cask.html#build">Build</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cask.html">cask: easy custodian exec via docker</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cask.html#install">Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cask.html#run">Run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cask.html#build">Build</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tools/c7n-mailer.html">c7n-mailer: Custodian Mailer</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-mailer.html#message-relay">Message Relay</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-mailer.html#tutorial">Tutorial</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#email">Email:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#datadog">DataDog:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#slack">Slack:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#splunk-http-event-collector-hec">Splunk HTTP Event Collector (HEC)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#now-run">Now run:</a></li>
+<li class="toctree-l1"><a class="reference internal" href="c7n-mailer.html">c7n-mailer: Custodian Mailer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="c7n-mailer.html#message-relay">Message Relay</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-mailer.html#tutorial">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#email">Email:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#datadog">DataDog:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#slack">Slack:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#splunk-http-event-collector-hec">Splunk HTTP Event Collector (HEC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#now-run">Now run:</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-mailer.html#usage-configuration">Usage &amp; Configuration</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#standard-lambda-function-config">Standard Lambda Function Config</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#standard-azure-functions-config">Standard Azure Functions Config</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#mailer-infrastructure-config">Mailer Infrastructure Config</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#smtp-config">SMTP Config</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../tools/c7n-mailer.html#datadog-config">DataDog Config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-mailer.html#usage-configuration">Usage &amp; Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#standard-lambda-function-config">Standard Lambda Function Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#standard-azure-functions-config">Standard Azure Functions Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#mailer-infrastructure-config">Mailer Infrastructure Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#smtp-config">SMTP Config</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="c7n-mailer.html#datadog-config">DataDog Config</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#slack-config">Slack Config</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#sendgrid-config">SendGrid Config</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#splunk-hec-config">Splunk HEC Config</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#sdk-config">SDK Config</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#secured-string">Secured String</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../tools/c7n-mailer.html#aws">AWS</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../tools/c7n-mailer.html#azure">Azure</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../tools/c7n-mailer.html#gcp">GCP</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-mailer.html#configuring-a-policy-to-send-email">Configuring a policy to send email</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-mailer.html#using-on-azure">Using on Azure</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#deploying-azure-functions">Deploying Azure Functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#configuring-function-identity">Configuring Function Identity</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-mailer.html#using-on-gcp">Using on GCP</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#deploying-gcp-functions">Deploying GCP Functions</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-mailer.html#writing-an-email-template">Writing an email template</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-mailer.html#developer-install-os-x-el-capitan">Developer Install (OS X El Capitan)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-mailer.html#testing-templates-and-recipients">Testing Templates and Recipients</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-mailer.html#testing-templates-for-azure">Testing Templates for Azure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#slack-config">Slack Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#sendgrid-config">SendGrid Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#splunk-hec-config">Splunk HEC Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#sdk-config">SDK Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#secured-string">Secured String</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="c7n-mailer.html#aws">AWS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="c7n-mailer.html#azure">Azure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="c7n-mailer.html#gcp">GCP</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tools/c7n-logexporter.html">c7n-log-exporter: Cloud watch log exporter automation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-logexporter.html#features">Features</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-logexporter.html#assumptions">Assumptions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-logexporter.html#cli-usage">Cli usage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-logexporter.html#config-format">Config format</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-logexporter.html#using-s3-bucket-as-destination">Using S3 Bucket as destination</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../tools/c7n-logexporter.html#using-cloudwatch-destination-as-destination-cross-account">Using CloudWatch Destination as destination cross account</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-mailer.html#configuring-a-policy-to-send-email">Configuring a policy to send email</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-mailer.html#using-on-azure">Using on Azure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#deploying-azure-functions">Deploying Azure Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#configuring-function-identity">Configuring Function Identity</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-logexporter.html#multiple-accounts-via-cli">Multiple accounts via cli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-logexporter.html#serverless-usage">Serverless Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-mailer.html#using-on-gcp">Using on GCP</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#deploying-gcp-functions">Deploying GCP Functions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tools/c7n-trailcreator.html">c7n-trailcreator:  Retroactive Resource Creator Tagging</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-trailcreator.html#install">Install</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-trailcreator.html#config-file">Config File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-trailcreator.html#athena-usage">Athena Usage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-trailcreator.html#tagging">Tagging</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-trailcreator.html#multi-account-multi-region">Multi Account / Multi Region</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-mailer.html#writing-an-email-template">Writing an email template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-mailer.html#developer-install-os-x-el-capitan">Developer Install (OS X El Capitan)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-mailer.html#testing-templates-and-recipients">Testing Templates and Recipients</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="c7n-mailer.html#testing-templates-for-azure">Testing Templates for Azure</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tools/c7n-policystream.html">c7n-policystream: Policy Changes from Git</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-policystream.html#install">Install</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-policystream.html#build">Build</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-policystream.html#usage">Usage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-policystream.html#options">Options</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tools/omnissm.html">OmniSSM - EC2 Systems Manager Automation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../tools/omnissm.html#client-configuration">Client Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/omnissm.html#links">Links</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/omnissm.html#todo">Todo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="c7n-logexporter.html">c7n-log-exporter: Cloud watch log exporter automation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="c7n-logexporter.html#features">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-logexporter.html#assumptions">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-logexporter.html#cli-usage">Cli usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-logexporter.html#config-format">Config format</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="c7n-logexporter.html#using-s3-bucket-as-destination">Using S3 Bucket as destination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="c7n-logexporter.html#using-cloudwatch-destination-as-destination-cross-account">Using CloudWatch Destination as destination cross account</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tools/c7n-guardian.html">c7n-guardian: Automated multi-account Guard Duty setup</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-guardian.html#accounts-credentials">Accounts Credentials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-guardian.html#using-custodian-policies-for-remediation">Using custodian policies for remediation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-logexporter.html#multiple-accounts-via-cli">Multiple accounts via cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-logexporter.html#serverless-usage">Serverless Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tools/c7n-salactus.html">c7n-salactus: Distributed Scale out S3 processing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-salactus.html#use-cases">Use Cases</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-salactus.html#usage">Usage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tools/c7n-salactus.html#sample-configuration">Sample Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="c7n-trailcreator.html">c7n-trailcreator:  Retroactive Resource Creator Tagging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="c7n-trailcreator.html#install">Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-trailcreator.html#config-file">Config File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-trailcreator.html#athena-usage">Athena Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-trailcreator.html#tagging">Tagging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-trailcreator.html#multi-account-multi-region">Multi Account / Multi Region</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="c7n-policystream.html">c7n-policystream: Policy Changes from Git</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="c7n-policystream.html#install">Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-policystream.html#build">Build</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-policystream.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-policystream.html#options">Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="omnissm.html">OmniSSM - EC2 Systems Manager Automation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="omnissm.html#client-configuration">Client Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnissm.html#links">Links</a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnissm.html#todo">Todo</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="c7n-guardian.html">c7n-guardian: Automated multi-account Guard Duty setup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="c7n-guardian.html#accounts-credentials">Accounts Credentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-guardian.html#using-custodian-policies-for-remediation">Using custodian policies for remediation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="c7n-salactus.html">c7n-salactus: Distributed Scale out S3 processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="c7n-salactus.html#use-cases">Use Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-salactus.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="c7n-salactus.html#sample-configuration">Sample Configuration</a></li>
 </ul>
 </li>
 </ul>
@@ -5438,214 +5436,92 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Getting Started (Alpha)</li>
+      <li>Custodian Kubernetes Support</li>
       <li class="wy-breadcrumbs-aside">
       </li>
-  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
-        <a href="../awscc/resources/xray_samplingrule.html" class="btn btn-neutral float-left" title="awscc.xray_samplingrule" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="controllermode.html" class="btn btn-neutral float-right" title="Kubernetes Controller Mode" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-  </div>
+  </ul>
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="getting-started-alpha">
-<span id="kubernetes-gettingstarted"></span><h1>Getting Started (Alpha)<a class="headerlink" href="#getting-started-alpha" title="Permalink to this headline">¶</a></h1>
-<p>The Kubernetes Provider (Alpha) is an optional package which an be installed to enable writing
-policies which interact with Kubernetes related resources.</p>
-<section id="install-kubernetes-plugin">
-<h2>Install Kubernetes Plugin<a class="headerlink" href="#install-kubernetes-plugin" title="Permalink to this headline">¶</a></h2>
-<p>First, ensure you have <a class="reference internal" href="../quickstart/index.html#install-cc"><span class="std std-ref">installed the base Cloud Custodian application</span></a>. Cloud Custodian is a Python application and must run on an
-<a class="reference external" href="https://devguide.python.org/#status-of-python-branches">actively supported</a>
-version.</p>
-<p>Once the base install is complete, you are now ready to install the Kubernetes provider package
-using one of the following options:</p>
-<section id="option-1-install-released-packages-to-local-python-environment">
-<h3>Option 1: Install released packages to local Python Environment<a class="headerlink" href="#option-1-install-released-packages-to-local-python-environment" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install c7n
-pip install c7n_kube
-</pre></div>
-</div>
+  <section id="custodian-kubernetes-support">
+<h1>Custodian Kubernetes Support<a class="headerlink" href="#custodian-kubernetes-support" title="Permalink to this headline">¶</a></h1>
+<p>Cloud Custodian can run policies directly inside your cluster, reporting on
+resources that violate those policies, or blocking them altogether.</p>
 </section>
-<section id="option-2-install-latest-from-the-repository">
-<h3>Option 2: Install latest from the repository<a class="headerlink" href="#option-2-install-latest-from-the-repository" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/cloud-custodian/cloud-custodian.git
-pip install -e ./cloud-custodian
-pip install -e ./cloud-custodian/tools/c7n_kube
-</pre></div>
-</div>
+<section id="running-the-server">
+<h1>Running the server<a class="headerlink" href="#running-the-server" title="Permalink to this headline">¶</a></h1>
+<p>c7n-kates can be run and installed via poetry. <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span> <span class="pre">&amp;&amp;</span> <span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">c7n-kates</span></code>.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>name</th>
+<th>default</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--host</td>
+<td>127.0.0.1</td>
+<td>(optional) The host that the server should listen on.</td>
+</tr>
+<tr>
+<td>--port</td>
+<td>8800</td>
+<td>(optional) The port the server will listen on.</td>
+</tr>
+<tr>
+<td>--policy-dir</td>
+<td></td>
+<td>Path to the policy directory.</td>
+</tr>
+<tr>
+<td>--on-exception</td>
+<td>warn</td>
+<td>Action to take on an internal exception. One of: warn, deny.</td>
+</tr>
+<tr>
+<td>--cert</td>
+<td></td>
+<td>Path to the certificate.</td>
+</tr>
+<tr>
+<td>--ca-cert</td>
+<td></td>
+<td>Path to the CA's certificate.</td>
+</tr>
+<tr>
+<td>--cert-key</td>
+<td></td>
+<td>Path to the certificate's key.</td>
+</tr>
+</tbody>
+</table>
 </section>
+<section id="generate-a-mutatingwebhookconfiguration">
+<h1>Generate a MutatingWebhookConfiguration<a class="headerlink" href="#generate-a-mutatingwebhookconfiguration" title="Permalink to this headline">¶</a></h1>
+<p>After the server is running, you’ll need to configure and install the
+MutatingWebhookConfiguration manually. To generate a webhook configuration, you
+can run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">c7n-kates</span> <span class="pre">--generate</span> <span class="pre">--endpoint</span> <span class="pre">$ENDPOINT_URL</span> <span class="pre">--policy-dir</span> <span class="pre">$DIR</span></code>, and
+it will generate an appropriate configuration for you, based on your policies.</p>
+<p>Note: some modification of the webhook configuration may be required. See the
+<a class="reference external" href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/">documentation</a>
+on webhooks for more configuration.</p>
 </section>
-<section id="connecting-to-your-cluster">
-<span id="kubernetes-authenticate"></span><h2>Connecting to your Cluster<a class="headerlink" href="#connecting-to-your-cluster" title="Permalink to this headline">¶</a></h2>
-<p>The Custodian Kubernetes provider automatically uses your kubectl configuration or the config
-file set by the environment variable <code class="docutils literal notranslate"><span class="pre">KUBECONFIG</span></code>. See the <a class="reference external" href="https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/">Kubernetes Docs</a>
-for more information.</p>
-</section>
-<section id="write-your-first-policy">
-<span id="kube-write-policy"></span><h2>Write Your First Policy<a class="headerlink" href="#write-your-first-policy" title="Permalink to this headline">¶</a></h2>
-<p>A policy is the primary way that Custodian is configured to manage cloud resources.
-It is a YAML file that follows a predetermined schema to describe what you want
-Custodian to do.</p>
-<p>There are three main components to a policy:</p>
-<ul class="simple">
-<li><p>Resource: the type of resource to run the policy against</p></li>
-<li><p>Filters: criteria to produce a specific subset of resources</p></li>
-<li><p>Actions: directives to take on the filtered set of resources</p></li>
-</ul>
-<p>First, lets create a pod resource that we want to target with the policy:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>❯ kubectl run nginx --image<span class="o">=</span>nginx --labels<span class="o">=</span><span class="nv">name</span><span class="o">=</span>custodian
-❯ kubectl get pod -o wide --show-labels
- NAME    READY   STATUS    RESTARTS   AGE   IP           NODE     NOMINATED NODE   READINESS GATES   LABELS
- nginx   <span class="m">1</span>/1     Running   <span class="m">0</span>          24s   <span class="m">10</span>.0.1.224   worker   &lt;none&gt;           &lt;none&gt;            <span class="nv">name</span><span class="o">=</span>custodian
-</pre></div>
-</div>
-<p>Now in the example below, we will write a policy that filters for pods with a
-label “custodian” and deletes it:</p>
-<p>Filename: <code class="docutils literal notranslate"><span class="pre">custodian.yml</span></code></p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-first-policy</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">      </span><span class="no">Deletes pods with label name:custodian</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k8s.pod</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="w"></span>
-<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">metadata.labels.name</span><span class="w"></span>
-<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custodian</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete</span><span class="w"></span>
-</pre></div>
-</div>
-</section>
-<section id="run-your-policy">
-<span id="kube-run-policy"></span><h2>Run Your Policy<a class="headerlink" href="#run-your-policy" title="Permalink to this headline">¶</a></h2>
-<p>First, ensure you have <a class="reference internal" href="#kubernetes-authenticate"><span class="std std-ref">configured connectivity to your cluster</span></a>.</p>
-<p>Next, run the following command to execute the policy with Custodian:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>custodian run --output-dir<span class="o">=</span>output custodian.yml --cache-period <span class="m">0</span> -v
-</pre></div>
-</div>
-<p>If successful, you should see output similar to the following on the command line:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2022</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">14</span> <span class="mi">12</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">38</span><span class="p">,</span><span class="mi">735</span><span class="p">:</span> <span class="n">custodian</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span><span class="n">DEBUG</span> <span class="n">Disabling</span> <span class="n">cache</span>
-<span class="mi">2022</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">14</span> <span class="mi">12</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">38</span><span class="p">,</span><span class="mi">735</span><span class="p">:</span> <span class="n">custodian</span><span class="o">.</span><span class="n">commands</span><span class="p">:</span><span class="n">DEBUG</span> <span class="n">Loaded</span> <span class="n">file</span> <span class="n">pod</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span> <span class="n">Contains</span> <span class="mi">1</span> <span class="n">policies</span>
-<span class="mi">2022</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">14</span> <span class="mi">12</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">38</span><span class="p">,</span><span class="mi">736</span><span class="p">:</span> <span class="n">custodian</span><span class="o">.</span><span class="n">output</span><span class="p">:</span><span class="n">DEBUG</span> <span class="n">Storing</span> <span class="n">output</span> <span class="k">with</span> <span class="o">&lt;</span><span class="n">LogFile</span> <span class="n">file</span><span class="p">:</span><span class="o">//</span><span class="n">output</span><span class="o">/</span><span class="n">my</span><span class="o">-</span><span class="n">first</span><span class="o">-</span><span class="n">policy</span><span class="o">/</span><span class="n">custodian</span><span class="o">-</span><span class="n">run</span><span class="o">.</span><span class="n">log</span><span class="o">&gt;</span>
-<span class="mi">2022</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">14</span> <span class="mi">12</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">38</span><span class="p">,</span><span class="mi">737</span><span class="p">:</span> <span class="n">custodian</span><span class="o">.</span><span class="n">policy</span><span class="p">:</span><span class="n">DEBUG</span> <span class="n">Running</span> <span class="n">policy</span><span class="p">:</span><span class="n">pod</span> <span class="n">resource</span><span class="p">:</span><span class="n">k8s</span><span class="o">.</span><span class="n">pod</span> <span class="n">region</span><span class="p">:</span><span class="n">default</span> <span class="n">c7n</span><span class="p">:</span><span class="mf">0.9.18</span>
-<span class="mi">2022</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">14</span> <span class="mi">12</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">38</span><span class="p">,</span><span class="mi">754</span><span class="p">:</span> <span class="n">custodian</span><span class="o">.</span><span class="n">k8s</span><span class="o">.</span><span class="n">client</span><span class="p">:</span><span class="n">DEBUG</span> <span class="n">connecting</span> <span class="n">to</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">61427</span>
-<span class="mi">2022</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">14</span> <span class="mi">12</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">38</span><span class="p">,</span><span class="mi">819</span><span class="p">:</span> <span class="n">custodian</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">pod</span><span class="p">:</span><span class="n">DEBUG</span> <span class="n">Filtered</span> <span class="kn">from</span> <span class="mi">17</span> <span class="n">to</span> <span class="mi">1</span> <span class="n">pod</span>
-<span class="mi">2022</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">14</span> <span class="mi">12</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">38</span><span class="p">,</span><span class="mi">820</span><span class="p">:</span> <span class="n">custodian</span><span class="o">.</span><span class="n">policy</span><span class="p">:</span><span class="n">INFO</span> <span class="n">policy</span><span class="p">:</span><span class="n">pod</span> <span class="n">resource</span><span class="p">:</span><span class="n">k8s</span><span class="o">.</span><span class="n">pod</span> <span class="n">region</span><span class="p">:</span> <span class="n">count</span><span class="p">:</span><span class="mi">1</span> <span class="n">time</span><span class="p">:</span><span class="mf">0.08</span>
-<span class="mi">2022</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">14</span> <span class="mi">12</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">38</span><span class="p">,</span><span class="mi">837</span><span class="p">:</span> <span class="n">custodian</span><span class="o">.</span><span class="n">k8s</span><span class="o">.</span><span class="n">client</span><span class="p">:</span><span class="n">DEBUG</span> <span class="n">connecting</span> <span class="n">to</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">61427</span>
-<span class="mi">2022</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">14</span> <span class="mi">12</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">38</span><span class="p">,</span><span class="mi">863</span><span class="p">:</span> <span class="n">custodian</span><span class="o">.</span><span class="n">policy</span><span class="p">:</span><span class="n">INFO</span> <span class="n">policy</span><span class="p">:</span><span class="n">pod</span> <span class="n">action</span><span class="p">:</span><span class="n">deleteresource</span> <span class="n">resources</span><span class="p">:</span><span class="mi">1</span> <span class="n">execution_time</span><span class="p">:</span><span class="mf">0.04</span>
-<span class="mi">2022</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">14</span> <span class="mi">12</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">38</span><span class="p">,</span><span class="mi">864</span><span class="p">:</span> <span class="n">custodian</span><span class="o">.</span><span class="n">output</span><span class="p">:</span><span class="n">DEBUG</span> <span class="n">metric</span><span class="p">:</span><span class="n">ResourceCount</span> <span class="n">Count</span><span class="p">:</span><span class="mi">1</span> <span class="n">policy</span><span class="p">:</span><span class="n">pod</span> <span class="n">restype</span><span class="p">:</span><span class="n">k8s</span><span class="o">.</span><span class="n">pod</span> <span class="n">scope</span><span class="p">:</span><span class="n">policy</span>
-</pre></div>
-</div>
-<p>You should also find a new <code class="docutils literal notranslate"><span class="pre">output/my-first-policy</span></code> directory with a log and other
-files (subsequent runs will append to the log by default, rather than
-overwriting it).</p>
-<p>See <a class="reference internal" href="../filters.html#filters"><span class="std std-ref">Generic Filters</span></a> for more information on the features of the Value filter used in this sample.</p>
-<p>You can also use <cite>custodian schema</cite> to get more information on the filters
-available to you.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>❯ custodian schema k8s
-resources:
-- k8s.config-map
-- k8s.custom-cluster-resource
-- k8s.custom-namespaced-resource
-- k8s.daemon-set
-- k8s.deployment
-- k8s.namespace
-- k8s.node
-- k8s.pod
-- k8s.replica-set
-- k8s.replication-controller
-- k8s.secret
-- k8s.service
-- k8s.service-account
-- k8s.stateful-set
-- k8s.volume
-- k8s.volume-claim
-</pre></div>
-</div>
-<p>To understand which values are available for a resource you can use <cite>kubectl</cite>,
-so for example to understand what attributes a persistent volume has on it you
-can run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>❯ kubectl explain persistentvolume --recursive
- KIND:     PersistentVolume
- VERSION:  v1
-
- DESCRIPTION:
-      PersistentVolume <span class="o">(</span>PV<span class="o">)</span> is a storage resource provisioned by an
-      administrator. It is analogous to a node. More info:
-      https://kubernetes.io/docs/concepts/storage/persistent-volumes
-
- FIELDS:
-    apiVersion   &lt;string&gt;
-    kind &lt;string&gt;
-    metadata     &lt;Object&gt;
-       annotations       &lt;map<span class="o">[</span>string<span class="o">]</span>string&gt;
-       creationTimestamp &lt;string&gt;
-       deletionGracePeriodSeconds        &lt;integer&gt;
-       deletionTimestamp &lt;string&gt;
-       finalizers        &lt;<span class="o">[]</span>string&gt;
-       generateName      &lt;string&gt;
-       generation        &lt;integer&gt;
-       labels    &lt;map<span class="o">[</span>string<span class="o">]</span>string&gt;
-
-  ....
-</pre></div>
-</div>
-<p>Or if you have a resource already deployed in your cluster and you want to
-figure out how to taret it you can output it to <cite>json</cite> and review the available
-attributes that way:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>❯ kubectl get pv node-pv-volume -o json
-
- <span class="o">{</span>
-     <span class="s2">&quot;apiVersion&quot;</span>: <span class="s2">&quot;v1&quot;</span>,
-     <span class="s2">&quot;kind&quot;</span>: <span class="s2">&quot;PersistentVolume&quot;</span>,
-     <span class="s2">&quot;metadata&quot;</span>: <span class="o">{</span>
-         <span class="s2">&quot;annotations&quot;</span>: <span class="o">{</span>
-             <span class="s2">&quot;kubectl.kubernetes.io/last-applied-configuration&quot;</span>: <span class="s2">&quot;{\&quot;apiVersion\&quot;:\&quot;v1\&quot;,\&quot;kind\&quot;:\&quot;PersistentVolume\&quot;,\&quot;metadata\&quot;:{\&quot;annotations\&quot;:{},\&quot;labels\&quot;:{\&quot;type\&quot;:\&quot;local\&quot;},\&quot;name\&quot;:\&quot;node-pv-volume\&quot;},\&quot;spec\&quot;:{\&quot;accessModes\&quot;:[\&quot;ReadWriteOnce\&quot;],\&quot;capacity\&quot;:{\&quot;storage\&quot;:\&quot;1Gi\&quot;},\&quot;hostPath\&quot;:{\&quot;path\&quot;:\&quot;/tmp/k8s\&quot;},\&quot;storageClassName\&quot;:\&quot;manual\&quot;}}\n&quot;</span>
-         <span class="o">}</span>,
-         <span class="s2">&quot;creationTimestamp&quot;</span>: <span class="s2">&quot;2022-10-14T19:34:45Z&quot;</span>,
-         <span class="s2">&quot;finalizers&quot;</span>: <span class="o">[</span>
-             <span class="s2">&quot;kubernetes.io/pv-protection&quot;</span>
-         <span class="o">]</span>,
-         <span class="s2">&quot;labels&quot;</span>: <span class="o">{</span>
-             <span class="s2">&quot;type&quot;</span>: <span class="s2">&quot;local&quot;</span>
-         <span class="o">}</span>,
-         <span class="s2">&quot;name&quot;</span>: <span class="s2">&quot;node-pv-volume&quot;</span>,
-         <span class="s2">&quot;resourceVersion&quot;</span>: <span class="s2">&quot;394700&quot;</span>,
-         <span class="s2">&quot;uid&quot;</span>: <span class="s2">&quot;ad414486-9fd9-48ac-8cc5-7d6b9c24b524&quot;</span>
-     <span class="o">}</span>,
-     <span class="s2">&quot;spec&quot;</span>: <span class="o">{</span>
-         <span class="s2">&quot;accessModes&quot;</span>: <span class="o">[</span>
-             <span class="s2">&quot;ReadWriteOnce&quot;</span>
-         <span class="o">]</span>,
-         <span class="s2">&quot;capacity&quot;</span>: <span class="o">{</span>
-             <span class="s2">&quot;storage&quot;</span>: <span class="s2">&quot;1Gi&quot;</span>
-         <span class="o">}</span>,
-         <span class="s2">&quot;hostPath&quot;</span>: <span class="o">{</span>
-             <span class="s2">&quot;path&quot;</span>: <span class="s2">&quot;/tmp/k8s&quot;</span>,
-             <span class="s2">&quot;type&quot;</span>: <span class="s2">&quot;&quot;</span>
-         <span class="o">}</span>,
-         <span class="s2">&quot;persistentVolumeReclaimPolicy&quot;</span>: <span class="s2">&quot;Retain&quot;</span>,
-         <span class="s2">&quot;storageClassName&quot;</span>: <span class="s2">&quot;manual&quot;</span>,
-         <span class="s2">&quot;volumeMode&quot;</span>: <span class="s2">&quot;Filesystem&quot;</span>
-     <span class="o">}</span>,
-     <span class="s2">&quot;status&quot;</span>: <span class="o">{</span>
-         <span class="s2">&quot;phase&quot;</span>: <span class="s2">&quot;Available&quot;</span>
-     <span class="o">}</span>
- <span class="o">}</span>
-</pre></div>
-</div>
-</section>
+<section id="development">
+<h1>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h1>
+<p>You can use <a class="reference external" href="https://github.com/GoogleContainerTools/skaffold/">skaffold</a> to
+assist with testing and debugging this controller. Run <code class="docutils literal notranslate"><span class="pre">skaffold</span> <span class="pre">dev</span></code> in this
+folder to deploy the local container into a local kubernetes cluster. It will
+automatically redeploy it as files change.</p>
 </section>
 
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../awscc/resources/xray_samplingrule.html" class="btn btn-neutral float-left" title="awscc.xray_samplingrule" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="controllermode.html" class="btn btn-neutral float-right" title="Kubernetes Controller Mode" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 
