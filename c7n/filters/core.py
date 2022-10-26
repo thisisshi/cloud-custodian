@@ -1042,7 +1042,7 @@ class ListItemResourceManager(ResourceManager):
     filter_registry = ListItemRegistry('filters')
 
     def get_model(self):
-        return ListItemModel()
+        return ListItemModel
 
 
 class ListItemFilter(Filter):
@@ -1089,8 +1089,6 @@ class ListItemFilter(Filter):
 
     def _get_schema():
         base_filters = [
-            {'$ref': '#/definitions/filters/event'},
-            {'$ref': '#/definitions/filters/reduce'},
             {'$ref': '#/definitions/filters/value'},
             {'$ref': '#/definitions/filters/valuekv'},
             {
@@ -1136,7 +1134,7 @@ class ListItemFilter(Filter):
         key={'type': 'string'},
         attrs=_get_schema(),
         count={'type': 'number'},
-        op={'$ref': '#/definitions/filters_common/comparison_operators'},
+        count_op={'$ref': '#/definitions/filters_common/comparison_operators'},
     )
 
     def process(self, resources, event=None):

@@ -1681,7 +1681,7 @@ class ListItemFilterTest(BaseFilterTest):
                 'type': 'list-item',
                 'key': 'list_elements',
                 'count': 3,
-                'op': 'gt',
+                'count_op': 'gt',
                 'attrs': [
                     {'foo': 'bar'},
                 ]
