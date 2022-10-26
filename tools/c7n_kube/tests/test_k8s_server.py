@@ -319,7 +319,7 @@ class TestServer(KubeTest):
         policies = {"policies": []}
         with patch('c7n_kube.server.AdmissionControllerServer') as patched:
             server, port = self._server(policies)
-            init(port, 'policies', serve_forever=False)
+            init(host='0.0.0.0', port=port, policy_dir='policies', serve_forever=False)
             patched.assert_called_once()
             patched.assert_called_with(
                 server_address=('0.0.0.0', port),
