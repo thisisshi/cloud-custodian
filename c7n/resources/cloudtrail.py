@@ -133,8 +133,7 @@ class LogMetricFilterPattern(Filter):
             resource: aws.cloudtrail
             filters:
             - type: log-metric-filter-pattern
-              required_pattern:
-              "{ ($.eventName = \"ConsoleLogin\") && ($.additionalEventData.MFAUsed != \"Yes\") }"
+              required_pattern: "{ ($.eventName = \"ConsoleLogin\") }"
     """
     schema = type_schema('log-metric-filter-pattern',
                          required_pattern={'type': 'string'},
