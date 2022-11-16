@@ -150,6 +150,10 @@ class LogMetricFilterPattern(Filter):
         for region, (client, trails) in grouped_trails.items():
             client_logs = local_session(self.manager.session_factory).client(
                 'logs', region_name=region)
+            client_cw = local_session(self.manager.session_factory).client(
+                'cloudwatch', region_name=region)
+            client_sns = local_session(self.manager.session_factory).client(
+                'sns', region_name=region)
             for t in trails:
                 # Check for cloudwatch log group
                 if 'CloudWatchLogsLogGroupArn' not in t.keys():
@@ -178,9 +182,6 @@ class LogMetricFilterPattern(Filter):
                     final_trails.append(t)
                     continue
 
-                client_cw = local_session(self.manager.session_factory).client(
-                    'cloudwatch', region_name=region)
-
                 alarms = client_cw.describe_alarms()['MetricAlarms']
                 metric_name = filter_matched["metricTransformations"][0]["metricName"]
                 # Ensure that an alarm exists for the above metric
@@ -196,8 +197,6 @@ class LogMetricFilterPattern(Filter):
                     final_trails.append(t)
                     continue
 
-                client_sns = local_session(self.manager.session_factory).client(
-                    'sns', region_name=region)
                 sns_subscriptions = client_sns.list_subscriptions()['Subscriptions']
                 sns_matched = None
                 for s in sns_subscriptions:
