@@ -205,15 +205,17 @@ def test_cloudtrail_success_filter_alarm(test):
         'filters': [
             {
                 'type': 'log-metric-filter-pattern',
-                'required_pattern': "{{ ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) }}"
+                'required_pattern':
+                    "{{ ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) }}"
             },
         ]
     }
-    pdata['filters'][0]['required_pattern'] = format_string_values(pdata['filters'][0]['required_pattern'])
+    pdata['filters'][0]['required_pattern'] = \
+        format_string_values(pdata['filters'][0]['required_pattern'])
     p = test.load_policy(
         pdata,
-        session_factory = session_factory
-        )
+        session_factory=session_factory
+    )
     return_value = p.run()
     test.assertEqual(len(return_value), 0)
 
@@ -227,15 +229,17 @@ def test_fail_no_alarm(test):
         'filters': [
             {
                 'type': 'log-metric-filter-pattern',
-                'required_pattern': "{{ ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) }}"
+                'required_pattern':
+                    "{{ ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) }}"
             },
         ]
     }
-    pdata['filters'][0]['required_pattern'] = format_string_values(pdata['filters'][0]['required_pattern'])
+    pdata['filters'][0]['required_pattern'] = \
+        format_string_values(pdata['filters'][0]['required_pattern'])
     p = test.load_policy(
         pdata,
-        session_factory = session_factory
-        )
+        session_factory=session_factory
+    )
     return_value = p.run()
     test.assertEqual(len(return_value), 1)
 
@@ -249,59 +253,17 @@ def test_fail_no_sns(test):
         'filters': [
             {
                 'type': 'log-metric-filter-pattern',
-                'required_pattern': "{{ ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) }}"
+                'required_pattern':
+                    "{{ ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) }}"
             },
         ]
     }
-    pdata['filters'][0]['required_pattern'] = format_string_values(pdata['filters'][0]['required_pattern'])
+    pdata['filters'][0]['required_pattern'] = \
+        format_string_values(pdata['filters'][0]['required_pattern'])
     p = test.load_policy(
         pdata,
-        session_factory = session_factory
-        )
-    return_value = p.run()
-    test.assertEqual(len(return_value), 1)
-
-
-@terraform('cloudtrail_fail_not_multi_region')
-def test_fail_not_multi_region(test):
-    session_factory = test.replay_flight_data('test_cloudtrail_fail_not_multi_region')
-    pdata = {
-        'name': 'check-filter-pattern',
-        'resource': 'aws.cloudtrail',
-        'filters': [
-            {
-                'type': 'log-metric-filter-pattern',
-                'required_pattern': "{{ ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) }}"
-            },
-        ]
-    }
-    pdata['filters'][0]['required_pattern'] = format_string_values(pdata['filters'][0]['required_pattern'])
-    p = test.load_policy(
-        pdata,
-        session_factory = session_factory
-        )
-    return_value = p.run()
-    test.assertEqual(len(return_value), 1)
-
-
-@terraform('cloudtrail_fail_wrong_event_selectors')
-def test_fail_wrong_event_selectors(test):
-    session_factory = test.replay_flight_data('test_cloudtrail_fail_wrong_event_selectors')
-    pdata = {
-        'name': 'check-filter-pattern',
-        'resource': 'aws.cloudtrail',
-        'filters': [
-            {
-                'type': 'log-metric-filter-pattern',
-                'required_pattern': "{{ ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) }}"
-            },
-        ]
-    }
-    pdata['filters'][0]['required_pattern'] = format_string_values(pdata['filters'][0]['required_pattern'])
-    p = test.load_policy(
-        pdata,
-        session_factory = session_factory
-        )
+        session_factory=session_factory
+    )
     return_value = p.run()
     test.assertEqual(len(return_value), 1)
 
@@ -315,14 +277,16 @@ def test_fail_wrong_filter(test):
         'filters': [
             {
                 'type': 'log-metric-filter-pattern',
-                'required_pattern': "{{ ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) }}"
+                'required_pattern':
+                    "{{ ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) }}"
             },
         ]
     }
-    pdata['filters'][0]['required_pattern'] = format_string_values(pdata['filters'][0]['required_pattern'])
+    pdata['filters'][0]['required_pattern'] = \
+        format_string_values(pdata['filters'][0]['required_pattern'])
     p = test.load_policy(
         pdata,
-        session_factory = session_factory
-        )
+        session_factory=session_factory
+    )
     return_value = p.run()
     test.assertEqual(len(return_value), 1)
