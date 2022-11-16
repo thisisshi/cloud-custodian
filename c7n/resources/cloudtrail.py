@@ -145,68 +145,72 @@ class LogMetricFilterPattern(Filter):
     annotation_key = 'c7n:LogMetricFilter'
 
     def process(self, resources, event=None):
-        log_group_names = []
-        filters_matched = []
-        match_alarms_actions = []
+        final_trails = []
         grouped_trails = get_trail_groups(self.manager.session_factory, resources)
-        if not grouped_trails:
-            self.log.info('No cloudtrails have been created')
-            return False
         for region, (client, trails) in grouped_trails.items():
             client_logs = local_session(self.manager.session_factory).client(
                 'logs', region_name=region)
             for t in trails:
-                # parse log group arn for name
-                if 'CloudWatchLogsLogGroupArn' in t.keys():
-                    log_group_name = t['CloudWatchLogsLogGroupArn'].split(':')[6]
-                    # Get a list of associated metric filters for the CloudWatch Logs Group ARN
-                    log_group_names.append(log_group_name)
-            if not log_group_names:
-                self.log.info(
-                    'No metric filter associated with log group. Metric filter must be %s',
-                    self.data.get('required_pattern'))
-                return resources
-            else:
-                for name in log_group_names:
-                    metric_filters_log_group = \
-                        client_logs.describe_metric_filters(logGroupName=name)['metricFilters']
-                    # Look for this filter pattern in the CloudWatch Metric Alarm:
-                    if metric_filters_log_group:
-                        for f in metric_filters_log_group:
-                            pattern = self.data.get('required_pattern')
-                            if f['filterPattern'] == pattern:
-                                filters_matched.append(f)
-                if not filters_matched:
+                # Check for cloudwatch log group
+                if 'CloudWatchLogsLogGroupArn' not in t.keys():
+                    self.log.info(
+                        'No metric filter associated with log group. Metric filter must be %s',
+                        self.data.get('required_pattern'))
+                    final_trails.append(t)
+                    continue
+
+                log_group_name = t['CloudWatchLogsLogGroupArn'].split(':')[6]
+                metric_filters_log_group = \
+                    client_logs.describe_metric_filters(
+                        logGroupName=log_group_name)['metricFilters']
+
+                # Look for this filter pattern in the CloudWatch Metric Alarm:
+                filter_matched = None
+                if metric_filters_log_group:
+                    for f in metric_filters_log_group:
+                        if f['filterPattern'] == self.data.get('required_pattern'):
+                            filter_matched = f
+                            break
+
+                if not filter_matched:
                     self.log.info('No metric filter match. Metric filter must be %s',
                                   self.data.get('required_pattern'))
-                    return resources
-                else:
-                    client_cw = local_session(self.manager.session_factory).client(
-                        'cloudwatch', region_name=region)
-                    alarms = client_cw.describe_alarms()['MetricAlarms']
-                    for f in filters_matched:
-                        metric_name = f["metricTransformations"][0]["metricName"]
-                        # Ensure that an alarm exists for the above metric
-                        for a in alarms:
-                            if a['MetricName'] == metric_name:
-                                for arn in a['AlarmActions']:
-                                    match_alarms_actions.append(arn)
-                    if not match_alarms_actions:
-                        self.log.info('No sns alarm action tied to metric alarm')
-                        return resources
-                    else:
-                        client_sns = local_session(self.manager.session_factory).client(
-                            'sns', region_name=region)
-                        sns_subscriptions = client_sns.list_subscriptions()['Subscriptions']
-                        if not sns_subscriptions:
-                            self.log.info('No sns subscription tied to metric alarm')
-                            return resources
-                        else:
-                            for s in sns_subscriptions:
-                                if not (s['TopicArn'] in match_alarms_actions):
-                                    return resources
-                                else:
-                                    return []
+                    final_trails.append(t)
+                    continue
+
+                client_cw = local_session(self.manager.session_factory).client(
+                    'cloudwatch', region_name=region)
+
+                alarms = client_cw.describe_alarms()['MetricAlarms']
+                metric_name = filter_matched["metricTransformations"][0]["metricName"]
+                # Ensure that an alarm exists for the above metric
+                alarm_matched = None
+                for a in alarms:
+                    if a['MetricName'] == metric_name:
+                        for arn in a['AlarmActions']:
+                            alarm_matched = arn
+                            break
+
+                if not alarm_matched:
+                    self.log.info('No sns alarm action tied to metric alarm')
+                    final_trails.append(t)
+                    continue
+
+                client_sns = local_session(self.manager.session_factory).client(
+                    'sns', region_name=region)
+                sns_subscriptions = client_sns.list_subscriptions()['Subscriptions']
+                sns_matched = None
+                for s in sns_subscriptions:
+                    if s['TopicArn'] == alarm_matched:
+                        sns_matched = True
+                        break
+
+                if not sns_matched:
+                    self.log.info('No sns subscription tied to metric alarm')
+                    final_trails.append(t)
+                    continue
+
+        return final_trails
 
     def __call__(self, r):
         return self.match(r[self.annotation_key])
