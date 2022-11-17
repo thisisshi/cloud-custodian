@@ -1332,7 +1332,7 @@ def test_cloudtrail_fail_log_metric_filter(test, cloudtrail_fail_log_metric_filt
             {
                 'type': 'check-cloudtrail',
                 'log-metric-filter-pattern':
-                    "{{ ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) }}"
+                    "{{ ($.eventName = ConsoleLogin) }}"
             },
         ]
     }
