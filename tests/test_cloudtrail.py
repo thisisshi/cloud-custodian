@@ -1,8 +1,6 @@
 # Copyright The Cloud Custodian Authors.
 # SPDX-License-Identifier: Apache-2.0
 import time
-from pytest_terraform import terraform
-from c7n.utils import format_string_values
 from .common import BaseTest
 
 
@@ -194,99 +192,3 @@ class CloudTrail(BaseTest):
             client.exceptions.TrailNotFoundException,
             client.delete_trail,
             Name=resources[0]['Name'])
-
-
-@terraform('cloudtrail_success_filter_alarm')
-def test_cloudtrail_success_filter_alarm(test):
-    session_factory = test.replay_flight_data('test_cloudtrail_success_filter_alarm')
-    pdata = {
-        'name': 'check-filter-pattern',
-        'resource': 'aws.cloudtrail',
-        'filters': [
-            {
-                'type': 'log-metric-filter-pattern',
-                'required_pattern':
-                    "{{ ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) }}"
-            },
-        ]
-    }
-    pdata['filters'][0]['required_pattern'] = \
-        format_string_values(pdata['filters'][0]['required_pattern'])
-    p = test.load_policy(
-        pdata,
-        session_factory=session_factory
-    )
-    return_value = p.run()
-    test.assertEqual(len(return_value), 0)
-
-
-@terraform('cloudtrail_fail_no_alarm')
-def test_fail_no_alarm(test):
-    session_factory = test.replay_flight_data('test_cloudtrail_fail_no_alarm')
-    pdata = {
-        'name': 'check-filter-pattern',
-        'resource': 'aws.cloudtrail',
-        'filters': [
-            {
-                'type': 'log-metric-filter-pattern',
-                'required_pattern':
-                    "{{ ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) }}"
-            },
-        ]
-    }
-    pdata['filters'][0]['required_pattern'] = \
-        format_string_values(pdata['filters'][0]['required_pattern'])
-    p = test.load_policy(
-        pdata,
-        session_factory=session_factory
-    )
-    return_value = p.run()
-    test.assertEqual(len(return_value), 1)
-
-
-@terraform('cloudtrail_fail_no_sns')
-def test_fail_no_sns(test):
-    session_factory = test.replay_flight_data('test_cloudtrail_fail_no_sns')
-    pdata = {
-        'name': 'check-filter-pattern',
-        'resource': 'aws.cloudtrail',
-        'filters': [
-            {
-                'type': 'log-metric-filter-pattern',
-                'required_pattern':
-                    "{{ ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) }}"
-            },
-        ]
-    }
-    pdata['filters'][0]['required_pattern'] = \
-        format_string_values(pdata['filters'][0]['required_pattern'])
-    p = test.load_policy(
-        pdata,
-        session_factory=session_factory
-    )
-    return_value = p.run()
-    test.assertEqual(len(return_value), 1)
-
-
-@terraform('cloudtrail_fail_wrong_filter')
-def test_fail_wrong_filter(test):
-    session_factory = test.replay_flight_data('test_cloudtrail_fail_wrong_filter')
-    pdata = {
-        'name': 'check-filter-pattern',
-        'resource': 'aws.cloudtrail',
-        'filters': [
-            {
-                'type': 'log-metric-filter-pattern',
-                'required_pattern':
-                    "{{ ($.eventName = ConsoleLogin) && ($.additionalEventData.MFAUsed != Yes) }}"
-            },
-        ]
-    }
-    pdata['filters'][0]['required_pattern'] = \
-        format_string_values(pdata['filters'][0]['required_pattern'])
-    p = test.load_policy(
-        pdata,
-        session_factory=session_factory
-    )
-    return_value = p.run()
-    test.assertEqual(len(return_value), 1)

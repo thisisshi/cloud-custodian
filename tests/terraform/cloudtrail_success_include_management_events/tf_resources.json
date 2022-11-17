@@ -1,0 +1,131 @@
+{
+    "pytest-terraform": 1,
+    "outputs": {},
+    "resources": {
+        "aws_caller_identity": {
+            "current": {
+                "account_id": "644160558196",
+                "arn": "arn:aws:sts::644160558196:assumed-role/Admin/Stephen_Hearn@mckinsey.com",
+                "id": "644160558196",
+                "user_id": "AROAXO263RKEPWOLU2WFE:Stephen_Hearn@mckinsey.com"
+            }
+        },
+        "aws_region": {
+            "current": {
+                "description": "US East (N. Virginia)",
+                "endpoint": "ec2.us-east-1.amazonaws.com",
+                "id": "us-east-1",
+                "name": "us-east-1"
+            }
+        },
+        "aws_cloudtrail": {
+            "success-2": {
+                "advanced_event_selector": [],
+                "arn": "arn:aws:cloudtrail:us-east-1:644160558196:trail/tf-trail-3bf19dec-127e-11ed-861d-0242ac12000",
+                "cloud_watch_logs_group_arn": "",
+                "cloud_watch_logs_role_arn": "",
+                "enable_log_file_validation": false,
+                "enable_logging": true,
+                "event_selector": [
+                    {
+                        "data_resource": [
+                            {
+                                "type": "AWS::S3::Object",
+                                "values": [
+                                    "arn:aws:s3:::trail-test-bucket-3bf19dec-127e-11ed-861d-0242ac12000/"
+                                ]
+                            }
+                        ],
+                        "exclude_management_event_sources": null,
+                        "include_management_events": true,
+                        "read_write_type": "All"
+                    }
+                ],
+                "home_region": "us-east-1",
+                "id": "tf-trail-3bf19dec-127e-11ed-861d-0242ac12000",
+                "include_global_service_events": true,
+                "insight_selector": [],
+                "is_multi_region_trail": true,
+                "is_organization_trail": false,
+                "kms_key_id": "",
+                "name": "tf-trail-3bf19dec-127e-11ed-861d-0242ac12000",
+                "s3_bucket_name": "trail-test-bucket-3bf19dec-127e-11ed-861d-0242ac12000",
+                "s3_key_prefix": "prefix",
+                "sns_topic_name": "",
+                "tags": {
+                    "c7n": "true"
+                },
+                "tags_all": {
+                    "c7n": "true"
+                }
+            }
+        },
+        "aws_s3_bucket": {
+            "success-1": {
+                "acceleration_status": "",
+                "acl": null,
+                "arn": "arn:aws:s3:::trail-test-bucket-3bf19dec-127e-11ed-861d-0242ac12000",
+                "bucket": "trail-test-bucket-3bf19dec-127e-11ed-861d-0242ac12000",
+                "bucket_domain_name": "trail-test-bucket-3bf19dec-127e-11ed-861d-0242ac12000.s3.amazonaws.com",
+                "bucket_prefix": null,
+                "bucket_regional_domain_name": "trail-test-bucket-3bf19dec-127e-11ed-861d-0242ac12000.s3.amazonaws.com",
+                "cors_rule": [],
+                "force_destroy": true,
+                "grant": [
+                    {
+                        "id": "73f95f883a5192bb5a2193c8b4621ab7ae140edcf1c861004a12a874ef5f279a",
+                        "permissions": [
+                            "FULL_CONTROL"
+                        ],
+                        "type": "CanonicalUser",
+                        "uri": ""
+                    }
+                ],
+                "hosted_zone_id": "Z3AQBSTGFYJSTF",
+                "id": "trail-test-bucket-3bf19dec-127e-11ed-861d-0242ac12000",
+                "lifecycle_rule": [],
+                "logging": [],
+                "object_lock_configuration": [],
+                "object_lock_enabled": false,
+                "policy": "",
+                "region": "us-east-1",
+                "replication_configuration": [],
+                "request_payer": "BucketOwner",
+                "server_side_encryption_configuration": [],
+                "tags": {
+                    "c7n": "true"
+                },
+                "tags_all": {
+                    "c7n": "true"
+                },
+                "timeouts": null,
+                "versioning": [
+                    {
+                        "enabled": false,
+                        "mfa_delete": false
+                    }
+                ],
+                "website": [],
+                "website_domain": null,
+                "website_endpoint": null
+            }
+        },
+        "aws_s3_bucket_policy": {
+            "success-1-policy": {
+                "bucket": "trail-test-bucket-3bf19dec-127e-11ed-861d-0242ac12000",
+                "id": "trail-test-bucket-3bf19dec-127e-11ed-861d-0242ac12000",
+                "policy": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n        {\n            \"Sid\": \"AWSCloudTrailAclCheck20150319\",\n            \"Effect\": \"Allow\",\n            \"Principal\": {\n                \"Service\": \"cloudtrail.amazonaws.com\"\n            },\n            \"Action\": \"s3:GetBucketAcl\",\n            \"Resource\": \"arn:aws:s3:::trail-test-bucket-3bf19dec-127e-11ed-861d-0242ac12000\",\n            \"Condition\": {\n                \"StringEquals\": {\n                    \"AWS:SourceArn\": \"arn:aws:cloudtrail:us-east-1:644160558196:trail/tf-trail-3bf19dec-127e-11ed-861d-0242ac12000\"\n                }\n            }\n        },\n        {\n            \"Sid\": \"AWSCloudTrailWrite20150319\",\n            \"Effect\": \"Allow\",\n            \"Principal\": {\n                \"Service\": \"cloudtrail.amazonaws.com\"\n            },\n            \"Action\": \"s3:PutObject\",\n            \"Resource\": \"arn:aws:s3:::trail-test-bucket-3bf19dec-127e-11ed-861d-0242ac12000/*\",\n            \"Condition\": {\n                \"StringEquals\": {\n                    \"AWS:SourceArn\": \"arn:aws:cloudtrail:us-east-1:644160558196:trail/tf-trail-3bf19dec-127e-11ed-861d-0242ac12000\",\n                    \"s3:x-amz-acl\": \"bucket-owner-full-control\"\n                }\n            }\n        }\n    ]\n}\n"
+            }
+        },
+        "aws_s3_bucket_public_access_block": {
+            "block-access-bucket": {
+                "block_public_acls": true,
+                "block_public_policy": true,
+                "bucket": "trail-test-bucket-3bf19dec-127e-11ed-861d-0242ac12000",
+                "id": "trail-test-bucket-3bf19dec-127e-11ed-861d-0242ac12000",
+                "ignore_public_acls": true,
+                "restrict_public_buckets": true
+            }
+        }
+    }
+}

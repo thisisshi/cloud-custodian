@@ -166,6 +166,8 @@ class CloudTrailEnabled(Filter):
                     global-events: true
                     multi-region: true
                     running: true
+                    include-management-events: true
+                    log-metric-filter-pattern: "{ ($.eventName = \"ConsoleLogin\") }"
     """
     schema = type_schema(
         'check-cloudtrail',
@@ -176,9 +178,13 @@ class CloudTrailEnabled(Filter):
            'notifies': {'type': 'boolean'},
            'file-digest': {'type': 'boolean'},
            'kms': {'type': 'boolean'},
-           'kms-key': {'type': 'string'}})
+           'kms-key': {'type': 'string'},
+           'include-management-events': {'type': 'boolean'},
+           'log-metric-filter-pattern': {'type': 'string'}})
 
-    permissions = ('cloudtrail:DescribeTrails', 'cloudtrail:GetTrailStatus')
+    permissions = ('cloudtrail:DescribeTrails', 'cloudtrail:GetTrailStatus',
+                   'cloudtrail:GetEventSelectors', 'cloudwatch:DescribeAlarms',
+                   'logs:DescribeMetricFilters', 'sns:ListSubscriptions')
 
     def process(self, resources, event=None):
         session = local_session(self.manager.session_factory)
@@ -212,6 +218,50 @@ class CloudTrailEnabled(Filter):
                         'LatestDeliveryError'):
                     running.append(t)
             trails = running
+        if self.data.get('include-management-events'):
+            matched = []
+            for t in list(trails):
+                selectors = client.get_event_selectors(TrailName=t['TrailARN'])
+                if 'EventSelectors' in selectors.keys():
+                    for s in selectors['EventSelectors']:
+                        if s['IncludeManagementEvents'] and s['ReadWriteType'] == 'All':
+                            matched.append(t)
+            trails = matched
+        if self.data.get('log-metric-filter-pattern'):
+            client_logs = session.client('logs')
+            client_cw = session.client('cloudwatch')
+            client_sns = session.client('sns')
+            matched = []
+            for t in list(trails):
+                if 'CloudWatchLogsLogGroupArn' not in t.keys():
+                    continue
+                log_group_name = t['CloudWatchLogsLogGroupArn'].split(':')[6]
+                metric_filters_log_group = \
+                    client_logs.describe_metric_filters(
+                        logGroupName=log_group_name)['metricFilters']
+                filter_matched = None
+                if metric_filters_log_group:
+                    for f in metric_filters_log_group:
+                        if f['filterPattern'] == self.data.get('log-metric-filter-pattern'):
+                            filter_matched = f
+                            break
+                if not filter_matched:
+                    continue
+                alarms = client_cw.describe_alarms()['MetricAlarms']
+                metric_name = filter_matched["metricTransformations"][0]["metricName"]
+                alarm_matched = None
+                for a in alarms:
+                    if a['MetricName'] == metric_name:
+                        for arn in a['AlarmActions']:
+                            alarm_matched = arn
+                            break
+                if not alarm_matched:
+                    continue
+                sns_subscriptions = client_sns.list_subscriptions()['Subscriptions']
+                for s in sns_subscriptions:
+                    if s['TopicArn'] == alarm_matched:
+                        matched.append(t)
+            trails = matched
         if trails:
             return []
         return resources
