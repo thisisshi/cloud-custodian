@@ -167,7 +167,7 @@ class CloudTrailEnabled(Filter):
                     multi-region: true
                     running: true
                     include-management-events: true
-                    log-metric-filter-pattern: "{ ($.eventName = \"ConsoleLogin\") }"
+                    log-metric-filter-pattern: "{ ($.eventName = \\"ConsoleLogin\\") }"
     """
     schema = type_schema(
         'check-cloudtrail',
