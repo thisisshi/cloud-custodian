@@ -186,7 +186,7 @@ class CloudTrailEnabled(Filter):
            'log-metric-filter-pattern': {'type': 'string'}})
 
     permissions = ('cloudtrail:DescribeTrails', 'cloudtrail:GetTrailStatus',
-                   'cloudtrail:GetEventSelectors', 'cloudwatch:DescribeAlarms',
+                   'cloudtrail:GetEventSelectors', 'cloudwatch:DescribeAlarmsForMetric',
                    'logs:DescribeMetricFilters', 'sns:ListSubscriptions')
 
     def process(self, resources, event=None):
