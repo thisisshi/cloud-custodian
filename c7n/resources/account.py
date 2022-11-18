@@ -153,6 +153,9 @@ class CloudTrailEnabled(Filter):
     Of particular note, the current-region option will evaluate whether cloudtrail is available
     in the current region, either as a multi region trail or as a trail with it as the home region.
 
+    The log-metric-filter-pattern option checks for the existence of a cloudwatch alarm and a
+    corresponding SNS subscription for a specific filter pattern
+
     :example:
 
     .. code-block:: yaml
@@ -230,7 +233,7 @@ class CloudTrailEnabled(Filter):
         if self.data.get('log-metric-filter-pattern'):
             client_logs = session.client('logs')
             client_cw = session.client('cloudwatch')
-            client_sns = session.client('sns')
+            sns_manager = self.manager.get_resource_manager('sns-subscription')
             matched = []
             for t in list(trails):
                 if 'CloudWatchLogsLogGroupArn' not in t.keys():
@@ -247,20 +250,20 @@ class CloudTrailEnabled(Filter):
                             break
                 if not filter_matched:
                     continue
-                alarms = client_cw.describe_alarms()['MetricAlarms']
-                metric_name = filter_matched["metricTransformations"][0]["metricName"]
-                alarm_matched = None
+                alarms = client_cw.describe_alarms_for_metric(
+                    MetricName=filter_matched["metricTransformations"][0]["metricName"],
+                    Namespace=filter_matched["metricTransformations"][0]["metricNamespace"]
+                )['MetricAlarms']
+                alarm_actions = []
                 for a in alarms:
-                    if a['MetricName'] == metric_name:
-                        for arn in a['AlarmActions']:
-                            alarm_matched = arn
-                            break
-                if not alarm_matched:
+                    alarm_actions += a['AlarmActions']
+                if not alarm_actions:
                     continue
-                sns_subscriptions = client_sns.list_subscriptions()['Subscriptions']
+                sns_subscriptions = sns_manager.resources()
                 for s in sns_subscriptions:
-                    if s['TopicArn'] == alarm_matched:
-                        matched.append(t)
+                    for a in alarm_actions:
+                        if s['TopicArn'] == a:
+                            matched.append(t)
             trails = matched
         if trails:
             return []

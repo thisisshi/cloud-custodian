@@ -146,7 +146,7 @@
                 "name_prefix": null,
                 "path": "/",
                 "policy": "{\"Statement\":[{\"Action\":[\"logs:CreateLogStream\",\"logs:PutLogEvents\"],\"Effect\":\"Allow\",\"Resource\":\"*\"}],\"Version\":\"2012-10-17\"}",
-                "policy_id": "ANPAXO263RKEKUBINQIKS",
+                "policy_id": "ANPAXO263RKEN4B3RNWEW",
                 "tags": {
                     "c7n": "true"
                 },
@@ -159,7 +159,7 @@
             "testing-cloudtrail-cloudwatch-role": {
                 "arn": "arn:aws:iam::644160558196:role/testing-cloudtrail_cloudwatch_role",
                 "assume_role_policy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"cloudtrail.amazonaws.com\"}}],\"Version\":\"2012-10-17\"}",
-                "create_date": "2022-11-17T19:57:08Z",
+                "create_date": "2022-11-18T19:07:40Z",
                 "description": "",
                 "force_detach_policies": false,
                 "id": "testing-cloudtrail_cloudwatch_role",
@@ -176,12 +176,12 @@
                 "tags_all": {
                     "c7n": "true"
                 },
-                "unique_id": "AROAXO263RKEMES4ULWHV"
+                "unique_id": "AROAXO263RKEG76WX6KZJ"
             }
         },
         "aws_iam_role_policy_attachment": {
             "testing_cloudtrail_cloudwatch_role_policy_attachment": {
-                "id": "testing-cloudtrail_cloudwatch_role-20221117195709236700000001",
+                "id": "testing-cloudtrail_cloudwatch_role-20221118190741604500000001",
                 "policy_arn": "arn:aws:iam::644160558196:policy/testing-trailtest_policy",
                 "role": "testing-cloudtrail_cloudwatch_role"
             }
@@ -291,14 +291,14 @@
         },
         "aws_sns_topic_subscription": {
             "user_updates_sqs_target": {
-                "arn": "arn:aws:sns:us-east-1:644160558196:mfa-notification-topic:b7dc54b9-4a32-4d8b-9760-e7d300631683",
+                "arn": "arn:aws:sns:us-east-1:644160558196:mfa-notification-topic:5c961360-9927-4271-b81c-3bfe3bff9d14",
                 "confirmation_timeout_in_minutes": 1,
                 "confirmation_was_authenticated": true,
                 "delivery_policy": "",
                 "endpoint": "arn:aws:sqs:us-east-1:644160558196:mfa-sqs-topic",
                 "endpoint_auto_confirms": false,
                 "filter_policy": "",
-                "id": "arn:aws:sns:us-east-1:644160558196:mfa-notification-topic:b7dc54b9-4a32-4d8b-9760-e7d300631683",
+                "id": "arn:aws:sns:us-east-1:644160558196:mfa-notification-topic:5c961360-9927-4271-b81c-3bfe3bff9d14",
                 "owner_id": "644160558196",
                 "pending_confirmation": false,
                 "protocol": "sqs",

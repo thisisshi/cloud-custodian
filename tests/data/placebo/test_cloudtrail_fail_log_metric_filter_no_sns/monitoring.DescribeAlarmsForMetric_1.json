@@ -1,26 +1,23 @@
 {
     "status_code": 200,
     "data": {
-        "CompositeAlarms": [],
         "MetricAlarms": [
             {
-                "AlarmName": "NoMFAConsoleLoginAlarm",
-                "AlarmArn": "arn:aws:cloudwatch:us-east-1:644160558196:alarm:NoMFAConsoleLoginAlarm",
+                "AlarmName": "NoMFAConsoleLoginAlarm_fail",
+                "AlarmArn": "arn:aws:cloudwatch:us-east-1:644160558196:alarm:NoMFAConsoleLoginAlarm_fail",
                 "AlarmConfigurationUpdatedTimestamp": {
                     "__class__": "datetime",
                     "year": 2022,
                     "month": 11,
-                    "day": 17,
-                    "hour": 15,
-                    "minute": 58,
-                    "second": 54,
-                    "microsecond": 369000
+                    "day": 18,
+                    "hour": 19,
+                    "minute": 7,
+                    "second": 5,
+                    "microsecond": 533000
                 },
                 "ActionsEnabled": true,
                 "OKActions": [],
-                "AlarmActions": [
-                    "arn:aws:sns:us-east-1:644160558196:mfa-notification-topic"
-                ],
+                "AlarmActions": [],
                 "InsufficientDataActions": [],
                 "StateValue": "INSUFFICIENT_DATA",
                 "StateReason": "Unchecked: Initial alarm creation",
@@ -28,13 +25,13 @@
                     "__class__": "datetime",
                     "year": 2022,
                     "month": 11,
-                    "day": 17,
-                    "hour": 15,
-                    "minute": 58,
-                    "second": 54,
-                    "microsecond": 369000
+                    "day": 18,
+                    "hour": 19,
+                    "minute": 7,
+                    "second": 5,
+                    "microsecond": 533000
                 },
-                "MetricName": "no_mfa_console_signin_metric_1",
+                "MetricName": "no_mfa_console_signin_metric_fail",
                 "Namespace": "ImportantMetrics",
                 "Statistic": "Sum",
                 "Dimensions": [],
