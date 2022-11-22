@@ -269,7 +269,7 @@ class CloudTrailEnabled(Filter):
                         subs = client_sns.list_subscriptions_by_topic(TopicArn=a)
                         if len(subs['Subscriptions']) > 0:
                             matched.append(t)
-                    except client.exceptions.InvalidParameterValueException:
+                    except client_sns.exceptions.InvalidParameterValueException:
                         # we can ignore any exception here, the alarm action might
                         # not be an sns topic for instance
                         continue
