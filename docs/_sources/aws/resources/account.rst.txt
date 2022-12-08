@@ -56,6 +56,10 @@ Filters
 
   - :ref:`service-limit <aws.account.filters.service-limit>`
 
+  - :ref:`ses-agg-send-stats <aws.common.filters.ses-agg-send-stats>`
+  
+  - :ref:`ses-send-stats <aws.account.filters.ses-send-stats>`
+
   - :ref:`shield-enabled <aws.account.filters.shield-enabled>`
 
   - :ref:`value <aws.common.filters.value>`
@@ -1566,6 +1570,59 @@ advisor.  In this case, some of these checks have no results.
 
 
 Permissions - support:DescribeTrustedAdvisorCheckRefreshStatuses, support:DescribeTrustedAdvisorCheckResult, support:DescribeTrustedAdvisorChecks, support:RefreshTrustedAdvisorCheck
+
+
+.. _aws.account.filters.ses-send-stats:
+
+ses-send-stats
+++++++++++++++
+This filter annotates the account resource with SES send statistics for the
+last n number of days, not including the current date.
+
+The stats are aggregated into daily metrics. Additionally, the filter also
+calculates and annotates the max daily bounce rate (percentage). Using this filter,
+users can alert when the bounce rate for a particular day is higher than the limit.
+
+:example:
+
+.. code-block:: yaml
+
+        policies:
+          - name: ses-send-stats
+            resource: account
+            filters:
+              - type: ses-send-stats
+                days: 5
+              - type: value
+                key: '"c7n:ses-max-bounce-rate"'
+                op: ge
+                value: 10
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      days:
+        minimum: 2
+        type: number
+      type:
+        enum:
+        - ses-send-stats
+    required:
+    - days
+    - type
+
+
+
+
+Permissions - ses:GetSendStatistics
 
 
 .. _aws.account.filters.shield-enabled:

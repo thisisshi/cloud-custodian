@@ -277,6 +277,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="aws-common-filters.html">AWS Common Filters</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#alarm">alarm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#api-cache">api-cache</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#check-permissions">check-permissions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#client-properties">client-properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#config-compliance">config-compliance</a></li>
@@ -300,6 +301,7 @@
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#ownership">ownership</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#reduce">reduce</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#security-group">security-group</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#ses-agg-send-stats">ses-agg-send-stats</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#shield-metrics">shield-metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#subnet">subnet</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aws-common-filters.html#subscription-filter">subscription-filter</a></li>
@@ -1439,6 +1441,14 @@
 <li class="toctree-l3"><a class="reference internal" href="r53domain.html">aws.r53domain</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="r53domain.html#filters">Filters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="r53domain.html#actions">Actions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="group-route53resolver.html">route53resolver resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="resolver-logs.html">aws.resolver-logs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="resolver-logs.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="resolver-logs.html#actions">Actions</a></li>
 </ul>
 </li>
 </ul>
@@ -2860,11 +2870,25 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../tencentcloud/resources/tencentcloud-common-filters.html">Tencent Cloud Common Filters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/tencentcloud-common-filters.html#check-permissions">check-permissions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/tencentcloud-common-filters.html#event">event</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/tencentcloud-common-filters.html#marked-for-op">marked-for-op</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/tencentcloud-common-filters.html#metrics">metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/tencentcloud-common-filters.html#reduce">reduce</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/tencentcloud-common-filters.html#value">value</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../tencentcloud/resources/group-cam.html">cam resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/cam-policy.html">tencentcloud.cam-policy</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cam-policy.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cam-policy.html#actions">Actions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/cam-user.html">tencentcloud.cam-user</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cam-user.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cam-user.html#actions">Actions</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../tencentcloud/resources/group-cbs.html">cbs resources</a><ul>
@@ -5612,6 +5636,8 @@
 <li><p><a class="reference internal" href="#aws-account-filters-s3-public-block"><span class="std std-ref">s3-public-block</span></a></p></li>
 <li><p><a class="reference internal" href="#aws-account-filters-securityhub"><span class="std std-ref">securityhub</span></a></p></li>
 <li><p><a class="reference internal" href="#aws-account-filters-service-limit"><span class="std std-ref">service-limit</span></a></p></li>
+<li><p><a class="reference internal" href="aws-common-filters.html#aws-common-filters-ses-agg-send-stats"><span class="std std-ref">ses-agg-send-stats</span></a></p></li>
+<li><p><a class="reference internal" href="#aws-account-filters-ses-send-stats"><span class="std std-ref">ses-send-stats</span></a></p></li>
 <li><p><a class="reference internal" href="#aws-account-filters-shield-enabled"><span class="std std-ref">shield-enabled</span></a></p></li>
 <li><p><a class="reference internal" href="aws-common-filters.html#aws-common-filters-value"><span class="std std-ref">value</span></a></p></li>
 <li><p><a class="reference internal" href="#aws-account-filters-xray-encrypt-key"><span class="std std-ref">xray-encrypt-key</span></a></p></li>
@@ -6872,6 +6898,45 @@ advisor.  In this case, some of these checks have no results.</p>
 </div>
 </div>
 <p>Permissions - support:DescribeTrustedAdvisorCheckRefreshStatuses, support:DescribeTrustedAdvisorCheckResult, support:DescribeTrustedAdvisorChecks, support:RefreshTrustedAdvisorCheck</p>
+</section>
+<section id="ses-send-stats">
+<span id="aws-account-filters-ses-send-stats"></span><h3>ses-send-stats<a class="headerlink" href="#ses-send-stats" title="Permalink to this headline">¶</a></h3>
+<p>This filter annotates the account resource with SES send statistics for the
+last n number of days, not including the current date.</p>
+<p>The stats are aggregated into daily metrics. Additionally, the filter also
+calculates and annotates the max daily bounce rate (percentage). Using this filter,
+users can alert when the bounce rate for a particular day is higher than the limit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">example</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ses-send-stats</span><span class="w"></span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">account</span><span class="w"></span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ses-send-stats</span><span class="w"></span>
+<span class="w">        </span><span class="nt">days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="w"></span>
+<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&quot;c7n:ses-max-bounce-rate&quot;&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ge</span><span class="w"></span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="toggle docutils container">
+<div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">days</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">minimum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">number</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ses-send-stats</span><span class="w"></span>
+<span class="nt">required</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">days</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<p>Permissions - ses:GetSendStatistics</p>
 </section>
 <section id="shield-enabled">
 <span id="aws-account-filters-shield-enabled"></span><h3>shield-enabled<a class="headerlink" href="#shield-enabled" title="Permalink to this headline">¶</a></h3>
