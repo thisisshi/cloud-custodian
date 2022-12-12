@@ -30,6 +30,8 @@ be applies for all resources.
 
    group-cls.rst
 
+   group-cos.rst
+
    group-cvm.rst
 
    group-es.rst
