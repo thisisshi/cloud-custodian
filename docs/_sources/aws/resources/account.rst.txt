@@ -1140,6 +1140,24 @@ Intended for use at a logical account/subscription/project level
 
 This works as an effectively an embedded policy thats evaluated.
 
+:example:
+
+Notify if an s3 bucket is missing
+
+.. code-block:: yaml
+
+        policies:
+          - name: missing-s3-bucket
+            resource: account
+            filters:
+              - type: missing
+                policy:
+                  resource: s3
+                  filters:
+                    - Name: my-bucket
+            actions:
+              - notify
+
 .. container:: toggle
 
   
@@ -1746,6 +1764,8 @@ Actions
 
   - :ref:`set-xray-encrypt <aws.account.actions.set-xray-encrypt>`
 
+  - :ref:`toggle-config-managed-rule <aws.account.actions.toggle-config-managed-rule>`
+
   - :ref:`webhook <aws.common.actions.webhook>`
   
 
@@ -2281,4 +2301,128 @@ Enable specific xray encryption.
 
 
 Permissions - xray:PutEncryptionConfig
+
+
+.. _aws.account.actions.toggle-config-managed-rule:
+
+toggle-config-managed-rule
+++++++++++++++++++++++++++
+Enables or disables an AWS Config Managed Rule
+
+:example:
+
+.. code-block:: yaml
+
+    policies:
+      - name: config-managed-s3-bucket-public-write-remediate-event
+        description: |
+          This policy detects if S3 bucket allows public write by the bucket policy
+          or ACL and remediates.
+        comment: |
+          This policy detects if S3 bucket policy or ACL allows public write access.
+          When the bucket is evaluated as 'NON_COMPLIANT', the action
+          'AWS-DisableS3BucketPublicReadWrite' is triggered and remediates.
+        resource: account
+        filters:
+          - type: missing
+            policy:
+              resource: config-rule
+              filters:
+                - type: remediation
+                  rule_name: &rule_name 'config-managed-s3-bucket-public-write-remediate-event'
+                  remediation: &remediation-config
+                    TargetId: AWS-DisableS3BucketPublicReadWrite
+                    Automatic: true
+                    MaximumAutomaticAttempts: 5
+                    RetryAttemptSeconds: 211
+                    Parameters:
+                      AutomationAssumeRole:
+                        StaticValue:
+                          Values:
+                            - 'arn:aws:iam::{account_id}:role/myrole'
+                      S3BucketName:
+                        ResourceValue:
+                          Value: RESOURCE_ID
+        actions:
+          - type: toggle-config-managed-rule
+            rule_name: *rule_name
+            managed_rule_id: S3_BUCKET_PUBLIC_WRITE_PROHIBITED
+            resource_types:
+              - 'AWS::S3::Bucket'
+            rule_parameters: '{}'
+            remediation: *remediation-config
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      enabled:
+        default: true
+        type: boolean
+      managed_rule_id:
+        type: string
+      remediation:
+        properties:
+          Automatic:
+            type: boolean
+          ExecutionControls:
+            type: object
+          MaximumAutomaticAttempts:
+            maximum: 25
+            minimum: 1
+            type: integer
+          Parameters:
+            type: object
+          RetryAttemptSeconds:
+            maximum: 2678000
+            minimum: 1
+            type: integer
+          TargetId:
+            type: string
+          TargetType:
+            type: string
+        type: object
+      resource_id:
+        type: string
+      resource_tag:
+        properties:
+          key:
+            type: string
+          value:
+            type: string
+        required:
+        - key
+        - value
+        type: object
+      resource_types:
+        items:
+          pattern: ^AWS::*
+          type: string
+        type: array
+      rule_name:
+        type: string
+      rule_parameters:
+        type: string
+      rule_prefix:
+        type: string
+      tags:
+        type: object
+      type:
+        enum:
+        - toggle-config-managed-rule
+    required:
+    - rule_name
+    - type
+
+
+
+
+Permissions - config:DescribeConfigRules, config:DescribeRemediationConfigurations, config:PutRemediationConfigurations, config:PutConfigRule
 

@@ -208,6 +208,8 @@ be applies for all resources.
 
    group-swf.rst
 
+   group-transfer.rst
+
    group-waf.rst
 
    group-waf-regional.rst
