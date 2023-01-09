@@ -51,8 +51,8 @@ class MySQLBackUp(QueryResourceManager):
             items = resp["Response"]["Items"]
             field_format = self.resource_type.datetime_fields_format["Date"]
             for item in items:
-                # backups in RUNNING status don't have a proper date yet
-                if item["Status"] == "RUNNING":
+                # backups in non SUCCESS status don't have a proper date yet
+                if item["Status"] == "SUCCESS":
                     continue
                 item["Date"] = isoformat_datetime_str(item["Date"],
                                                       field_format[0],
