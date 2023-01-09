@@ -1411,27 +1411,29 @@ Filter Connect resources based on instance attributes
 logging
 +++++++
 
-Checks Redshift logging status and attributes.
+Filter by wafv2 logging configuration
 
 :example:
 
 .. code-block:: yaml
 
+    policies:
+      - name: wafv2-logging-enabled
+        resource: aws.wafv2
+        filters:
+          - not:
+              - type: logging
+                key: ResourceArn
+                value: present
 
-        policies:
-
-            - name: redshift-logging-bucket-and-prefix-test
-              resource: redshift
-              filters:
-               - type: logging
-                 key: LoggingEnabled
-                 value: true
-               - type: logging
-                 key: S3KeyPrefix
-                 value: "accounts/{account_id}"
-               - type: logging
-                 key: BucketName
-                 value: "redshiftlogs"
+      - name: check-redacted-fields
+        resource: aws.wafv2
+        filters:
+          - type: logging
+            key: RedactedFields[].SingleHeader.Name
+            value: user-agent
+            op: in
+            value_type: swap
 
 .. container:: toggle
 
