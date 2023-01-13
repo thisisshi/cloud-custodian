@@ -17,7 +17,7 @@ class TimestreamDatabase(QueryResourceManager):
     class resource_type(TypeInfo):
         service = 'timestream-write'
         arn_type = ''
-        name = 'TableName'
+        name = 'DatabaseName'
         id = arn = 'Arn'
         enum_spec = ('list_databases', 'Databases', {})
         permissions = ('timestream-write:ListDatabases', )
