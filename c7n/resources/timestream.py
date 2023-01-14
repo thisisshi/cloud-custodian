@@ -1,6 +1,7 @@
 from c7n.manager import resources
+from c7n.actions import Action
 from c7n.query import DescribeSource, QueryResourceManager, TypeInfo
-from c7n.utils import local_session
+from c7n.utils import local_session, type_schema
 from c7n.tags import (
     TagDelayedAction,
     TagActionFilter,
@@ -68,3 +69,59 @@ TimestreamTable.action_registry.register('mark-for-op', TagDelayedAction)
 
 TimestreamDatabase.filter_registry.register('marked-for-op', TagActionFilter)
 TimestreamTable.filter_registry.register('marked-for-op', TagActionFilter)
+
+
+@TimestreamTable.action_registry.register('delete')
+class TimestreamTableDelete(Action):
+    """
+    Deletes a timestream table
+    """
+
+    schema = type_schema('delete')
+    permissions = ('timestream-write:DeleteTable', )
+
+    def process(self, resources):
+        client = local_session(self.manager.session_factory).client('timestream-write')
+        for r in resources:
+            try:
+                client.delete_table(
+                    DatabaseName=r['DatabaseName'],
+                    TableName=r['TableName']
+                )
+            except client.exceptions.ResourceNotFoundException:
+                continue
+
+
+@TimestreamDatabase.action_registry.register('delete')
+class TimestreamDatabaseDelete(Action):
+    """
+    Deletes a timestream database
+    """
+
+    schema = type_schema('delete', force={'type': 'boolean', 'default': False})
+    permissions = ('timestream-write:DeleteDatabase', )
+
+    def process(self, resources):
+        client = local_session(self.manager.session_factory).client('timestream-write')
+        for r in resources:
+            try:
+                client.delete_database(
+                    DatabaseName=r['DatabaseName'],
+                )
+            except client.exceptions.ResourceNotFoundException:
+                continue
+            except client.exceptions.ValidationException:
+                if not self.data.get('force', False):
+                    self.log.error(
+                        f'Unable to delete database:{r["DatabaseName"]}, '
+                        'tables must be deleted first')
+                    continue
+                tables = client.list_tables(DatabaseName=r['DatabaseName'])['Tables']
+                TimestreamTableDelete(
+                    data={'type': 'delete'},
+                    manager=self.manager,
+                    log_dir=self.log_dir
+                ).process(tables)
+                client.delete_database(
+                    DatabaseName=r['DatabaseName'],
+                )

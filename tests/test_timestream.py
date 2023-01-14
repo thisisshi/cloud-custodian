@@ -56,6 +56,48 @@ class TestTimestreamDatabase(BaseTest):
         tags = client.list_tags_for_resource(ResourceARN=resources[0]['Arn'])['Tags']
         self.assertEqual(len(tags), 0)
 
+    def test_timestream_database_delete(self):
+        session_factory = self.replay_flight_data('test_timestream_database_delete')
+        p = self.load_policy(
+            {
+                'name': 'test-timestream-db-delete',
+                'resource': 'aws.timestream-database',
+                'actions': [
+                    {
+                        'type': 'delete',
+                    }
+                ]
+            }, session_factory=session_factory
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        client = session_factory().client('timestream-write')
+        dbs = client.list_databases()['Databases']
+        self.assertEqual(len(dbs), 0)
+
+    def test_timestream_database_delete_force(self):
+        session_factory = self.replay_flight_data('test_timestream_database_delete_force')
+        p = self.load_policy(
+            {
+                'name': 'test-timestream-db-delete-force',
+                'resource': 'aws.timestream-database',
+                'filters': [
+                    {"TableCount": 1}
+                ],
+                'actions': [
+                    {
+                        'type': 'delete',
+                        'force': True
+                    }
+                ]
+            }, session_factory=session_factory
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        client = session_factory().client('timestream-write')
+        dbs = client.list_databases()['Databases']
+        self.assertEqual(len(dbs), 0)
+
 
 class TestTimestreamTable(BaseTest):
     def test_timestream_table_tag(self):
@@ -109,3 +151,22 @@ class TestTimestreamTable(BaseTest):
         client = session_factory().client('timestream-write')
         tags = client.list_tags_for_resource(ResourceARN=resources[0]['Arn'])['Tags']
         self.assertEqual(len(tags), 0)
+
+    def test_timestream_table_delete(self):
+        session_factory = self.replay_flight_data('test_timestream_table_delete')
+        p = self.load_policy(
+            {
+                'name': 'test-timestream-table-delete',
+                'resource': 'aws.timestream-table',
+                'actions': [
+                    {
+                        'type': 'delete',
+                    }
+                ]
+            }, session_factory=session_factory
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        client = session_factory().client('timestream-write')
+        tables = client.list_tables()['Tables']
+        self.assertEqual(len(tables), 0)
