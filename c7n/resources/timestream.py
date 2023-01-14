@@ -26,7 +26,8 @@ class TimestreamDatabase(QueryResourceManager):
         name = 'DatabaseName'
         id = arn = 'Arn'
         enum_spec = ('list_databases', 'Databases', {})
-        permissions = ('timestream-write:ListDatabases', )
+        permission_prefix = 'timestream'
+        permissions = ('timestream:ListDatabases', )
 
     source_mapping = {
         'describe': DescribeTimestream,
@@ -41,7 +42,8 @@ class TimestreamTable(QueryResourceManager):
         name = 'TableName'
         id = arn = 'Arn'
         enum_spec = ('list_tables', 'Tables', {})
-        permissions = ('timestream-write:ListTables', )
+        permission_prefix = 'timestream'
+        permissions = ('timestream:ListTables', )
 
     source_mapping = {
         'describe': DescribeTimestream,
@@ -51,6 +53,9 @@ class TimestreamTable(QueryResourceManager):
 @TimestreamDatabase.action_registry.register('tag')
 @TimestreamTable.action_registry.register('tag')
 class TimestreamTag(TagAction):
+
+    permissions = ('timestream:TagResource', )
+
     def process_resource_set(self, client, resource_set, tags):
         for r in resource_set:
             client.tag_resource(ResourceARN=r['Arn'], Tags=tags)
@@ -59,6 +64,9 @@ class TimestreamTag(TagAction):
 @TimestreamDatabase.action_registry.register('remove-tag')
 @TimestreamTable.action_registry.register('remove-tag')
 class TimestreamRemoveTag(RemoveTagAction):
+
+    permissions = ('timestream:UntagResource', )
+
     def process_resource_set(self, client, resource_set, tag_keys):
         for r in resource_set:
             client.untag_resource(ResourceARN=r['Arn'], TagKeys=tag_keys)
@@ -78,7 +86,7 @@ class TimestreamTableDelete(Action):
     """
 
     schema = type_schema('delete')
-    permissions = ('timestream-write:DeleteTable', )
+    permissions = ('timestream:DeleteTable', )
 
     def process(self, resources):
         client = local_session(self.manager.session_factory).client('timestream-write')
@@ -99,7 +107,9 @@ class TimestreamDatabaseDelete(Action):
     """
 
     schema = type_schema('delete', force={'type': 'boolean', 'default': False})
-    permissions = ('timestream-write:DeleteDatabase', )
+    permissions = (
+        'timestream:DeleteDatabase',
+        'timestream:ListTables', 'timestream:DeleteTable', )
 
     def process(self, resources):
         client = local_session(self.manager.session_factory).client('timestream-write')
