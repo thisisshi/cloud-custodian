@@ -2481,5 +2481,6 @@ class HasSpecificManagedPolicy(SpecificIamProfileManagedPolicy):
 
         return results
 
+
 EC2.filter_registry.register('aws-backup', BackupFilter)
 EC2.filter_registry.register('consecutive-aws-backup', ConsecutiveAwsBackupsFilter)
