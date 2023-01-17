@@ -1437,6 +1437,14 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="group-route53-recovery-readiness.html">route53-recovery-readiness resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="readiness-check.html">aws.readiness-check</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="readiness-check.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="readiness-check.html#actions">Actions</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="group-route53domains.html">route53domains resources</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="r53domain.html">aws.r53domain</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="r53domain.html#filters">Filters</a></li>
@@ -2924,6 +2932,11 @@
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cbs.html#actions">Actions</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html">tencentcloud.cbs-snapshot</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html#actions">Actions</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../tencentcloud/resources/group-cdb.html">cdb resources</a><ul>
@@ -2969,11 +2982,6 @@
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/ami.html#actions">Actions</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html">tencentcloud.cbs-snapshot</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html#filters">Filters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html#actions">Actions</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/cvm.html">tencentcloud.cvm</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cvm.html#filters">Filters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cvm.html#actions">Actions</a></li>
@@ -2985,14 +2993,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/elasticsearch.html">tencentcloud.elasticsearch</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/elasticsearch.html#filters">Filters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/elasticsearch.html#actions">Actions</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../tencentcloud/resources/group-security-group.html">security-group resources</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/security-group.html">tencentcloud.security-group</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/security-group.html#filters">Filters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/security-group.html#actions">Actions</a></li>
 </ul>
 </li>
 </ul>
@@ -3009,6 +3009,11 @@
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/nat-gateway.html">tencentcloud.nat-gateway</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/nat-gateway.html#filters">Filters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/nat-gateway.html#actions">Actions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/security-group.html">tencentcloud.security-group</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/security-group.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/security-group.html#actions">Actions</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/vpc.html">tencentcloud.vpc</a><ul>
@@ -5686,25 +5691,25 @@
 <dt class="field-odd">example</dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudwatch-delete-insight-rule</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">insight-rule</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="w"></span>
-<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">State</span><span class="w"></span>
-<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ENABLED</span><span class="w"></span>
-<span class="w">        </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eq</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudwatch-delete-insight-rule</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">insight-rule</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span>
+<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">State</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ENABLED</span>
+<span class="w">        </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eq</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete</span>
 </pre></div>
 </div>
 <div class="toggle docutils container">
-<div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete</span><span class="w"></span>
-<span class="nt">required</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span><span class="w"></span>
+<div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">enum</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete</span>
+<span class="nt">required</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span>
 </pre></div>
 </div>
 </div>
@@ -5717,25 +5722,25 @@
 <dt class="field-odd">example</dt>
 <dd class="field-odd"><p></p></dd>
 </dl>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudwatch-disable-insight-rule</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">insight-rule</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="w"></span>
-<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">State</span><span class="w"></span>
-<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ENABLED</span><span class="w"></span>
-<span class="w">        </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eq</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disable</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudwatch-disable-insight-rule</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">insight-rule</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span>
+<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">State</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ENABLED</span>
+<span class="w">        </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eq</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disable</span>
 </pre></div>
 </div>
 <div class="toggle docutils container">
-<div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disable</span><span class="w"></span>
-<span class="nt">required</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span><span class="w"></span>
+<div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">enum</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disable</span>
+<span class="nt">required</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span>
 </pre></div>
 </div>
 </div>

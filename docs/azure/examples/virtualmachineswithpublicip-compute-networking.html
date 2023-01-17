@@ -5650,13 +5650,13 @@
   <section id="virtual-machines-find-virtual-machines-with-public-ip-address">
 <span id="azure-examples-vm-with-public-ips"></span><h1>Virtual Machines - Find Virtual Machines with public IP address<a class="headerlink" href="#virtual-machines-find-virtual-machines-with-public-ip-address" title="Permalink to this headline">¶</a></h1>
 <p>Filter to select all virtual machines with a public ip address</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vms-with-public-ip</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.vm</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">network-interface</span><span class="w"></span>
-<span class="w">       </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;properties.ipConfigurations[].properties.publicIPAddress.id&#39;</span><span class="w"></span>
-<span class="w">       </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-null</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vms-with-public-ip</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.vm</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">network-interface</span>
+<span class="w">       </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;properties.ipConfigurations[].properties.publicIPAddress.id&#39;</span>
+<span class="w">       </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-null</span>
 </pre></div>
 </div>
 </section>

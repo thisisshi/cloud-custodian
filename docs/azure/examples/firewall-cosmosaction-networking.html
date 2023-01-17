@@ -5655,34 +5655,34 @@ expected ranges.</p>
 <p>We then reconfigure that firewall to known-safe defaults which include a bypass for
 all of the Azure Cloud as well as additional space in our data center.</p>
 <p>Virtual network rules are not specified so they will not be modified.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosmos-firewall-enable</span><span class="w"></span>
-<span class="w">   </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">     </span><span class="no">Find all incorrect firewalls and enable</span><span class="w"></span>
-<span class="w">     </span><span class="no">with a set of defaults</span><span class="w"></span>
-<span class="w">   </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.cosmosdb</span><span class="w"></span>
-<span class="w">   </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">or</span><span class="p">:</span><span class="w"></span>
-<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="w"></span>
-<span class="w">         </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">properties.ipRangeFilter</span><span class="w"></span>
-<span class="w">         </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">empty</span><span class="w">  </span><span class="c1"># The firewall is disabled</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosmos-firewall-enable</span>
+<span class="w">   </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">     </span><span class="no">Find all incorrect firewalls and enable</span>
+<span class="w">     </span><span class="no">with a set of defaults</span>
+<span class="w">   </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.cosmosdb</span>
+<span class="w">   </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">or</span><span class="p">:</span>
+<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span>
+<span class="w">         </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">properties.ipRangeFilter</span>
+<span class="w">         </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">empty</span><span class="w">  </span><span class="c1"># The firewall is disabled</span>
 
-<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">not</span><span class="p">:</span><span class="w"></span>
-<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">firewall-rules</span><span class="w"></span>
-<span class="w">           </span><span class="nt">only</span><span class="p">:</span><span class="w">       </span><span class="c1"># Should *only* allow access within the specified maximums here</span><span class="w"></span>
-<span class="w">             </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">19.0.0.0/16</span><span class="w"></span>
-<span class="w">             </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20.0.1.2</span><span class="w"></span>
-<span class="w">             </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceTags.AzureCloud</span><span class="w"></span>
+<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">not</span><span class="p">:</span>
+<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">firewall-rules</span>
+<span class="w">           </span><span class="nt">only</span><span class="p">:</span><span class="w">       </span><span class="c1"># Should *only* allow access within the specified maximums here</span>
+<span class="w">             </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">19.0.0.0/16</span>
+<span class="w">             </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20.0.1.2</span>
+<span class="w">             </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceTags.AzureCloud</span>
 
-<span class="w">   </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set-firewall-rules</span><span class="w"></span>
-<span class="w">       </span><span class="nt">append</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
-<span class="w">       </span><span class="nt">bypass-rules</span><span class="p">:</span><span class="w">   </span><span class="c1"># Enable firewall and allow all Azure Cloud</span><span class="w"></span>
-<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AzureCloud</span><span class="w"></span>
-<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Portal</span><span class="w"></span>
-<span class="w">       </span><span class="nt">ip-rules</span><span class="p">:</span><span class="w">       </span><span class="c1"># and some external IP space</span><span class="w"></span>
-<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">19.0.0.0/16</span><span class="w"></span>
-<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20.0.1.2</span><span class="w"></span>
+<span class="w">   </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set-firewall-rules</span>
+<span class="w">       </span><span class="nt">append</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="w">       </span><span class="nt">bypass-rules</span><span class="p">:</span><span class="w">   </span><span class="c1"># Enable firewall and allow all Azure Cloud</span>
+<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AzureCloud</span>
+<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Portal</span>
+<span class="w">       </span><span class="nt">ip-rules</span><span class="p">:</span><span class="w">       </span><span class="c1"># and some external IP space</span>
+<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">19.0.0.0/16</span>
+<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20.0.1.2</span>
 </pre></div>
 </div>
 </section>

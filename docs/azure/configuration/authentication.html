@@ -5676,20 +5676,20 @@ The Service Principal requires the Contributor role to be assigned.</p>
 <section id="id1">
 <h3>Azure CLI<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># select correct subscription</span>
-az account <span class="nb">set</span> -s <span class="s2">&quot;my subscription name&quot;</span>
+az<span class="w"> </span>account<span class="w"> </span><span class="nb">set</span><span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;my subscription name&quot;</span>
 
 <span class="c1"># create Service Principal</span>
-az ad sp create-for-rbac --name &lt;name&gt; --password &lt;password&gt;
+az<span class="w"> </span>ad<span class="w"> </span>sp<span class="w"> </span>create-for-rbac<span class="w"> </span>--name<span class="w"> </span>&lt;name&gt;<span class="w"> </span>--password<span class="w"> </span>&lt;password&gt;
 </pre></div>
 </div>
 <p>This will yield something like:</p>
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="s2">&quot;appId&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">appid</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="s2">&quot;displayName&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="s2">&quot;password&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">password</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="s2">&quot;tenant&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">guid</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="s2">&quot;appId&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">appid</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;displayName&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;password&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">password</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">&quot;tenant&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">guid</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>Map the Service Principal to environment variables for Custodian:</p>
@@ -5742,7 +5742,7 @@ and <strong>Tenant ID</strong> locally and store the Service Principal credentia
 <p>Cloud Custodian leverages Managed Service Identity or User Assigned Identity to access Key Vault and retrieve
 the extended configuration.</p>
 <p>The following example shows the secret stored in a Key Vault:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;your-sp-id&gt;&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;client_secret&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;your-sp-password&gt;&quot;</span><span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;your-sp-id&gt;&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;client_secret&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;your-sp-password&gt;&quot;</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>To enable Key Vault integration support, populate <code class="docutils literal notranslate"><span class="pre">AZURE_KEYVAULT_SECRET</span></code> environment variable
@@ -5776,7 +5776,7 @@ level or resource group/storage account level.</p>
 3. Azure German Cloud (<cite>AzureGermanCloud</cite>)
 4. Azure US Government (<cite>AzureUSGovernment</cite>)</p>
 <p>To target these Clouds, pass the cloud name in the <code class="docutils literal notranslate"><span class="pre">--region</span></code> flag</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>custodian run -s . --region<span class="o">=</span>AzureChinaCloud my-policy.yml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>custodian<span class="w"> </span>run<span class="w"> </span>-s<span class="w"> </span>.<span class="w"> </span>--region<span class="o">=</span>AzureChinaCloud<span class="w"> </span>my-policy.yml
 </pre></div>
 </div>
 <p><strong>Note</strong>: All Custodian features may not be available in every Cloud.</p>

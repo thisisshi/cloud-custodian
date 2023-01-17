@@ -5650,8 +5650,8 @@
 <span id="gcp-contribute"></span><h1>Developer Guide<a class="headerlink" href="#developer-guide" title="Permalink to this headline">¶</a></h1>
 <p>The c7n developer install includes c7n_gcp.  A shortcut for creating a virtual env for development is available
 in the makefile:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make install
-<span class="nb">source</span> bin/activate
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>install
+<span class="nb">source</span><span class="w"> </span>bin/activate
 </pre></div>
 </div>
 <p>This creates a virtual env in your enlistment and installs all packages as editable.</p>
@@ -5808,9 +5808,9 @@ Cloud Project you have access to. The second, <code class="docutils literal notr
 should be the corresponding credentials json with access to the aforementioned
 project.</p>
 <p>For example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">GOOGLE_CLOUD_PROJECT</span><span class="o">=</span>cloud-custodian
-<span class="nb">export</span> <span class="nv">GOOGLE_APPLICATION_CREDENTIALS</span><span class="o">=</span>data/credentials.json
-pytest tools/c7n_gcp/tests -n auto
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">GOOGLE_CLOUD_PROJECT</span><span class="o">=</span>cloud-custodian
+<span class="nb">export</span><span class="w"> </span><span class="nv">GOOGLE_APPLICATION_CREDENTIALS</span><span class="o">=</span>data/credentials.json
+pytest<span class="w"> </span>tools/c7n_gcp/tests<span class="w"> </span>-n<span class="w"> </span>auto
 </pre></div>
 </div>
 <section id="updating-existing-tests">

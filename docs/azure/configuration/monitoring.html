@@ -5655,13 +5655,13 @@
 <strong>subscription id</strong> and <strong>execution id properties</strong>. These logs will be found under the <strong>trace</strong> source in Application Insights.</p>
 <p>Usage example using an instrumentation key:</p>
 <blockquote>
-<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>custodian run -s &lt;output_directory&gt; -l azure://&lt;instrumentation_key_guid&gt; policy.yml
+<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>custodian<span class="w"> </span>run<span class="w"> </span>-s<span class="w"> </span>&lt;output_directory&gt;<span class="w"> </span>-l<span class="w"> </span>azure://&lt;instrumentation_key_guid&gt;<span class="w"> </span>policy.yml
 </pre></div>
 </div>
 </div></blockquote>
 <p>Usage example using a resource name:</p>
 <blockquote>
-<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>custodian run -s &lt;output_directory&gt; -l azure://&lt;resource_group_name&gt;/&lt;app_insights_name&gt; policy.yml
+<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>custodian<span class="w"> </span>run<span class="w"> </span>-s<span class="w"> </span>&lt;output_directory&gt;<span class="w"> </span>-l<span class="w"> </span>azure://&lt;resource_group_name&gt;/&lt;app_insights_name&gt;<span class="w"> </span>policy.yml
 </pre></div>
 </div>
 </div></blockquote>
@@ -5681,32 +5681,32 @@
 These metrics will be found under the <strong>customMetrics</strong> source in Application Insights.</p>
 <p>Usage example using an instrumentation key:</p>
 <blockquote>
-<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>custodian run -s &lt;output_directory&gt; -m azure://&lt;instrumentation_key_guid&gt; policy.yml
+<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>custodian<span class="w"> </span>run<span class="w"> </span>-s<span class="w"> </span>&lt;output_directory&gt;<span class="w"> </span>-m<span class="w"> </span>azure://&lt;instrumentation_key_guid&gt;<span class="w"> </span>policy.yml
 </pre></div>
 </div>
 </div></blockquote>
 <p>Usage example using a resource name:</p>
 <blockquote>
-<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>custodian run -s &lt;output_directory&gt; -m azure://&lt;resource_group_name&gt;/&lt;app_insights_name&gt; policy.yml
+<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>custodian<span class="w"> </span>run<span class="w"> </span>-s<span class="w"> </span>&lt;output_directory&gt;<span class="w"> </span>-m<span class="w"> </span>azure://&lt;resource_group_name&gt;/&lt;app_insights_name&gt;<span class="w"> </span>policy.yml
 </pre></div>
 </div>
 </div></blockquote>
 <p>In <strong>azure-periodic</strong> and <strong>azure-event-grid</strong> modes, you can configure metrics under the <strong>execution-options</strong>.
 As above, you can provide an instrumentation key or a resource name.</p>
 <blockquote>
-<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">periodic-mode-logging-metrics</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.storage</span><span class="w"></span>
-<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-periodic</span><span class="w"></span>
-<span class="w">      </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0</span><span class="nv"> </span><span class="s">0</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*&#39;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">provision-options</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">servicePlan</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloud-custodian</span><span class="w"></span>
-<span class="w">          </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eastus</span><span class="w"></span>
-<span class="w">          </span><span class="nt">resourceGroupName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloud-custodian</span><span class="w"></span>
-<span class="w">      </span><span class="nt">execution-options</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">metrics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure://&lt;instrumentation_key_guid&gt;</span><span class="w"></span>
+<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">periodic-mode-logging-metrics</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.storage</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-periodic</span>
+<span class="w">      </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0</span><span class="nv"> </span><span class="s">0</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*&#39;</span>
+<span class="w">      </span><span class="nt">provision-options</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">servicePlan</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloud-custodian</span>
+<span class="w">          </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eastus</span>
+<span class="w">          </span><span class="nt">resourceGroupName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloud-custodian</span>
+<span class="w">      </span><span class="nt">execution-options</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">metrics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure://&lt;instrumentation_key_guid&gt;</span>
 </pre></div>
 </div>
 </div></blockquote>
@@ -5717,14 +5717,14 @@ As above, you can provide an instrumentation key or a resource name.</p>
 You must change the URL prefix from https to azure.</p>
 <p>By default, Custodian will add the policy name and date as the prefix to the blob.</p>
 <blockquote>
-<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>custodian run -s azure://mystorage.blob.core.windows.net/logs mypolicy.yml
+<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>custodian<span class="w"> </span>run<span class="w"> </span>-s<span class="w"> </span>azure://mystorage.blob.core.windows.net/logs<span class="w"> </span>mypolicy.yml
 </pre></div>
 </div>
 </div></blockquote>
 <p>In addition, you can use <cite>pyformat</cite> syntax to format the output prefix.
 This example is the same structure as the default one.</p>
 <blockquote>
-<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>custodian run -s azure://mystorage.blob.core.windows.net/logs/<span class="o">{</span>policy_name<span class="o">}</span>/<span class="o">{</span>now:%Y/%m/%d/%H/<span class="o">}</span> mypolicy.yml
+<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>custodian<span class="w"> </span>run<span class="w"> </span>-s<span class="w"> </span>azure://mystorage.blob.core.windows.net/logs/<span class="o">{</span>policy_name<span class="o">}</span>/<span class="o">{</span>now:%Y/%m/%d/%H/<span class="o">}</span><span class="w"> </span>mypolicy.yml
 </pre></div>
 </div>
 </div></blockquote>

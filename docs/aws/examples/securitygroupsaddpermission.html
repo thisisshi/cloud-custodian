@@ -5655,48 +5655,48 @@ anytime a user creates or modifies a security group. This provides near real-tim
 auto-remediation action (typically within a minute) of the security group change.
 Having such a quick auto-remediation action greatly reduces any attack window!
 User defined rule is added to the filtered results.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg-add-permission</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security-group</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">      </span><span class="no">Add rule to a security group. Filter any security group that</span><span class="w"></span>
-<span class="w">      </span><span class="no">allows 0.0.0.0/0 or ::/0 (IPv6) ingress on port 22, remove</span><span class="w"></span>
-<span class="w">      </span><span class="no">the rule and add user defined sg rule</span><span class="w"></span>
-<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span><span class="w"></span>
-<span class="w">        </span><span class="nt">events</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span><span class="w"></span>
-<span class="w">            </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AuthorizeSecurityGroupIngress</span><span class="w"></span>
-<span class="w">            </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;responseElements.securityGroupRuleSet.items[].groupId&quot;</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span><span class="w"></span>
-<span class="w">            </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RevokeSecurityGroupIngress</span><span class="w"></span>
-<span class="w">            </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;requestParameters.groupId&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">or</span><span class="p">:</span><span class="w"></span>
-<span class="w">             </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingress</span><span class="w"></span>
-<span class="w">               </span><span class="nt">IpProtocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;-1&quot;</span><span class="w"></span>
-<span class="w">               </span><span class="nt">Ports</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">22</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">               </span><span class="nt">Cidr</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.0.0.0/0&quot;</span><span class="w"></span>
-<span class="w">             </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingress</span><span class="w"></span>
-<span class="w">               </span><span class="nt">IpProtocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;-1&quot;</span><span class="w"></span>
-<span class="w">               </span><span class="nt">Ports</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">22</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">               </span><span class="nt">CidrV6</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;::/0&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set-permissions</span><span class="w"></span>
-<span class="w">        </span><span class="c1"># remove the permission matched by a previous ingress filter.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">remove-ingress</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">matched</span><span class="w"></span>
-<span class="w">        </span><span class="c1"># add a list of permissions to the group.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">add-ingress</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="c1"># full syntax/parameters to authorize can be used.</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">IpPermissions</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">IpProtocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span><span class="w"></span>
-<span class="w">              </span><span class="nt">FromPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">22</span><span class="w"></span>
-<span class="w">              </span><span class="nt">ToPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">22</span><span class="w"></span>
-<span class="w">              </span><span class="nt">IpRanges</span><span class="p">:</span><span class="w"></span>
-<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ops SSH Access</span><span class="w"></span>
-<span class="w">                  </span><span class="nt">CidrIp</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.1.1.1/32&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Security SSH Access</span><span class="w"></span>
-<span class="w">                  </span><span class="nt">CidrIp</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2.2.2.2/32&quot;</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg-add-permission</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security-group</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">Add rule to a security group. Filter any security group that</span>
+<span class="w">      </span><span class="no">allows 0.0.0.0/0 or ::/0 (IPv6) ingress on port 22, remove</span>
+<span class="w">      </span><span class="no">the rule and add user defined sg rule</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span>
+<span class="w">        </span><span class="nt">events</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span>
+<span class="w">            </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AuthorizeSecurityGroupIngress</span>
+<span class="w">            </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;responseElements.securityGroupRuleSet.items[].groupId&quot;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span>
+<span class="w">            </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RevokeSecurityGroupIngress</span>
+<span class="w">            </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;requestParameters.groupId&quot;</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">or</span><span class="p">:</span>
+<span class="w">             </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingress</span>
+<span class="w">               </span><span class="nt">IpProtocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;-1&quot;</span>
+<span class="w">               </span><span class="nt">Ports</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">22</span><span class="p p-Indicator">]</span>
+<span class="w">               </span><span class="nt">Cidr</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.0.0.0/0&quot;</span>
+<span class="w">             </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingress</span>
+<span class="w">               </span><span class="nt">IpProtocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;-1&quot;</span>
+<span class="w">               </span><span class="nt">Ports</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">22</span><span class="p p-Indicator">]</span>
+<span class="w">               </span><span class="nt">CidrV6</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;::/0&quot;</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set-permissions</span>
+<span class="w">        </span><span class="c1"># remove the permission matched by a previous ingress filter.</span>
+<span class="w">        </span><span class="nt">remove-ingress</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">matched</span>
+<span class="w">        </span><span class="c1"># add a list of permissions to the group.</span>
+<span class="w">        </span><span class="nt">add-ingress</span><span class="p">:</span>
+<span class="w">          </span><span class="c1"># full syntax/parameters to authorize can be used.</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">IpPermissions</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">IpProtocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="w">              </span><span class="nt">FromPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">22</span>
+<span class="w">              </span><span class="nt">ToPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">22</span>
+<span class="w">              </span><span class="nt">IpRanges</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ops SSH Access</span>
+<span class="w">                  </span><span class="nt">CidrIp</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.1.1.1/32&quot;</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Security SSH Access</span>
+<span class="w">                  </span><span class="nt">CidrIp</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2.2.2.2/32&quot;</span>
 </pre></div>
 </div>
 </section>

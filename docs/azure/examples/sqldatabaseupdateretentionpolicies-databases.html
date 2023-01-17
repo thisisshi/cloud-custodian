@@ -5650,33 +5650,33 @@
   <section id="sql-update-sql-database-retention-policies">
 <span id="azure-examples-sqldatabaseupdateretentionpolicies"></span><h1>SQL - Update SQL Database retention policies<a class="headerlink" href="#sql-update-sql-database-retention-policies" title="Permalink to this headline">¶</a></h1>
 <p>Update any SQL Database short term retentions to at least 7 days</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update-short-term-backup-retention-policy</span><span class="w"></span>
-<span class="w">     </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.sqldatabase</span><span class="w"></span>
-<span class="w">     </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">short-term-backup-retention</span><span class="w"></span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">op</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lt</span><span class="w"></span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">retention-period-days</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7</span><span class="w"></span>
-<span class="w">     </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update-short-term-backup-retention</span><span class="w"></span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">retention-period-days</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update-short-term-backup-retention-policy</span>
+<span class="w">     </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.sqldatabase</span>
+<span class="w">     </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">short-term-backup-retention</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">op</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lt</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">retention-period-days</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7</span>
+<span class="w">     </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update-short-term-backup-retention</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">retention-period-days</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7</span>
 </pre></div>
 </div>
 <p>Enforce a 1 month maximum retention for weekly backups on all SQL Databases</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update-long-term-backup-retention-policy</span><span class="w"></span>
-<span class="w">     </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.sqldatabase</span><span class="w"></span>
-<span class="w">     </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">long-term-backup-retention</span><span class="w"></span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">backup-type</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">weekly</span><span class="w"></span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">op</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gt</span><span class="w"></span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">retention-period</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">retention-period-units</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">months</span><span class="w"></span>
-<span class="w">     </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update-long-term-backup-retention</span><span class="w"></span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">backup-type</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">weekly</span><span class="w"></span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">retention-period</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">retention-period-units</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">months</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update-long-term-backup-retention-policy</span>
+<span class="w">     </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.sqldatabase</span>
+<span class="w">     </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">long-term-backup-retention</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">backup-type</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">weekly</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">op</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gt</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">retention-period</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">retention-period-units</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">months</span>
+<span class="w">     </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update-long-term-backup-retention</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">backup-type</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">weekly</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">retention-period</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">retention-period-units</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">months</span>
 </pre></div>
 </div>
 </section>

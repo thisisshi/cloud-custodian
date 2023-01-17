@@ -5657,31 +5657,31 @@ interfaces and can be used for troubleshooting traffic issues and monitoring
 network traffic as a security tool.  See more info on example dashboarding
 of VPC Flow Logs using Elasticsearch and Kibana
 <a class="reference external" href="https://aws.amazon.com/blogs/aws/cloudwatch-logs-subscription-consumer-elasticsearch-kibana-dashboards/">https://aws.amazon.com/blogs/aws/cloudwatch-logs-subscription-consumer-elasticsearch-kibana-dashboards/</a></p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-flow-log-check</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">not</span><span class="p">:</span><span class="w"></span>
-<span class="w">           </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flow-logs</span><span class="w"></span>
-<span class="w">             </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">             </span><span class="nt">set-op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">or</span><span class="w"></span>
-<span class="w">             </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">equal</span><span class="w"></span>
-<span class="w">             </span><span class="nt">traffic-type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span><span class="w"></span>
-<span class="w">             </span><span class="nt">log-group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myVPCFlowLogs</span><span class="w"></span>
-<span class="w">             </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">active</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span><span class="w"></span>
-<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default.html</span><span class="w"></span>
-<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Cloud</span><span class="nv"> </span><span class="s">Custodian</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">VPC</span><span class="nv"> </span><span class="s">Flow</span><span class="nv"> </span><span class="s">Log(s)</span><span class="nv"> </span><span class="s">Not</span><span class="nv"> </span><span class="s">Setup</span><span class="nv"> </span><span class="s">Properly&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">violation_desc</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">Following</span><span class="nv"> </span><span class="s">Flow</span><span class="nv"> </span><span class="s">Logs</span><span class="nv"> </span><span class="s">Are</span><span class="nv"> </span><span class="s">Invalid:&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">action_desc</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Actions</span><span class="nv"> </span><span class="s">Taken:</span><span class="nv">  </span><span class="s">Notification</span><span class="nv"> </span><span class="s">Only&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">to</span><span class="p">:</span><span class="w"></span>
-<span class="w">           </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudCustodian@Company.com</span><span class="w"></span>
-<span class="w">        </span><span class="nt">transport</span><span class="p">:</span><span class="w"></span>
-<span class="w">           </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span><span class="w"></span>
-<span class="w">           </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/12345678900/cloud-custodian-mailer</span><span class="w"></span>
-<span class="w">           </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-flow-log-check</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">not</span><span class="p">:</span>
+<span class="w">           </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flow-logs</span>
+<span class="w">             </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">             </span><span class="nt">set-op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">or</span>
+<span class="w">             </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">equal</span>
+<span class="w">             </span><span class="nt">traffic-type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span>
+<span class="w">             </span><span class="nt">log-group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myVPCFlowLogs</span>
+<span class="w">             </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">active</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span>
+<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default.html</span>
+<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Cloud</span><span class="nv"> </span><span class="s">Custodian</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">VPC</span><span class="nv"> </span><span class="s">Flow</span><span class="nv"> </span><span class="s">Log(s)</span><span class="nv"> </span><span class="s">Not</span><span class="nv"> </span><span class="s">Setup</span><span class="nv"> </span><span class="s">Properly&quot;</span>
+<span class="w">        </span><span class="nt">violation_desc</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">Following</span><span class="nv"> </span><span class="s">Flow</span><span class="nv"> </span><span class="s">Logs</span><span class="nv"> </span><span class="s">Are</span><span class="nv"> </span><span class="s">Invalid:&quot;</span>
+<span class="w">        </span><span class="nt">action_desc</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Actions</span><span class="nv"> </span><span class="s">Taken:</span><span class="nv">  </span><span class="s">Notification</span><span class="nv"> </span><span class="s">Only&quot;</span>
+<span class="w">        </span><span class="nt">to</span><span class="p">:</span>
+<span class="w">           </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudCustodian@Company.com</span>
+<span class="w">        </span><span class="nt">transport</span><span class="p">:</span>
+<span class="w">           </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span>
+<span class="w">           </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/12345678900/cloud-custodian-mailer</span>
+<span class="w">           </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
 </pre></div>
 </div>
 <p>Note that the <code class="docutils literal notranslate"><span class="pre">notify</span></code> action requires the cloud custodian mailer tool to be installed.</p>

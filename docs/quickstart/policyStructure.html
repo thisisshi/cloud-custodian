@@ -5658,29 +5658,29 @@ are needed to manage tag compliance. The other two policies in this set are, 1)
 checking to see if the tags have been corrected before the four day period
 is up, and 2) performing the operation of stopping all instances
 with the status to be stopped on that particular day.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2-tag-compliance-mark</span><span class="w"></span>
-<span class="linenos"> 2</span><span class="w">  </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2</span><span class="w"></span>
-<span class="linenos"> 3</span><span class="w">  </span><span class="nt">comment</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="linenos"> 4</span><span class="w">    </span><span class="no">Mark non-compliant, Non-ASG EC2 instances with stoppage in 4 days</span><span class="w"></span>
-<span class="linenos"> 5</span><span class="w">  </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="linenos"> 6</span><span class="l l-Scalar l-Scalar-Plain">▣───────── - &quot;State.Name&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">running</span><span class="w"></span>
-<span class="linenos"> 7</span><span class="l l-Scalar l-Scalar-Plain">│ ▣─────── - &quot;tag:aws:autoscaling:groupName&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
-<span class="linenos"> 8</span><span class="l l-Scalar l-Scalar-Plain">│ │ ▣───── - &quot;tag:c7n_status&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
-<span class="linenos"> 9</span><span class="nt">│ │ │ ▣─── - type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tag-count</span><span class="w"></span>
-<span class="linenos">10</span><span class="nt">│ │ │ │    - or</span><span class="p">:</span><span class="w">                           </span><span class="l l-Scalar l-Scalar-Plain">─┐</span><span class="w"></span>
-<span class="linenos">11</span><span class="l l-Scalar l-Scalar-Plain">│ │ │ │      - &quot;tag:Owner&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent          ├─If any of these tags are</span><span class="w"></span>
-<span class="linenos">12</span><span class="l l-Scalar l-Scalar-Plain">│ │ │ │      - &quot;tag:CostCenter&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent     │ missing, then select instance</span><span class="w"></span>
-<span class="linenos">13</span><span class="l l-Scalar l-Scalar-Plain">│ │ │ │      - &quot;tag:Project&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent       ─┘</span><span class="w"></span>
-<span class="linenos">14</span><span class="l l-Scalar l-Scalar-Plain">│ │ │ │</span><span class="w"></span>
-<span class="linenos">15</span><span class="nt">│ │ │ │  actions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">─────────────────▶ For selected instances, run this action</span><span class="w"></span>
-<span class="linenos">16</span><span class="nt">│ │ │ │    - type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mark-for-op ────▶ Mark instance for operation</span><span class="w"></span>
-<span class="linenos">17</span><span class="nt">│ │ │ │      op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop ─────────────▶ Stop instance</span><span class="w"></span>
-<span class="linenos">18</span><span class="nt">│ │ │ │      days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4 ──────────────▶ After 4 days</span><span class="w"></span>
-<span class="linenos">19</span><span class="l l-Scalar l-Scalar-Plain">│ │ │ │</span><span class="w"></span>
-<span class="linenos">20</span><span class="l l-Scalar l-Scalar-Plain">│ │ │ ▣────▶ If instance has 10 tags, skip</span><span class="w"></span>
-<span class="linenos">21</span><span class="l l-Scalar l-Scalar-Plain">│ │ ▣──────▶ If instance already has a c7n_status, skip</span><span class="w"></span>
-<span class="linenos">22</span><span class="l l-Scalar l-Scalar-Plain">│ ▣────────▶ If instance is part of an ASG, skip</span><span class="w"></span>
-<span class="linenos">23</span><span class="l l-Scalar l-Scalar-Plain">▣──────────▶ If instance is not running, skip</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2-tag-compliance-mark</span>
+<span class="linenos"> 2</span><span class="w">  </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2</span>
+<span class="linenos"> 3</span><span class="w">  </span><span class="nt">comment</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="linenos"> 4</span><span class="w">    </span><span class="no">Mark non-compliant, Non-ASG EC2 instances with stoppage in 4 days</span>
+<span class="linenos"> 5</span><span class="w">  </span><span class="nt">filters</span><span class="p">:</span>
+<span class="linenos"> 6</span><span class="l l-Scalar l-Scalar-Plain">▣───────── - &quot;State.Name&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">running</span>
+<span class="linenos"> 7</span><span class="l l-Scalar l-Scalar-Plain">│ ▣─────── - &quot;tag:aws:autoscaling:groupName&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
+<span class="linenos"> 8</span><span class="l l-Scalar l-Scalar-Plain">│ │ ▣───── - &quot;tag:c7n_status&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
+<span class="linenos"> 9</span><span class="nt">│ │ │ ▣─── - type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tag-count</span>
+<span class="linenos">10</span><span class="nt">│ │ │ │    - or</span><span class="p">:</span><span class="w">                           </span><span class="l l-Scalar l-Scalar-Plain">─┐</span>
+<span class="linenos">11</span><span class="l l-Scalar l-Scalar-Plain">│ │ │ │      - &quot;tag:Owner&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent          ├─If any of these tags are</span>
+<span class="linenos">12</span><span class="l l-Scalar l-Scalar-Plain">│ │ │ │      - &quot;tag:CostCenter&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent     │ missing, then select instance</span>
+<span class="linenos">13</span><span class="l l-Scalar l-Scalar-Plain">│ │ │ │      - &quot;tag:Project&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent       ─┘</span>
+<span class="linenos">14</span><span class="l l-Scalar l-Scalar-Plain">│ │ │ │</span>
+<span class="linenos">15</span><span class="nt">│ │ │ │  actions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">─────────────────▶ For selected instances, run this action</span>
+<span class="linenos">16</span><span class="nt">│ │ │ │    - type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mark-for-op ────▶ Mark instance for operation</span>
+<span class="linenos">17</span><span class="nt">│ │ │ │      op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop ─────────────▶ Stop instance</span>
+<span class="linenos">18</span><span class="nt">│ │ │ │      days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4 ──────────────▶ After 4 days</span>
+<span class="linenos">19</span><span class="l l-Scalar l-Scalar-Plain">│ │ │ │</span>
+<span class="linenos">20</span><span class="l l-Scalar l-Scalar-Plain">│ │ │ ▣────▶ If instance has 10 tags, skip</span>
+<span class="linenos">21</span><span class="l l-Scalar l-Scalar-Plain">│ │ ▣──────▶ If instance already has a c7n_status, skip</span>
+<span class="linenos">22</span><span class="l l-Scalar l-Scalar-Plain">│ ▣────────▶ If instance is part of an ASG, skip</span>
+<span class="linenos">23</span><span class="l l-Scalar l-Scalar-Plain">▣──────────▶ If instance is not running, skip</span>
 </pre></div>
 </div>
 </section>

@@ -5659,16 +5659,16 @@ version.</p>
 using one of the following options:</p>
 <section id="option-1-install-released-packages-to-local-python-environment">
 <h3>Option 1: Install released packages to local Python Environment<a class="headerlink" href="#option-1-install-released-packages-to-local-python-environment" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install c7n
-pip install c7n_gcp
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>c7n
+pip<span class="w"> </span>install<span class="w"> </span>c7n_gcp
 </pre></div>
 </div>
 </section>
 <section id="option-2-install-latest-from-the-repository">
 <h3>Option 2: Install latest from the repository<a class="headerlink" href="#option-2-install-latest-from-the-repository" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/cloud-custodian/cloud-custodian.git
-pip install -e ./cloud-custodian
-pip install -e ./cloud-custodian/tools/c7n_gcp
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/cloud-custodian/cloud-custodian.git
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>./cloud-custodian
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>./cloud-custodian/tools/c7n_gcp
 </pre></div>
 </div>
 </section>
@@ -5687,7 +5687,7 @@ pick up your credentials when it runs.</p>
 configure your credentials.</p>
 <p>First, <a class="reference external" href="https://cloud.google.com/sdk/install">install</a> <code class="docutils literal notranslate"><span class="pre">gcloud</span></code> (the GCP Command Line Interface).</p>
 <p>Then run the following command, substituting your username:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gcloud auth application-default login
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gcloud<span class="w"> </span>auth<span class="w"> </span>application-default<span class="w"> </span>login
 </pre></div>
 </div>
 <p>Executing the command will open a browser window with prompts to finish configuring
@@ -5716,17 +5716,17 @@ Custodian to do.</p>
 <p>In the example below, we will write a policy that filters for compute engine
 resources, and then stops each resource.</p>
 <p>Filename: <code class="docutils literal notranslate"><span class="pre">custodian.yml</span></code></p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-first-policy</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">      </span><span class="no">Stops all compute instances that are named &quot;test&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp.instance</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="w"></span>
-<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">name</span><span class="w"></span>
-<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-first-policy</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">Stops all compute instances that are named &quot;test&quot;</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp.instance</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span>
+<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">name</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop</span>
 </pre></div>
 </div>
 </section>
@@ -5734,7 +5734,7 @@ resources, and then stops each resource.</p>
 <span id="gcp-run-policy"></span><h2>Run Your Policy<a class="headerlink" href="#run-your-policy" title="Permalink to this headline">¶</a></h2>
 <p>First, ensure you have <a class="reference internal" href="#gcp-authenticate"><span class="std std-ref">configured one of the supported authentication mechanisms</span></a>.</p>
 <p>Next, run the following command to execute the policy with Custodian:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">GOOGLE_CLOUD_PROJECT</span><span class="o">=</span><span class="s2">&quot;project-id&quot;</span> custodian run --output-dir<span class="o">=</span>. custodian.yml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">GOOGLE_CLOUD_PROJECT</span><span class="o">=</span><span class="s2">&quot;project-id&quot;</span><span class="w"> </span>custodian<span class="w"> </span>run<span class="w"> </span>--output-dir<span class="o">=</span>.<span class="w"> </span>custodian.yml
 </pre></div>
 </div>
 <p>If successful, you should see output similar to the following on the command line:</p>

@@ -5677,11 +5677,11 @@ libraries are available (libgit2 &gt; 0.26)</p>
 <h2>Build<a class="headerlink" href="#build" title="Permalink to this headline">¶</a></h2>
 <p>Alternatively a docker image can be built as follows</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note must be top level directory of checkout</span>
-<span class="nb">cd</span> cloud-custodian
+<span class="nb">cd</span><span class="w"> </span>cloud-custodian
 
-docker build -t policystream:latest -f tools/c7n_policystream/Dockerfile .
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>policystream:latest<span class="w"> </span>-f<span class="w"> </span>tools/c7n_policystream/Dockerfile<span class="w"> </span>.
 
-docker run --mount <span class="nv">src</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">&quot;</span>,target<span class="o">=</span>/repos,type<span class="o">=</span><span class="nb">bind</span> policystream:latest
+docker<span class="w"> </span>run<span class="w"> </span>--mount<span class="w"> </span><span class="nv">src</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">&quot;</span>,target<span class="o">=</span>/repos,type<span class="o">=</span><span class="nb">bind</span><span class="w"> </span>policystream:latest
 </pre></div>
 </div>
 </section>

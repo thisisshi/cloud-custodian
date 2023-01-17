@@ -1437,6 +1437,14 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/resources/group-route53-recovery-readiness.html">route53-recovery-readiness resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/resources/readiness-check.html">aws.readiness-check</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../aws/resources/readiness-check.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../aws/resources/readiness-check.html#actions">Actions</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../aws/resources/group-route53domains.html">route53domains resources</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/resources/r53domain.html">aws.r53domain</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../aws/resources/r53domain.html#filters">Filters</a></li>
@@ -2924,6 +2932,11 @@
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cbs.html#actions">Actions</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html">tencentcloud.cbs-snapshot</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html#actions">Actions</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../tencentcloud/resources/group-cdb.html">cdb resources</a><ul>
@@ -2969,11 +2982,6 @@
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/ami.html#actions">Actions</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html">tencentcloud.cbs-snapshot</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html#filters">Filters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html#actions">Actions</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/cvm.html">tencentcloud.cvm</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cvm.html#filters">Filters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cvm.html#actions">Actions</a></li>
@@ -2985,14 +2993,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/elasticsearch.html">tencentcloud.elasticsearch</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/elasticsearch.html#filters">Filters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/elasticsearch.html#actions">Actions</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../tencentcloud/resources/group-security-group.html">security-group resources</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/security-group.html">tencentcloud.security-group</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/security-group.html#filters">Filters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/security-group.html#actions">Actions</a></li>
 </ul>
 </li>
 </ul>
@@ -3009,6 +3009,11 @@
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/nat-gateway.html">tencentcloud.nat-gateway</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/nat-gateway.html#filters">Filters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/nat-gateway.html#actions">Actions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/security-group.html">tencentcloud.security-group</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/security-group.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/security-group.html#actions">Actions</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/vpc.html">tencentcloud.vpc</a><ul>
@@ -5668,12 +5673,12 @@
 <span id="awscc-ecs-taskset-actions-delete"></span><h3>delete<a class="headerlink" href="#delete" title="Permalink to this headline">¶</a></h3>
 <p>Parent base class for filters and actions.</p>
 <div class="toggle docutils container">
-<div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete</span><span class="w"></span>
-<span class="nt">required</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span><span class="w"></span>
+<div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">enum</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete</span>
+<span class="nt">required</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span>
 </pre></div>
 </div>
 </div>
@@ -5683,180 +5688,180 @@
 <span id="awscc-ecs-taskset-actions-update"></span><h3>update<a class="headerlink" href="#update" title="Permalink to this headline">¶</a></h3>
 <p>Parent base class for filters and actions.</p>
 <div class="toggle docutils container">
-<div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">definitions</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">AwsVpcConfiguration</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The VPC subnets and security groups associated with a task. All specified</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">subnets and security groups must be from the same VPC.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">AssignPublicIp</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Whether the task&#39;s elastic network interface receives a public</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">IP address. The default value is DISABLED.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISABLED</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ENABLED</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">      </span><span class="nt">SecurityGroups</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The security groups associated with the task or service. If you</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">do not specify a security group, the default security group for the VPC</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">is used. There is a limit of 5 security groups that can be specified per</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">AwsVpcConfiguration.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">        </span><span class="nt">maxItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span><span class="w"></span>
-<span class="w">      </span><span class="nt">Subnets</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The subnets associated with the task or service. There is a limit</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">of 16 subnets that can be specified per AwsVpcConfiguration.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">        </span><span class="nt">maxItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span><span class="w"></span>
-<span class="w">    </span><span class="nt">required</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Subnets</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="w">  </span><span class="nt">LoadBalancer</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;A</span><span class="nv"> </span><span class="s">load</span><span class="nv"> </span><span class="s">balancer</span><span class="nv"> </span><span class="s">object</span><span class="nv"> </span><span class="s">representing</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">load</span><span class="nv"> </span><span class="s">balancer</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">use</span><span class="nv"> </span><span class="s">with</span><span class="w"></span>
-<span class="w">      </span><span class="s">the</span><span class="nv"> </span><span class="s">task</span><span class="nv"> </span><span class="s">set.</span><span class="nv"> </span><span class="s">The</span><span class="nv"> </span><span class="s">supported</span><span class="nv"> </span><span class="s">load</span><span class="nv"> </span><span class="s">balancer</span><span class="nv"> </span><span class="s">types</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">either</span><span class="nv"> </span><span class="s">an</span><span class="nv"> </span><span class="s">Application</span><span class="nv"> </span><span class="s">Load</span><span class="w"></span>
-<span class="w">      </span><span class="s">Balancer</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">Network</span><span class="nv"> </span><span class="s">Load</span><span class="nv"> </span><span class="s">Balancer.</span><span class="nv"> </span><span class="s">&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">ContainerName</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The name of the container (as it appears in a container definition)</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">to associate with the load balancer.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">      </span><span class="nt">ContainerPort</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The port on the container to associate with the load balancer.</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">This port must correspond to a containerPort in the task definition the</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">tasks in the service are using. For tasks that use the EC2 launch type,</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">the container instance they are launched on must allow ingress traffic on</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">the hostPort of the port mapping.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">integer</span><span class="w"></span>
-<span class="w">      </span><span class="nt">LoadBalancerName</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The name of the load balancer to associate with the Amazon ECS</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">service or task set. A load balancer name is only specified when using a</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">Classic Load Balancer. If you are using an Application Load Balancer or</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">a Network Load Balancer this should be omitted.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">      </span><span class="nt">TargetGroupArn</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The full Amazon Resource Name (ARN) of the Elastic Load Balancing</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">target group or groups associated with a service or task set. A target group</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">ARN is only specified when using an Application Load Balancer or Network</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">Load Balancer. If you are using a Classic Load Balancer this should be omitted.</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">For services using the ECS deployment controller, you can specify one or</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">multiple target groups. For more information, see https://docs.aws.amazon.com/AmazonECS/latest/developerguide/register-multiple-targetgroups.html</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">in the Amazon Elastic Container Service Developer Guide. For services using</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">the CODE_DEPLOY deployment controller, you are required to define two target</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">groups for the load balancer. For more information, see https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-bluegreen.html</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">in the Amazon Elastic Container Service Developer Guide. If your service&#39;s</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">task definition uses the awsvpc network mode (which is required for the</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">Fargate launch type), you must choose ip as the target type, not instance,</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">when creating your target groups because tasks that use the awsvpc network</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">mode are associated with an elastic network interface, not an Amazon EC2</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">instance.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="w">  </span><span class="nt">NetworkConfiguration</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An object representing the network configuration for a task or service.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">AwsVpcConfiguration</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The VPC subnets and security groups associated with a task. All</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">specified subnets and security groups must be from the same VPC.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">AssignPublicIp</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Whether the task&#39;s elastic network interface receives a public</span><span class="w"></span>
-<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">IP address. The default value is DISABLED.</span><span class="w"></span>
-<span class="w">            </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISABLED</span><span class="w"></span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ENABLED</span><span class="w"></span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">          </span><span class="nt">SecurityGroups</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The security groups associated with the task or service.</span><span class="w"></span>
-<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">If you do not specify a security group, the default security group for</span><span class="w"></span>
-<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">the VPC is used. There is a limit of 5 security groups that can be specified</span><span class="w"></span>
-<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">per AwsVpcConfiguration.</span><span class="w"></span>
-<span class="w">            </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">            </span><span class="nt">maxItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"></span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span><span class="w"></span>
-<span class="w">          </span><span class="nt">Subnets</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The subnets associated with the task or service. There is</span><span class="w"></span>
-<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">a limit of 16 subnets that can be specified per AwsVpcConfiguration.</span><span class="w"></span>
-<span class="w">            </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">            </span><span class="nt">maxItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16</span><span class="w"></span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span><span class="w"></span>
-<span class="w">        </span><span class="nt">required</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Subnets</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Scale</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">Unit</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The unit of measure for the scale value.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PERCENT</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">      </span><span class="nt">Value</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The value, specified as a percent total of a service&#39;s desiredCount,</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">to scale the task set. Accepted values are numbers between 0 and 100.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">maximum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"></span>
-<span class="w">        </span><span class="nt">minimum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">number</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="w">  </span><span class="nt">ServiceRegistry</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">ContainerName</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The container name value, already specified in the task definition,</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">to be used for your service discovery service. If the task definition that</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">your service task specifies uses the bridge or host network mode, you must</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">specify a containerName and containerPort combination from the task definition.</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">If the task definition that your service task specifies uses the awsvpc</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">network mode and a type SRV DNS record is used, you must specify either</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">a containerName and containerPort combination or a port value, but not both.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">      </span><span class="nt">ContainerPort</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The port value, already specified in the task definition, to</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">be used for your service discovery service. If the task definition your</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">service task specifies uses the bridge or host network mode, you must specify</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">a containerName and containerPort combination from the task definition.</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">If the task definition your service task specifies uses the awsvpc network</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">mode and a type SRV DNS record is used, you must specify either a containerName</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">and containerPort combination or a port value, but not both.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">integer</span><span class="w"></span>
-<span class="w">      </span><span class="nt">Port</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The port value used if your service discovery service specified</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">an SRV record. This field may be used if both the awsvpc network mode and</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">SRV records are used.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">integer</span><span class="w"></span>
-<span class="w">      </span><span class="nt">RegistryArn</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The Amazon Resource Name (ARN) of the service registry. The currently</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">supported service registry is AWS Cloud Map. For more information, see https://docs.aws.amazon.com/cloud-map/latest/api/API_CreateService.html</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Scale</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">Unit</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The unit of measure for the scale value.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PERCENT</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">      </span><span class="nt">Value</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The value, specified as a percent total of a service&#39;s desiredCount,</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">to scale the task set. Accepted values are numbers between 0 and 100.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">maximum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"></span>
-<span class="w">        </span><span class="nt">minimum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">number</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update</span><span class="w"></span>
+<div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">definitions</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">AwsVpcConfiguration</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The VPC subnets and security groups associated with a task. All specified</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">subnets and security groups must be from the same VPC.</span>
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">AssignPublicIp</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Whether the task&#39;s elastic network interface receives a public</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">IP address. The default value is DISABLED.</span>
+<span class="w">        </span><span class="nt">enum</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISABLED</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ENABLED</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">SecurityGroups</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The security groups associated with the task or service. If you</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">do not specify a security group, the default security group for the VPC</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">is used. There is a limit of 5 security groups that can be specified per</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">AwsVpcConfiguration.</span>
+<span class="w">        </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">        </span><span class="nt">maxItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span>
+<span class="w">      </span><span class="nt">Subnets</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The subnets associated with the task or service. There is a limit</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">of 16 subnets that can be specified per AwsVpcConfiguration.</span>
+<span class="w">        </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">        </span><span class="nt">maxItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span>
+<span class="w">    </span><span class="nt">required</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Subnets</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">  </span><span class="nt">LoadBalancer</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;A</span><span class="nv"> </span><span class="s">load</span><span class="nv"> </span><span class="s">balancer</span><span class="nv"> </span><span class="s">object</span><span class="nv"> </span><span class="s">representing</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">load</span><span class="nv"> </span><span class="s">balancer</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">use</span><span class="nv"> </span><span class="s">with</span>
+<span class="w">      </span><span class="s">the</span><span class="nv"> </span><span class="s">task</span><span class="nv"> </span><span class="s">set.</span><span class="nv"> </span><span class="s">The</span><span class="nv"> </span><span class="s">supported</span><span class="nv"> </span><span class="s">load</span><span class="nv"> </span><span class="s">balancer</span><span class="nv"> </span><span class="s">types</span><span class="nv"> </span><span class="s">are</span><span class="nv"> </span><span class="s">either</span><span class="nv"> </span><span class="s">an</span><span class="nv"> </span><span class="s">Application</span><span class="nv"> </span><span class="s">Load</span>
+<span class="w">      </span><span class="s">Balancer</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">Network</span><span class="nv"> </span><span class="s">Load</span><span class="nv"> </span><span class="s">Balancer.</span><span class="nv"> </span><span class="s">&#39;</span>
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">ContainerName</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The name of the container (as it appears in a container definition)</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">to associate with the load balancer.</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">ContainerPort</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The port on the container to associate with the load balancer.</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">This port must correspond to a containerPort in the task definition the</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">tasks in the service are using. For tasks that use the EC2 launch type,</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">the container instance they are launched on must allow ingress traffic on</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">the hostPort of the port mapping.</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">integer</span>
+<span class="w">      </span><span class="nt">LoadBalancerName</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The name of the load balancer to associate with the Amazon ECS</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">service or task set. A load balancer name is only specified when using a</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">Classic Load Balancer. If you are using an Application Load Balancer or</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">a Network Load Balancer this should be omitted.</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">TargetGroupArn</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The full Amazon Resource Name (ARN) of the Elastic Load Balancing</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">target group or groups associated with a service or task set. A target group</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">ARN is only specified when using an Application Load Balancer or Network</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">Load Balancer. If you are using a Classic Load Balancer this should be omitted.</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">For services using the ECS deployment controller, you can specify one or</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">multiple target groups. For more information, see https://docs.aws.amazon.com/AmazonECS/latest/developerguide/register-multiple-targetgroups.html</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">in the Amazon Elastic Container Service Developer Guide. For services using</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">the CODE_DEPLOY deployment controller, you are required to define two target</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">groups for the load balancer. For more information, see https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-bluegreen.html</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">in the Amazon Elastic Container Service Developer Guide. If your service&#39;s</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">task definition uses the awsvpc network mode (which is required for the</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">Fargate launch type), you must choose ip as the target type, not instance,</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">when creating your target groups because tasks that use the awsvpc network</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">mode are associated with an elastic network interface, not an Amazon EC2</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">instance.</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">  </span><span class="nt">NetworkConfiguration</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An object representing the network configuration for a task or service.</span>
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">AwsVpcConfiguration</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The VPC subnets and security groups associated with a task. All</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">specified subnets and security groups must be from the same VPC.</span>
+<span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">AssignPublicIp</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Whether the task&#39;s elastic network interface receives a public</span>
+<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">IP address. The default value is DISABLED.</span>
+<span class="w">            </span><span class="nt">enum</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISABLED</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ENABLED</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">          </span><span class="nt">SecurityGroups</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The security groups associated with the task or service.</span>
+<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">If you do not specify a security group, the default security group for</span>
+<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">the VPC is used. There is a limit of 5 security groups that can be specified</span>
+<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">per AwsVpcConfiguration.</span>
+<span class="w">            </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">            </span><span class="nt">maxItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span>
+<span class="w">          </span><span class="nt">Subnets</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The subnets associated with the task or service. There is</span>
+<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">a limit of 16 subnets that can be specified per AwsVpcConfiguration.</span>
+<span class="w">            </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">            </span><span class="nt">maxItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span>
+<span class="w">        </span><span class="nt">required</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Subnets</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">  </span><span class="nt">Scale</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Unit</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The unit of measure for the scale value.</span>
+<span class="w">        </span><span class="nt">enum</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PERCENT</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">Value</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The value, specified as a percent total of a service&#39;s desiredCount,</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">to scale the task set. Accepted values are numbers between 0 and 100.</span>
+<span class="w">        </span><span class="nt">maximum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">        </span><span class="nt">minimum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">number</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">  </span><span class="nt">ServiceRegistry</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">ContainerName</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The container name value, already specified in the task definition,</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">to be used for your service discovery service. If the task definition that</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">your service task specifies uses the bridge or host network mode, you must</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">specify a containerName and containerPort combination from the task definition.</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">If the task definition that your service task specifies uses the awsvpc</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">network mode and a type SRV DNS record is used, you must specify either</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">a containerName and containerPort combination or a port value, but not both.</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">ContainerPort</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The port value, already specified in the task definition, to</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">be used for your service discovery service. If the task definition your</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">service task specifies uses the bridge or host network mode, you must specify</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">a containerName and containerPort combination from the task definition.</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">If the task definition your service task specifies uses the awsvpc network</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">mode and a type SRV DNS record is used, you must specify either a containerName</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">and containerPort combination or a port value, but not both.</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">integer</span>
+<span class="w">      </span><span class="nt">Port</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The port value used if your service discovery service specified</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">an SRV record. This field may be used if both the awsvpc network mode and</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">SRV records are used.</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">integer</span>
+<span class="w">      </span><span class="nt">RegistryArn</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The Amazon Resource Name (ARN) of the service registry. The currently</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">supported service registry is AWS Cloud Map. For more information, see https://docs.aws.amazon.com/cloud-map/latest/api/API_CreateService.html</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="nt">properties</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Scale</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Unit</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The unit of measure for the scale value.</span>
+<span class="w">        </span><span class="nt">enum</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PERCENT</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">Value</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The value, specified as a percent total of a service&#39;s desiredCount,</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">to scale the task set. Accepted values are numbers between 0 and 100.</span>
+<span class="w">        </span><span class="nt">maximum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">        </span><span class="nt">minimum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">number</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">enum</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update</span>
 </pre></div>
 </div>
 </div>

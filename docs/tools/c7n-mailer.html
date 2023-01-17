@@ -5686,35 +5686,35 @@ must
 every individual recipient of emails. If need be, make an AWS support ticket to
 be taken out of SES sandbox mode.</p>
 <p>Your <code class="docutils literal notranslate"><span class="pre">mailer.yml</span></code> should now look something like this:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">queue_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/1234567890/c7n-mailer-test</span><span class="w"></span>
-<span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456790:role/c7n-mailer-test</span><span class="w"></span>
-<span class="nt">from_address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">you@example.com</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">queue_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/1234567890/c7n-mailer-test</span>
+<span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456790:role/c7n-mailer-test</span>
+<span class="nt">from_address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">you@example.com</span>
 </pre></div>
 </div>
 <p>You can also set <code class="docutils literal notranslate"><span class="pre">region</span></code> if you are in a region other than <code class="docutils literal notranslate"><span class="pre">us-east-1</span></code> as well as <code class="docutils literal notranslate"><span class="pre">lambda_tags</span></code> to give the mailer tags.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-2</span><span class="w"></span>
-<span class="nt">lambda_tags</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ops</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-2</span>
+<span class="nt">lambda_tags</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ops</span>
 </pre></div>
 </div>
 <p>Now let’s make a Custodian policy to populate your mailer queue. Create a
 <code class="docutils literal notranslate"><span class="pre">test-policy.yml</span></code> file with this content (update <code class="docutils literal notranslate"><span class="pre">to</span></code> and <code class="docutils literal notranslate"><span class="pre">queue</span></code> to match your
 environment)</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">c7n-mailer-test</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tag:MailerTest&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span><span class="w"></span>
-<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
-<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testing the c7n mailer</span><span class="w"></span>
-<span class="w">        </span><span class="nt">to</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">you@example.com</span><span class="w"></span>
-<span class="w">        </span><span class="nt">transport</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span><span class="w"></span>
-<span class="w">          </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/1234567890/c7n-mailer-test</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">c7n-mailer-test</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tag:MailerTest&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span>
+<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2&#39;</span>
+<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testing the c7n mailer</span>
+<span class="w">        </span><span class="nt">to</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">you@example.com</span>
+<span class="w">        </span><span class="nt">transport</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span>
+<span class="w">          </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/1234567890/c7n-mailer-test</span>
 </pre></div>
 </div>
 </section>
@@ -5730,27 +5730,27 @@ for the case you don’t want or you can’t use AWS CloudWatch, e.g. in Azure o
 </pre></div>
 </div>
 <p>Your <code class="docutils literal notranslate"><span class="pre">mailer.yml</span></code> should now look something like this:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">queue_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/1234567890/c7n-mailer-test</span><span class="w"></span>
-<span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456790:role/c7n-mailer-test</span><span class="w"></span>
-<span class="nt">datadog_api_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">XXXXXXXXXXXXXXXXXXXXXXXXXXXXX</span><span class="w"></span>
-<span class="nt">datadog_application_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">queue_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/1234567890/c7n-mailer-test</span>
+<span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456790:role/c7n-mailer-test</span>
+<span class="nt">datadog_api_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">XXXXXXXXXXXXXXXXXXXXXXXXXXXXX</span>
+<span class="nt">datadog_application_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</span>
 </pre></div>
 </div>
 <p>(Also set <code class="docutils literal notranslate"><span class="pre">region</span></code> if you are in a region other than <code class="docutils literal notranslate"><span class="pre">us-east-1</span></code>.)</p>
 <p>Now let’s make a Custodian policy to populate your mailer queue. Create a
 <code class="docutils literal notranslate"><span class="pre">test-policy.yml</span></code>:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">c7n-mailer-test</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ebs</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Attachments</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span><span class="w"></span>
-<span class="w">        </span><span class="nt">to</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">datadog://?metric_name=datadog.metric.name&amp;metric_value_tag=Size</span><span class="w"></span>
-<span class="w">        </span><span class="nt">transport</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span><span class="w"></span>
-<span class="w">          </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/1234567890/c7n-mailer-test</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">c7n-mailer-test</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ebs</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Attachments</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span>
+<span class="w">        </span><span class="nt">to</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">datadog://?metric_name=datadog.metric.name&amp;metric_value_tag=Size</span>
+<span class="w">        </span><span class="nt">transport</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span>
+<span class="w">          </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/1234567890/c7n-mailer-test</span>
 </pre></div>
 </div>
 <p>There is a special <code class="docutils literal notranslate"><span class="pre">to</span></code> format that specifies datadog delivery, and includes the datadog configuration via url parameters.</p>
@@ -5762,9 +5762,9 @@ for the case you don’t want or you can’t use AWS CloudWatch, e.g. in Azure o
 <section id="slack">
 <h3>Slack:<a class="headerlink" href="#slack" title="Permalink to this headline">¶</a></h3>
 <p>The Custodian mailer supports Slack messaging as a separate notification mechanism for the SQS transport method. To enable Slack integration, you must specify a Slack token in the <code class="docutils literal notranslate"><span class="pre">slack_token</span></code> field under the <code class="docutils literal notranslate"><span class="pre">mailer.yml</span></code> file.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">queue_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/1234567890/c7n-mailer-test</span><span class="w"></span>
-<span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456790:role/c7n-mailer-test</span><span class="w"></span>
-<span class="nt">slack_token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xoxo-token123</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">queue_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/1234567890/c7n-mailer-test</span>
+<span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456790:role/c7n-mailer-test</span>
+<span class="nt">slack_token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xoxo-token123</span>
 </pre></div>
 </div>
 <p>To enable Slack messaging, several unique fields are evaluated in the policy, as shown in the below example:</p>
@@ -5858,10 +5858,10 @@ like so: <code class="docutils literal notranslate"><span class="pre">slack_msg_
 <section id="splunk-http-event-collector-hec">
 <h3>Splunk HTTP Event Collector (HEC)<a class="headerlink" href="#splunk-http-event-collector-hec" title="Permalink to this headline">¶</a></h3>
 <p>The Custodian mailer supports delivery to the HTTP Event Collector (HEC) endpoint of a Splunk instance as a separate notification mechanism for the SQS transport method. To enable Splunk HEC integration, you must specify the URL to the HEC endpoint as well as a valid username and token:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">queue_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/1234567890/c7n-mailer-test</span><span class="w"></span>
-<span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456790:role/c7n-mailer-test</span><span class="w"></span>
-<span class="nt">splunk_hec_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://http-inputs-foo.splunkcloud.com/services/collector/event</span><span class="w"></span>
-<span class="nt">splunk_hec_token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">268b3cc2-f32e-4a19-a1e8-aee08d86ca7f</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">queue_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/1234567890/c7n-mailer-test</span>
+<span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456790:role/c7n-mailer-test</span>
+<span class="nt">splunk_hec_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://http-inputs-foo.splunkcloud.com/services/collector/event</span>
+<span class="nt">splunk_hec_token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">268b3cc2-f32e-4a19-a1e8-aee08d86ca7f</span>
 </pre></div>
 </div>
 <p>To send events for a policy to the Splunk HEC endpoint, add a <code class="docutils literal notranslate"><span class="pre">to</span></code> address notify action specifying the name of the Splunk index to send events to in the form <code class="docutils literal notranslate"><span class="pre">splunkhec://indexName</span></code>:</p>
@@ -6417,18 +6417,18 @@ strings. You can treat it as a regular <code class="docutils literal notranslate
 <h4>AWS<a class="headerlink" href="#aws" title="Permalink to this headline">¶</a></h4>
 <p>You can use KMS to encrypt your secrets and use encrypted secret in mailer policy.
 Custodian tries to decrypt the string using KMS, if it fails c7n treats it as a plaintext secret.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="nt">plaintext_secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;raw_secret&gt;</span><span class="w"></span>
-<span class="w"> </span><span class="nt">secured_string</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;encrypted_secret&gt;</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="nt">plaintext_secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;raw_secret&gt;</span>
+<span class="w"> </span><span class="nt">secured_string</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;encrypted_secret&gt;</span>
 </pre></div>
 </div>
 </section>
 <section id="azure">
 <h4>Azure<a class="headerlink" href="#azure" title="Permalink to this headline">¶</a></h4>
 <p>You can store your secrets in Azure Key Vault secrets and reference them from the policy.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">plaintext_secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;raw_secret&gt;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">secured_string</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.keyvault</span><span class="w"></span>
-<span class="w">    </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://your-vault.vault.azure.net/secrets/your-secret</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">plaintext_secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;raw_secret&gt;</span>
+<span class="w">  </span><span class="nt">secured_string</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.keyvault</span>
+<span class="w">    </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://your-vault.vault.azure.net/secrets/your-secret</span>
 </pre></div>
 </div>
 <p>Note: <code class="docutils literal notranslate"><span class="pre">secrets.get</span></code> permission on the KeyVault for the Service Principal is required.</p>
@@ -6436,16 +6436,16 @@ Custodian tries to decrypt the string using KMS, if it fails c7n treats it as a 
 <section id="gcp">
 <h4>GCP<a class="headerlink" href="#gcp" title="Permalink to this headline">¶</a></h4>
 <p>You can store your secrets as GCP Secret Manager secrets and reference them from the policy.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">plaintext_secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;raw_secret&gt;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">secured_string</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp.secretmanager</span><span class="w"></span>
-<span class="w">    </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">projects/12345678912/secrets/your-secret</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">plaintext_secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;raw_secret&gt;</span>
+<span class="w">  </span><span class="nt">secured_string</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp.secretmanager</span>
+<span class="w">    </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">projects/12345678912/secrets/your-secret</span>
 </pre></div>
 </div>
 <p>An example of an SMTP password set as a secured string:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">smtp_password</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp.secretmanager</span><span class="w"></span>
-<span class="w">    </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">projects/59808015552/secrets/smtp_pw</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">smtp_password</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp.secretmanager</span>
+<span class="w">    </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">projects/59808015552/secrets/smtp_pw</span>
 </pre></div>
 </div>
 <p>Note: If you do not specify a version, <code class="docutils literal notranslate"><span class="pre">/versions/latest</span></code> will be appended to your secret location.</p>
@@ -6455,24 +6455,24 @@ Custodian tries to decrypt the string using KMS, if it fails c7n treats it as a 
 <section id="configuring-a-policy-to-send-email">
 <h2>Configuring a policy to send email<a class="headerlink" href="#configuring-a-policy-to-send-email" title="Permalink to this headline">¶</a></h2>
 <p>Outbound email can be added to any policy by including the <code class="docutils literal notranslate"><span class="pre">notify</span></code> action.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bad-apples</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asg</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tag:ASV&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span><span class="w"></span>
-<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
-<span class="w">        </span><span class="nt">template_format</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;html&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;1&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fix your tags</span><span class="w"></span>
-<span class="w">        </span><span class="nt">to</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">resource-owner</span><span class="w"></span>
-<span class="w">        </span><span class="nt">owner_absent_contact</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo@example.com</span><span class="w"></span>
-<span class="w">        </span><span class="nt">transport</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span><span class="w"></span>
-<span class="w">          </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/80101010101/cloud-custodian-message-relay</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bad-apples</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asg</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tag:ASV&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span>
+<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">        </span><span class="nt">template_format</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;html&#39;</span>
+<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;1&#39;</span>
+<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fix your tags</span>
+<span class="w">        </span><span class="nt">to</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">resource-owner</span>
+<span class="w">        </span><span class="nt">owner_absent_contact</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo@example.com</span>
+<span class="w">        </span><span class="nt">transport</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span>
+<span class="w">          </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/80101010101/cloud-custodian-message-relay</span>
 </pre></div>
 </div>
 <p>So breaking it down, you add an action of type <code class="docutils literal notranslate"><span class="pre">notify</span></code>. You can specify a
@@ -6495,32 +6495,32 @@ specified then <code class="docutils literal notranslate"><span class="pre">reso
 the <code class="docutils literal notranslate"><span class="pre">resource-owner</span></code> special option was unable to find any matching owner contact
 tags.</p>
 <p>In addition, you may choose to use a custom tag instead of the default <code class="docutils literal notranslate"><span class="pre">OwnerContact</span></code>.  In order to configure this, the mailer.yaml must be modified to include the contact_tags and the custom tag.  The <code class="docutils literal notranslate"><span class="pre">resource-owner</span></code> will now email the custom tag instead of <code class="docutils literal notranslate"><span class="pre">OwnerContact</span></code>.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">contact_tags</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;custom_tag&quot;</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">contact_tags</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;custom_tag&quot;</span>
 </pre></div>
 </div>
 <p>For reference purposes, the JSON Schema of the <code class="docutils literal notranslate"><span class="pre">notify</span></code> action:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;transport&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;to&quot;</span><span class="p">],</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;notify&quot;</span><span class="p">]},</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;to&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">}},</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;owner_absent_contact&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">}},</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">},</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;priority_header&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">},</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;template&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">},</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;transport&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;queue&quot;</span><span class="p">],</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;queue&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">},</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;region&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">},</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;sqs&quot;</span><span class="p">]}</span><span class="w"></span>
-<span class="w">      </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;transport&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;to&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;notify&quot;</span><span class="p">]},</span>
+<span class="w">    </span><span class="nt">&quot;to&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">}},</span>
+<span class="w">    </span><span class="nt">&quot;owner_absent_contact&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">}},</span>
+<span class="w">    </span><span class="nt">&quot;subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;priority_header&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;template&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;transport&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;queue&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;queue&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;region&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;sqs&quot;</span><span class="p">]}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </section>
@@ -6538,35 +6538,35 @@ Configuration for this scenario requires only minor changes from AWS deployments
 mailer is running under.</p>
 <p>The notify action in your policy will reflect transport type <code class="docutils literal notranslate"><span class="pre">asq</span></code> with the URL
 to an Azure Storage Queue.  For example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-notify</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.resourcegroup</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">send a message to a mailer instance</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span><span class="w"></span>
-<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
-<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Hello from C7N Mailer</span><span class="w"></span>
-<span class="w">        </span><span class="nt">to</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">you@youremail.com</span><span class="w"></span>
-<span class="w">        </span><span class="nt">transport</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asq</span><span class="w"></span>
-<span class="w">          </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://storageaccount.queue.core.windows.net/queuename</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-notify</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.resourcegroup</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">send a message to a mailer instance</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span>
+<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2&#39;</span>
+<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Hello from C7N Mailer</span>
+<span class="w">        </span><span class="nt">to</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">you@youremail.com</span>
+<span class="w">        </span><span class="nt">transport</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asq</span>
+<span class="w">          </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://storageaccount.queue.core.windows.net/queuename</span>
 </pre></div>
 </div>
 <p>In your mailer configuration, you’ll need to provide your SendGrid API key as well as
 prefix your queue URL with <code class="docutils literal notranslate"><span class="pre">asq://</span></code> to let mailer know what type of queue it is:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">queue_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asq://storageaccount.queue.core.windows.net/queuename</span><span class="w"></span>
-<span class="nt">from_address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">you@youremail.com</span><span class="w"></span>
-<span class="nt">sendgrid_api_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SENDGRID_API_KEY</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">queue_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asq://storageaccount.queue.core.windows.net/queuename</span>
+<span class="nt">from_address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">you@youremail.com</span>
+<span class="nt">sendgrid_api_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SENDGRID_API_KEY</span>
 </pre></div>
 </div>
 <p>The mailer will transmit all messages found on the queue on each execution, and will retry
 sending 3 times in the event of a failure calling SendGrid.  After the retries the queue
 message will be discarded.</p>
 <p>In addition, SendGrid delivery on Azure supports using resource tags to send emails. For example, in the <code class="docutils literal notranslate"><span class="pre">to</span></code> field:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">to</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tag:OwnerEmail</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">to</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tag:OwnerEmail</span>
 </pre></div>
 </div>
 <p>This will find the email address associated with the resource’s <code class="docutils literal notranslate"><span class="pre">OwnerEmail</span></code> tag, and send an email to the specified address.
@@ -6577,12 +6577,12 @@ If no tag is found, or the associated email address is invalid, no email will be
 mailer configuration.</p>
 <p><code class="docutils literal notranslate"><span class="pre">c7n-mailer</span> <span class="pre">--config</span> <span class="pre">mailer.yml</span> <span class="pre">--update-lambda</span></code></p>
 <p>where a simple <code class="docutils literal notranslate"><span class="pre">mailer.yml</span></code> using Consumption functions may look like:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">queue_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asq://storage.queue.core.windows.net/custodian</span><span class="w"></span>
-<span class="nt">from_address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo@mail.com</span><span class="w"></span>
-<span class="nt">sendgrid_api_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;key&gt;</span><span class="w"></span>
-<span class="nt">function_properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">servicePlan</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;testmailer1&#39;</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">queue_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asq://storage.queue.core.windows.net/custodian</span>
+<span class="nt">from_address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo@mail.com</span>
+<span class="nt">sendgrid_api_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;key&gt;</span>
+<span class="nt">function_properties</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">servicePlan</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;testmailer1&#39;</span>
 </pre></div>
 </div>
 </section>
@@ -6597,20 +6597,20 @@ service principals credentials.</p>
 function policy where simply providing an name is sufficient, the
 uuid/id and client id of the identity must be provided. You can
 retrieve this information on the cli using the <code class="docutils literal notranslate"><span class="pre">az</span> <span class="pre">identity</span> <span class="pre">list</span></code>.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">function_properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">identity</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UserAssigned</span><span class="w"></span>
-<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/subscriptions/333fd504-7f11-2270-88c8-7325a27f7222/resourcegroups/c7n/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mailer&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">client_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;b9cb06fa-dfb8-4342-add3-aab5acb2abbc&quot;</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">function_properties</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">identity</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UserAssigned</span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/subscriptions/333fd504-7f11-2270-88c8-7325a27f7222/resourcegroups/c7n/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mailer&quot;</span>
+<span class="w">    </span><span class="nt">client_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;b9cb06fa-dfb8-4342-add3-aab5acb2abbc&quot;</span>
 </pre></div>
 </div>
 <p>A system managed identity can also be used, and the Azure platform will
 create an identity when the function is provisoned, however the function’s identity
 then needs to be retrieved and mapped to rbac permissions post provisioning, this
 user management activity must be performed manually.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">function_properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">identity</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SystemAssigned</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">function_properties</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">identity</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SystemAssigned</span>
 </pre></div>
 </div>
 </section>
@@ -6628,38 +6628,38 @@ user management activity must be performed manually.</p>
 Configuration for this scenario requires only minor changes from AWS deployments.</p>
 <p>The notify action in your policy will reflect transport type <code class="docutils literal notranslate"><span class="pre">projects</span></code> with the URL
 to a GCP Pub/Sub Topic.  For example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp-notify</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp.compute</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example policy</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span><span class="w"></span>
-<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
-<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Hello from C7N Mailer</span><span class="w"></span>
-<span class="w">        </span><span class="nt">to</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">you@youremail.com</span><span class="w"></span>
-<span class="w">        </span><span class="nt">transport</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pubsub</span><span class="w"></span>
-<span class="w">          </span><span class="nt">topic</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">projects/myproject/topics/mytopic</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp-notify</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp.compute</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example policy</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span>
+<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2&#39;</span>
+<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Hello from C7N Mailer</span>
+<span class="w">        </span><span class="nt">to</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">you@youremail.com</span>
+<span class="w">        </span><span class="nt">transport</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pubsub</span>
+<span class="w">          </span><span class="nt">topic</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">projects/myproject/topics/mytopic</span>
 </pre></div>
 </div>
 <p>In your mailer configuration, you’ll need to provide your SMTP account information
 as well as your topic subscription path in the queue_url variable. Please note that the
 subscription you specify should be subscribed to the topic you assign in your policies’
 notify action for GCP resources.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">queue_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">projects/myproject/subscriptions/mysubscription</span><span class="w"></span>
-<span class="nt">from_address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">you@youremail.com</span><span class="w"></span>
-<span class="c1"># c7n-mailer currently requires a role be present, even if it&#39;s empty</span><span class="w"></span>
-<span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">queue_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">projects/myproject/subscriptions/mysubscription</span>
+<span class="nt">from_address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">you@youremail.com</span>
+<span class="c1"># c7n-mailer currently requires a role be present, even if it&#39;s empty</span>
+<span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
 
-<span class="nt">smtp_server</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my.smtp.add.ress</span><span class="w"></span>
-<span class="nt">smtp_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">25</span><span class="w"></span>
-<span class="nt">smtp_ssl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="nt">smtp_username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">smtpuser</span><span class="w"></span>
-<span class="nt">smtp_password</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp.secretmanager</span><span class="w"></span>
-<span class="w">  </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">projects/12345678912/secrets/smtppassword</span><span class="w"></span>
+<span class="nt">smtp_server</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my.smtp.add.ress</span>
+<span class="nt">smtp_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">25</span>
+<span class="nt">smtp_ssl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">smtp_username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">smtpuser</span>
+<span class="nt">smtp_password</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp.secretmanager</span>
+<span class="w">  </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">projects/12345678912/secrets/smtppassword</span>
 </pre></div>
 </div>
 <p>The mailer will transmit all messages found on the queue on each execution using SMTP/Email delivery.</p>

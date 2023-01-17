@@ -5654,15 +5654,15 @@ to remove enough tags to make the desired amount of space while preserving
 a given set of tags. Setting space to 0 will remove all tags not listed to preserve.</p>
 <p>This example limits the number of tags on all virtual machines to 12, while
 making sure to keep <cite>TagName1</cite> and <cite>TagName2</cite> preserved.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tag-trim</span><span class="w"></span>
-<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">        </span><span class="no">Trims tags from resources to make additional space</span><span class="w"></span>
-<span class="w">      </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.vm</span><span class="w"></span>
-<span class="w">      </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tag-trim</span><span class="w"></span>
-<span class="w">         </span><span class="nt">preserve</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;TagName1&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;TagName2&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">         </span><span class="nt">space</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tag-trim</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">        </span><span class="no">Trims tags from resources to make additional space</span>
+<span class="w">      </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.vm</span>
+<span class="w">      </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tag-trim</span>
+<span class="w">         </span><span class="nt">preserve</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;TagName1&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;TagName2&#39;</span><span class="p p-Indicator">]</span>
+<span class="w">         </span><span class="nt">space</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
 </pre></div>
 </div>
 </section>

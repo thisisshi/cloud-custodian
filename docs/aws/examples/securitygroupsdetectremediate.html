@@ -5657,56 +5657,56 @@ Having such a quick auto-remediation action greatly reduces any attack window!
 By notifying the customer who tried to perform the action it helps drive user
 behaviour and lets them know why the security group keeps reverting their 0.0.0.0/0
 rule additions on them!</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">high-risk-security-groups-remediate</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security-group</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">      </span><span class="no">Remove any rule from a security group that allows 0.0.0.0/0 or ::/0 (IPv6) ingress</span><span class="w"></span>
-<span class="w">      </span><span class="no">and notify the user  who added the violating rule.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span><span class="w"></span>
-<span class="w">        </span><span class="nt">events</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span><span class="w"></span>
-<span class="w">            </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AuthorizeSecurityGroupIngress</span><span class="w"></span>
-<span class="w">            </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;responseElements.securityGroupRuleSet.items[].groupId&quot;</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span><span class="w"></span>
-<span class="w">            </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AuthorizeSecurityGroupEgress</span><span class="w"></span>
-<span class="w">            </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;responseElements.securityGroupRuleSet.items[].groupId&quot;</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span><span class="w"></span>
-<span class="w">            </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RevokeSecurityGroupEgress</span><span class="w"></span>
-<span class="w">            </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;requestParameters.groupId&quot;</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span><span class="w"></span>
-<span class="w">            </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RevokeSecurityGroupIngress</span><span class="w"></span>
-<span class="w">            </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;requestParameters.groupId&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">or</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingress</span><span class="w"></span>
-<span class="w">              </span><span class="nt">Cidr</span><span class="p">:</span><span class="w"></span>
-<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.0.0.0/0&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingress</span><span class="w"></span>
-<span class="w">              </span><span class="nt">CidrV6</span><span class="p">:</span><span class="w"></span>
-<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;::/0&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remove-permissions</span><span class="w"></span>
-<span class="w">          </span><span class="nt">ingress</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">matched</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span><span class="w"></span>
-<span class="w">          </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default.html</span><span class="w"></span>
-<span class="w">          </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">          </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Open</span><span class="nv"> </span><span class="s">Security</span><span class="nv"> </span><span class="s">Group</span><span class="nv"> </span><span class="s">Rule</span><span class="nv"> </span><span class="s">Created-[custodian</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">account</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">region</span><span class="nv"> </span><span class="s">}}]&quot;</span><span class="w"></span>
-<span class="w">          </span><span class="nt">violation_desc</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Security</span><span class="nv"> </span><span class="s">Group(s)</span><span class="nv"> </span><span class="s">Which</span><span class="nv"> </span><span class="s">Had</span><span class="nv"> </span><span class="s">Rules</span><span class="nv"> </span><span class="s">Open</span><span class="nv"> </span><span class="s">To</span><span class="nv"> </span><span class="s">The</span><span class="nv"> </span><span class="s">World:&quot;</span><span class="w"></span>
-<span class="w">          </span><span class="nt">action_desc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">              </span><span class="no">&quot;Actions Taken:  The Violating Security Group Rule Has Been Removed As It Typically</span><span class="w"></span>
-<span class="w">              </span><span class="no">Allows Direct Incoming Public Internet Traffic Access To Your Resource Which Violates Our</span><span class="w"></span>
-<span class="w">              </span><span class="no">Company&#39;s Cloud Security Policy.  Please Refer To Our Company&#39;s Cloud Security Best</span><span class="w"></span>
-<span class="w">              </span><span class="no">Practices Documentation.  If This Ingress Rule Is Required You May Contact The Security</span><span class="w"></span>
-<span class="w">              </span><span class="no">Team To Request An Exception.&quot;</span><span class="w"></span>
-<span class="w">          </span><span class="nt">to</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudCustodian@Company.com</span><span class="w"></span>
-<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">event-owner</span><span class="w"></span>
-<span class="w">          </span><span class="nt">transport</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span><span class="w"></span>
-<span class="w">              </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/12345678900/cloud-custodian-mailer</span><span class="w"></span>
-<span class="w">              </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">high-risk-security-groups-remediate</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security-group</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">Remove any rule from a security group that allows 0.0.0.0/0 or ::/0 (IPv6) ingress</span>
+<span class="w">      </span><span class="no">and notify the user  who added the violating rule.</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span>
+<span class="w">        </span><span class="nt">events</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span>
+<span class="w">            </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AuthorizeSecurityGroupIngress</span>
+<span class="w">            </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;responseElements.securityGroupRuleSet.items[].groupId&quot;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span>
+<span class="w">            </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AuthorizeSecurityGroupEgress</span>
+<span class="w">            </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;responseElements.securityGroupRuleSet.items[].groupId&quot;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span>
+<span class="w">            </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RevokeSecurityGroupEgress</span>
+<span class="w">            </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;requestParameters.groupId&quot;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span>
+<span class="w">            </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RevokeSecurityGroupIngress</span>
+<span class="w">            </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;requestParameters.groupId&quot;</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">or</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingress</span>
+<span class="w">              </span><span class="nt">Cidr</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.0.0.0/0&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingress</span>
+<span class="w">              </span><span class="nt">CidrV6</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;::/0&quot;</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remove-permissions</span>
+<span class="w">          </span><span class="nt">ingress</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">matched</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span>
+<span class="w">          </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default.html</span>
+<span class="w">          </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">          </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Open</span><span class="nv"> </span><span class="s">Security</span><span class="nv"> </span><span class="s">Group</span><span class="nv"> </span><span class="s">Rule</span><span class="nv"> </span><span class="s">Created-[custodian</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">account</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">region</span><span class="nv"> </span><span class="s">}}]&quot;</span>
+<span class="w">          </span><span class="nt">violation_desc</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Security</span><span class="nv"> </span><span class="s">Group(s)</span><span class="nv"> </span><span class="s">Which</span><span class="nv"> </span><span class="s">Had</span><span class="nv"> </span><span class="s">Rules</span><span class="nv"> </span><span class="s">Open</span><span class="nv"> </span><span class="s">To</span><span class="nv"> </span><span class="s">The</span><span class="nv"> </span><span class="s">World:&quot;</span>
+<span class="w">          </span><span class="nt">action_desc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">              </span><span class="no">&quot;Actions Taken:  The Violating Security Group Rule Has Been Removed As It Typically</span>
+<span class="w">              </span><span class="no">Allows Direct Incoming Public Internet Traffic Access To Your Resource Which Violates Our</span>
+<span class="w">              </span><span class="no">Company&#39;s Cloud Security Policy.  Please Refer To Our Company&#39;s Cloud Security Best</span>
+<span class="w">              </span><span class="no">Practices Documentation.  If This Ingress Rule Is Required You May Contact The Security</span>
+<span class="w">              </span><span class="no">Team To Request An Exception.&quot;</span>
+<span class="w">          </span><span class="nt">to</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudCustodian@Company.com</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">event-owner</span>
+<span class="w">          </span><span class="nt">transport</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span>
+<span class="w">              </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/12345678900/cloud-custodian-mailer</span>
+<span class="w">              </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
 </pre></div>
 </div>
 <p>By including <code class="docutils literal notranslate"><span class="pre">-</span> <span class="pre">event-owner</span></code> in the notify’s to: field it tells Cloud Custodian

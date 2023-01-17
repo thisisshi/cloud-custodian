@@ -5652,7 +5652,7 @@
 </section>
 <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install c7n_tencentcloud
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>c7n_tencentcloud
 </pre></div>
 </div>
 </section>
@@ -5661,10 +5661,10 @@
 <p>To execute policies against tencent cloud you’ll need to provide api
 credentials for custodian to interact with the cloud apis.</p>
 <p>as a best practice create a sub account / cam user with api keys in the console.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">TENCENTCLOUD_SECRET_ID</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span>
-<span class="nb">export</span> <span class="nv">TENCENTCLOUD_SECRET_KEY</span><span class="o">=</span><span class="s2">&quot;abc123&quot;</span>
-<span class="nb">export</span> <span class="nv">TENCENTCLOUD_REGION</span><span class="o">=</span><span class="s2">&quot;na-ashburn&quot;</span>
-custodian run -v policy.yml
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">TENCENTCLOUD_SECRET_ID</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">TENCENTCLOUD_SECRET_KEY</span><span class="o">=</span><span class="s2">&quot;abc123&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">TENCENTCLOUD_REGION</span><span class="o">=</span><span class="s2">&quot;na-ashburn&quot;</span>
+custodian<span class="w"> </span>run<span class="w"> </span>-v<span class="w"> </span>policy.yml
 </pre></div>
 </div>
 <p>region can also be passed on the cli via the <code class="docutils literal notranslate"><span class="pre">--region</span></code> flag, complete list of regions is here

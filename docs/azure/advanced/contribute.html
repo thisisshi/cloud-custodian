@@ -5651,8 +5651,8 @@
 <span id="azure-contribute"></span><h1>Developer Guide<a class="headerlink" href="#developer-guide" title="Permalink to this headline">¶</a></h1>
 <p>The c7n developer install includes c7n_azure.  A shortcut for creating a virtual env for development is available
 in the makefile:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ make install
-$ <span class="nb">source</span> bin/activate
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>install
+$<span class="w"> </span><span class="nb">source</span><span class="w"> </span>bin/activate
 </pre></div>
 </div>
 <p>This creates a virtual env in your enlistment and installs all packages as editable.</p>
@@ -5735,8 +5735,8 @@ cassettes used by the unit tests.  They will let you run the unit tests against 
 after the template files (<cite>test_&lt;filename&gt;</cite>).</p>
 <p>This scripts use Azure CLI, so you need to <cite>az login</cite> and <cite>az account set -s ‘subscription name’</cite> first.</p>
 <p>You can optionally pass a list of file names without extension to the scripts to act only on those templates:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>provision.sh vm storage
-cleanup.sh storage
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>provision.sh<span class="w"> </span>vm<span class="w"> </span>storage
+cleanup.sh<span class="w"> </span>storage
 </pre></div>
 </div>
 <p>or do everything</p>
@@ -5759,9 +5759,9 @@ but it is required to verify cassettes don’t contain any sensitive information
 <section id="running-tests">
 <h3>Running tests<a class="headerlink" href="#running-tests" title="Permalink to this headline">¶</a></h3>
 <p>You can use <cite>tox</cite> to run all tests or instead you can use <cite>pytest</cite> and run only Azure tests (or only specific set of tests). Running recorded tests still requires some authentication, it is possible to use fake data for authorization token and subscription id.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">AZURE_ACCESS_TOKEN</span><span class="o">=</span>fake_token
-<span class="nb">export</span> <span class="nv">AZURE_SUBSCRIPTION_ID</span><span class="o">=</span>ea42f556-5106-4743-99b0-c129bfa71a47
-pytest tools/c7n_azure/tests
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">AZURE_ACCESS_TOKEN</span><span class="o">=</span>fake_token
+<span class="nb">export</span><span class="w"> </span><span class="nv">AZURE_SUBSCRIPTION_ID</span><span class="o">=</span>ea42f556-5106-4743-99b0-c129bfa71a47
+pytest<span class="w"> </span>tools/c7n_azure/tests
 </pre></div>
 </div>
 </section>

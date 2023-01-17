@@ -5731,15 +5731,15 @@ In this example, we will create a workflow that is invoked by Custodian’s <a c
 <h2>Author Cloud Custodian policy<a class="headerlink" href="#author-cloud-custodian-policy" title="Permalink to this headline">¶</a></h2>
 <p>Let’s start with an existing policy such as the <a class="reference internal" href="../virtualmachineswithpublicip-compute-networking.html#azure-examples-vm-with-public-ips"><span class="std std-ref">Find Virtual Machines with Public IP address</span></a> policy.
 This policy will find all Azure Virtual Machines that have public IPs attached to them.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">find-vms-with-public-ips</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">      </span><span class="no">VMs should not have public-ips attached to them.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.vm</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">network-interface</span><span class="w"></span>
-<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">properties.ipConfigurations[].properties.publicIPAddress.id</span><span class="w"></span>
-<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-null</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">find-vms-with-public-ips</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">VMs should not have public-ips attached to them.</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.vm</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">network-interface</span>
+<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">properties.ipConfigurations[].properties.publicIPAddress.id</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-null</span>
 </pre></div>
 </div>
 <section id="add-logic-app-action">
@@ -5747,54 +5747,54 @@ This policy will find all Azure Virtual Machines that have public IPs attached t
 <p>Add a <a class="reference internal" href="../../resources/azure-common-actions.html#azure-common-actions-logic-app"><span class="std std-ref">logic-app</span></a> action to the policy to invoke the newly created Logic App.
 This action expects a <strong>CreatorEmail</strong> tag to be added on each resource.
 This can be done by Custodian using the <a class="reference internal" href="../tagautotagusers-general-identity.html#azure-examples-autotagusers"><span class="std std-ref">auto-tag-user</span></a> policy.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logic-app</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource-group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloud-custodian</span><span class="w">            </span><span class="c1"># ─▶ This is the resource group where you created your Logic App</span><span class="w"></span>
-<span class="w">    </span><span class="nt">logic-app-name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custodian-notifications</span><span class="w">    </span><span class="c1"># ─▶ This is the name of your Logic App</span><span class="w"></span>
-<span class="w">    </span><span class="nt">batch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">                               </span><span class="c1"># ─▶ We want to invoke the Logic App for each resource that violates our policy</span><span class="w"></span>
-<span class="w">    </span><span class="nt">body</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="w">                                    </span><span class="c1"># ─▶ We will select specific properties of our resource that can be used in our Logic App</span><span class="w"></span>
-<span class="w">        </span><span class="no">{</span><span class="w"></span>
-<span class="w">        </span><span class="no">PolicyName: policy.name,</span><span class="w"></span>
-<span class="w">        </span><span class="no">PolicyDescription: policy.description,</span><span class="w"></span>
-<span class="w">        </span><span class="no">Resource: resource.</span><span class="w"></span>
-<span class="w">            </span><span class="no">{</span><span class="w"></span>
-<span class="w">            </span><span class="no">Name: name,</span><span class="w"></span>
-<span class="w">            </span><span class="no">Location: location,</span><span class="w"></span>
-<span class="w">            </span><span class="no">Owner: tags.CreatorEmail,                  # ─▶ The CreatorEmail tag on the resource will be recipient of the email.</span><span class="w"></span>
-<span class="w">            </span><span class="no">VmSize: properties.hardwareProfile.vmSize</span><span class="w"></span>
-<span class="w">            </span><span class="no">}</span><span class="w"></span>
-<span class="w">        </span><span class="no">}</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logic-app</span>
+<span class="w">    </span><span class="nt">resource-group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloud-custodian</span><span class="w">            </span><span class="c1"># ─▶ This is the resource group where you created your Logic App</span>
+<span class="w">    </span><span class="nt">logic-app-name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custodian-notifications</span><span class="w">    </span><span class="c1"># ─▶ This is the name of your Logic App</span>
+<span class="w">    </span><span class="nt">batch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">                               </span><span class="c1"># ─▶ We want to invoke the Logic App for each resource that violates our policy</span>
+<span class="w">    </span><span class="nt">body</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="w">                                    </span><span class="c1"># ─▶ We will select specific properties of our resource that can be used in our Logic App</span>
+<span class="w">        </span><span class="no">{</span>
+<span class="w">        </span><span class="no">PolicyName: policy.name,</span>
+<span class="w">        </span><span class="no">PolicyDescription: policy.description,</span>
+<span class="w">        </span><span class="no">Resource: resource.</span>
+<span class="w">            </span><span class="no">{</span>
+<span class="w">            </span><span class="no">Name: name,</span>
+<span class="w">            </span><span class="no">Location: location,</span>
+<span class="w">            </span><span class="no">Owner: tags.CreatorEmail,                  # ─▶ The CreatorEmail tag on the resource will be recipient of the email.</span>
+<span class="w">            </span><span class="no">VmSize: properties.hardwareProfile.vmSize</span>
+<span class="w">            </span><span class="no">}</span>
+<span class="w">        </span><span class="no">}</span>
 </pre></div>
 </div>
 </section>
 <section id="final-updated-policy">
 <h3>Final updated policy<a class="headerlink" href="#final-updated-policy" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">find-vms-with-public-ips</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">      </span><span class="no">VMs should not have public-ips attached to them.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.vm</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">network-interface</span><span class="w"></span>
-<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">properties.ipConfigurations[].properties.publicIPAddress.id</span><span class="w"></span>
-<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-null</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logic-app</span><span class="w"></span>
-<span class="w">        </span><span class="nt">resource-group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloud-custodian</span><span class="w"></span>
-<span class="w">        </span><span class="nt">logic-app-name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custodian-notifications</span><span class="w"></span>
-<span class="w">        </span><span class="nt">batch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">        </span><span class="nt">body</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="w"></span>
-<span class="w">          </span><span class="no">{</span><span class="w"></span>
-<span class="w">            </span><span class="no">PolicyName: policy.name,</span><span class="w"></span>
-<span class="w">            </span><span class="no">PolicyDescription: policy.description,</span><span class="w"></span>
-<span class="w">            </span><span class="no">Resource: resource.</span><span class="w"></span>
-<span class="w">              </span><span class="no">{</span><span class="w"></span>
-<span class="w">                </span><span class="no">Name: name,</span><span class="w"></span>
-<span class="w">                </span><span class="no">Location: location,</span><span class="w"></span>
-<span class="w">                </span><span class="no">Owner: tags.CreatorEmail,</span><span class="w"></span>
-<span class="w">                </span><span class="no">VmSize: properties.hardwareProfile.vmSize</span><span class="w"></span>
-<span class="w">              </span><span class="no">}</span><span class="w"></span>
-<span class="w">          </span><span class="no">}</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">find-vms-with-public-ips</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">VMs should not have public-ips attached to them.</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.vm</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">network-interface</span>
+<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">properties.ipConfigurations[].properties.publicIPAddress.id</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-null</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logic-app</span>
+<span class="w">        </span><span class="nt">resource-group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloud-custodian</span>
+<span class="w">        </span><span class="nt">logic-app-name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custodian-notifications</span>
+<span class="w">        </span><span class="nt">batch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">body</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">          </span><span class="no">{</span>
+<span class="w">            </span><span class="no">PolicyName: policy.name,</span>
+<span class="w">            </span><span class="no">PolicyDescription: policy.description,</span>
+<span class="w">            </span><span class="no">Resource: resource.</span>
+<span class="w">              </span><span class="no">{</span>
+<span class="w">                </span><span class="no">Name: name,</span>
+<span class="w">                </span><span class="no">Location: location,</span>
+<span class="w">                </span><span class="no">Owner: tags.CreatorEmail,</span>
+<span class="w">                </span><span class="no">VmSize: properties.hardwareProfile.vmSize</span>
+<span class="w">              </span><span class="no">}</span>
+<span class="w">          </span><span class="no">}</span>
 </pre></div>
 </div>
 </section>

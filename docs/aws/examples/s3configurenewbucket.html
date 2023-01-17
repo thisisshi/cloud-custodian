@@ -5663,40 +5663,40 @@ and region like the following:  0123456789012-us-east-1-s3-logs
 The S3 bucket lifecycle will help to save S3 costs by getting rid of old object versions
 and moving objects from standard storage class to infrequent access storage after 180
 days in this example.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
 
-<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3-configure-standards-real-time</span><span class="w"></span>
-<span class="w">     </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3</span><span class="w"></span>
-<span class="w">     </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">       </span><span class="no">This policy is triggered when a new S3 bucket is created and it applies</span><span class="w"></span>
-<span class="w">       </span><span class="no">the AWS AES256 Default Bucket Encryption, Tags the creators ID, enables</span><span class="w"></span>
-<span class="w">       </span><span class="no">object versioning, configures the bucket lifecycle and enables logging.</span><span class="w"></span>
-<span class="w">     </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">       </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span><span class="w"></span>
-<span class="w">       </span><span class="nt">events</span><span class="p">:</span><span class="w"></span>
-<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreateBucket</span><span class="w"></span>
-<span class="w">       </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::{account_id}:role/Cloud_Custodian_S3_Lambda_Role</span><span class="w"></span>
-<span class="w">       </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span><span class="w"></span>
-<span class="w">     </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">auto-tag-user</span><span class="w"></span>
-<span class="w">         </span><span class="nt">tag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreatorName</span><span class="w"></span>
-<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set-bucket-encryption</span><span class="w"></span>
-<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">toggle-versioning</span><span class="w"></span>
-<span class="w">         </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">toggle-logging</span><span class="w"></span>
-<span class="w">         </span><span class="nt">target_bucket</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{account_id}-{region}-s3-logs&quot;</span><span class="w"></span>
-<span class="w">         </span><span class="nt">target_prefix</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{source_bucket_name}/&quot;</span><span class="w"></span>
-<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">configure-lifecycle</span><span class="w"></span>
-<span class="w">         </span><span class="nt">rules</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">company-s3-lifecycle</span><span class="w"></span>
-<span class="w">            </span><span class="nt">Status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Enabled</span><span class="w"></span>
-<span class="w">            </span><span class="nt">Filter</span><span class="p">:</span><span class="w"></span>
-<span class="w">               </span><span class="nt">Prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span><span class="w"></span>
-<span class="w">            </span><span class="nt">Transitions</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">180</span><span class="w"></span>
-<span class="w">                </span><span class="nt">StorageClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">STANDARD_IA</span><span class="w"></span>
-<span class="w">            </span><span class="nt">NoncurrentVersionExpiration</span><span class="p">:</span><span class="w"></span>
-<span class="w">                </span><span class="nt">NoncurrentDays</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">35</span><span class="w"></span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3-configure-standards-real-time</span>
+<span class="w">     </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3</span>
+<span class="w">     </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">       </span><span class="no">This policy is triggered when a new S3 bucket is created and it applies</span>
+<span class="w">       </span><span class="no">the AWS AES256 Default Bucket Encryption, Tags the creators ID, enables</span>
+<span class="w">       </span><span class="no">object versioning, configures the bucket lifecycle and enables logging.</span>
+<span class="w">     </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">       </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span>
+<span class="w">       </span><span class="nt">events</span><span class="p">:</span>
+<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreateBucket</span>
+<span class="w">       </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::{account_id}:role/Cloud_Custodian_S3_Lambda_Role</span>
+<span class="w">       </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span>
+<span class="w">     </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">auto-tag-user</span>
+<span class="w">         </span><span class="nt">tag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreatorName</span>
+<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set-bucket-encryption</span>
+<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">toggle-versioning</span>
+<span class="w">         </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">toggle-logging</span>
+<span class="w">         </span><span class="nt">target_bucket</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{account_id}-{region}-s3-logs&quot;</span>
+<span class="w">         </span><span class="nt">target_prefix</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{source_bucket_name}/&quot;</span>
+<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">configure-lifecycle</span>
+<span class="w">         </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">company-s3-lifecycle</span>
+<span class="w">            </span><span class="nt">Status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Enabled</span>
+<span class="w">            </span><span class="nt">Filter</span><span class="p">:</span>
+<span class="w">               </span><span class="nt">Prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">            </span><span class="nt">Transitions</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">180</span>
+<span class="w">                </span><span class="nt">StorageClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">STANDARD_IA</span>
+<span class="w">            </span><span class="nt">NoncurrentVersionExpiration</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">NoncurrentDays</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">35</span>
 </pre></div>
 </div>
 </section>

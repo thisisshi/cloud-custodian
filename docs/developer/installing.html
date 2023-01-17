@@ -5666,7 +5666,7 @@ Here are instructions for a way to do it on Ubuntu and Mac OS X.</p>
 <p>Python 3 is included in recent Ubuntu releases.</p>
 <p>To install Ubuntu’s default Python 3 version along with additional packages required
 to manage Python packages and environments, run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt-get install python3 python3-venv python3-pip
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>python3<span class="w"> </span>python3-venv<span class="w"> </span>python3-pip
 </pre></div>
 </div>
 <p>When this is complete you should be able to check that you have pip properly installed:</p>
@@ -5678,7 +5678,7 @@ to manage Python packages and environments, run:</p>
 </section>
 <section id="on-macos-with-homebrew">
 <h4>On macOS with Homebrew<a class="headerlink" href="#on-macos-with-homebrew" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>brew install python3
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>brew<span class="w"> </span>install<span class="w"> </span>python3
 </pre></div>
 </div>
 <p>Installing <code class="docutils literal notranslate"><span class="pre">python3</span></code> will get you the latest version of Python 3 supported by Homebrew, currently Python 3.9.</p>
@@ -5702,7 +5702,7 @@ manually. <a class="reference external" href="https://realpython.com/installing-
 Python environment is set up, you will need to install <a class="reference external" href="https://python-poetry.org/docs/#installation">install Poetry</a>.</p>
 <section id="on-mac-linux">
 <h4>On Mac/Linux<a class="headerlink" href="#on-mac-linux" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl -sSL https://install.python-poetry.org <span class="p">|</span> python3 -
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-sSL<span class="w"> </span>https://install.python-poetry.org<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-
 </pre></div>
 </div>
 </section>
@@ -5717,8 +5717,8 @@ Python environment is set up, you will need to install <a class="reference exter
 <section id="installing-custodian">
 <h2>Installing Custodian<a class="headerlink" href="#installing-custodian" title="Permalink to this headline">¶</a></h2>
 <p>First, clone the repository:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/cloud-custodian/cloud-custodian.git
-<span class="nb">cd</span> cloud-custodian
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/cloud-custodian/cloud-custodian.git
+<span class="nb">cd</span><span class="w"> </span>cloud-custodian
 </pre></div>
 </div>
 <div class="admonition note">
@@ -5727,47 +5727,47 @@ Python environment is set up, you will need to install <a class="reference exter
 a fork of the Cloud-Custodian repository first, and work inside your fork, so
 that you can push changes to your fork and make a pull request from there. Make
 the fork from the Github UI, then clone your fork instead of the main repository.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/&lt;your github account&gt;/cloud-custodian.git
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/&lt;your<span class="w"> </span>github<span class="w"> </span>account&gt;/cloud-custodian.git
 </pre></div>
 </div>
 <p>To keep track of the changes to the original cloud-custodian repository, add a
 remote upstream repository in your fork:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git remote add upstream https://github.com/cloud-custodian/cloud-custodian.git
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>upstream<span class="w"> </span>https://github.com/cloud-custodian/cloud-custodian.git
 </pre></div>
 </div>
 <p>Then, to get the upstream changes and merge them into your fork:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git fetch upstream
-git merge upstream/master
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>fetch<span class="w"> </span>upstream
+git<span class="w"> </span>merge<span class="w"> </span>upstream/master
 </pre></div>
 </div>
 </div>
 <p>Now that the repository is set up, perform a developer installation using Poetry:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make install-poetry
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>install-poetry
 </pre></div>
 </div>
 <p>This creates a sandboxed “virtual environment” (“venv”) inside the <code class="docutils literal notranslate"><span class="pre">cloud-custodian</span></code>
 directory, and installs the full suite of Cloud Custodian packages.</p>
 <p>You can run tests via Poetry as well:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make test-poetry
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>test-poetry
 </pre></div>
 </div>
 <p>To run executables from your Poetry environment, precede them with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry run custodian version
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>custodian<span class="w"> </span>version
 </pre></div>
 </div>
 <p>Alternatively, activate a Poetry shell so that commands will run from your
 development environment by default:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry shell
-custodian version
-custodian schema
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>shell
+custodian<span class="w"> </span>version
+custodian<span class="w"> </span>schema
 </pre></div>
 </div>
 <p>You’ll also be able to invoke <a class="reference external" href="https://docs.pytest.org/en/latest/">pytest</a> directly
 with the arguments of your choosing, though that requires mimicking <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test-poetry</span></code>’s
 environment preparation:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry shell
-<span class="nb">source</span> test.env
-pytest tests/test_s3.py -x -k replication
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>shell
+<span class="nb">source</span><span class="w"> </span>test.env
+pytest<span class="w"> </span>tests/test_s3.py<span class="w"> </span>-x<span class="w"> </span>-k<span class="w"> </span>replication
 </pre></div>
 </div>
 </section>

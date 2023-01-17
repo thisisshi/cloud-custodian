@@ -5660,19 +5660,19 @@
 <p>Our first policy filters to a VM of a specific name, then adds the tag <code class="docutils literal notranslate"><span class="pre">Hello:</span> <span class="pre">World</span></code>.</p>
 <p>Create a file named <code class="docutils literal notranslate"><span class="pre">custodian.yml</span></code> with the following content. Update <code class="docutils literal notranslate"><span class="pre">my_vm_name</span></code> to match an existing VM.</p>
 <p><em>Note: Some text editors (VSCode) inject invalid whitespace characters when copy/pasting YAML from a browser</em></p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-first-policy</span><span class="w"></span>
-<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">        </span><span class="no">Adds a tag to a virtual machines</span><span class="w"></span>
-<span class="w">      </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.vm</span><span class="w"></span>
-<span class="w">      </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="w"></span>
-<span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">name</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_vm_name</span><span class="w"></span>
-<span class="w">      </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tag</span><span class="w"></span>
-<span class="w">         </span><span class="nt">tag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Hello</span><span class="w"></span>
-<span class="w">         </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">World</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-first-policy</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">        </span><span class="no">Adds a tag to a virtual machines</span>
+<span class="w">      </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.vm</span>
+<span class="w">      </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span>
+<span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">name</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_vm_name</span>
+<span class="w">      </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tag</span>
+<span class="w">         </span><span class="nt">tag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Hello</span>
+<span class="w">         </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">World</span>
 </pre></div>
 </div>
 </section>
@@ -5680,7 +5680,7 @@
 <span id="azure-run-policy"></span><h2>Run your policy<a class="headerlink" href="#run-your-policy" title="Permalink to this headline">¶</a></h2>
 <p><strong>Choose one of the supported authentication mechanisms</strong>, and either log in to Azure CLI or set
 environment variables as documented in <a class="reference internal" href="configuration/authentication.html#azure-authentication"><span class="std std-ref">Authentication &amp; Access</span></a>.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>custodian run --output-dir<span class="o">=</span>. custodian.yml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>custodian<span class="w"> </span>run<span class="w"> </span>--output-dir<span class="o">=</span>.<span class="w"> </span>custodian.yml
 </pre></div>
 </div>
 <p>If successful, you should see output like the following on the command line:</p>
@@ -5715,7 +5715,7 @@ By default, this will output data in a CSV format, but report also provides othe
 </div>
 <p>The fields produced by <code class="docutils literal notranslate"><span class="pre">custodian</span> <span class="pre">report</span></code> vary by resource (i.e. properties.hardwareProfile.vmSize); however, you can add additional fields to your report
 by using the <code class="docutils literal notranslate"><span class="pre">--field</span></code> parameter. For example, if you want to see a list of tags on this resource:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>custodian report --output-dir<span class="o">=</span>. --format grid --field <span class="nv">tags</span><span class="o">=</span>tags custodian.yml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>custodian<span class="w"> </span>report<span class="w"> </span>--output-dir<span class="o">=</span>.<span class="w"> </span>--format<span class="w"> </span>grid<span class="w"> </span>--field<span class="w"> </span><span class="nv">tags</span><span class="o">=</span>tags<span class="w"> </span>custodian.yml
 </pre></div>
 </div>
 <p>Result:</p>

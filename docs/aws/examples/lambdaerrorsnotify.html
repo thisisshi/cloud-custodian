@@ -5659,50 +5659,50 @@ addressed.</p>
 <a class="reference external" href="https://github.com/cloud-custodian/cloud-custodian/tree/master/tools/c7n_mailer">https://github.com/cloud-custodian/cloud-custodian/tree/master/tools/c7n_mailer</a></p>
 <p>Mailer Setup Guide:
 <a class="reference external" href="https://cloudcustodian.io/docs/tools/c7n-mailer.html">https://cloudcustodian.io/docs/tools/c7n-mailer.html</a></p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
 
 
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lambda-invocation-errors</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lambda</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">       </span><span class="no">Hourly check that finds any Lambda functions that have any</span><span class="w"></span>
-<span class="w">       </span><span class="no">errors within the last hour and notifies the customer and Cloud Team.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">periodic</span><span class="w"></span>
-<span class="w">      </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;rate(1</span><span class="nv"> </span><span class="s">hour)&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span><span class="w"></span>
-<span class="w">      </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="nt">ResourceContact</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cloudteam@company.com&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="nt">ResourcePurpose</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Created</span><span class="nv"> </span><span class="s">by</span><span class="nv"> </span><span class="s">Cloud</span><span class="nv"> </span><span class="s">Custodian</span><span class="nv"> </span><span class="s">Automated</span><span class="nv"> </span><span class="s">Fleet</span><span class="nv"> </span><span class="s">Management&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="nt">Environment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prd</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">metrics</span><span class="w"></span>
-<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Errors</span><span class="w"></span>
-<span class="w">        </span><span class="nt">days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.068</span><span class="w"></span>
-<span class="w">        </span><span class="nt">period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3600</span><span class="w"></span>
-<span class="w">        </span><span class="nt">statistics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Sum</span><span class="w"></span>
-<span class="w">        </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">greater-than</span><span class="w"></span>
-<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">not</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tag:Custodian_Lambda_Error_Exclude&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span><span class="w"></span>
-<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default.html</span><span class="w"></span>
-<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Lambda</span><span class="nv"> </span><span class="s">Function</span><span class="nv"> </span><span class="s">Errors</span><span class="nv"> </span><span class="s">Occuring!</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">[custodian</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">account</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">region</span><span class="nv"> </span><span class="s">}}]&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">violation_desc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">           </span><span class="no">&quot;There has been one or more code errors occuring on this lambda function in the last hour:&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">action_desc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">           </span><span class="no">&quot;Actions Taken:  Please investigate this lambda function as errors reported.</span><span class="w"></span>
-<span class="w">           </span><span class="no">To exclude the below function from this scan please add a tag with a Key called</span><span class="w"></span>
-<span class="w">           </span><span class="no">Custodian_Lambda_Error_Exclude with any value to the lambda function.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">to</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudCustodian@Company.com</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">resource-owner</span><span class="w"></span>
-<span class="w">        </span><span class="nt">transport</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span><span class="w"></span>
-<span class="w">          </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/1234567890/cloud-custodian-mailer</span><span class="w"></span>
-<span class="w">          </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lambda-invocation-errors</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lambda</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">       </span><span class="no">Hourly check that finds any Lambda functions that have any</span>
+<span class="w">       </span><span class="no">errors within the last hour and notifies the customer and Cloud Team.</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">periodic</span>
+<span class="w">      </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;rate(1</span><span class="nv"> </span><span class="s">hour)&quot;</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
+<span class="w">      </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">ResourceContact</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cloudteam@company.com&quot;</span>
+<span class="w">            </span><span class="nt">ResourcePurpose</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Created</span><span class="nv"> </span><span class="s">by</span><span class="nv"> </span><span class="s">Cloud</span><span class="nv"> </span><span class="s">Custodian</span><span class="nv"> </span><span class="s">Automated</span><span class="nv"> </span><span class="s">Fleet</span><span class="nv"> </span><span class="s">Management&quot;</span>
+<span class="w">            </span><span class="nt">Environment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prd</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">metrics</span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Errors</span>
+<span class="w">        </span><span class="nt">days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.068</span>
+<span class="w">        </span><span class="nt">period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3600</span>
+<span class="w">        </span><span class="nt">statistics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Sum</span>
+<span class="w">        </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">greater-than</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">not</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tag:Custodian_Lambda_Error_Exclude&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span>
+<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default.html</span>
+<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Lambda</span><span class="nv"> </span><span class="s">Function</span><span class="nv"> </span><span class="s">Errors</span><span class="nv"> </span><span class="s">Occuring!</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">[custodian</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">account</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">region</span><span class="nv"> </span><span class="s">}}]&quot;</span>
+<span class="w">        </span><span class="nt">violation_desc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">           </span><span class="no">&quot;There has been one or more code errors occuring on this lambda function in the last hour:&quot;</span>
+<span class="w">        </span><span class="nt">action_desc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">           </span><span class="no">&quot;Actions Taken:  Please investigate this lambda function as errors reported.</span>
+<span class="w">           </span><span class="no">To exclude the below function from this scan please add a tag with a Key called</span>
+<span class="w">           </span><span class="no">Custodian_Lambda_Error_Exclude with any value to the lambda function.</span>
+<span class="w">        </span><span class="nt">to</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudCustodian@Company.com</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">resource-owner</span>
+<span class="w">        </span><span class="nt">transport</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span>
+<span class="w">          </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/1234567890/cloud-custodian-mailer</span>
+<span class="w">          </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
 </pre></div>
 </div>
 </section>

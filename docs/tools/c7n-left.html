@@ -5658,49 +5658,49 @@ source asset evaluation.</p>
 <p>We currently only support python 3.10 on mac and linux. We plan to
 expand support for additional operating systems and python versions
 over time.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install c7n_left
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>c7n_left
 </pre></div>
 </div>
 </section>
 <section id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ c7n-left run --help
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>c7n-left<span class="w"> </span>run<span class="w"> </span>--help
 
-Usage: c7n-left run <span class="o">[</span>OPTIONS<span class="o">]</span>
+Usage:<span class="w"> </span>c7n-left<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 
-  evaluate policies against iac sources
+<span class="w">  </span>evaluate<span class="w"> </span>policies<span class="w"> </span>against<span class="w"> </span>iac<span class="w"> </span>sources
 
 Options:
-  --format TEXT
-  -p, --policy-dir PATH
-  -d, --directory PATH
-  -o, --output <span class="o">[</span>cli<span class="p">|</span>github<span class="p">|</span>json<span class="o">]</span>
-  --output-file FILENAME
-  --help                          Show this message and exit.
+<span class="w">  </span>--format<span class="w"> </span>TEXT
+<span class="w">  </span>-p,<span class="w"> </span>--policy-dir<span class="w"> </span>PATH
+<span class="w">  </span>-d,<span class="w"> </span>--directory<span class="w"> </span>PATH
+<span class="w">  </span>-o,<span class="w"> </span>--output<span class="w"> </span><span class="o">[</span>cli<span class="p">|</span>github<span class="p">|</span>json<span class="o">]</span>
+<span class="w">  </span>--output-file<span class="w"> </span>FILENAME
+<span class="w">  </span>--help<span class="w">                          </span>Show<span class="w"> </span>this<span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span>exit.
 </pre></div>
 </div>
 <p>We’ll create an empty directory with a policy in it</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">terraform.aws_s3_bucket</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">server_side_encryption_configuration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">terraform.aws_s3_bucket</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">server_side_encryption_configuration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 </pre></div>
 </div>
 <p>And now we can use it to evaluate a terraform root module</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ c7n-left run --policy-dir policies -d root_module
-DEBUG:c7n.iac:Loaded <span class="m">3</span> resources
-Running <span class="m">1</span> policies
-DEBUG:c7n.iac:Filtered from <span class="m">3</span> to <span class="m">1</span> terraformresourcemanager
-<span class="nb">test</span> - terraform.aws_s3_bucket
-  Failed
-  File: main.tf:25-28
-  <span class="m">25</span> resource <span class="s2">&quot;aws_s3_bucket&quot;</span> <span class="s2">&quot;example_c&quot;</span> <span class="o">{</span>  
-  <span class="m">26</span>   <span class="nv">bucket</span> <span class="o">=</span> <span class="s2">&quot;c7n-aws-s3-encryption-audit-test-c&quot;</span>  
-  <span class="m">27</span>   <span class="nv">acl</span>    <span class="o">=</span> <span class="s2">&quot;private&quot;</span>
-  <span class="m">28</span> <span class="o">}</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>c7n-left<span class="w"> </span>run<span class="w"> </span>--policy-dir<span class="w"> </span>policies<span class="w"> </span>-d<span class="w"> </span>root_module
+DEBUG:c7n.iac:Loaded<span class="w"> </span><span class="m">3</span><span class="w"> </span>resources
+Running<span class="w"> </span><span class="m">1</span><span class="w"> </span>policies
+DEBUG:c7n.iac:Filtered<span class="w"> </span>from<span class="w"> </span><span class="m">3</span><span class="w"> </span>to<span class="w"> </span><span class="m">1</span><span class="w"> </span>terraformresourcemanager
+<span class="nb">test</span><span class="w"> </span>-<span class="w"> </span>terraform.aws_s3_bucket
+<span class="w">  </span>Failed
+<span class="w">  </span>File:<span class="w"> </span>main.tf:25-28
+<span class="w">  </span><span class="m">25</span><span class="w"> </span>resource<span class="w"> </span><span class="s2">&quot;aws_s3_bucket&quot;</span><span class="w"> </span><span class="s2">&quot;example_c&quot;</span><span class="w"> </span><span class="o">{</span><span class="w">  </span>
+<span class="w">  </span><span class="m">26</span><span class="w">   </span><span class="nv">bucket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;c7n-aws-s3-encryption-audit-test-c&quot;</span><span class="w">  </span>
+<span class="w">  </span><span class="m">27</span><span class="w">   </span><span class="nv">acl</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;private&quot;</span>
+<span class="w">  </span><span class="m">28</span><span class="w"> </span><span class="o">}</span>
 
-Execution <span class="nb">complete</span> <span class="m">0</span>.01 seconds
+Execution<span class="w"> </span><span class="nb">complete</span><span class="w"> </span><span class="m">0</span>.01<span class="w"> </span>seconds
 </pre></div>
 </div>
 </section>

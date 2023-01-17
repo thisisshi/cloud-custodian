@@ -1437,6 +1437,14 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/resources/group-route53-recovery-readiness.html">route53-recovery-readiness resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/resources/readiness-check.html">aws.readiness-check</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../aws/resources/readiness-check.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../aws/resources/readiness-check.html#actions">Actions</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../aws/resources/group-route53domains.html">route53domains resources</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/resources/r53domain.html">aws.r53domain</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../aws/resources/r53domain.html#filters">Filters</a></li>
@@ -2924,6 +2932,11 @@
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cbs.html#actions">Actions</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html">tencentcloud.cbs-snapshot</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html#actions">Actions</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../tencentcloud/resources/group-cdb.html">cdb resources</a><ul>
@@ -2969,11 +2982,6 @@
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/ami.html#actions">Actions</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html">tencentcloud.cbs-snapshot</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html#filters">Filters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cbs-snapshot.html#actions">Actions</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/cvm.html">tencentcloud.cvm</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cvm.html#filters">Filters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/cvm.html#actions">Actions</a></li>
@@ -2985,14 +2993,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/elasticsearch.html">tencentcloud.elasticsearch</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/elasticsearch.html#filters">Filters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/elasticsearch.html#actions">Actions</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../tencentcloud/resources/group-security-group.html">security-group resources</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/security-group.html">tencentcloud.security-group</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/security-group.html#filters">Filters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/security-group.html#actions">Actions</a></li>
 </ul>
 </li>
 </ul>
@@ -3009,6 +3009,11 @@
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/nat-gateway.html">tencentcloud.nat-gateway</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/nat-gateway.html#filters">Filters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/nat-gateway.html#actions">Actions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/security-group.html">tencentcloud.security-group</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/security-group.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tencentcloud/resources/security-group.html#actions">Actions</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../tencentcloud/resources/vpc.html">tencentcloud.vpc</a><ul>
@@ -5668,12 +5673,12 @@
 <span id="awscc-cloudtrail-trail-actions-delete"></span><h3>delete<a class="headerlink" href="#delete" title="Permalink to this headline">¶</a></h3>
 <p>Parent base class for filters and actions.</p>
 <div class="toggle docutils container">
-<div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete</span><span class="w"></span>
-<span class="nt">required</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span><span class="w"></span>
+<div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">enum</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete</span>
+<span class="nt">required</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span>
 </pre></div>
 </div>
 </div>
@@ -5683,282 +5688,282 @@
 <span id="awscc-cloudtrail-trail-actions-update"></span><h3>update<a class="headerlink" href="#update" title="Permalink to this headline">¶</a></h3>
 <p>Parent base class for filters and actions.</p>
 <div class="toggle docutils container">
-<div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">definitions</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">DataResource</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudTrail supports data event logging for Amazon S3 objects and</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">AWS Lambda functions. You can specify up to 250 resources for an individual</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">event selector, but the total number of data resources cannot exceed 250 across</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">all event selectors in a trail. This limit does not apply if you configure resource</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">logging for all data events.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">Type</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The resource type in which you want to log data events. You can</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">specify AWS::S3::Object or AWS::Lambda::Function resources.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">      </span><span class="nt">Values</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An array of Amazon Resource Name (ARN) strings or partial ARN</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">strings for the specified objects.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">        </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span><span class="w"></span>
-<span class="w">        </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">    </span><span class="nt">required</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Type</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="w">  </span><span class="nt">EventSelector</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The type of email sending events to publish to the event destination.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">DataResources</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">        </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudTrail supports data event logging for Amazon S3 objects</span><span class="w"></span>
-<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">and AWS Lambda functions. You can specify up to 250 resources for an individual</span><span class="w"></span>
-<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">event selector, but the total number of data resources cannot exceed 250</span><span class="w"></span>
-<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">across all event selectors in a trail. This limit does not apply if you</span><span class="w"></span>
-<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">configure resource logging for all data events.</span><span class="w"></span>
-<span class="w">          </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="nt">Type</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The resource type in which you want to log data events.</span><span class="w"></span>
-<span class="w">                </span><span class="l l-Scalar l-Scalar-Plain">You can specify AWS::S3::Object or AWS::Lambda::Function resources.</span><span class="w"></span>
-<span class="w">              </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">            </span><span class="nt">Values</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An array of Amazon Resource Name (ARN) strings or partial</span><span class="w"></span>
-<span class="w">                </span><span class="l l-Scalar l-Scalar-Plain">ARN strings for the specified objects.</span><span class="w"></span>
-<span class="w">              </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">              </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">              </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span><span class="w"></span>
-<span class="w">              </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">          </span><span class="nt">required</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Type</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span><span class="w"></span>
-<span class="w">        </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">ExcludeManagementEventSources</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An optional list of service event sources from which you do not</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">want management events to be logged on your trail. In this release, the</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">list can be empty (disables the filter), or it can filter out AWS Key Management</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">Service events by containing &quot;kms.amazonaws.com&quot;. By default, ExcludeManagementEventSources</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">is empty, and AWS KMS events are included in events that are logged to your</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">trail.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">        </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span><span class="w"></span>
-<span class="w">        </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">IncludeManagementEvents</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specify if you want your event selector to include management</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">events for your trail.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span><span class="w"></span>
-<span class="w">      </span><span class="nt">ReadWriteType</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specify if you want your trail to log read-only events, write-only</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">events, or all. For example, the EC2 GetConsoleOutput is a read-only API</span><span class="w"></span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">operation and RunInstances is a write-only API operation.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">All</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadOnly</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteOnly</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="w">  </span><span class="nt">InsightSelector</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A string that contains insight types that are logged on a trail.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">InsightType</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The type of insight to log on a trail.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Tag</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An arbitrary set of tags (key-value pairs) for this trail.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">Key</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;The</span><span class="nv"> </span><span class="s">key</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">tag.</span><span class="nv"> </span><span class="s">You</span><span class="nv"> </span><span class="s">can</span><span class="nv"> </span><span class="s">specify</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">value</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">1</span><span class="nv"> </span><span class="s">to</span><span class="w"></span>
-<span class="w">          </span><span class="s">127</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">characters</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">length</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">cannot</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">prefixed</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">aws:.</span><span class="nv"> </span><span class="s">You</span><span class="nv"> </span><span class="s">can</span><span class="w"></span>
-<span class="w">          </span><span class="s">use</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">following</span><span class="nv"> </span><span class="s">characters:</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">set</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">letters,</span><span class="nv"> </span><span class="s">digits,</span><span class="w"></span>
-<span class="w">          </span><span class="s">whitespace,</span><span class="nv"> </span><span class="s">_,</span><span class="nv"> </span><span class="s">.,</span><span class="nv"> </span><span class="s">/,</span><span class="nv"> </span><span class="s">=,</span><span class="nv"> </span><span class="s">+,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">-.&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">      </span><span class="nt">Value</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;The</span><span class="nv"> </span><span class="s">value</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">tag.</span><span class="nv"> </span><span class="s">You</span><span class="nv"> </span><span class="s">can</span><span class="nv"> </span><span class="s">specify</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">value</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">1</span><span class="nv"> </span><span class="s">to</span><span class="w"></span>
-<span class="w">          </span><span class="s">255</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">characters</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">length</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">cannot</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">prefixed</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">aws:.</span><span class="nv"> </span><span class="s">You</span><span class="nv"> </span><span class="s">can</span><span class="w"></span>
-<span class="w">          </span><span class="s">use</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">following</span><span class="nv"> </span><span class="s">characters:</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">set</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">letters,</span><span class="nv"> </span><span class="s">digits,</span><span class="w"></span>
-<span class="w">          </span><span class="s">whitespace,</span><span class="nv"> </span><span class="s">_,</span><span class="nv"> </span><span class="s">.,</span><span class="nv"> </span><span class="s">/,</span><span class="nv"> </span><span class="s">=,</span><span class="nv"> </span><span class="s">+,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">-.&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">    </span><span class="nt">required</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Value</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Key</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">CloudWatchLogsLogGroupArn</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies a log group name using an Amazon Resource Name (ARN), a</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">unique identifier that represents the log group to which CloudTrail logs will</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">be delivered. Not required unless you specify CloudWatchLogsRoleArn.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">  </span><span class="nt">CloudWatchLogsRoleArn</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies the role for the CloudWatch Logs endpoint to assume to</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">write to a user&#39;s log group.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">  </span><span class="nt">EnableLogFileValidation</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies whether log file validation is enabled. The default is</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">false.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span><span class="w"></span>
-<span class="w">  </span><span class="nt">EventSelectors</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Use event selectors to further specify the management and data event</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">settings for your trail. By default, trails created without specific event selectors</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">will be configured to log all read and write management events, and no data</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">events. When an event occurs in your account, CloudTrail evaluates the event</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">selector for all trails. For each trail, if the event matches any event selector,</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">the trail processes and logs the event. If the event doesn&#39;t match any event</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">selector, the trail doesn&#39;t log the event. You can configure up to five event</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">selectors for a trail.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The type of email sending events to publish to the event destination.</span><span class="w"></span>
-<span class="w">      </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">DataResources</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">          </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudTrail supports data event logging for Amazon S3 objects</span><span class="w"></span>
-<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">and AWS Lambda functions. You can specify up to 250 resources for an</span><span class="w"></span>
-<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">individual event selector, but the total number of data resources cannot</span><span class="w"></span>
-<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">exceed 250 across all event selectors in a trail. This limit does not</span><span class="w"></span>
-<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">apply if you configure resource logging for all data events.</span><span class="w"></span>
-<span class="w">            </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="nt">Type</span><span class="p">:</span><span class="w"></span>
-<span class="w">                </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The resource type in which you want to log data events.</span><span class="w"></span>
-<span class="w">                  </span><span class="l l-Scalar l-Scalar-Plain">You can specify AWS::S3::Object or AWS::Lambda::Function resources.</span><span class="w"></span>
-<span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">              </span><span class="nt">Values</span><span class="p">:</span><span class="w"></span>
-<span class="w">                </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An array of Amazon Resource Name (ARN) strings or partial</span><span class="w"></span>
-<span class="w">                  </span><span class="l l-Scalar l-Scalar-Plain">ARN strings for the specified objects.</span><span class="w"></span>
-<span class="w">                </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">                </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">                  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span><span class="w"></span>
-<span class="w">                </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">            </span><span class="nt">required</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Type</span><span class="w"></span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span><span class="w"></span>
-<span class="w">          </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">        </span><span class="nt">ExcludeManagementEventSources</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An optional list of service event sources from which you do</span><span class="w"></span>
-<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">not want management events to be logged on your trail. In this release,</span><span class="w"></span>
-<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">the list can be empty (disables the filter), or it can filter out AWS</span><span class="w"></span>
-<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">Key Management Service events by containing &quot;kms.amazonaws.com&quot;. By default,</span><span class="w"></span>
-<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">ExcludeManagementEventSources is empty, and AWS KMS events are included</span><span class="w"></span>
-<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">in events that are logged to your trail.</span><span class="w"></span>
-<span class="w">          </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">          </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span><span class="w"></span>
-<span class="w">          </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">        </span><span class="nt">IncludeManagementEvents</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specify if you want your event selector to include management</span><span class="w"></span>
-<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">events for your trail.</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span><span class="w"></span>
-<span class="w">        </span><span class="nt">ReadWriteType</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specify if you want your trail to log read-only events, write-only</span><span class="w"></span>
-<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">events, or all. For example, the EC2 GetConsoleOutput is a read-only API</span><span class="w"></span>
-<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">operation and RunInstances is a write-only API operation.</span><span class="w"></span>
-<span class="w">          </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">All</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadOnly</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteOnly</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="w">    </span><span class="nt">maxItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span><span class="w"></span>
-<span class="w">    </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">  </span><span class="nt">IncludeGlobalServiceEvents</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies whether the trail is publishing events from global services</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">such as IAM to the log files.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span><span class="w"></span>
-<span class="w">  </span><span class="nt">InsightSelectors</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Lets you enable Insights event logging by specifying the Insights</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">selectors that you want to enable on an existing trail.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A string that contains insight types that are logged on a trail.</span><span class="w"></span>
-<span class="w">      </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">InsightType</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The type of insight to log on a trail.</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span><span class="w"></span>
-<span class="w">    </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">  </span><span class="nt">IsLogging</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Whether the CloudTrail is currently logging AWS API calls.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span><span class="w"></span>
-<span class="w">  </span><span class="nt">IsMultiRegionTrail</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies whether the trail applies only to the current region or</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">to all regions. The default is false. If the trail exists only in the current</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">region and this value is set to true, shadow trails (replications of the trail)</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">will be created in the other regions. If the trail exists in all regions and</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">this value is set to false, the trail will remain in the region where it was</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">created, and its shadow trails in other regions will be deleted. As a best practice,</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">consider using trails that log events in all regions.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span><span class="w"></span>
-<span class="w">  </span><span class="nt">IsOrganizationTrail</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies whether the trail is created for all accounts in an organization</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">in AWS Organizations, or only for the current AWS account. The default is false,</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">and cannot be true unless the call is made on behalf of an AWS account that</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">is the master account for an organization in AWS Organizations.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span><span class="w"></span>
-<span class="w">  </span><span class="nt">KMSKeyId</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies the KMS key ID to use to encrypt the logs delivered by</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">CloudTrail. The value can be an alias name prefixed by &#39;alias/&#39;, a fully specified</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">ARN to an alias, a fully specified ARN to a key, or a globally unique identifier.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">  </span><span class="nt">S3BucketName</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies the name of the Amazon S3 bucket designated for publishing</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">log files. See Amazon S3 Bucket Naming Requirements.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">  </span><span class="nt">S3KeyPrefix</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies the Amazon S3 key prefix that comes after the name of the</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">bucket you have designated for log file delivery. For more information, see</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">Finding Your CloudTrail Log Files. The maximum length is 200 characters.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">maxLength</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">  </span><span class="nt">SnsTopicName</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies the name of the Amazon SNS topic defined for notification</span><span class="w"></span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">of log file delivery. The maximum length is 256 characters.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">maxLength</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">  </span><span class="nt">Tags</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An arbitrary set of tags (key-value pairs) for this trail.</span><span class="w"></span>
-<span class="w">      </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">Key</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;The</span><span class="nv"> </span><span class="s">key</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">tag.</span><span class="nv"> </span><span class="s">You</span><span class="nv"> </span><span class="s">can</span><span class="nv"> </span><span class="s">specify</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">value</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">1</span><span class="w"></span>
-<span class="w">            </span><span class="s">to</span><span class="nv"> </span><span class="s">127</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">characters</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">length</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">cannot</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">prefixed</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">aws:.</span><span class="w"></span>
-<span class="w">            </span><span class="s">You</span><span class="nv"> </span><span class="s">can</span><span class="nv"> </span><span class="s">use</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">following</span><span class="nv"> </span><span class="s">characters:</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">set</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">letters,</span><span class="w"></span>
-<span class="w">            </span><span class="s">digits,</span><span class="nv"> </span><span class="s">whitespace,</span><span class="nv"> </span><span class="s">_,</span><span class="nv"> </span><span class="s">.,</span><span class="nv"> </span><span class="s">/,</span><span class="nv"> </span><span class="s">=,</span><span class="nv"> </span><span class="s">+,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">-.&#39;</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">        </span><span class="nt">Value</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;The</span><span class="nv"> </span><span class="s">value</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">tag.</span><span class="nv"> </span><span class="s">You</span><span class="nv"> </span><span class="s">can</span><span class="nv"> </span><span class="s">specify</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">value</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">1</span><span class="nv"> </span><span class="s">to</span><span class="w"></span>
-<span class="w">            </span><span class="s">255</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">characters</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">length</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">cannot</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">prefixed</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">aws:.</span><span class="nv"> </span><span class="s">You</span><span class="w"></span>
-<span class="w">            </span><span class="s">can</span><span class="nv"> </span><span class="s">use</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">following</span><span class="nv"> </span><span class="s">characters:</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">set</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">letters,</span><span class="nv"> </span><span class="s">digits,</span><span class="w"></span>
-<span class="w">            </span><span class="s">whitespace,</span><span class="nv"> </span><span class="s">_,</span><span class="nv"> </span><span class="s">.,</span><span class="nv"> </span><span class="s">/,</span><span class="nv"> </span><span class="s">=,</span><span class="nv"> </span><span class="s">+,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">-.&#39;</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w"></span>
-<span class="w">      </span><span class="nt">required</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Value</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Key</span><span class="w"></span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span><span class="w"></span>
-<span class="w">    </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">enum</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update</span><span class="w"></span>
+<div class="header docutils container" style=""></div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">definitions</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">DataResource</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudTrail supports data event logging for Amazon S3 objects and</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">AWS Lambda functions. You can specify up to 250 resources for an individual</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">event selector, but the total number of data resources cannot exceed 250 across</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">all event selectors in a trail. This limit does not apply if you configure resource</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">logging for all data events.</span>
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Type</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The resource type in which you want to log data events. You can</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">specify AWS::S3::Object or AWS::Lambda::Function resources.</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">Values</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An array of Amazon Resource Name (ARN) strings or partial ARN</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">strings for the specified objects.</span>
+<span class="w">        </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span>
+<span class="w">        </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">required</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Type</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">  </span><span class="nt">EventSelector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The type of email sending events to publish to the event destination.</span>
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">DataResources</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudTrail supports data event logging for Amazon S3 objects</span>
+<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">and AWS Lambda functions. You can specify up to 250 resources for an individual</span>
+<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">event selector, but the total number of data resources cannot exceed 250</span>
+<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">across all event selectors in a trail. This limit does not apply if you</span>
+<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">configure resource logging for all data events.</span>
+<span class="w">          </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">Type</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The resource type in which you want to log data events.</span>
+<span class="w">                </span><span class="l l-Scalar l-Scalar-Plain">You can specify AWS::S3::Object or AWS::Lambda::Function resources.</span>
+<span class="w">              </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">            </span><span class="nt">Values</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An array of Amazon Resource Name (ARN) strings or partial</span>
+<span class="w">                </span><span class="l l-Scalar l-Scalar-Plain">ARN strings for the specified objects.</span>
+<span class="w">              </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">              </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">              </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span>
+<span class="w">              </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">          </span><span class="nt">required</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Type</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span>
+<span class="w">        </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">ExcludeManagementEventSources</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An optional list of service event sources from which you do not</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">want management events to be logged on your trail. In this release, the</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">list can be empty (disables the filter), or it can filter out AWS Key Management</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">Service events by containing &quot;kms.amazonaws.com&quot;. By default, ExcludeManagementEventSources</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">is empty, and AWS KMS events are included in events that are logged to your</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">trail.</span>
+<span class="w">        </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span>
+<span class="w">        </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">IncludeManagementEvents</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specify if you want your event selector to include management</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">events for your trail.</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span>
+<span class="w">      </span><span class="nt">ReadWriteType</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specify if you want your trail to log read-only events, write-only</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">events, or all. For example, the EC2 GetConsoleOutput is a read-only API</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">operation and RunInstances is a write-only API operation.</span>
+<span class="w">        </span><span class="nt">enum</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">All</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadOnly</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteOnly</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">  </span><span class="nt">InsightSelector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A string that contains insight types that are logged on a trail.</span>
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">InsightType</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The type of insight to log on a trail.</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">  </span><span class="nt">Tag</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An arbitrary set of tags (key-value pairs) for this trail.</span>
+<span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Key</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;The</span><span class="nv"> </span><span class="s">key</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">tag.</span><span class="nv"> </span><span class="s">You</span><span class="nv"> </span><span class="s">can</span><span class="nv"> </span><span class="s">specify</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">value</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">1</span><span class="nv"> </span><span class="s">to</span>
+<span class="w">          </span><span class="s">127</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">characters</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">length</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">cannot</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">prefixed</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">aws:.</span><span class="nv"> </span><span class="s">You</span><span class="nv"> </span><span class="s">can</span>
+<span class="w">          </span><span class="s">use</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">following</span><span class="nv"> </span><span class="s">characters:</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">set</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">letters,</span><span class="nv"> </span><span class="s">digits,</span>
+<span class="w">          </span><span class="s">whitespace,</span><span class="nv"> </span><span class="s">_,</span><span class="nv"> </span><span class="s">.,</span><span class="nv"> </span><span class="s">/,</span><span class="nv"> </span><span class="s">=,</span><span class="nv"> </span><span class="s">+,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">-.&#39;</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">Value</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;The</span><span class="nv"> </span><span class="s">value</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">tag.</span><span class="nv"> </span><span class="s">You</span><span class="nv"> </span><span class="s">can</span><span class="nv"> </span><span class="s">specify</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">value</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">1</span><span class="nv"> </span><span class="s">to</span>
+<span class="w">          </span><span class="s">255</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">characters</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">length</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">cannot</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">prefixed</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">aws:.</span><span class="nv"> </span><span class="s">You</span><span class="nv"> </span><span class="s">can</span>
+<span class="w">          </span><span class="s">use</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">following</span><span class="nv"> </span><span class="s">characters:</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">set</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">letters,</span><span class="nv"> </span><span class="s">digits,</span>
+<span class="w">          </span><span class="s">whitespace,</span><span class="nv"> </span><span class="s">_,</span><span class="nv"> </span><span class="s">.,</span><span class="nv"> </span><span class="s">/,</span><span class="nv"> </span><span class="s">=,</span><span class="nv"> </span><span class="s">+,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">-.&#39;</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">    </span><span class="nt">required</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Value</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Key</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="nt">properties</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">CloudWatchLogsLogGroupArn</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies a log group name using an Amazon Resource Name (ARN), a</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">unique identifier that represents the log group to which CloudTrail logs will</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">be delivered. Not required unless you specify CloudWatchLogsRoleArn.</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">  </span><span class="nt">CloudWatchLogsRoleArn</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies the role for the CloudWatch Logs endpoint to assume to</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">write to a user&#39;s log group.</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">  </span><span class="nt">EnableLogFileValidation</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies whether log file validation is enabled. The default is</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">false.</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span>
+<span class="w">  </span><span class="nt">EventSelectors</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Use event selectors to further specify the management and data event</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">settings for your trail. By default, trails created without specific event selectors</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">will be configured to log all read and write management events, and no data</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">events. When an event occurs in your account, CloudTrail evaluates the event</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">selector for all trails. For each trail, if the event matches any event selector,</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">the trail processes and logs the event. If the event doesn&#39;t match any event</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">selector, the trail doesn&#39;t log the event. You can configure up to five event</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">selectors for a trail.</span>
+<span class="w">    </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The type of email sending events to publish to the event destination.</span>
+<span class="w">      </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">DataResources</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">          </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudTrail supports data event logging for Amazon S3 objects</span>
+<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">and AWS Lambda functions. You can specify up to 250 resources for an</span>
+<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">individual event selector, but the total number of data resources cannot</span>
+<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">exceed 250 across all event selectors in a trail. This limit does not</span>
+<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">apply if you configure resource logging for all data events.</span>
+<span class="w">            </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">Type</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The resource type in which you want to log data events.</span>
+<span class="w">                  </span><span class="l l-Scalar l-Scalar-Plain">You can specify AWS::S3::Object or AWS::Lambda::Function resources.</span>
+<span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">              </span><span class="nt">Values</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An array of Amazon Resource Name (ARN) strings or partial</span>
+<span class="w">                  </span><span class="l l-Scalar l-Scalar-Plain">ARN strings for the specified objects.</span>
+<span class="w">                </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">                </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">                  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span>
+<span class="w">                </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">            </span><span class="nt">required</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Type</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span>
+<span class="w">          </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">ExcludeManagementEventSources</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An optional list of service event sources from which you do</span>
+<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">not want management events to be logged on your trail. In this release,</span>
+<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">the list can be empty (disables the filter), or it can filter out AWS</span>
+<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">Key Management Service events by containing &quot;kms.amazonaws.com&quot;. By default,</span>
+<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">ExcludeManagementEventSources is empty, and AWS KMS events are included</span>
+<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">in events that are logged to your trail.</span>
+<span class="w">          </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">          </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span>
+<span class="w">          </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">IncludeManagementEvents</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specify if you want your event selector to include management</span>
+<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">events for your trail.</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span>
+<span class="w">        </span><span class="nt">ReadWriteType</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specify if you want your trail to log read-only events, write-only</span>
+<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">events, or all. For example, the EC2 GetConsoleOutput is a read-only API</span>
+<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">operation and RunInstances is a write-only API operation.</span>
+<span class="w">          </span><span class="nt">enum</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">All</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadOnly</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteOnly</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">    </span><span class="nt">maxItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span>
+<span class="w">    </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">IncludeGlobalServiceEvents</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies whether the trail is publishing events from global services</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">such as IAM to the log files.</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span>
+<span class="w">  </span><span class="nt">InsightSelectors</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Lets you enable Insights event logging by specifying the Insights</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">selectors that you want to enable on an existing trail.</span>
+<span class="w">    </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A string that contains insight types that are logged on a trail.</span>
+<span class="w">      </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">InsightType</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The type of insight to log on a trail.</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span>
+<span class="w">    </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">IsLogging</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Whether the CloudTrail is currently logging AWS API calls.</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span>
+<span class="w">  </span><span class="nt">IsMultiRegionTrail</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies whether the trail applies only to the current region or</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">to all regions. The default is false. If the trail exists only in the current</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">region and this value is set to true, shadow trails (replications of the trail)</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">will be created in the other regions. If the trail exists in all regions and</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">this value is set to false, the trail will remain in the region where it was</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">created, and its shadow trails in other regions will be deleted. As a best practice,</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">consider using trails that log events in all regions.</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span>
+<span class="w">  </span><span class="nt">IsOrganizationTrail</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies whether the trail is created for all accounts in an organization</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">in AWS Organizations, or only for the current AWS account. The default is false,</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">and cannot be true unless the call is made on behalf of an AWS account that</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">is the master account for an organization in AWS Organizations.</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span>
+<span class="w">  </span><span class="nt">KMSKeyId</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies the KMS key ID to use to encrypt the logs delivered by</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">CloudTrail. The value can be an alias name prefixed by &#39;alias/&#39;, a fully specified</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">ARN to an alias, a fully specified ARN to a key, or a globally unique identifier.</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">  </span><span class="nt">S3BucketName</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies the name of the Amazon S3 bucket designated for publishing</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">log files. See Amazon S3 Bucket Naming Requirements.</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">  </span><span class="nt">S3KeyPrefix</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies the Amazon S3 key prefix that comes after the name of the</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">bucket you have designated for log file delivery. For more information, see</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">Finding Your CloudTrail Log Files. The maximum length is 200 characters.</span>
+<span class="w">    </span><span class="nt">maxLength</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">  </span><span class="nt">SnsTopicName</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Specifies the name of the Amazon SNS topic defined for notification</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">of log file delivery. The maximum length is 256 characters.</span>
+<span class="w">    </span><span class="nt">maxLength</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">  </span><span class="nt">Tags</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">insertionOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">additionalProperties</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An arbitrary set of tags (key-value pairs) for this trail.</span>
+<span class="w">      </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Key</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;The</span><span class="nv"> </span><span class="s">key</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">tag.</span><span class="nv"> </span><span class="s">You</span><span class="nv"> </span><span class="s">can</span><span class="nv"> </span><span class="s">specify</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">value</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">1</span>
+<span class="w">            </span><span class="s">to</span><span class="nv"> </span><span class="s">127</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">characters</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">length</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">cannot</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">prefixed</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">aws:.</span>
+<span class="w">            </span><span class="s">You</span><span class="nv"> </span><span class="s">can</span><span class="nv"> </span><span class="s">use</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">following</span><span class="nv"> </span><span class="s">characters:</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">set</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">letters,</span>
+<span class="w">            </span><span class="s">digits,</span><span class="nv"> </span><span class="s">whitespace,</span><span class="nv"> </span><span class="s">_,</span><span class="nv"> </span><span class="s">.,</span><span class="nv"> </span><span class="s">/,</span><span class="nv"> </span><span class="s">=,</span><span class="nv"> </span><span class="s">+,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">-.&#39;</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">        </span><span class="nt">Value</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;The</span><span class="nv"> </span><span class="s">value</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">tag.</span><span class="nv"> </span><span class="s">You</span><span class="nv"> </span><span class="s">can</span><span class="nv"> </span><span class="s">specify</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">value</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">1</span><span class="nv"> </span><span class="s">to</span>
+<span class="w">            </span><span class="s">255</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">characters</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">length</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">cannot</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">prefixed</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">aws:.</span><span class="nv"> </span><span class="s">You</span>
+<span class="w">            </span><span class="s">can</span><span class="nv"> </span><span class="s">use</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">following</span><span class="nv"> </span><span class="s">characters:</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">set</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">Unicode</span><span class="nv"> </span><span class="s">letters,</span><span class="nv"> </span><span class="s">digits,</span>
+<span class="w">            </span><span class="s">whitespace,</span><span class="nv"> </span><span class="s">_,</span><span class="nv"> </span><span class="s">.,</span><span class="nv"> </span><span class="s">/,</span><span class="nv"> </span><span class="s">=,</span><span class="nv"> </span><span class="s">+,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">-.&#39;</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">required</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Value</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Key</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">object</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">array</span>
+<span class="w">    </span><span class="nt">uniqueItems</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">enum</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update</span>
 </pre></div>
 </div>
 </div>

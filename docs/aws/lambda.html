@@ -5682,17 +5682,17 @@ policy filters, and apply the policy actions to matching resources.</p>
 <section id="cloudtrail-api-calls">
 <h4>CloudTrail API Calls<a class="headerlink" href="#cloudtrail-api-calls" title="Permalink to this headline">¶</a></h4>
 <p>Lambdas can receive CWE over CloudTrail API calls within seconds of delay at P99.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2-tag-running</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2</span><span class="w"></span>
-<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span><span class="w"></span>
-<span class="w">      </span><span class="nt">events</span><span class="p">:</span><span class="w"></span>
-<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RunInstances</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mark</span><span class="w"></span>
-<span class="w">        </span><span class="nt">tag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo</span><span class="w"></span>
-<span class="w">        </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2-tag-running</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span>
+<span class="w">      </span><span class="nt">events</span><span class="p">:</span>
+<span class="w">       </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RunInstances</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mark</span>
+<span class="w">        </span><span class="nt">tag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo</span>
+<span class="w">        </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span>
 </pre></div>
 </div>
 <p>Because the total AWS API surface area is so large most CloudTrail API
@@ -5707,10 +5707,10 @@ the resources can be queried. In the code block example below this is the <code 
 <p>For very common API calls for policies, some <a class="reference external" href="https://github.com/cloud-custodian/cloud-custodian/blob/master/c7n/cwe.py#L28-L69">shortcuts</a>
 have been defined to allow for easier policy writing as for the
 <code class="docutils literal notranslate"><span class="pre">RunInstances</span></code> API call above, which expands to:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">events</span><span class="p">:</span><span class="w"></span>
-<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span><span class="w"></span>
-<span class="w">   </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RunInstances</span><span class="w"></span>
-<span class="w">   </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;responseElements.instancesSet.items[].instanceId&quot;</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">events</span><span class="p">:</span>
+<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span>
+<span class="w">   </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RunInstances</span>
+<span class="w">   </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;responseElements.instancesSet.items[].instanceId&quot;</span>
 </pre></div>
 </div>
 <p>Refer to the <a class="reference external" href="https://cloudcustodian.io/docs/aws/resources/aws-modes.html#cloudtrail">AWS execution modes documention</a> for a
@@ -5719,20 +5719,20 @@ list of other configurable options.</p>
 <section id="ec2-instance-state-events">
 <h4>EC2 Instance State Events<a class="headerlink" href="#ec2-instance-state-events" title="Permalink to this headline">¶</a></h4>
 <p>Policies can react to EC2 instance state events in real time.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2-require-encrypted-volumes</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2</span><span class="w"></span>
-<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2-instance-state</span><span class="w"></span>
-<span class="w">      </span><span class="nt">events</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pending</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ebs</span><span class="w"></span>
-<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Encrypted</span><span class="w"></span>
-<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mark</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">terminate</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2-require-encrypted-volumes</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2-instance-state</span>
+<span class="w">      </span><span class="nt">events</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pending</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ebs</span>
+<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Encrypted</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mark</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">terminate</span>
 </pre></div>
 </div>
 <p>Refer to <a class="reference external" href="https://cloudcustodian.io/docs/aws/resources/aws-modes.html#ec2-instance-state">AWS execution modes documentation</a>
@@ -5748,13 +5748,13 @@ specify the role attribute in the config block for mode. However, if
 you are not using the –assume option, then it is required to add role
 in the config-block of mode. When specifying role {account_id} is runtime
 substituted so a policy can be used across accounts.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3-bucket-check</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3</span><span class="w"></span>
-<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">periodic</span><span class="w"></span>
-<span class="w">      </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;rate(1</span><span class="nv"> </span><span class="s">day)&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::{account_id}:role/some-role</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3-bucket-check</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">periodic</span>
+<span class="w">      </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;rate(1</span><span class="nv"> </span><span class="s">day)&quot;</span>
+<span class="w">      </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::{account_id}:role/some-role</span>
 </pre></div>
 </div>
 </section>
@@ -5771,20 +5771,20 @@ will be merged with the custodian generated default event pattern.</p>
 be invoked/executed.</p>
 <p>In the following example policy, an additional event pattern is supplied that ignores
 any create subnet call by the iam user named <cite>deputy</cite>.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-detect</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws.subnet</span><span class="w"></span>
-<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span><span class="w"></span>
-<span class="w">      </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CustodianDemoRole</span><span class="w"></span>
-<span class="w">      </span><span class="nt">events</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span><span class="w"></span>
-<span class="w">          </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreateSubnet</span><span class="w"></span>
-<span class="w">          </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">responseElements.subnet.subnetId</span><span class="w"></span>
-<span class="w">      </span><span class="nt">pattern</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">detail</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">userIdentity</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="nt">userName</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[{</span><span class="s">&#39;anything-but&#39;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&#39;deputy&#39;</span><span class="p p-Indicator">}]</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-detect</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws.subnet</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span>
+<span class="w">      </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CustodianDemoRole</span>
+<span class="w">      </span><span class="nt">events</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span>
+<span class="w">          </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreateSubnet</span>
+<span class="w">          </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">responseElements.subnet.subnetId</span>
+<span class="w">      </span><span class="nt">pattern</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">detail</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">userIdentity</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">userName</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[{</span><span class="s">&#39;anything-but&#39;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&#39;deputy&#39;</span><span class="p p-Indicator">}]</span>
 </pre></div>
 </div>
 </section>
@@ -5805,22 +5805,22 @@ You’ll also need the ARN of an IAM role to assume when running the Lambda that
 Custodian is going to install for you. Sensible policies to add to that role would be
 <code class="docutils literal notranslate"><span class="pre">AWSLambdaBasicExecutionRole</span></code> and <code class="docutils literal notranslate"><span class="pre">AWSConfigRulesExecutionRole</span></code>, on top of any permissions
 your lambda is going to need to perform the actions you want it to perform.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-first-policy</span><span class="w"></span>
-<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">config-rule</span><span class="w"></span>
-<span class="w">        </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456789012:role/some-role</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tag:Custodian&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-first-policy</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">config-rule</span>
+<span class="w">        </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456789012:role/some-role</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tag:Custodian&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop</span>
 </pre></div>
 </div>
 <p>Then make sure that you’ve set up AWS Config. If you <a class="reference external" href="https://eu-west-1.console.aws.amazon.com/config/home">go to the AWS Config console</a>
 and see the welcome screen instead of the dashboard, go through <a class="reference external" href="https://docs.aws.amazon.com/config/latest/developerguide/gs-console.html">the setup procedure first</a>.</p>
 <p>Now deploy the policy:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>custodian run -s . custodian.yml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>custodian<span class="w"> </span>run<span class="w"> </span>-s<span class="w"> </span>.<span class="w"> </span>custodian.yml
 </pre></div>
 </div>
 <p>That should give you log output like this:</p>
@@ -5850,26 +5850,26 @@ page for the full list of configuration options available on a Lambda.</p>
 values and the corresponding additional configuration options each requires.</p>
 <p>Here is an example YAML fragment that shows the options you are most likely to want or need to configure on a
 lambda:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span><span class="w"></span>
-<span class="w">  </span><span class="nt">events</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreateBucket</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span>
+<span class="w">  </span><span class="nt">events</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreateBucket</span>
 
-<span class="w">  </span><span class="c1">##### ROLE #####</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># Specify the ARN role as either name or full ARN.  This shows</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># us running the lambda with the IAM role named Custodian.</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># Specifying role by name:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Custodian</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># Or specifying using a full ARN</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># role: arn:aws:iam::123456789012:role/Custodian</span><span class="w"></span>
+<span class="w">  </span><span class="c1">##### ROLE #####</span>
+<span class="w">  </span><span class="c1"># Specify the ARN role as either name or full ARN.  This shows</span>
+<span class="w">  </span><span class="c1"># us running the lambda with the IAM role named Custodian.</span>
+<span class="w">  </span><span class="c1"># Specifying role by name:</span>
+<span class="w">  </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Custodian</span>
+<span class="w">  </span><span class="c1"># Or specifying using a full ARN</span>
+<span class="w">  </span><span class="c1"># role: arn:aws:iam::123456789012:role/Custodian</span>
 
-<span class="w">  </span><span class="c1">##### TAGS #####</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># Specify the tags to assign to this Lambda.  We are setting a</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># tag named &quot;Application&quot; with a value of &quot;Custodian&quot;, and a</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># &quot;CreatedBy&quot; tag with a value of &quot;CloudCustodian&quot;.</span><span class="w"></span>
-<span class="w">  </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">Application</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Custodian</span><span class="w"></span>
-<span class="w">    </span><span class="nt">CreatedBy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudCustodian</span><span class="w"></span>
+<span class="w">  </span><span class="c1">##### TAGS #####</span>
+<span class="w">  </span><span class="c1"># Specify the tags to assign to this Lambda.  We are setting a</span>
+<span class="w">  </span><span class="c1"># tag named &quot;Application&quot; with a value of &quot;Custodian&quot;, and a</span>
+<span class="w">  </span><span class="c1"># &quot;CreatedBy&quot; tag with a value of &quot;CloudCustodian&quot;.</span>
+<span class="w">  </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Application</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Custodian</span>
+<span class="w">    </span><span class="nt">CreatedBy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudCustodian</span>
 </pre></div>
 </div>
 </section>
@@ -5903,20 +5903,20 @@ one of the following keys:</p>
 </ul>
 <p>One useful thing we can do with these options is to make a policy execute in a
 different account using assume_role. A policy definition for this looks like:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-first-policy-cross-account</span><span class="w"></span>
-<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">periodic</span><span class="w"></span>
-<span class="w">        </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;rate(1</span><span class="nv"> </span><span class="s">day)&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456789012:role/lambda-role</span><span class="w"></span>
-<span class="w">        </span><span class="nt">execution-options</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">assume_role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::210987654321:role/target-role</span><span class="w"></span>
-<span class="w">          </span><span class="nt">metrics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tag:Custodian&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-first-policy-cross-account</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">periodic</span>
+<span class="w">        </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;rate(1</span><span class="nv"> </span><span class="s">day)&quot;</span>
+<span class="w">        </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456789012:role/lambda-role</span>
+<span class="w">        </span><span class="nt">execution-options</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">assume_role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::210987654321:role/target-role</span>
+<span class="w">          </span><span class="nt">metrics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tag:Custodian&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop</span>
 </pre></div>
 </div>
 <p>A couple of things to note here:</p>

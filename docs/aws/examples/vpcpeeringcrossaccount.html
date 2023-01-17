@@ -5659,59 +5659,59 @@ You must provide the CSV file of your account numbers or you can hardcode your a
 numbers into the policy if you have a small static number of accounts.  The CSV would
 look something like:
 “271212121293”,”171717171716”,”27272727272724”,”121212112128”,”118118118118”</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
 
-<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-peering-cross-account-checker-real-time</span><span class="w"></span>
-<span class="w">   </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">peering-connection</span><span class="w"></span>
-<span class="w">   </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span><span class="w"></span>
-<span class="w">      </span><span class="nt">events</span><span class="p">:</span><span class="w"></span>
-<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span><span class="w"></span>
-<span class="w">           </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreateVpcPeeringConnection</span><span class="w"></span>
-<span class="w">           </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;responseElements.vpcPeeringConnection.vpcPeeringConnectionId&#39;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">90</span><span class="w"></span>
-<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span><span class="w"></span>
-<span class="w">      </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::{account_id}:role/Cloud_Custodian_EC2_Lambda_Role</span><span class="w"></span>
-<span class="w">   </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">     </span><span class="no">When a new peering connection is created the Accepter and Requester account</span><span class="w"></span>
-<span class="w">     </span><span class="no">numbers are compared and if they aren&#39;t both internally owned accounts then the</span><span class="w"></span>
-<span class="w">     </span><span class="no">cloud and security teams are notified to investigate and delete the peering connection.</span><span class="w"></span>
-<span class="w">   </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">or</span><span class="p">:</span><span class="w"></span>
-<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">event</span><span class="w"></span>
-<span class="w">           </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;detail.responseElements.vpcPeeringConnection.accepterVpcInfo.ownerId&quot;</span><span class="w"></span>
-<span class="w">           </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-in</span><span class="w"></span>
-<span class="w">           </span><span class="nt">value_from</span><span class="p">:</span><span class="w"></span>
-<span class="w">             </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3://s3bucketname/AccountNumbers.csv</span><span class="w"></span>
-<span class="w">             </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv2dict</span><span class="w"></span>
-<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">event</span><span class="w"></span>
-<span class="w">           </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;detail.responseElements.vpcPeeringConnection.requesterVpcInfo.ownerId&quot;</span><span class="w"></span>
-<span class="w">           </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-in</span><span class="w"></span>
-<span class="w">           </span><span class="nt">value_from</span><span class="p">:</span><span class="w"></span>
-<span class="w">             </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3://s3bucketname/AccountNumbers.csv</span><span class="w"></span>
-<span class="w">             </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv2dict</span><span class="w"></span>
-<span class="w">   </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span><span class="w"></span>
-<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default.html</span><span class="w"></span>
-<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ATTN!!</span><span class="nv"> </span><span class="s">External</span><span class="nv"> </span><span class="s">VPC</span><span class="nv"> </span><span class="s">Peering</span><span class="nv"> </span><span class="s">Violation</span><span class="nv"> </span><span class="s">[custodian</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">account</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">region</span><span class="nv"> </span><span class="s">}}]&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">violation_desc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">            </span><span class="no">VPC Peers are not to be setup to or from external AWS accounts</span><span class="w"></span>
-<span class="w">            </span><span class="no">so this policy verifies that both the source and destination</span><span class="w"></span>
-<span class="w">            </span><span class="no">accounts are internally owned. If the peering connection is going</span><span class="w"></span>
-<span class="w">            </span><span class="no">to/from an external account, this policy will email the Cloud and</span><span class="w"></span>
-<span class="w">            </span><span class="no">Security Teams as well as the customer.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">action_desc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">            </span><span class="no">Please investigate this VPC Peering connection and terminate it</span><span class="w"></span>
-<span class="w">            </span><span class="no">if it&#39;s connecting to a unapproved external VPC</span><span class="w"></span>
-<span class="w">        </span><span class="nt">to</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudTeam@company.com</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security@company.com</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">resource-contact</span><span class="w"></span>
-<span class="w">        </span><span class="nt">transport</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span><span class="w"></span>
-<span class="w">          </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/XXXXXXXXXXXXXXX/cloud-custodian-mailer</span><span class="w"></span>
-<span class="w">          </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
+<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-peering-cross-account-checker-real-time</span>
+<span class="w">   </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">peering-connection</span>
+<span class="w">   </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span>
+<span class="w">      </span><span class="nt">events</span><span class="p">:</span>
+<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2.amazonaws.com</span>
+<span class="w">           </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreateVpcPeeringConnection</span>
+<span class="w">           </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;responseElements.vpcPeeringConnection.vpcPeeringConnectionId&#39;</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">90</span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span>
+<span class="w">      </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::{account_id}:role/Cloud_Custodian_EC2_Lambda_Role</span>
+<span class="w">   </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">     </span><span class="no">When a new peering connection is created the Accepter and Requester account</span>
+<span class="w">     </span><span class="no">numbers are compared and if they aren&#39;t both internally owned accounts then the</span>
+<span class="w">     </span><span class="no">cloud and security teams are notified to investigate and delete the peering connection.</span>
+<span class="w">   </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">or</span><span class="p">:</span>
+<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">event</span>
+<span class="w">           </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;detail.responseElements.vpcPeeringConnection.accepterVpcInfo.ownerId&quot;</span>
+<span class="w">           </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-in</span>
+<span class="w">           </span><span class="nt">value_from</span><span class="p">:</span>
+<span class="w">             </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3://s3bucketname/AccountNumbers.csv</span>
+<span class="w">             </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv2dict</span>
+<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">event</span>
+<span class="w">           </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;detail.responseElements.vpcPeeringConnection.requesterVpcInfo.ownerId&quot;</span>
+<span class="w">           </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-in</span>
+<span class="w">           </span><span class="nt">value_from</span><span class="p">:</span>
+<span class="w">             </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3://s3bucketname/AccountNumbers.csv</span>
+<span class="w">             </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv2dict</span>
+<span class="w">   </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span>
+<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default.html</span>
+<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ATTN!!</span><span class="nv"> </span><span class="s">External</span><span class="nv"> </span><span class="s">VPC</span><span class="nv"> </span><span class="s">Peering</span><span class="nv"> </span><span class="s">Violation</span><span class="nv"> </span><span class="s">[custodian</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">account</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">region</span><span class="nv"> </span><span class="s">}}]&quot;</span>
+<span class="w">        </span><span class="nt">violation_desc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">            </span><span class="no">VPC Peers are not to be setup to or from external AWS accounts</span>
+<span class="w">            </span><span class="no">so this policy verifies that both the source and destination</span>
+<span class="w">            </span><span class="no">accounts are internally owned. If the peering connection is going</span>
+<span class="w">            </span><span class="no">to/from an external account, this policy will email the Cloud and</span>
+<span class="w">            </span><span class="no">Security Teams as well as the customer.</span>
+<span class="w">        </span><span class="nt">action_desc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">            </span><span class="no">Please investigate this VPC Peering connection and terminate it</span>
+<span class="w">            </span><span class="no">if it&#39;s connecting to a unapproved external VPC</span>
+<span class="w">        </span><span class="nt">to</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudTeam@company.com</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security@company.com</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">resource-contact</span>
+<span class="w">        </span><span class="nt">transport</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span>
+<span class="w">          </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/XXXXXXXXXXXXXXX/cloud-custodian-mailer</span>
+<span class="w">          </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
 </pre></div>
 </div>
 <p>The following policy runs in pull mode and will scan all existing vpc peering connections
@@ -5720,51 +5720,51 @@ to pull the accepter and requester ids is slightly different between these 2 pol
 The first one pulls the information from the CloudTrail API event metadata and the second
 policy uses information pulled back from a describe_vpc_peering_connections API call.
 Using both policies allows you to check both new and existing peering connections.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
 
-<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-peering-cross-account-checker-pull</span><span class="w"></span>
-<span class="w">   </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">peering-connection</span><span class="w"></span>
-<span class="w">   </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">     </span><span class="no">Checks existing VPC Peering Connections to see if the Accepter</span><span class="w"></span>
-<span class="w">     </span><span class="no">and Requester account numbers are both internally owned accounts.</span><span class="w"></span>
-<span class="w">     </span><span class="no">If a connection is going to/from an external AWS account then the</span><span class="w"></span>
-<span class="w">     </span><span class="no">cloud and security teams are notified of the violating peering connection.</span><span class="w"></span>
-<span class="w"> </span><span class="w w-Error"> </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">or</span><span class="p">:</span><span class="w"></span>
-<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="w"></span>
-<span class="w">           </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;RequesterVpcInfo.OwnerId&quot;</span><span class="w"></span>
-<span class="w">           </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-in</span><span class="w"></span>
-<span class="w">           </span><span class="nt">value_from</span><span class="p">:</span><span class="w"></span>
-<span class="w">             </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3://s3bucketname/AccountNumbers.csv</span><span class="w"></span>
-<span class="w">             </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv2dict</span><span class="w"></span>
-<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="w"></span>
-<span class="w">           </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AccepterVpcInfo.OwnerId&quot;</span><span class="w"></span>
-<span class="w">           </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-in</span><span class="w"></span>
-<span class="w">           </span><span class="nt">value_from</span><span class="p">:</span><span class="w"></span>
-<span class="w">             </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3://s3bucketname/AccountNumbers.csv</span><span class="w"></span>
-<span class="w">             </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv2dict</span><span class="w"></span>
-<span class="w">  </span><span class="w w-Error"> </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span><span class="w"></span>
-<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default.html</span><span class="w"></span>
-<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ATTN!!</span><span class="nv"> </span><span class="s">External</span><span class="nv"> </span><span class="s">VPC</span><span class="nv"> </span><span class="s">Peering</span><span class="nv"> </span><span class="s">Violation</span><span class="nv"> </span><span class="s">[custodian</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">account</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">region</span><span class="nv"> </span><span class="s">}}]&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">violation_desc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">            </span><span class="no">VPC Peers are not to be setup to or from external AWS accounts</span><span class="w"></span>
-<span class="w">            </span><span class="no">so this policy verifies that both the source and destination</span><span class="w"></span>
-<span class="w">            </span><span class="no">accounts are internally owned. If the peering connection is going</span><span class="w"></span>
-<span class="w">            </span><span class="no">to/from an external account, this policy will email the Cloud and</span><span class="w"></span>
-<span class="w">            </span><span class="no">Security Teams as well as the customer.</span><span class="w"></span>
-<span class="w">        </span><span class="nt">action_desc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">            </span><span class="no">Please investigate this VPC Peering connection and terminate it</span><span class="w"></span>
-<span class="w">            </span><span class="no">if it&#39;s connecting to a unapproved external VPC</span><span class="w"></span>
-<span class="w">        </span><span class="nt">to</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudTeam@company.com</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security@company.com</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">resource-contact</span><span class="w"></span>
-<span class="w">        </span><span class="nt">transport</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span><span class="w"></span>
-<span class="w">          </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/XXXXXXXXXXXXXXX/cloud-custodian-mailer</span><span class="w"></span>
-<span class="w">          </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
+<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-peering-cross-account-checker-pull</span>
+<span class="w">   </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">peering-connection</span>
+<span class="w">   </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">     </span><span class="no">Checks existing VPC Peering Connections to see if the Accepter</span>
+<span class="w">     </span><span class="no">and Requester account numbers are both internally owned accounts.</span>
+<span class="w">     </span><span class="no">If a connection is going to/from an external AWS account then the</span>
+<span class="w">     </span><span class="no">cloud and security teams are notified of the violating peering connection.</span>
+<span class="w"> </span><span class="w w-Error"> </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">or</span><span class="p">:</span>
+<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span>
+<span class="w">           </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;RequesterVpcInfo.OwnerId&quot;</span>
+<span class="w">           </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-in</span>
+<span class="w">           </span><span class="nt">value_from</span><span class="p">:</span>
+<span class="w">             </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3://s3bucketname/AccountNumbers.csv</span>
+<span class="w">             </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv2dict</span>
+<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span>
+<span class="w">           </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AccepterVpcInfo.OwnerId&quot;</span>
+<span class="w">           </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not-in</span>
+<span class="w">           </span><span class="nt">value_from</span><span class="p">:</span>
+<span class="w">             </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3://s3bucketname/AccountNumbers.csv</span>
+<span class="w">             </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv2dict</span>
+<span class="w">  </span><span class="w w-Error"> </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify</span>
+<span class="w">        </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default.html</span>
+<span class="w">        </span><span class="nt">priority_header</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ATTN!!</span><span class="nv"> </span><span class="s">External</span><span class="nv"> </span><span class="s">VPC</span><span class="nv"> </span><span class="s">Peering</span><span class="nv"> </span><span class="s">Violation</span><span class="nv"> </span><span class="s">[custodian</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">account</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">region</span><span class="nv"> </span><span class="s">}}]&quot;</span>
+<span class="w">        </span><span class="nt">violation_desc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">            </span><span class="no">VPC Peers are not to be setup to or from external AWS accounts</span>
+<span class="w">            </span><span class="no">so this policy verifies that both the source and destination</span>
+<span class="w">            </span><span class="no">accounts are internally owned. If the peering connection is going</span>
+<span class="w">            </span><span class="no">to/from an external account, this policy will email the Cloud and</span>
+<span class="w">            </span><span class="no">Security Teams as well as the customer.</span>
+<span class="w">        </span><span class="nt">action_desc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">            </span><span class="no">Please investigate this VPC Peering connection and terminate it</span>
+<span class="w">            </span><span class="no">if it&#39;s connecting to a unapproved external VPC</span>
+<span class="w">        </span><span class="nt">to</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudTeam@company.com</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">security@company.com</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">resource-contact</span>
+<span class="w">        </span><span class="nt">transport</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqs</span>
+<span class="w">          </span><span class="nt">queue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://sqs.us-east-1.amazonaws.com/XXXXXXXXXXXXXXX/cloud-custodian-mailer</span>
+<span class="w">          </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
 </pre></div>
 </div>
 <p>Note that for email delivery to work with the <code class="docutils literal notranslate"><span class="pre">notify</span></code> action, the cloud custodian mailer tool must be installed, configured, and running.  See <a class="reference external" href="https://github.com/cloud-custodian/cloud-custodian/tree/master/tools/c7n_mailer">https://github.com/cloud-custodian/cloud-custodian/tree/master/tools/c7n_mailer</a> for docs.</p>

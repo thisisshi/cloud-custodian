@@ -5652,61 +5652,61 @@
 Azure subscriptions, or GCP projects in parallel.</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install c7n-org
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>c7n-org
 </pre></div>
 </div>
 <p>c7n-org has 3 run modes:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Usage: c7n-org <span class="o">[</span>OPTIONS<span class="o">]</span> COMMAND <span class="o">[</span>ARGS<span class="o">]</span>...
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>Usage:<span class="w"> </span>c7n-org<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
 
-  custodian organization multi-account runner.
+<span class="w">  </span>custodian<span class="w"> </span>organization<span class="w"> </span>multi-account<span class="w"> </span>runner.
 
 Options:
-  --help  Show this message and exit.
+<span class="w">  </span>--help<span class="w">  </span>Show<span class="w"> </span>this<span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span>exit.
 
 Commands:
-  report      report on an AWS cross account policy execution
-  run         run a custodian policy across accounts <span class="o">(</span>AWS, Azure, GCP<span class="o">)</span>
-  run-script  run a script across AWS accounts
+<span class="w">  </span>report<span class="w">      </span>report<span class="w"> </span>on<span class="w"> </span>an<span class="w"> </span>AWS<span class="w"> </span>cross<span class="w"> </span>account<span class="w"> </span>policy<span class="w"> </span>execution
+<span class="w">  </span>run<span class="w">         </span>run<span class="w"> </span>a<span class="w"> </span>custodian<span class="w"> </span>policy<span class="w"> </span>across<span class="w"> </span>accounts<span class="w"> </span><span class="o">(</span>AWS,<span class="w"> </span>Azure,<span class="w"> </span>GCP<span class="o">)</span>
+<span class="w">  </span>run-script<span class="w">  </span>run<span class="w"> </span>a<span class="w"> </span>script<span class="w"> </span>across<span class="w"> </span>AWS<span class="w"> </span>accounts
 </pre></div>
 </div>
 <p>In order to run c7n-org against multiple accounts, a config file must
 first be created containing pertinent information about the accounts:</p>
 <p>Example AWS Config File:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">accounts</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">account_id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;123123123123&#39;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">account-1</span><span class="w"></span>
-<span class="w">  </span><span class="nt">regions</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-west-2</span><span class="w"></span>
-<span class="w">  </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123123123123:role/CloudCustodian</span><span class="w"></span>
-<span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">charge_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xyz</span><span class="w"></span>
-<span class="w">  </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type:prod</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">division:some division</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">partition:us</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scope:pci</span><span class="w"></span>
-<span class="nn">...</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">accounts</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">account_id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;123123123123&#39;</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">account-1</span>
+<span class="w">  </span><span class="nt">regions</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-west-2</span>
+<span class="w">  </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123123123123:role/CloudCustodian</span>
+<span class="w">  </span><span class="nt">vars</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">charge_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xyz</span>
+<span class="w">  </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type:prod</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">division:some division</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">partition:us</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scope:pci</span>
+<span class="nn">...</span>
 </pre></div>
 </div>
 <p>Example Azure Config File:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">subscriptions</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Subscription-1</span><span class="w"></span>
-<span class="w">  </span><span class="nt">subscription_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a1b2c3d4-e5f6-g7h8i9...</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Subscription-2</span><span class="w"></span>
-<span class="w">  </span><span class="nt">subscription_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1z2y3x4w-5v6u-7t8s9r...</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">subscriptions</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Subscription-1</span>
+<span class="w">  </span><span class="nt">subscription_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a1b2c3d4-e5f6-g7h8i9...</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Subscription-2</span>
+<span class="w">  </span><span class="nt">subscription_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1z2y3x4w-5v6u-7t8s9r...</span>
 </pre></div>
 </div>
 <p>Example GCP Config File:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">projects</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-dev</span><span class="w"></span>
-<span class="w">  </span><span class="nt">project_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-203501</span><span class="w"></span>
-<span class="w">  </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">projects</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-dev</span>
+<span class="w">  </span><span class="nt">project_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-203501</span>
+<span class="w">  </span><span class="nt">tags</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">label:env:dev</span><span class="w">  </span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-prod</span><span class="w"></span>
-<span class="w">  </span><span class="nt">project_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-1291</span><span class="w"></span>
-<span class="w">  </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">label:env:dev</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-prod</span>
+<span class="w">  </span><span class="nt">project_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-1291</span>
+<span class="w">  </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">label:env:dev</span>
 </pre></div>
 </div>
 <section id="config-file-generation">
@@ -5728,13 +5728,13 @@ from the Azure Resource Management API</p>
 <li><p>For <strong>GCP</strong>, the script <code class="docutils literal notranslate"><span class="pre">gcpprojects.py</span></code> generates a config file from
 the GCP Resource Management API</p></li>
 </ul>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python orgaccounts.py -f accounts.yml
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>orgaccounts.py<span class="w"> </span>-f<span class="w"> </span>accounts.yml
 </pre></div>
 </div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python azuresubs.py -f subscriptions.yml
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>azuresubs.py<span class="w"> </span>-f<span class="w"> </span>subscriptions.yml
 </pre></div>
 </div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python gcpprojects.py -f projects.yml
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>gcpprojects.py<span class="w"> </span>-f<span class="w"> </span>projects.yml
 </pre></div>
 </div>
 </section>
@@ -5742,12 +5742,12 @@ the GCP Resource Management API</p></li>
 <section id="running-a-policy-with-c7n-org">
 <h2>Running a Policy with c7n-org<a class="headerlink" href="#running-a-policy-with-c7n-org" title="Permalink to this headline">¶</a></h2>
 <p>To run a policy, the following arguments must be passed in:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>-c <span class="p">|</span> accounts<span class="p">|</span>projects<span class="p">|</span>subscriptions config file
--s <span class="p">|</span> output directory
--u <span class="p">|</span> policy
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>-c<span class="w"> </span><span class="p">|</span><span class="w"> </span>accounts<span class="p">|</span>projects<span class="p">|</span>subscriptions<span class="w"> </span>config<span class="w"> </span>file
+-s<span class="w"> </span><span class="p">|</span><span class="w"> </span>output<span class="w"> </span>directory
+-u<span class="w"> </span><span class="p">|</span><span class="w"> </span>policy
 </pre></div>
 </div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>c7n-org run -c accounts.yml -s output -u test.yml --dryrun
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>c7n-org<span class="w"> </span>run<span class="w"> </span>-c<span class="w"> </span>accounts.yml<span class="w"> </span>-s<span class="w"> </span>output<span class="w"> </span>-u<span class="w"> </span>test.yml<span class="w"> </span>--dryrun
 </pre></div>
 </div>
 <p>After running the above command, the following folder structure will be created:</p>
@@ -5795,27 +5795,27 @@ definitions and are interpolated at execution time. These are in
 addition to the default runtime variables custodian provides like
 <code class="docutils literal notranslate"><span class="pre">account_id</span></code>, <code class="docutils literal notranslate"><span class="pre">now</span></code>, and <code class="docutils literal notranslate"><span class="pre">region</span></code>.</p>
 <p>Example of defining in c7n-org config file:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">accounts</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">account_id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;123123123123&#39;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">account-1</span><span class="w"></span>
-<span class="w">  </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123123123123:role/CloudCustodian</span><span class="w"></span>
-<span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">charge_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xyz</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">accounts</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">account_id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;123123123123&#39;</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">account-1</span>
+<span class="w">  </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123123123123:role/CloudCustodian</span>
+<span class="w">  </span><span class="nt">vars</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">charge_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xyz</span>
 </pre></div>
 </div>
 <p>Example of using in a policy file:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2-check-tag</span><span class="w"></span>
-<span class="w">   </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws.ec2</span><span class="w"></span>
-<span class="w">   </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tag:CostCenter&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;{charge_code}&quot;</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2-check-tag</span>
+<span class="w">   </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws.ec2</span>
+<span class="w">   </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tag:CostCenter&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;{charge_code}&quot;</span>
 </pre></div>
 </div>
 <p>Another enhancement for <code class="docutils literal notranslate"><span class="pre">c7n-org</span> <span class="pre">run-script</span></code> is to support a few vars in the script arg.
 The available vars are <code class="docutils literal notranslate"><span class="pre">account</span></code>, <code class="docutils literal notranslate"><span class="pre">account_id</span></code>, <code class="docutils literal notranslate"><span class="pre">region</span></code> and <code class="docutils literal notranslate"><span class="pre">output_dir</span></code>.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>c7n-org run-script -s . -c my-projects.yml gcp_check_<span class="o">{</span>region<span class="o">}</span>.sh
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>c7n-org<span class="w"> </span>run-script<span class="w"> </span>-s<span class="w"> </span>.<span class="w"> </span>-c<span class="w"> </span>my-projects.yml<span class="w"> </span>gcp_check_<span class="o">{</span>region<span class="o">}</span>.sh
 <span class="c1"># or</span>
-c7n-org run-script -s . -c my-projects.yml use_another_policy_result.sh <span class="o">{</span>output_dir<span class="o">}</span>
+c7n-org<span class="w"> </span>run-script<span class="w"> </span>-s<span class="w"> </span>.<span class="w"> </span>-c<span class="w"> </span>my-projects.yml<span class="w"> </span>use_another_policy_result.sh<span class="w"> </span><span class="o">{</span>output_dir<span class="o">}</span>
 </pre></div>
 </div>
 <p><strong>Note</strong> Variable interpolation is sensitive to proper quoting and spacing,

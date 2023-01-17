@@ -5657,43 +5657,43 @@ accounts.</p>
 <p>The following cli will enable guard duty on all accounts tagged
 dev. The master guard duty account can be specified by name or account
 id. Running enable multiple times will idempotently converge.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ c7n-guardian <span class="nb">enable</span> --config accounts.yml --master <span class="m">120312301231</span> --tags dev
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>c7n-guardian<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--config<span class="w"> </span>accounts.yml<span class="w"> </span>--master<span class="w"> </span><span class="m">120312301231</span><span class="w"> </span>--tags<span class="w"> </span>dev
 </pre></div>
 </div>
 <p>The accounts config file is similiar to c7n-org, with the addition of the
 account email.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ cat accounts.yml
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cat<span class="w"> </span>accounts.yml
 
 accounts:
-  - name: guard-duty-master
-    email: guard-duty-master@example.com
-    account_id: <span class="s2">&quot;2020202020202&quot;</span>
-    role: <span class="s2">&quot;arn:aws:iam::2020202020202:role/CustodianGuardDuty&quot;</span>
-    tags:
-      - prod
+<span class="w">  </span>-<span class="w"> </span>name:<span class="w"> </span>guard-duty-master
+<span class="w">    </span>email:<span class="w"> </span>guard-duty-master@example.com
+<span class="w">    </span>account_id:<span class="w"> </span><span class="s2">&quot;2020202020202&quot;</span>
+<span class="w">    </span>role:<span class="w"> </span><span class="s2">&quot;arn:aws:iam::2020202020202:role/CustodianGuardDuty&quot;</span>
+<span class="w">    </span>tags:
+<span class="w">      </span>-<span class="w"> </span>prod
 
-  - name: cicd
-    email: cicd@example.com
-    account_id: <span class="s2">&quot;1010101010101&quot;</span>
-    role: <span class="s2">&quot;arn:aws:iam::1010101010101:role/CustodianGuardDuty&quot;</span>
-    tags:
-      - dev
-      - cicd
+<span class="w">  </span>-<span class="w"> </span>name:<span class="w"> </span>cicd
+<span class="w">    </span>email:<span class="w"> </span>cicd@example.com
+<span class="w">    </span>account_id:<span class="w"> </span><span class="s2">&quot;1010101010101&quot;</span>
+<span class="w">    </span>role:<span class="w"> </span><span class="s2">&quot;arn:aws:iam::1010101010101:role/CustodianGuardDuty&quot;</span>
+<span class="w">    </span>tags:
+<span class="w">      </span>-<span class="w"> </span>dev
+<span class="w">      </span>-<span class="w"> </span>cicd
 </pre></div>
 </div>
 <p>The cli also has support for disabling and reporting on accounts</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ c7n-guardian --help
-Usage: c7n-guardian <span class="o">[</span>OPTIONS<span class="o">]</span> COMMAND <span class="o">[</span>ARGS<span class="o">]</span>...
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>c7n-guardian<span class="w"> </span>--help
+Usage:<span class="w"> </span>c7n-guardian<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
 
-  Automate Guard Duty Setup.
+<span class="w">  </span>Automate<span class="w"> </span>Guard<span class="w"> </span>Duty<span class="w"> </span>Setup.
 
 Options:
-  --help  Show this message and exit.
+<span class="w">  </span>--help<span class="w">  </span>Show<span class="w"> </span>this<span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span>exit.
 
 Commands:
-  disable  <span class="nb">suspend</span> guard duty <span class="k">in</span> the given accounts.
-  <span class="nb">enable</span>   <span class="nb">enable</span> guard duty on a <span class="nb">set</span> of accounts
-  report   report on guard duty enablement by account
+<span class="w">  </span>disable<span class="w">  </span><span class="nb">suspend</span><span class="w"> </span>guard<span class="w"> </span>duty<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>given<span class="w"> </span>accounts.
+<span class="w">  </span><span class="nb">enable</span><span class="w">   </span><span class="nb">enable</span><span class="w"> </span>guard<span class="w"> </span>duty<span class="w"> </span>on<span class="w"> </span>a<span class="w"> </span><span class="nb">set</span><span class="w"> </span>of<span class="w"> </span>accounts
+<span class="w">  </span>report<span class="w">   </span>report<span class="w"> </span>on<span class="w"> </span>guard<span class="w"> </span>duty<span class="w"> </span>enablement<span class="w"> </span>by<span class="w"> </span>account
 </pre></div>
 </div>
 <section id="accounts-credentials">
@@ -5711,34 +5711,34 @@ remediation on the alerted resources, respectively stopping an ec2
 instance, and removing an access key. You have the full access to
 custodian’s actions and filters for doing additional activities in
 response to events.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
 
-<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2-guard-remediate</span><span class="w"></span>
-<span class="w">   </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2</span><span class="w"></span>
-<span class="w">   </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::{account_id}:role/CustodianPolicyExecution</span><span class="w"></span>
-<span class="w">     </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guard-duty</span><span class="w"></span>
-<span class="w">   </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="c1"># Filter for medium and high severity events</span><span class="w"></span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">event</span><span class="w"></span>
-<span class="w">       </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">detail.severity</span><span class="w"></span>
-<span class="w">       </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gte</span><span class="w"></span>
-<span class="w">       </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4.5</span><span class="w"></span>
-<span class="w">   </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop</span><span class="w"></span>
+<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2-guard-remediate</span>
+<span class="w">   </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ec2</span>
+<span class="w">   </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">     </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::{account_id}:role/CustodianPolicyExecution</span>
+<span class="w">     </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guard-duty</span>
+<span class="w">   </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">     </span><span class="c1"># Filter for medium and high severity events</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">event</span>
+<span class="w">       </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">detail.severity</span>
+<span class="w">       </span><span class="nt">op</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gte</span>
+<span class="w">       </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4.5</span>
+<span class="w">   </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop</span>
 
-<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">iam-guard-remediate</span><span class="w"></span>
-<span class="w">   </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">iam-user</span><span class="w"></span>
-<span class="w">   </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::{account_id}:role/CustodianPolicyExecution</span><span class="w"></span>
-<span class="w">     </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guard-duty</span><span class="w"></span>
-<span class="w">   </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="c1"># Only a particular type of event, go ahead and remove keys</span><span class="w"></span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">event</span><span class="w"></span>
-<span class="w">       </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">detail.type</span><span class="w"></span>
-<span class="w">       </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;UnauthorizedAccess:IAMUser/TorIPCaller&quot;</span><span class="w"></span>
-<span class="w">   </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remove-keys</span><span class="w"></span>
+<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">iam-guard-remediate</span>
+<span class="w">   </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">iam-user</span>
+<span class="w">   </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">     </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::{account_id}:role/CustodianPolicyExecution</span>
+<span class="w">     </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guard-duty</span>
+<span class="w">   </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">     </span><span class="c1"># Only a particular type of event, go ahead and remove keys</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">event</span>
+<span class="w">       </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">detail.type</span>
+<span class="w">       </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;UnauthorizedAccess:IAMUser/TorIPCaller&quot;</span>
+<span class="w">   </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remove-keys</span>
 </pre></div>
 </div>
 </section>

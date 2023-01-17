@@ -5664,77 +5664,77 @@ and Redshift Logs.  The ELB and Redshift arns are region specific
 you might need to add or remove addtional arns found here:
 Redshift Log Accounts: <a class="reference external" href="https://docs.aws.amazon.com/redshift/latest/mgmt/db-auditing.html">https://docs.aws.amazon.com/redshift/latest/mgmt/db-auditing.html</a>
 ELB Log Accounts: <a class="reference external" href="https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/enable-access-logs.html">https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/enable-access-logs.html</a></p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
 
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3-deny-public-object-acl-poll</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">      </span><span class="no">Appends a bucket policy statement to all existing s3 buckets to</span><span class="w"></span>
-<span class="w">      </span><span class="no">deny anyone except for the AWS Logging Services from setting s3</span><span class="w"></span>
-<span class="w">      </span><span class="no">objects in the bucket to public-read, public-read-write, or any</span><span class="w"></span>
-<span class="w">      </span><span class="no">authenticated AWS user.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set-statements</span><span class="w"></span>
-<span class="w">        </span><span class="nt">statements</span><span class="p">:</span><span class="w"></span>
-<span class="w">           </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Sid</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;DenyS3PublicObjectACL&quot;</span><span class="w"></span>
-<span class="w">             </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Deny&quot;</span><span class="w"></span>
-<span class="w">             </span><span class="nt">Action</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;s3:PutObjectAcl&quot;</span><span class="w"></span>
-<span class="w">             </span><span class="nt">NotPrincipal</span><span class="p">:</span><span class="w"></span>
-<span class="w">               </span><span class="s">&quot;AWS&quot;</span><span class="p p-Indicator">:</span><span class="w"></span>
-<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::858827067514:root&quot;</span><span class="w"></span>
-<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::193672423079:user/logs&quot;</span><span class="w"></span>
-<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::210876761215:user/logs&quot;</span><span class="w"></span>
-<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::127311923021:root&quot;</span><span class="w"></span>
-<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::156460612806:root&quot;</span><span class="w"></span>
-<span class="w">             </span><span class="nt">Resource</span><span class="p">:</span><span class="w"></span>
-<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:s3:::{bucket_name}/*&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:s3:::{bucket_name}&quot;</span><span class="w"></span>
-<span class="w">             </span><span class="nt">Condition</span><span class="p">:</span><span class="w"></span>
-<span class="w">               </span><span class="nt">StringEqualsIgnoreCaseIfExists</span><span class="p">:</span><span class="w"></span>
-<span class="w">                  </span><span class="s">&#39;s3:x-amz-acl&#39;</span><span class="p p-Indicator">:</span><span class="w"></span>
-<span class="w">                      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;public-read&quot;</span><span class="w"></span>
-<span class="w">                      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;public-read-write&quot;</span><span class="w"></span>
-<span class="w">                      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;authenticated-read&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3-deny-public-object-acl-poll</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">Appends a bucket policy statement to all existing s3 buckets to</span>
+<span class="w">      </span><span class="no">deny anyone except for the AWS Logging Services from setting s3</span>
+<span class="w">      </span><span class="no">objects in the bucket to public-read, public-read-write, or any</span>
+<span class="w">      </span><span class="no">authenticated AWS user.</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set-statements</span>
+<span class="w">        </span><span class="nt">statements</span><span class="p">:</span>
+<span class="w">           </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Sid</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;DenyS3PublicObjectACL&quot;</span>
+<span class="w">             </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Deny&quot;</span>
+<span class="w">             </span><span class="nt">Action</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;s3:PutObjectAcl&quot;</span>
+<span class="w">             </span><span class="nt">NotPrincipal</span><span class="p">:</span>
+<span class="w">               </span><span class="s">&quot;AWS&quot;</span><span class="p p-Indicator">:</span>
+<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::858827067514:root&quot;</span>
+<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::193672423079:user/logs&quot;</span>
+<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::210876761215:user/logs&quot;</span>
+<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::127311923021:root&quot;</span>
+<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::156460612806:root&quot;</span>
+<span class="w">             </span><span class="nt">Resource</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:s3:::{bucket_name}/*&quot;</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:s3:::{bucket_name}&quot;</span>
+<span class="w">             </span><span class="nt">Condition</span><span class="p">:</span>
+<span class="w">               </span><span class="nt">StringEqualsIgnoreCaseIfExists</span><span class="p">:</span>
+<span class="w">                  </span><span class="s">&#39;s3:x-amz-acl&#39;</span><span class="p p-Indicator">:</span>
+<span class="w">                      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;public-read&quot;</span>
+<span class="w">                      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;public-read-write&quot;</span>
+<span class="w">                      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;authenticated-read&quot;</span>
 
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3-deny-public-object-acl-realtime</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3</span><span class="w"></span>
-<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span><span class="w"></span>
-<span class="w">      </span><span class="nt">events</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreateBucket</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;s3.amazonaws.com&#39;</span><span class="w"></span>
-<span class="w">          </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PutBucketPolicy</span><span class="w"></span>
-<span class="w">          </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;requestParameters.bucketName&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::{account_id}:role/Cloud_Custodian_Role</span><span class="w"></span>
-<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">      </span><span class="no">Appends a bucket policy statement to an s3 bucket when it detects</span><span class="w"></span>
-<span class="w">      </span><span class="no">a policy change to the bucket or a new bucket is created which</span><span class="w"></span>
-<span class="w">      </span><span class="no">will deny anyone except some AWS logging services from setting</span><span class="w"></span>
-<span class="w">      </span><span class="no">s3 objects in the bucket to public-read, public-read-write, or</span><span class="w"></span>
-<span class="w">      </span><span class="no">any authenticated AWS user.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set-statements</span><span class="w"></span>
-<span class="w">        </span><span class="nt">statements</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Sid</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;DenyS3PublicObjectACL&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Deny&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="nt">Action</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;s3:PutObjectAcl&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="nt">NotPrincipal</span><span class="p">:</span><span class="w"></span>
-<span class="w">               </span><span class="s">&quot;AWS&quot;</span><span class="p p-Indicator">:</span><span class="w"></span>
-<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::858827067514:root&quot;</span><span class="w"></span>
-<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::193672423079:user/logs&quot;</span><span class="w"></span>
-<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::210876761215:user/logs&quot;</span><span class="w"></span>
-<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::127311923021:root&quot;</span><span class="w"></span>
-<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::156460612806:root&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span><span class="w"></span>
-<span class="w">               </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:s3:::{bucket_name}/*&quot;</span><span class="w"></span>
-<span class="w">               </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:s3:::{bucket_name}&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="nt">Condition</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="nt">StringEqualsIgnoreCaseIfExists</span><span class="p">:</span><span class="w"></span>
-<span class="w">                 </span><span class="s">&#39;s3:x-amz-acl&#39;</span><span class="p p-Indicator">:</span><span class="w"></span>
-<span class="w">                     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;public-read&quot;</span><span class="w"></span>
-<span class="w">                     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;public-read-write&quot;</span><span class="w"></span>
-<span class="w">                     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;authenticated-read&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3-deny-public-object-acl-realtime</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudtrail</span>
+<span class="w">      </span><span class="nt">events</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreateBucket</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;s3.amazonaws.com&#39;</span>
+<span class="w">          </span><span class="nt">event</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PutBucketPolicy</span>
+<span class="w">          </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;requestParameters.bucketName&quot;</span>
+<span class="w">      </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::{account_id}:role/Cloud_Custodian_Role</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">Appends a bucket policy statement to an s3 bucket when it detects</span>
+<span class="w">      </span><span class="no">a policy change to the bucket or a new bucket is created which</span>
+<span class="w">      </span><span class="no">will deny anyone except some AWS logging services from setting</span>
+<span class="w">      </span><span class="no">s3 objects in the bucket to public-read, public-read-write, or</span>
+<span class="w">      </span><span class="no">any authenticated AWS user.</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set-statements</span>
+<span class="w">        </span><span class="nt">statements</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Sid</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;DenyS3PublicObjectACL&quot;</span>
+<span class="w">            </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Deny&quot;</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;s3:PutObjectAcl&quot;</span>
+<span class="w">            </span><span class="nt">NotPrincipal</span><span class="p">:</span>
+<span class="w">               </span><span class="s">&quot;AWS&quot;</span><span class="p p-Indicator">:</span>
+<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::858827067514:root&quot;</span>
+<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::193672423079:user/logs&quot;</span>
+<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::210876761215:user/logs&quot;</span>
+<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::127311923021:root&quot;</span>
+<span class="w">                   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::156460612806:root&quot;</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span>
+<span class="w">               </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:s3:::{bucket_name}/*&quot;</span>
+<span class="w">               </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;arn:aws:s3:::{bucket_name}&quot;</span>
+<span class="w">            </span><span class="nt">Condition</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">StringEqualsIgnoreCaseIfExists</span><span class="p">:</span>
+<span class="w">                 </span><span class="s">&#39;s3:x-amz-acl&#39;</span><span class="p p-Indicator">:</span>
+<span class="w">                     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;public-read&quot;</span>
+<span class="w">                     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;public-read-write&quot;</span>
+<span class="w">                     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;authenticated-read&quot;</span>
 </pre></div>
 </div>
 </section>

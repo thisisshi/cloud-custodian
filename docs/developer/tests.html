@@ -5651,11 +5651,11 @@
 <section id="running-tests">
 <h2>Running tests<a class="headerlink" href="#running-tests" title="Permalink to this headline">¶</a></h2>
 <p>Unit tests can be run with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tox
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>tox
 </pre></div>
 </div>
 <p>Linting can be run with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ make lint
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>lint
 </pre></div>
 </div>
 <p>To run tests directly with pytest, or to integrate into your IDE, you can reference
@@ -5697,7 +5697,7 @@ resources.  Pytest Terraform uses <a class="reference external" href="https://te
 to repeatably &amp; reliably stand up cloud resources.  Make sure you have
 installed terraform and the <code class="docutils literal notranslate"><span class="pre">terraform</span></code> command is available in your
 shell’s PATH.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ terraform version
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>terraform<span class="w"> </span>version
 </pre></div>
 </div>
 <p>In addition to a working terraform installation, credentials and configuration for the target cloud will need to be completed.
@@ -5741,14 +5741,14 @@ resource <code class="docutils literal notranslate"><span class="pre">local_file
 lookup.</p>
 <p>Run this test using the following command, which will also generate flight recordings for terraform:</p>
 <blockquote>
-<div><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pytest tests/path/to/test.py -s -v -k <span class="s1">&#39;test_file_example&#39;</span>
+<div><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pytest<span class="w"> </span>tests/path/to/test.py<span class="w"> </span>-s<span class="w"> </span>-v<span class="w"> </span>-k<span class="w"> </span><span class="s1">&#39;test_file_example&#39;</span>
 </pre></div>
 </div>
 </div></blockquote>
 <p>This may take a little while as tests are typically interacting with the cloud.
 All terraform state is recorded in the same directory of the terraform module as a <code class="docutils literal notranslate"><span class="pre">tf_resources.json</span></code> file.</p>
 <blockquote>
-<div><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ ls tests/terraform/file_example/
+<div><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>ls<span class="w"> </span>tests/terraform/file_example/
 main.tf
 tf_resources.json
 </pre></div>
@@ -5805,7 +5805,7 @@ example:</p>
 </div></blockquote>
 <p>Now run this test using the following command to generate the placebo data:</p>
 <blockquote>
-<div><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pytest tests/path/to/test.py -s -v
+<div><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pytest<span class="w"> </span>tests/path/to/test.py<span class="w"> </span>-s<span class="w"> </span>-v
 </pre></div>
 </div>
 </div></blockquote>
@@ -5814,7 +5814,7 @@ All responses are stored in the placebo directory, and can be viewed when the te
 finished.  It is not necessary to inspect these files, but they can be helpful
 if the test is not behaving how you expect.</p>
 <blockquote>
-<div><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ ls tests/data/placebo/test_example/
+<div><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>ls<span class="w"> </span>tests/data/placebo/test_example/
 ec2.DescribeInstances_1.json
 ec2.DescribeTags_1.json
 </pre></div>

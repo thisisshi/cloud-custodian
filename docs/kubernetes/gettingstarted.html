@@ -5659,16 +5659,16 @@ version.</p>
 using one of the following options:</p>
 <section id="option-1-install-released-packages-to-local-python-environment">
 <h3>Option 1: Install released packages to local Python Environment<a class="headerlink" href="#option-1-install-released-packages-to-local-python-environment" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install c7n
-pip install c7n_kube
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>c7n
+pip<span class="w"> </span>install<span class="w"> </span>c7n_kube
 </pre></div>
 </div>
 </section>
 <section id="option-2-install-latest-from-the-repository">
 <h3>Option 2: Install latest from the repository<a class="headerlink" href="#option-2-install-latest-from-the-repository" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/cloud-custodian/cloud-custodian.git
-pip install -e ./cloud-custodian
-pip install -e ./cloud-custodian/tools/c7n_kube
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/cloud-custodian/cloud-custodian.git
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>./cloud-custodian
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>./cloud-custodian/tools/c7n_kube
 </pre></div>
 </div>
 </section>
@@ -5691,26 +5691,26 @@ Custodian to do.</p>
 <li><p>Actions: directives to take on the filtered set of resources</p></li>
 </ul>
 <p>First, lets create a pod resource that we want to target with the policy:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>❯ kubectl run nginx --image<span class="o">=</span>nginx --labels<span class="o">=</span><span class="nv">name</span><span class="o">=</span>custodian
-❯ kubectl get pod -o wide --show-labels
- NAME    READY   STATUS    RESTARTS   AGE   IP           NODE     NOMINATED NODE   READINESS GATES   LABELS
- nginx   <span class="m">1</span>/1     Running   <span class="m">0</span>          24s   <span class="m">10</span>.0.1.224   worker   &lt;none&gt;           &lt;none&gt;            <span class="nv">name</span><span class="o">=</span>custodian
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>❯<span class="w"> </span>kubectl<span class="w"> </span>run<span class="w"> </span>nginx<span class="w"> </span>--image<span class="o">=</span>nginx<span class="w"> </span>--labels<span class="o">=</span><span class="nv">name</span><span class="o">=</span>custodian
+❯<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>-o<span class="w"> </span>wide<span class="w"> </span>--show-labels
+<span class="w"> </span>NAME<span class="w">    </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE<span class="w">   </span>IP<span class="w">           </span>NODE<span class="w">     </span>NOMINATED<span class="w"> </span>NODE<span class="w">   </span>READINESS<span class="w"> </span>GATES<span class="w">   </span>LABELS
+<span class="w"> </span>nginx<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>24s<span class="w">   </span><span class="m">10</span>.0.1.224<span class="w">   </span>worker<span class="w">   </span>&lt;none&gt;<span class="w">           </span>&lt;none&gt;<span class="w">            </span><span class="nv">name</span><span class="o">=</span>custodian
 </pre></div>
 </div>
 <p>Now in the example below, we will write a policy that filters for pods with a
 label “custodian” and deletes it:</p>
 <p>Filename: <code class="docutils literal notranslate"><span class="pre">custodian.yml</span></code></p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-first-policy</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">      </span><span class="no">Deletes pods with label name:custodian</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k8s.pod</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="w"></span>
-<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">metadata.labels.name</span><span class="w"></span>
-<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custodian</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-first-policy</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">Deletes pods with label name:custodian</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k8s.pod</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span>
+<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">metadata.labels.name</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custodian</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete</span>
 </pre></div>
 </div>
 </section>
@@ -5718,7 +5718,7 @@ label “custodian” and deletes it:</p>
 <span id="kube-run-policy"></span><h2>Run Your Policy<a class="headerlink" href="#run-your-policy" title="Permalink to this headline">¶</a></h2>
 <p>First, ensure you have <a class="reference internal" href="#kubernetes-authenticate"><span class="std std-ref">configured connectivity to your cluster</span></a>.</p>
 <p>Next, run the following command to execute the policy with Custodian:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>custodian run --output-dir<span class="o">=</span>output custodian.yml --cache-period <span class="m">0</span> -v
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>custodian<span class="w"> </span>run<span class="w"> </span>--output-dir<span class="o">=</span>output<span class="w"> </span>custodian.yml<span class="w"> </span>--cache-period<span class="w"> </span><span class="m">0</span><span class="w"> </span>-v
 </pre></div>
 </div>
 <p>If successful, you should see output similar to the following on the command line:</p>
@@ -5740,96 +5740,96 @@ overwriting it).</p>
 <p>See <a class="reference internal" href="../filters.html#filters"><span class="std std-ref">Generic Filters</span></a> for more information on the features of the Value filter used in this sample.</p>
 <p>You can also use <cite>custodian schema</cite> to get more information on the filters
 available to you.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>❯ custodian schema k8s
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>❯<span class="w"> </span>custodian<span class="w"> </span>schema<span class="w"> </span>k8s
 resources:
-- k8s.config-map
-- k8s.custom-cluster-resource
-- k8s.custom-namespaced-resource
-- k8s.daemon-set
-- k8s.deployment
-- k8s.namespace
-- k8s.node
-- k8s.pod
-- k8s.replica-set
-- k8s.replication-controller
-- k8s.secret
-- k8s.service
-- k8s.service-account
-- k8s.stateful-set
-- k8s.volume
-- k8s.volume-claim
+-<span class="w"> </span>k8s.config-map
+-<span class="w"> </span>k8s.custom-cluster-resource
+-<span class="w"> </span>k8s.custom-namespaced-resource
+-<span class="w"> </span>k8s.daemon-set
+-<span class="w"> </span>k8s.deployment
+-<span class="w"> </span>k8s.namespace
+-<span class="w"> </span>k8s.node
+-<span class="w"> </span>k8s.pod
+-<span class="w"> </span>k8s.replica-set
+-<span class="w"> </span>k8s.replication-controller
+-<span class="w"> </span>k8s.secret
+-<span class="w"> </span>k8s.service
+-<span class="w"> </span>k8s.service-account
+-<span class="w"> </span>k8s.stateful-set
+-<span class="w"> </span>k8s.volume
+-<span class="w"> </span>k8s.volume-claim
 </pre></div>
 </div>
 <p>To understand which values are available for a resource you can use <cite>kubectl</cite>,
 so for example to understand what attributes a persistent volume has on it you
 can run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>❯ kubectl explain persistentvolume --recursive
- KIND:     PersistentVolume
- VERSION:  v1
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>❯<span class="w"> </span>kubectl<span class="w"> </span>explain<span class="w"> </span>persistentvolume<span class="w"> </span>--recursive
+<span class="w"> </span>KIND:<span class="w">     </span>PersistentVolume
+<span class="w"> </span>VERSION:<span class="w">  </span>v1
 
- DESCRIPTION:
-      PersistentVolume <span class="o">(</span>PV<span class="o">)</span> is a storage resource provisioned by an
-      administrator. It is analogous to a node. More info:
-      https://kubernetes.io/docs/concepts/storage/persistent-volumes
+<span class="w"> </span>DESCRIPTION:
+<span class="w">      </span>PersistentVolume<span class="w"> </span><span class="o">(</span>PV<span class="o">)</span><span class="w"> </span>is<span class="w"> </span>a<span class="w"> </span>storage<span class="w"> </span>resource<span class="w"> </span>provisioned<span class="w"> </span>by<span class="w"> </span>an
+<span class="w">      </span>administrator.<span class="w"> </span>It<span class="w"> </span>is<span class="w"> </span>analogous<span class="w"> </span>to<span class="w"> </span>a<span class="w"> </span>node.<span class="w"> </span>More<span class="w"> </span>info:
+<span class="w">      </span>https://kubernetes.io/docs/concepts/storage/persistent-volumes
 
- FIELDS:
-    apiVersion   &lt;string&gt;
-    kind &lt;string&gt;
-    metadata     &lt;Object&gt;
-       annotations       &lt;map<span class="o">[</span>string<span class="o">]</span>string&gt;
-       creationTimestamp &lt;string&gt;
-       deletionGracePeriodSeconds        &lt;integer&gt;
-       deletionTimestamp &lt;string&gt;
-       finalizers        &lt;<span class="o">[]</span>string&gt;
-       generateName      &lt;string&gt;
-       generation        &lt;integer&gt;
-       labels    &lt;map<span class="o">[</span>string<span class="o">]</span>string&gt;
+<span class="w"> </span>FIELDS:
+<span class="w">    </span>apiVersion<span class="w">   </span>&lt;string&gt;
+<span class="w">    </span>kind<span class="w"> </span>&lt;string&gt;
+<span class="w">    </span>metadata<span class="w">     </span>&lt;Object&gt;
+<span class="w">       </span>annotations<span class="w">       </span>&lt;map<span class="o">[</span>string<span class="o">]</span>string&gt;
+<span class="w">       </span>creationTimestamp<span class="w"> </span>&lt;string&gt;
+<span class="w">       </span>deletionGracePeriodSeconds<span class="w">        </span>&lt;integer&gt;
+<span class="w">       </span>deletionTimestamp<span class="w"> </span>&lt;string&gt;
+<span class="w">       </span>finalizers<span class="w">        </span>&lt;<span class="o">[]</span>string&gt;
+<span class="w">       </span>generateName<span class="w">      </span>&lt;string&gt;
+<span class="w">       </span>generation<span class="w">        </span>&lt;integer&gt;
+<span class="w">       </span>labels<span class="w">    </span>&lt;map<span class="o">[</span>string<span class="o">]</span>string&gt;
 
-  ....
+<span class="w">  </span>....
 </pre></div>
 </div>
 <p>Or if you have a resource already deployed in your cluster and you want to
 figure out how to taret it you can output it to <cite>json</cite> and review the available
 attributes that way:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>❯ kubectl get pv node-pv-volume -o json
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>❯<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pv<span class="w"> </span>node-pv-volume<span class="w"> </span>-o<span class="w"> </span>json
 
- <span class="o">{</span>
-     <span class="s2">&quot;apiVersion&quot;</span>: <span class="s2">&quot;v1&quot;</span>,
-     <span class="s2">&quot;kind&quot;</span>: <span class="s2">&quot;PersistentVolume&quot;</span>,
-     <span class="s2">&quot;metadata&quot;</span>: <span class="o">{</span>
-         <span class="s2">&quot;annotations&quot;</span>: <span class="o">{</span>
-             <span class="s2">&quot;kubectl.kubernetes.io/last-applied-configuration&quot;</span>: <span class="s2">&quot;{\&quot;apiVersion\&quot;:\&quot;v1\&quot;,\&quot;kind\&quot;:\&quot;PersistentVolume\&quot;,\&quot;metadata\&quot;:{\&quot;annotations\&quot;:{},\&quot;labels\&quot;:{\&quot;type\&quot;:\&quot;local\&quot;},\&quot;name\&quot;:\&quot;node-pv-volume\&quot;},\&quot;spec\&quot;:{\&quot;accessModes\&quot;:[\&quot;ReadWriteOnce\&quot;],\&quot;capacity\&quot;:{\&quot;storage\&quot;:\&quot;1Gi\&quot;},\&quot;hostPath\&quot;:{\&quot;path\&quot;:\&quot;/tmp/k8s\&quot;},\&quot;storageClassName\&quot;:\&quot;manual\&quot;}}\n&quot;</span>
-         <span class="o">}</span>,
-         <span class="s2">&quot;creationTimestamp&quot;</span>: <span class="s2">&quot;2022-10-14T19:34:45Z&quot;</span>,
-         <span class="s2">&quot;finalizers&quot;</span>: <span class="o">[</span>
-             <span class="s2">&quot;kubernetes.io/pv-protection&quot;</span>
-         <span class="o">]</span>,
-         <span class="s2">&quot;labels&quot;</span>: <span class="o">{</span>
-             <span class="s2">&quot;type&quot;</span>: <span class="s2">&quot;local&quot;</span>
-         <span class="o">}</span>,
-         <span class="s2">&quot;name&quot;</span>: <span class="s2">&quot;node-pv-volume&quot;</span>,
-         <span class="s2">&quot;resourceVersion&quot;</span>: <span class="s2">&quot;394700&quot;</span>,
-         <span class="s2">&quot;uid&quot;</span>: <span class="s2">&quot;ad414486-9fd9-48ac-8cc5-7d6b9c24b524&quot;</span>
-     <span class="o">}</span>,
-     <span class="s2">&quot;spec&quot;</span>: <span class="o">{</span>
-         <span class="s2">&quot;accessModes&quot;</span>: <span class="o">[</span>
-             <span class="s2">&quot;ReadWriteOnce&quot;</span>
-         <span class="o">]</span>,
-         <span class="s2">&quot;capacity&quot;</span>: <span class="o">{</span>
-             <span class="s2">&quot;storage&quot;</span>: <span class="s2">&quot;1Gi&quot;</span>
-         <span class="o">}</span>,
-         <span class="s2">&quot;hostPath&quot;</span>: <span class="o">{</span>
-             <span class="s2">&quot;path&quot;</span>: <span class="s2">&quot;/tmp/k8s&quot;</span>,
-             <span class="s2">&quot;type&quot;</span>: <span class="s2">&quot;&quot;</span>
-         <span class="o">}</span>,
-         <span class="s2">&quot;persistentVolumeReclaimPolicy&quot;</span>: <span class="s2">&quot;Retain&quot;</span>,
-         <span class="s2">&quot;storageClassName&quot;</span>: <span class="s2">&quot;manual&quot;</span>,
-         <span class="s2">&quot;volumeMode&quot;</span>: <span class="s2">&quot;Filesystem&quot;</span>
-     <span class="o">}</span>,
-     <span class="s2">&quot;status&quot;</span>: <span class="o">{</span>
-         <span class="s2">&quot;phase&quot;</span>: <span class="s2">&quot;Available&quot;</span>
-     <span class="o">}</span>
- <span class="o">}</span>
+<span class="w"> </span><span class="o">{</span>
+<span class="w">     </span><span class="s2">&quot;apiVersion&quot;</span>:<span class="w"> </span><span class="s2">&quot;v1&quot;</span>,
+<span class="w">     </span><span class="s2">&quot;kind&quot;</span>:<span class="w"> </span><span class="s2">&quot;PersistentVolume&quot;</span>,
+<span class="w">     </span><span class="s2">&quot;metadata&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">         </span><span class="s2">&quot;annotations&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">             </span><span class="s2">&quot;kubectl.kubernetes.io/last-applied-configuration&quot;</span>:<span class="w"> </span><span class="s2">&quot;{\&quot;apiVersion\&quot;:\&quot;v1\&quot;,\&quot;kind\&quot;:\&quot;PersistentVolume\&quot;,\&quot;metadata\&quot;:{\&quot;annotations\&quot;:{},\&quot;labels\&quot;:{\&quot;type\&quot;:\&quot;local\&quot;},\&quot;name\&quot;:\&quot;node-pv-volume\&quot;},\&quot;spec\&quot;:{\&quot;accessModes\&quot;:[\&quot;ReadWriteOnce\&quot;],\&quot;capacity\&quot;:{\&quot;storage\&quot;:\&quot;1Gi\&quot;},\&quot;hostPath\&quot;:{\&quot;path\&quot;:\&quot;/tmp/k8s\&quot;},\&quot;storageClassName\&quot;:\&quot;manual\&quot;}}\n&quot;</span>
+<span class="w">         </span><span class="o">}</span>,
+<span class="w">         </span><span class="s2">&quot;creationTimestamp&quot;</span>:<span class="w"> </span><span class="s2">&quot;2022-10-14T19:34:45Z&quot;</span>,
+<span class="w">         </span><span class="s2">&quot;finalizers&quot;</span>:<span class="w"> </span><span class="o">[</span>
+<span class="w">             </span><span class="s2">&quot;kubernetes.io/pv-protection&quot;</span>
+<span class="w">         </span><span class="o">]</span>,
+<span class="w">         </span><span class="s2">&quot;labels&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">             </span><span class="s2">&quot;type&quot;</span>:<span class="w"> </span><span class="s2">&quot;local&quot;</span>
+<span class="w">         </span><span class="o">}</span>,
+<span class="w">         </span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;node-pv-volume&quot;</span>,
+<span class="w">         </span><span class="s2">&quot;resourceVersion&quot;</span>:<span class="w"> </span><span class="s2">&quot;394700&quot;</span>,
+<span class="w">         </span><span class="s2">&quot;uid&quot;</span>:<span class="w"> </span><span class="s2">&quot;ad414486-9fd9-48ac-8cc5-7d6b9c24b524&quot;</span>
+<span class="w">     </span><span class="o">}</span>,
+<span class="w">     </span><span class="s2">&quot;spec&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">         </span><span class="s2">&quot;accessModes&quot;</span>:<span class="w"> </span><span class="o">[</span>
+<span class="w">             </span><span class="s2">&quot;ReadWriteOnce&quot;</span>
+<span class="w">         </span><span class="o">]</span>,
+<span class="w">         </span><span class="s2">&quot;capacity&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">             </span><span class="s2">&quot;storage&quot;</span>:<span class="w"> </span><span class="s2">&quot;1Gi&quot;</span>
+<span class="w">         </span><span class="o">}</span>,
+<span class="w">         </span><span class="s2">&quot;hostPath&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">             </span><span class="s2">&quot;path&quot;</span>:<span class="w"> </span><span class="s2">&quot;/tmp/k8s&quot;</span>,
+<span class="w">             </span><span class="s2">&quot;type&quot;</span>:<span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">         </span><span class="o">}</span>,
+<span class="w">         </span><span class="s2">&quot;persistentVolumeReclaimPolicy&quot;</span>:<span class="w"> </span><span class="s2">&quot;Retain&quot;</span>,
+<span class="w">         </span><span class="s2">&quot;storageClassName&quot;</span>:<span class="w"> </span><span class="s2">&quot;manual&quot;</span>,
+<span class="w">         </span><span class="s2">&quot;volumeMode&quot;</span>:<span class="w"> </span><span class="s2">&quot;Filesystem&quot;</span>
+<span class="w">     </span><span class="o">}</span>,
+<span class="w">     </span><span class="s2">&quot;status&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">         </span><span class="s2">&quot;phase&quot;</span>:<span class="w"> </span><span class="s2">&quot;Available&quot;</span>
+<span class="w">     </span><span class="o">}</span>
+<span class="w"> </span><span class="o">}</span>
 </pre></div>
 </div>
 </section>

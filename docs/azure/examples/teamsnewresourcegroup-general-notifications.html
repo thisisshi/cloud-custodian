@@ -5660,41 +5660,41 @@ to provide a link to the new resource group. Note: linking to portal pages withi
 Azure is not supported by all web browsers.</p>
 <p>To run the policy, you must replace <code class="docutils literal notranslate"><span class="pre">&lt;your_webhook_here&gt;</span></code> with the correct url.</p>
 <p>For more information on how the event grid function works please see <a class="reference internal" href="../configuration/functionshosting.html#azure-functionshosting"><span class="std std-ref">Azure Functions Hosting</span></a></p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify-new-resource-group</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">      </span><span class="no">Generates a Teams notification when a new resource group is created</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.resourcegroup</span><span class="w"></span>
-<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-event-grid</span><span class="w"></span>
-<span class="w">      </span><span class="nt">events</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[{</span><span class="w"></span>
-<span class="nt">        resourceProvider</span><span class="p">:</span><span class="w"> </span><span class="nv">Microsoft.Resources/subscriptions/resourceGroups</span><span class="p p-Indicator">,</span><span class="w"></span>
-<span class="nt">        event</span><span class="p">:</span><span class="w"> </span><span class="nv">write</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">}]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">webhook</span><span class="w"></span>
-<span class="w">        </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;your_webhook_here&gt;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">batch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">        </span><span class="nt">body</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="w"></span>
-<span class="w">          </span><span class="no">{</span><span class="w"></span>
-<span class="w">            </span><span class="no">&quot;@context&quot;: `https://schema.org/extensions`,</span><span class="w"></span>
-<span class="w">            </span><span class="no">&quot;@type&quot;: `MessageCard`,</span><span class="w"></span>
-<span class="w">            </span><span class="no">&quot;themeColor&quot;: `0072C6`,</span><span class="w"></span>
-<span class="w">            </span><span class="no">&quot;title&quot;: `New Resource Group Created`,</span><span class="w"></span>
-<span class="w">            </span><span class="no">&quot;text&quot;: join(&#39;&#39;, [`A new resource group has been created in subscription `, account_id, `.\n\nResource Group Name: `, resource.name, `\n\nResource Group Location: `, resource.location])</span><span class="w"></span>
-<span class="w">            </span><span class="no">&quot;potentialAction&quot;: [</span><span class="w"></span>
-<span class="w">              </span><span class="no">{</span><span class="w"></span>
-<span class="w">                </span><span class="no">&quot;@type&quot;: `OpenUri`,</span><span class="w"></span>
-<span class="w">                </span><span class="no">&quot;name&quot;: `Open In Portal`,</span><span class="w"></span>
-<span class="w">                </span><span class="no">&quot;targets&quot;: [</span><span class="w"></span>
-<span class="w">                </span><span class="no">{</span><span class="w"></span>
-<span class="w">                  </span><span class="no">&quot;os&quot;: `default`,</span><span class="w"></span>
-<span class="w">                  </span><span class="no">&quot;uri&quot;: join(&#39;&#39;,[`https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource`, resource.id, `/overview`])</span><span class="w"></span>
-<span class="w">                </span><span class="no">}</span><span class="w"></span>
-<span class="w">                </span><span class="no">]</span><span class="w"></span>
-<span class="w">              </span><span class="no">}</span><span class="w"></span>
-<span class="w">            </span><span class="no">]</span><span class="w"></span>
-<span class="w">          </span><span class="no">}</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">policies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notify-new-resource-group</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">Generates a Teams notification when a new resource group is created</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure.resourcegroup</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure-event-grid</span>
+<span class="w">      </span><span class="nt">events</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[{</span>
+<span class="nt">        resourceProvider</span><span class="p">:</span><span class="w"> </span><span class="nv">Microsoft.Resources/subscriptions/resourceGroups</span><span class="p p-Indicator">,</span>
+<span class="nt">        event</span><span class="p">:</span><span class="w"> </span><span class="nv">write</span>
+<span class="w">      </span><span class="p p-Indicator">}]</span>
+<span class="w">    </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">webhook</span>
+<span class="w">        </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;your_webhook_here&gt;</span>
+<span class="w">        </span><span class="nt">batch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">body</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">          </span><span class="no">{</span>
+<span class="w">            </span><span class="no">&quot;@context&quot;: `https://schema.org/extensions`,</span>
+<span class="w">            </span><span class="no">&quot;@type&quot;: `MessageCard`,</span>
+<span class="w">            </span><span class="no">&quot;themeColor&quot;: `0072C6`,</span>
+<span class="w">            </span><span class="no">&quot;title&quot;: `New Resource Group Created`,</span>
+<span class="w">            </span><span class="no">&quot;text&quot;: join(&#39;&#39;, [`A new resource group has been created in subscription `, account_id, `.\n\nResource Group Name: `, resource.name, `\n\nResource Group Location: `, resource.location])</span>
+<span class="w">            </span><span class="no">&quot;potentialAction&quot;: [</span>
+<span class="w">              </span><span class="no">{</span>
+<span class="w">                </span><span class="no">&quot;@type&quot;: `OpenUri`,</span>
+<span class="w">                </span><span class="no">&quot;name&quot;: `Open In Portal`,</span>
+<span class="w">                </span><span class="no">&quot;targets&quot;: [</span>
+<span class="w">                </span><span class="no">{</span>
+<span class="w">                  </span><span class="no">&quot;os&quot;: `default`,</span>
+<span class="w">                  </span><span class="no">&quot;uri&quot;: join(&#39;&#39;,[`https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource`, resource.id, `/overview`])</span>
+<span class="w">                </span><span class="no">}</span>
+<span class="w">                </span><span class="no">]</span>
+<span class="w">              </span><span class="no">}</span>
+<span class="w">            </span><span class="no">]</span>
+<span class="w">          </span><span class="no">}</span>
 </pre></div>
 </div>
 </section>
