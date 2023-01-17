@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 from c7n.filters import Filter
 from c7n.filters import ValueFilter
 from c7n.query import RetryPageIterator
-from c7n.filters.backup import ConsecutiveAwsBackupsFilter
+from c7n.filters.backup import ConsecutiveAwsBackupsFilter, BackupFilter
 
 
 class ConfigTable(query.ConfigSource):
@@ -749,3 +749,4 @@ class TableConsecutiveBackups(Filter):
 
 
 Table.filter_registry.register('consecutive-aws-backups', ConsecutiveAwsBackupsFilter)
+Table.filter_registry.register('aws-backups', BackupFilter)

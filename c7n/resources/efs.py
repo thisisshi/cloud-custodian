@@ -15,7 +15,7 @@ from c7n.query import (
 from c7n.tags import universal_augment
 from c7n.utils import local_session, type_schema, get_retry
 from .aws import shape_validate
-from c7n.filters.backup import ConsecutiveAwsBackupsFilter
+from c7n.filters.backup import ConsecutiveAwsBackupsFilter, BackupFilter
 
 
 class EFSDescribe(DescribeSource):
@@ -342,3 +342,4 @@ class EFSHasStatementFilter(HasStatementFilter):
 
 
 ElasticFileSystem.filter_registry.register('consecutive-aws-backups', ConsecutiveAwsBackupsFilter)
+ElasticFileSystem.filter_registry.register('aws-backups', BackupFilter)

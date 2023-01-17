@@ -62,6 +62,7 @@ from c7n.utils import (
     local_session, type_schema, get_retry, chunks, snapshot_identifier, merge_dict_list)
 from c7n.resources.kms import ResourceKmsKeyAlias
 from c7n.resources.securityhub import OtherResourcePostFinding
+from c7n.filters.backups import BackupFilter, ConsecutiveAwsBackupsFilter
 
 log = logging.getLogger('custodian.rds')
 
@@ -2063,3 +2064,7 @@ class DbOptionGroups(ValueFilter):
                     break
 
         return results
+
+
+filters.register('consecutive-aws-backups', ConsecutiveAwsBackupsFilter)
+filters.register('aws-backups', BackupFilter)

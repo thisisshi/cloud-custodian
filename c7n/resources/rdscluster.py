@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 
 from c7n.actions import BaseAction
 from c7n.filters import AgeFilter, CrossAccountAccessFilter, Filter, ValueFilter
+from c7n.filters.backups import BackupFilter, ConsecutiveAwsBackupsFilter
 from c7n.filters.offhours import OffHour, OnHour
 import c7n.filters.vpc as net_filters
 from c7n.manager import resources
@@ -701,3 +702,7 @@ class ClusterParameterFilter(ParameterFilter):
                     self.data.get('key'))
                 results.append(resource)
         return results
+
+
+RDSCluster.filter_registry.register('consecutive-aws-backups', ConsecutiveAwsBackupsFilter)
+RDSCluster.filter_registry.register('aws-backups', BackupFilter)

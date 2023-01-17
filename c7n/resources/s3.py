@@ -54,6 +54,7 @@ from c7n.exceptions import PolicyValidationError, PolicyExecutionError
 from c7n.filters import (
     FilterRegistry, Filter, CrossAccountAccessFilter, MetricsFilter,
     ValueFilter)
+from c7n.filters.backup import ConsecutiveAwsBackupsFilter, BackupFilter
 import c7n.filters.policystatement as polstmt_filter
 from c7n.manager import resources
 from c7n.output import NullBlobOutput
@@ -3457,3 +3458,7 @@ class BucketOwnershipControls(BucketFilterBase, ValueFilter):
                 raise
             controls = {}
         b[self.annotation_key] = controls.get('OwnershipControls')
+
+
+filters.register('aws-backup', BackupFilter)
+filters.register('consecutive-aws-backup', ConsecutiveAwsBackupsFilter)

@@ -11,6 +11,7 @@ from c7n.actions import BaseAction
 from c7n.tags import Tag, TagDelayedAction, RemoveTag, coalesce_copy_user_tags, TagActionFilter
 from c7n.utils import type_schema, local_session, chunks
 from c7n.filters import Filter
+from c7n.filters.backup import ConsecutiveAwsBackupsFilter, BackupFilter
 from c7n.filters.kms import KmsRelatedFilter
 from c7n.filters.vpc import SubnetFilter
 
@@ -442,3 +443,7 @@ class ConsecutiveBackups(Filter):
 class Subnet(SubnetFilter):
 
     RelatedIdsExpression = 'SubnetIds[]'
+
+
+FSx.filter_registry.register('aws-backup', BackupFilter)
+FSx.filter_registry.register('consecutive-aws-backup', ConsecutiveAwsBackupsFilter)

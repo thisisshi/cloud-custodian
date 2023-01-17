@@ -23,6 +23,7 @@ from c7n.exceptions import PolicyValidationError
 from c7n.filters import (
     FilterRegistry, AgeFilter, ValueFilter, Filter, DefaultVpcBase
 )
+from c7n.filters.backup import ConsecutiveAwsBackupsFilter, BackupFilter
 from c7n.filters.offhours import OffHour, OnHour
 import c7n.filters.vpc as net_filters
 
@@ -2479,3 +2480,6 @@ class HasSpecificManagedPolicy(SpecificIamProfileManagedPolicy):
                 results.append(r)
 
         return results
+
+EC2.filter_registry.register('aws-backup', BackupFilter)
+EC2.filter_registry.register('consecutive-aws-backup', ConsecutiveAwsBackupsFilter)

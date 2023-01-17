@@ -15,6 +15,7 @@ from c7n.exceptions import PolicyValidationError
 from c7n.filters import (
     CrossAccountAccessFilter, Filter, AgeFilter, ValueFilter,
     ANNOTATION_KEY)
+from c7n.filters.backup import ConsecutiveAwsBackupsFilter, BackupFilter
 from c7n.filters.health import HealthEventFilter
 from c7n.filters.related import RelatedResourceFilter
 
@@ -1645,3 +1646,7 @@ class ModifyVolume(BaseAction):
             if vtype:
                 params['VolumeType'] = vtype
             self.manager.retry(client.modify_volume, **params)
+
+
+EBS.filter_registry.register('aws-backup', BackupFilter)
+EBS.filter_registry.register('consecutive-aws-backup', ConsecutiveAwsBackupsFilter)
