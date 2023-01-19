@@ -38,6 +38,9 @@ import operator
 import jmespath
 import re
 import datetime
+
+from datetime import timedelta
+
 from decimal import Decimal as D, ROUND_HALF_UP
 
 from distutils.version import LooseVersion
@@ -1928,10 +1931,10 @@ class ConsecutiveSnapshots(Filter):
         client = local_session(self.manager.session_factory).client('rds')
         results = []
         retention = self.data.get('days')
-        utcnow = datetime.datetime.utcnow()
+        utcnow = datetime.utcnow()
         expected_dates = set()
         for days in range(1, retention + 1):
-            expected_dates.add((utcnow - datetime.timedelta(days=days)).strftime('%Y-%m-%d'))
+            expected_dates.add((utcnow - timedelta(days=days)).strftime('%Y-%m-%d'))
 
         for resource_set in chunks(
                 [r for r in resources if self.annotation not in r], 50):
