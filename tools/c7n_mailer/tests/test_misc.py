@@ -38,7 +38,9 @@ class AWSMailerTests(unittest.TestCase):
         MAILER_CONFIG["https_proxy"] = ""
         config = handle.config_setup(MAILER_CONFIG)
 
-    def test_sqs_queue_processor(self):
+    @patch("c7n_mailer.target.EmailDelivery")
+    @patch("c7n_mailer.sns_delivery.SnsDelivery")
+    def test_sqs_queue_processor(self, mock_sns_delivery, mock_email_delivery):
         mailer_sqs_queue_processor = sqs_queue_processor.MailerSqsQueueProcessor(
             MAILER_CONFIG, boto3.Session(), logging.getLogger("c7n_mailer")
         )
@@ -46,12 +48,8 @@ class AWSMailerTests(unittest.TestCase):
             mailer_sqs_queue_processor.__class__, sqs_queue_processor.MailerSqsQueueProcessor
         )
 
-        with (
-            patch('c7n_mailer.target.EmailDelivery'),
-            patch('c7n_mailer.sns_delivery.SnsDelivery') as mock_sns_delivery,
-        ):
-            mailer_sqs_queue_processor.process_sqs_message(SQS_MESSAGE_1_ENCODED)
-            assert mock_sns_delivery.called
+        mailer_sqs_queue_processor.process_sqs_message(SQS_MESSAGE_1_ENCODED)
+        assert mock_sns_delivery.called
 
     def test_azure_queue_processor(self):
         processor = azure_queue_processor.MailerAzureQueueProcessor(
