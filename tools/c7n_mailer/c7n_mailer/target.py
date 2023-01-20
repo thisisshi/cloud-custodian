@@ -21,7 +21,6 @@ class MessageTargetMixin(object):
         # this sections gets the map of sns_to_addresses to rendered_jinja messages
         # (with resources baked in) and delivers the message to each sns topic
         if sns_delivery:
-            # Import SNS deps (including boto3) only when necessary
             from .sns_delivery import SnsDelivery
 
             sns_delivery = SnsDelivery(self.config, self.session, self.logger)

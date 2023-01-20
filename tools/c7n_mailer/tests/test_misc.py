@@ -5,6 +5,7 @@ import argparse
 import unittest
 import logging
 import boto3
+from unittest.mock import patch
 
 from c7n_mailer import replay
 from c7n_mailer import handle
@@ -14,7 +15,7 @@ from c7n_mailer import deploy
 from c7n_mailer.azure_mailer import azure_queue_processor
 from c7n_mailer.gcp_mailer import gcp_queue_processor
 from c7n.mu import PythonPackageArchive
-from common import MAILER_CONFIG, MAILER_CONFIG_GCP, MAILER_CONFIG_AZURE
+from common import MAILER_CONFIG, MAILER_CONFIG_GCP, MAILER_CONFIG_AZURE, SQS_MESSAGE_1_ENCODED
 
 
 class AWSMailerTests(unittest.TestCase):
@@ -44,6 +45,13 @@ class AWSMailerTests(unittest.TestCase):
         self.assertIs(
             mailer_sqs_queue_processor.__class__, sqs_queue_processor.MailerSqsQueueProcessor
         )
+
+        with (
+            patch('c7n_mailer.target.EmailDelivery'),
+            patch('c7n_mailer.sns_delivery.SnsDelivery') as mock_sns_delivery,
+        ):
+            mailer_sqs_queue_processor.process_sqs_message(SQS_MESSAGE_1_ENCODED)
+            assert mock_sns_delivery.called
 
     def test_azure_queue_processor(self):
         processor = azure_queue_processor.MailerAzureQueueProcessor(
