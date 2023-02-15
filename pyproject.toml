@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "c7n"
-version = "0.9.20"
+version = "0.9.23"
 description = "Cloud Custodian - Policy Rules Engine"
 authors = ["Cloud Custodian Project"]
 readme = "README.md"
@@ -36,7 +36,7 @@ docutils = ">=0.14,<0.18"
 pytest = "^7.1.2"
 coverage = "^6.4.4"
 placebo = "^0.9.0"
-pytest-xdist = "^2.0"
+pytest-xdist = "^3.0"
 pytest-cov = "^3.0.0"
 pytest-terraform = "^0.6.0"
 mock = "^4.0.1"
