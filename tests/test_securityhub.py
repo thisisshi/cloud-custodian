@@ -578,7 +578,9 @@ class SecurityHubTest(BaseTest):
         resources = policy.run()
         self.assertEqual(len(resources), 1)
         rfinding = policy.resource_manager.actions[0].format_resource(resources[0])
-        shape_validate(rfinding['Details']['AwsRdsDbInstance'], 'AwsRdsDbInstanceDetails', 'securityhub')
+        shape_validate(
+            rfinding['Details']['AwsRdsDbInstance'],
+            'AwsRdsDbInstanceDetails', 'securityhub')
 
         client = factory().client("securityhub", region_name='us-west-2')
         findings = client.get_findings(
