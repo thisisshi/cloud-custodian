@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from c7n.exceptions import PolicyValidationError
+from c7n.resources.aws import shape_validate
 from .common import BaseTest, event_data
 
 import logging
@@ -576,6 +577,8 @@ class SecurityHubTest(BaseTest):
 
         resources = policy.run()
         self.assertEqual(len(resources), 1)
+        rfinding = policy.resource_manager.actions[0].format_resource(resources[0])
+        shape_validate(rfinding['Details']['AwsRdsDbInstance'], 'AwsRdsDbInstanceDetails', 'securityhub')
 
         client = factory().client("securityhub", region_name='us-west-2')
         findings = client.get_findings(
@@ -595,6 +598,7 @@ class SecurityHubTest(BaseTest):
             }
         ).get('Findings', [])
         self.assertEqual(len(findings), 1)
+
         self.assertEqual(
             findings[0]["Resources"][0],
             {
