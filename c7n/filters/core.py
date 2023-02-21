@@ -1087,7 +1087,6 @@ class ListItemFilter(Filter):
                         op: regex
     """
 
-    @staticmethod
     def _get_schema():
         base_filters = [
             {'$ref': '#/definitions/filters/value'},
