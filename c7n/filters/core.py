@@ -1167,3 +1167,8 @@ class ListItemFilter(Filter):
                     r['c7n:ListItemMatches'].extend(annotations)
                     result.append(r)
         return result
+
+    def __call__(self, resource):
+        if self.process((resource,)):
+            return True
+        return False
