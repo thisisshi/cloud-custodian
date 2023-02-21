@@ -1035,7 +1035,6 @@ class ListItemRegistry(FilterRegistry):
         self.register('or', Or)
         self.register('and', And)
         self.register('not', Not)
-        self.register('event', EventFilter)
         self.register('reduce', ReduceFilter)
 
 
@@ -1088,6 +1087,7 @@ class ListItemFilter(Filter):
                         op: regex
     """
 
+    @staticmethod
     def _get_schema():
         base_filters = [
             {'$ref': '#/definitions/filters/value'},
@@ -1098,7 +1098,6 @@ class ListItemFilter(Filter):
                     'or',
                     'and',
                     'not',
-                    'event',
                     'reduce',
                 ]
             }
@@ -1147,7 +1146,10 @@ class ListItemFilter(Filter):
             if not list_values:
                 continue
             if not isinstance(list_values, list):
-                raise PolicyExecutionError(f'{list_values} is not a list, filter:{self.data}')
+                item_type = type(list_values)
+                raise PolicyExecutionError(
+                    f"list-item filter value for {self.data['key']} is a {item_type} not a list"
+                )
             for idx, list_value in enumerate(list_values):
                 list_value['c7n:_id'] = idx
             list_resources = frm.filter_resources(list_values, event)
@@ -1156,7 +1158,7 @@ class ListItemFilter(Filter):
                 list_value.pop('c7n:_id')
             if self.data.get('count'):
                 count = self.data['count']
-                op = OPERATORS[self.data.get('op', 'eq')]
+                op = OPERATORS[self.data.get('count_op', 'eq')]
                 if op(len(list_resources), count):
                     result.append(r)
             else:
