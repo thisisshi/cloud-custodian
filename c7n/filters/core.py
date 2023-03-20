@@ -1087,29 +1087,20 @@ class ListItemFilter(Filter):
                         op: regex
     """
 
-    def _get_schema():
+    def _get_attr_schema():
         base_filters = [
             {'$ref': '#/definitions/filters/value'},
             {'$ref': '#/definitions/filters/valuekv'},
-            {
-                'enum': [
-                    'value',
-                    'or',
-                    'and',
-                    'not',
-                    'reduce',
-                ]
-            }
         ]
         any_of = []
         any_of.extend(base_filters)
 
-        for i in ('and', 'or', 'not',):
+        for op in ('and', 'or', 'not',):
             any_of.append(
                 {
                     'additional_properties': False,
                     'properties': {
-                        i: {
+                        op: {
                             'type': 'array',
                             'items': {
                                 'anyOf': base_filters
@@ -1131,10 +1122,12 @@ class ListItemFilter(Filter):
     schema = type_schema(
         'list-item',
         key={'type': 'string'},
-        attrs=_get_schema(),
+        attrs=_get_attr_schema(),
         count={'type': 'number'},
         count_op={'$ref': '#/definitions/filters_common/comparison_operators'},
     )
+
+    schema_alias = True
 
     def process(self, resources, event=None):
         compiled = jmespath.compile(self.data['key'])
