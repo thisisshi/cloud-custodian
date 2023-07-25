@@ -1,0 +1,158 @@
+{
+    "version": 1,
+    "interactions": [
+        {
+            "request": {
+                "method": "GET",
+                "uri": "https://management.azure.com/subscriptions/ea42f556-5106-4743-99b0-c129bfa71a47/providers/Microsoft.Compute/disks?api-version=2020-09-30",
+                "body": null,
+                "headers": {}
+            },
+            "response": {
+                "status": {
+                    "code": 200,
+                    "message": "OK"
+                },
+                "headers": {
+                    "cache-control": [
+                        "no-cache"
+                    ],
+                    "content-type": [
+                        "application/json; charset=utf-8"
+                    ],
+                    "date": [
+                        "Tue, 25 Jul 2023 21:43:54 GMT"
+                    ],
+                    "content-length": [
+                        "7017"
+                    ],
+                    "x-ms-original-request-ids": [
+                        "c2c59f67-2ec5-4dfc-9e86-dd9c779b3b7c",
+                        "f7af38dd-0455-4d05-b9d4-8009f8e2e817"
+                    ]
+                },
+                "body": {
+                    "data": {
+                        "value": [
+                            {
+                                "name": "JamisonsCMKDisk",
+                                "id": "/subscriptions/ea42f556-5106-4743-99b0-c129bfa71a47/resourceGroups/JAMISON-POLICY-TESTING/providers/Microsoft.Compute/disks/JamisonsCMKDisk",
+                                "type": "Microsoft.Compute/disks",
+                                "location": "eastus",
+                                "tags": {},
+                                "sku": {
+                                    "name": "Premium_LRS",
+                                    "tier": "Premium"
+                                },
+                                "properties": {
+                                    "creationData": {
+                                        "createOption": "Empty"
+                                    },
+                                    "diskSizeGB": 4,
+                                    "diskIOPSReadWrite": 120,
+                                    "diskMBpsReadWrite": 25,
+                                    "encryption": {
+                                        "type": "EncryptionAtRestWithCustomerKey",
+                                        "diskEncryptionSetId": "/subscriptions/ea42f556-5106-4743-99b0-c129bfa71a47/resourceGroups/JAMISON-POLICY-TESTING/providers/Microsoft.Compute/diskEncryptionSets/CMKEncryptionSet"
+                                    },
+                                    "networkAccessPolicy": "AllowAll",
+                                    "timeCreated": "2022-01-25T20:51:04.4474023+00:00",
+                                    "provisioningState": "Succeeded",
+                                    "diskState": "Unattached",
+                                    "diskSizeBytes": 4294967296,
+                                    "uniqueId": "9efaecd0-15ee-41b9-a8da-843b68655038",
+                                    "tier": "P1"
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "request": {
+                "method": "GET",
+                "uri": "https://management.azure.com/subscriptions/ea42f556-5106-4743-99b0-c129bfa71a47/providers/Microsoft.Advisor/recommendations?api-version=2020-01-01",
+                "body": null,
+                "headers": {}
+            },
+            "response": {
+                "status": {
+                    "code": 200,
+                    "message": "OK"
+                },
+                "headers": {
+                    "cache-control": [
+                        "no-cache"
+                    ],
+                    "content-type": [
+                        "application/json; charset=utf-8"
+                    ],
+                    "x-ms-ratelimit-remaining-subscription-resource-requests": [
+                        "599"
+                    ],
+                    "date": [
+                        "Tue, 25 Jul 2023 21:43:56 GMT"
+                    ],
+                    "content-length": [
+                        "183681"
+                    ]
+                },
+                "body": {
+                    "data": {
+                        "value": [
+                            {
+                                "properties": {
+                                    "category": "Cost",
+                                    "impact": "Medium",
+                                    "impactedField": "Microsoft.Compute/disks",
+                                    "impactedValue": "demo_tagged",
+                                    "lastUpdated": "2023-07-24T15:39:52.447291Z",
+                                    "recommendationTypeId": "48eda464-1485-4dcf-a674-d0905df5054a",
+                                    "shortDescription": {
+                                        "problem": "You have disks which have not been attached to a VM for more than 30 days. Please evaluate if you still need the disk.",
+                                        "solution": "You have disks which have not been attached to a VM for more than 30 days. Please evaluate if you still need the disk."
+                                    },
+                                    "extendedProperties": {
+                                        "_skuToken": "ManagedDiskS4",
+                                        "_meterIdToken": ""
+                                    },
+                                    "resourceMetadata": {
+                                        "resourceId": "/subscriptions/ea42f556-5106-4743-99b0-c129bfa71a47/resourceGroups/AJ/providers/Microsoft.Compute/disks/demo_tagged"
+                                    }
+                                },
+                                "id": "/subscriptions/ea42f556-5106-4743-99b0-c129bfa71a47/resourceGroups/AJ/providers/Microsoft.Compute/disks/demo_tagged/providers/Microsoft.Advisor/recommendations/b48d642a-6aee-d0f2-f285-2db7c9e31422",
+                                "type": "Microsoft.Advisor/recommendations",
+                                "name": "b48d642a-6aee-d0f2-f285-2db7c9e31422"
+                            },
+                            {
+                                "properties": {
+                                    "category": "Cost",
+                                    "impact": "Medium",
+                                    "impactedField": "Microsoft.Compute/disks",
+                                    "impactedValue": "JamisonsCMKDisk",
+                                    "lastUpdated": "2023-07-24T15:39:52.447291Z",
+                                    "recommendationTypeId": "48eda464-1485-4dcf-a674-d0905df5054a",
+                                    "shortDescription": {
+                                        "problem": "You have disks which have not been attached to a VM for more than 30 days. Please evaluate if you still need the disk.",
+                                        "solution": "You have disks which have not been attached to a VM for more than 30 days. Please evaluate if you still need the disk."
+                                    },
+                                    "extendedProperties": {
+                                        "_skuToken": "ManagedDiskP1",
+                                        "_meterIdToken": ""
+                                    },
+                                    "resourceMetadata": {
+                                        "resourceId": "/subscriptions/ea42f556-5106-4743-99b0-c129bfa71a47/resourceGroups/JAMISON-POLICY-TESTING/providers/Microsoft.Compute/disks/JamisonsCMKDisk"
+                                    }
+                                },
+                                "id": "/subscriptions/ea42f556-5106-4743-99b0-c129bfa71a47/resourceGroups/JAMISON-POLICY-TESTING/providers/Microsoft.Compute/disks/JamisonsCMKDisk/providers/Microsoft.Advisor/recommendations/2e6e6212-2564-5654-5cad-ab783b685d2d",
+                                "type": "Microsoft.Advisor/recommendations",
+                                "name": "2e6e6212-2564-5654-5cad-ab783b685d2d"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}

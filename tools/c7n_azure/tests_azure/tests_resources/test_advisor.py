@@ -20,3 +20,21 @@ class AdvisorRecommendationTest(BaseTest):
         })
         resources = p.run()
         self.assertTrue(len(resources) > 0)
+
+    def test_advisor_recommendation_filter(self):
+        p = self.load_policy({
+            'name': 'test-azure-advisor-recommendation-filter',
+            'resource': 'azure.disk',
+            'filters': [
+                {
+                    'type': 'advisor-recommendation',
+                    'key': '[].properties.category',
+                    'value': 'Cost',
+                    'value_type': 'swap',
+                    'op': 'in'
+
+                }
+            ]
+        })
+        resources = p.run()
+        self.assertTrue(len(resources) > 1)

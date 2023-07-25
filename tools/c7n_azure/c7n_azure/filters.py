@@ -18,8 +18,10 @@ from c7n_azure.utils import (IpRangeHelper, Math, ResourceIdParser,
 from dateutil.parser import parse
 from azure.core.exceptions import HttpResponseError
 
+from c7n_azure.provider import resources
 from c7n.filters import Filter, FilterValidationError, ValueFilter
 from c7n.filters.core import PolicyValidationError
+from c7n.filters.related import RelatedResourceFilter
 from c7n.filters.offhours import OffHour, OnHour, Time
 from c7n.utils import chunks, get_annotation_prefix, type_schema
 
@@ -1035,3 +1037,73 @@ class ParentFilter(Filter):
         parent_resources_ids = [p['id'] for p in parent_resources]
         parent_key = self.manager.resource_type.parent_key
         return [r for r in resources if r[parent_key] in parent_resources_ids]
+
+
+class AzureAdvisorFilter(RelatedResourceFilter):
+    """
+    Filter resources by Azure Advisor Recommendations
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: disks-with-cost-recommendations
+            resource: azure.disk
+            filters:
+              - type: advisor-recommendation
+                key: [].properties.category
+                value: Cost
+                value_type: swap
+                op: in
+
+    """
+
+    RelatedResource = "c7n_azure.resources.advisor.AdvisorRecommendation"
+    RelatedIdsExpression = "id"
+    AnnotationKey = "AdvisorRecommendation"
+
+    _recommendation_map = {}
+
+    schema = type_schema(
+        "advisor-recommendation",
+        rinherit=RelatedResourceFilter.schema,
+    )
+
+    def _add_annotations(self, related_ids, resource):
+        resource[f"c7n:{self.AnnotationKey}"] = [
+            r["id"] for r in
+            AzureAdvisorFilter._recommendation_map[resource["id"]]
+        ]
+
+    def get_related(self, resources):
+        """
+        get_related works a little bit differently here compared to other
+        related resource filtersnamely due to the fact that the parent resource
+        (e.g. disk) doesn't have an attribute pointing to a advisor
+        recommendation. thus, we need to fetch all recommendations first,
+        then map the recommendations to resource ids
+        """
+
+        resource_manager = self.get_resource_manager()
+        related = resource_manager.resources()
+
+        for i in resources:
+            if i['id'] in AzureAdvisorFilter._recommendation_map:
+                continue
+            for r in related:
+                if (
+                    r["properties"]["resourceMetadata"]["resourceId"] ==
+                    i["id"]
+                ):
+                    AzureAdvisorFilter._recommendation_map.setdefault(
+                        i["id"], []).append(r)
+
+        return AzureAdvisorFilter._recommendation_map
+
+    @classmethod
+    def register_resource(cls, registry, resource_class):
+        resource_class.filter_registry.register("advisor-recommendation", cls)
+
+
+resources.subscribe(AzureAdvisorFilter.register_resource)
