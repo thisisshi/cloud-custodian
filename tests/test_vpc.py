@@ -44,6 +44,47 @@ def test_ec2_igw_subnet(test, ec2_igw_subnet):
     assert expected_instance_ids == result_instance_ids
 
 
+def test_vpc_usage(test):
+    factory = test.replay_flight_data(
+        'test_vpc_usage_detect_set', region='us-west-1')
+    p = test.load_policy({
+        'name': 'vpc-usage',
+        'resource': 'aws.vpc',
+        'filters': [
+            {'type': 'vpc-attributes',
+             'addressusage': False}],
+        'actions': [
+            {'type': 'modify',
+             'addressusage': True}],
+        }, session_factory=factory)
+    resources = p.run()
+    assert len(resources) == 1
+    client = factory().client('ec2')
+    result = client.describe_vpc_attribute(
+        VpcId=resources[0]['VpcId'],
+        Attribute='enableNetworkAddressUsageMetrics')
+    assert result['EnableNetworkAddressUsageMetrics']['Value'] is True
+
+
+def test_vpc_usage_metric(test):
+    factory = test.replay_flight_data(
+        'test_vpc_usage_metrics', region='us-west-1')
+    p = test.load_policy({
+        'name': 'vpc-usage',
+        'resource': 'aws.vpc',
+        'filters': [
+            {'type': 'metrics',
+             'statistics': 'Maximum',
+             'value': 0,
+             'op': 'gte',
+             'missing-value': 0,
+             'days': 2,
+             'name': 'NetworkAddressUsage'}
+        ]}, session_factory=factory)
+    resources = p.run()
+    assert resources[0]['VpcId'] == 'vpc-6d20940b'
+
+
 def test_eni_igw_subnet(test):
     factory = test.replay_flight_data('test_eni_public_subnet')
     p = test.load_policy({
@@ -264,7 +305,9 @@ class VpcTest(BaseTest):
                 "name": "dns-hostnames-and-support-enabled",
                 "resource": "vpc",
                 "filters": [
-                    {"type": "vpc-attributes", "dnshostnames": True, "dnssupport": True}
+                    {"type": "vpc-attributes",
+                     "dnshostnames": True,
+                     "dnssupport": True}
                 ],
             },
             session_factory=self.session_factory,
@@ -3462,6 +3505,39 @@ class TestUnusedKeys(BaseTest):
         self.assertIn(resources[0]['KeyName'], unused_key)
         self.assertNotEqual(unused_key, keys)
         self.assertEqual(used_key, keys)
+
+    def test_unused_keypair_with_asg_launch_templates(self):
+        factory = self.replay_flight_data('test_unused_keypair_launch_template')
+        p = self.load_policy(
+            {"name": "test-unused-keypairs", "resource": "key-pair", "filters": ["unused"]},
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(resources[0]['KeyName'], 'delete')
+
+    def test_unused_keypair_true(self):
+        factory = self.replay_flight_data("test_unused_keypair")
+        p = self.load_policy(
+            {"name": "test-unused-keypairs", "resource": "key-pair", "filters": ["unused"]},
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+
+    def test_unused_keypair_false(self):
+        factory = self.replay_flight_data("test_unused_keypair")
+        p = self.load_policy(
+            {
+                "name": "test-unused-keypairs",
+                "resource": "key-pair",
+                "filters": [{"type": "unused", "state": False}],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+
 
     def test_vpc_unused_key_not_filtered_error(self):
         with self.assertRaises(PolicyValidationError):
