@@ -1052,7 +1052,7 @@ class AzureAdvisorFilter(RelatedResourceFilter):
             resource: azure.disk
             filters:
               - type: advisor-recommendation
-                key: [].properties.category
+                key: '[].properties.category'
                 value: Cost
                 value_type: swap
                 op: in
