@@ -1071,10 +1071,7 @@ class AzureAdvisorFilter(RelatedResourceFilter):
     )
 
     def _add_annotations(self, related_ids, resource):
-        resource[f"c7n:{self.AnnotationKey}"] = [
-            r["id"] for r in
-            AzureAdvisorFilter._recommendation_map[resource["id"]]
-        ]
+        resource[f"c7n:{self.AnnotationKey}"] = self._recommendation_map[resource['id'].lower()]
 
     def get_related(self, resources):
         """
@@ -1087,19 +1084,17 @@ class AzureAdvisorFilter(RelatedResourceFilter):
 
         resource_manager = self.get_resource_manager()
         related = resource_manager.resources()
+        self._recommendation_map = {}
 
-        for i in resources:
-            if i['id'] in AzureAdvisorFilter._recommendation_map:
-                continue
-            for r in related:
-                if (
-                    r["properties"]["resourceMetadata"]["resourceId"] ==
-                    i["id"]
-                ):
-                    AzureAdvisorFilter._recommendation_map.setdefault(
-                        i["id"], []).append(r)
+        for r in related:
+            self._recommendation_map.setdefault(
+                r["properties"]["resourceMetadata"]["resourceId"].lower(), []
+            ).append(r)
+        return self._recommendation_map
 
-        return AzureAdvisorFilter._recommendation_map
+    def get_related_ids(self, resource):
+        # normalize to lower case
+        return [i.lower() for i in super().get_related_ids(resource)]
 
     @classmethod
     def register_resource(cls, registry, resource_class):
