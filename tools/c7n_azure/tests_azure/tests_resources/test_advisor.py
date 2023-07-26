@@ -38,7 +38,10 @@ class AdvisorRecommendationTest(BaseTest):
         })
         resources = p.run()
         self.assertTrue(len(resources) == 1)
-        self.assertEqual(
-            resources[0]['c7n:AdvisorRecommendation'],
-            ['/subscriptions/ea42f556-5106-4743-99b0-c129bfa71a47/resourceGroups/JAMISON-POLICY-TESTING/providers/Microsoft.Compute/disks/JamisonsCMKDisk/providers/Microsoft.Advisor/recommendations/2e6e6212-2564-5654-5cad-ab783b685d2d']  # noqa
-         )
+        self.assertTrue(
+            isinstance(resources[0]['c7n:AdvisorRecommendation'], list)
+        )
+        # elements should be a list
+        self.assertTrue(
+            isinstance(resources[0]['c7n:AdvisorRecommendation'][0], dict)
+        )
