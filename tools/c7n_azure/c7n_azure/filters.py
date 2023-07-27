@@ -1063,23 +1063,23 @@ class AzureAdvisorFilter(RelatedResourceFilter):
     RelatedIdsExpression = "id"
     AnnotationKey = "AdvisorRecommendation"
 
-    _recommendation_map = {}
-
     schema = type_schema(
         "advisor-recommendation",
         rinherit=RelatedResourceFilter.schema,
     )
 
     def _add_annotations(self, related_ids, resource):
-        resource[f"c7n:{self.AnnotationKey}"] = self._recommendation_map[resource['id'].lower()]
+        resource[f"c7n:{self.AnnotationKey}"] = self._recommendation_map[
+            resource['id'].lower()
+        ]
 
     def get_related(self, resources):
         """
         get_related works a little bit differently here compared to other
-        related resource filtersnamely due to the fact that the parent resource
-        (e.g. disk) doesn't have an attribute pointing to a advisor
-        recommendation. thus, we need to fetch all recommendations first,
-        then map the recommendations to resource ids
+        related resource filters namely due to the fact that the parent
+        resource (e.g. disk) doesn't have an attribute pointing to a
+        advisor recommendation. thus, we need to fetch all recommendations
+        first, then map the recommendations to resource ids
         """
 
         resource_manager = self.get_resource_manager()
