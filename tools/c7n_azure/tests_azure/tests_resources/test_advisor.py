@@ -21,18 +21,33 @@ class AdvisorRecommendationTest(BaseTest):
         resources = p.run()
         self.assertTrue(len(resources) > 0)
 
+    def test_find_by_category(self):
+        p = self.load_policy({
+            'name': 'test-azure-advisor-recommendation',
+            'resource': 'azure.advisor-recommendation',
+            'query': [
+                {
+                    'filter': "Category eq 'Cost'"
+                }
+            ]
+        })
+        resources = p.run()
+        self.assertTrue(len(resources) > 0)
+        for r in resources:
+            if r['properties']['category'] != 'Cost':
+                raise Exception('Server side filter failed')
+
     def test_advisor_recommendation_filter(self):
         p = self.load_policy({
             'name': 'test-azure-advisor-recommendation-filter',
-            'resource': 'azure.disk',
+            'resource': 'azure.subscription',
             'filters': [
                 {
                     'type': 'advisor-recommendation',
-                    'key': '[].properties.category',
-                    'value': 'Cost',
-                    'value_type': 'swap',
-                    'op': 'in'
-
+                    'category': 'Cost',
+                    'key': '[].properties.recommendationTypeId',
+                    'op': 'contains',
+                    'value': '84b1a508-fc21-49da-979e-96894f1665df',
                 }
             ]
         })
