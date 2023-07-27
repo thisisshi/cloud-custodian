@@ -133,7 +133,7 @@ class ChildResourceQuery(ResourceQuery):
     parents identifiers. ie. SQL and Cosmos databases
     """
 
-    def filter(self, resource_manager, **params):
+    def filter(self, resource_manager, query=None, **params):
         """Query a set of resources."""
         m = self.resolve(resource_manager.resource_type)  # type: ChildTypeInfo
 
