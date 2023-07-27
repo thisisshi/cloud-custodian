@@ -1055,10 +1055,9 @@ class AzureAdvisorFilter(RelatedResourceFilter):
             filters:
               - type: advisor-recommendation
                 category: Cost
-                key: '[].properties.shortDescription.problem'
+                key: '[].properties.recommendationTypeId'
                 op: contains
-                value: 'You have disks which have not been attached to a VM for more than 30 days. Please evaluate if you still need the disk.'
-
+                value: '48eda464-1485-4dcf-a674-d0905df5054a'
     """
 
     RelatedResource = "c7n_azure.resources.advisor.AdvisorRecommendation"
