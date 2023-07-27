@@ -1043,6 +1043,8 @@ class AzureAdvisorFilter(RelatedResourceFilter):
     """
     Filter resources by Azure Advisor Recommendations
 
+    Select all categories with 'all'
+
     :example:
 
     .. code-block:: yaml
@@ -1052,10 +1054,10 @@ class AzureAdvisorFilter(RelatedResourceFilter):
             resource: azure.disk
             filters:
               - type: advisor-recommendation
-                key: '[].properties.category'
-                value: Cost
-                value_type: swap
-                op: in
+                category: Cost
+                key: '[].properties.shortDescription.problem'
+                op: contains
+                value: 'You have disks which have not been attached to a VM for more than 30 days. Please evaluate if you still need the disk.'
 
     """
 
@@ -1065,7 +1067,9 @@ class AzureAdvisorFilter(RelatedResourceFilter):
 
     schema = type_schema(
         "advisor-recommendation",
+        category={'type': 'string'},
         rinherit=RelatedResourceFilter.schema,
+        required=['category']
     )
 
     def _add_annotations(self, related_ids, resource):
@@ -1083,7 +1087,14 @@ class AzureAdvisorFilter(RelatedResourceFilter):
         """
 
         resource_manager = self.get_resource_manager()
-        related = resource_manager.resources()
+        category = self.data.get("category")
+
+        if category == 'all':
+            query = None
+        else:
+            query = {'filter': f"Category eq '{category}'"}
+
+        related = resource_manager.resources(query=[query])
         self._recommendation_map = {}
 
         for r in related:
