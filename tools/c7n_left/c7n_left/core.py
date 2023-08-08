@@ -7,14 +7,14 @@ import logging
 import operator
 
 from c7n.actions import ActionRegistry
-from c7n.cache import NullCache
+from c7n.cache import NullCache, InMemoryCache
 from c7n.filters import FilterRegistry
 from c7n.manager import ResourceManager
 
 from c7n.provider import Provider, clouds
 from c7n.policy import PolicyExecutionMode
 
-from .filters import Traverse
+from .filters import Traverse, Infracost
 from .utils import SEVERITY_LEVELS
 
 log = logging.getLogger("c7n.iac")
@@ -310,7 +310,8 @@ class IACResourceManager(ResourceManager):
     def __init__(self, ctx, data):
         self.ctx = ctx
         self.data = data
-        self._cache = NullCache(None)
+        # self._cache = NullCache(None)
+        self._cache = InMemoryCache(None)
         self.session_factory = lambda: None
         self.filters = self.filter_registry.parse(self.data.get("filters", []), self)
         self.actions = self.action_registry.parse(self.data.get("actions", []), self)
@@ -320,6 +321,7 @@ class IACResourceManager(ResourceManager):
 
 
 IACResourceManager.filter_registry.register("traverse", Traverse)
+IACResourceManager.filter_registry.register("infracost", Infracost)
 
 
 class IACResourceMap(object):

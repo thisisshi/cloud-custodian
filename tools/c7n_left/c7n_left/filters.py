@@ -1,6 +1,7 @@
-# Copyright The Cloud Custodian Authors.
-# SPDX-License-Identifier: Apache-2.0
+# Copyright The Cloud Custodian Authors.  # SPDX-License-Identifier: Apache-2.0
 #
+import subprocess
+import json
 import itertools
 
 from c7n.filters import Filter, ValueFilter, OPERATORS
@@ -67,7 +68,7 @@ class Traverse(Filter):
             },
         },
         required=("resources",),
-        **{"count-op": {"$ref": "#/definitions/filters_common/comparison_operators"}}
+        **{"count-op": {"$ref": "#/definitions/filters_common/comparison_operators"}},
     )
 
     _vfilters = None
@@ -88,7 +89,9 @@ class Traverse(Filter):
         for r in resources:
             working_set = (r,)
             for target_type in self.type_chain:
-                working_set = self.resolve_refs(target_type, working_set, event["graph"])
+                working_set = self.resolve_refs(
+                    target_type, working_set, event["graph"]
+                )
             matched = self.match_attrs(working_set)
             if not self.match_cardinality(matched):
                 continue
@@ -138,3 +141,144 @@ class Traverse(Filter):
 
     def resolve_refs(self, target_type, working_set, graph):
         return itertools.chain(*[graph.get_refs(w, target_type) for w in working_set])
+
+
+class Infracost(ValueFilter):
+    """
+    Infracost filter
+
+    Filter by totalMonthlyCost, totalHourlyCost, or individual attributes
+    from a Infracost breakdown. These costs are estimations that do not
+    take into consideration usage, savings plans, or discounts, etc.
+
+    :example:
+
+    .. code-block:: yaml
+
+       policies:
+         - name: find-high-cost-instances
+           resource: terraform.aws_instance
+           metadata:
+             severity: high
+           filters:
+             - type: infracost
+               key: monthlyCost
+               value: 1000
+               op: gt
+
+    .. code-block:: hcl
+
+        data "aws_ami" "ubuntu" {
+          most_recent = true
+
+          filter {
+            name   = "name"
+            values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+          }
+
+          filter {
+            name   = "virtualization-type"
+            values = ["hvm"]
+          }
+
+          owners = ["099720109477"] # Canonical
+        }
+
+        resource "aws_instance" "web" {
+          ami           = data.aws_ami.ubuntu.id
+          instance_type = "p3dn.24xlarge"
+
+          tags = {
+            Name = "HelloWorld"
+          }
+        }
+
+    """
+
+    schema = type_schema("infracost", rinherit=ValueFilter.schema)
+    annotation_key = "Infracost"
+    cost_map = {}
+
+    def _cast_costs(self, entry):
+        """
+        Cost/Quantity/Price values are all strings, so we need to
+        cast them to floats to be able to do meaningful value filter
+        operations on the resulting infracost breakdown
+        """
+        for k, v in entry.items():
+            if isinstance(v, dict):
+                entry[k] = self._cast_costs(v)
+            if isinstance(v, list):
+                for idx, l in enumerate(v):
+                    if isinstance(l, dict):
+                        v[idx] = self._cast_costs(l)
+            k_l = k.lower()
+            if (
+                k_l.endswith("cost")
+                or k_l.endswith("price")
+                or k_l.endswith("quantity")
+            ):
+                if not v:
+                    continue
+                entry[k] = float(v)
+        return entry
+
+    def get_infracost_breakdown(self, source_dir):
+        # cache it here in memory cache so we dont have to call infracost
+        # more than once per source directory
+        cache_key = f"infracost-filter-breakdown-{source_dir}"
+        breakdown = self.manager._cache.get(cache_key)
+        if breakdown:
+            return breakdown
+
+        breakdown = subprocess.check_output(
+            [
+                "infracost",
+                "breakdown",
+                "--path",
+                source_dir,
+                "--include-all-paths",
+                "--format=json",
+            ],
+            # suppress infracost logging
+            stderr=subprocess.DEVNULL,
+        )
+        breakdown = json.loads(breakdown.decode("utf-8"))
+        self.manager._cache.save(cache_key, breakdown)
+        return breakdown
+
+    def get_cost_map(self):
+        source_dir = str(self.manager.ctx.options.source_dir)
+        res = self.get_infracost_breakdown(source_dir)
+
+        # cache the cost map so we dont have to remap resources to
+        # their infracost results
+        cache_key = f"infracost-filter-breakdown-cost-map-{source_dir}"
+        cost_map = self.manager._cache.get(cache_key)
+
+        if cost_map:
+            return cost_map
+
+        cost_map = {}
+
+        for r in res["projects"]:
+            for i in r["breakdown"].get("resources", []):
+                # add the total monthly cost for filtering purposes
+                i["totalHourlyCost"] = float(res["totalHourlyCost"])
+                i["totalMonthlyCost"] = float(res["totalMonthlyCost"])
+                cost_map[i["name"]] = i
+
+        cost_map = self._cast_costs(cost_map)
+        self.manager._cache.save(cache_key, cost_map)
+        return cost_map
+
+    def process(self, resources, event=None):
+        cost_map = self.get_cost_map()
+        for r in resources:
+            r[f"c7n:{self.annotation_key}"] = cost_map.get(
+                r["__tfmeta"]["path"], {})
+
+        return super().process(resources)
+
+    def __call__(self, r):
+        return self.match(r.get(f"c7n:{self.annotation_key}", {}))
