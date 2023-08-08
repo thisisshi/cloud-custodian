@@ -238,6 +238,8 @@ class CollectionRunner:
                     self.reporter.on_results(result_set)
                     found = True
         self.reporter.on_execution_ended()
+        # reset the cache
+        self.policies[0].resource_manager._cache.__shared_state = {}
         return found
 
     def run_policy(self, policy, graph, resources, event):

@@ -266,6 +266,10 @@ class Infracost(ValueFilter):
                 # add the total monthly cost for filtering purposes
                 i["totalHourlyCost"] = float(res["totalHourlyCost"])
                 i["totalMonthlyCost"] = float(res["totalMonthlyCost"])
+                i['pastTotalHourlyCost'] = float(res.get('pastTotalHourlyCost', 0))
+                i['pastTotalMonthlyCost'] = float(res.get('pastTotalMonthlyCost', 0))
+                i['diffTotalHourlyCost'] = float(res.get('diffTotalHourlyCost', 0))
+                i['diffTotalMonthlyCost'] = float(res.get('diffTotalMonthlyCost', 0))
                 cost_map[i["name"]] = i
 
         cost_map = self._cast_costs(cost_map)
