@@ -4,6 +4,7 @@ import subprocess
 import json
 import itertools
 
+from c7n.exceptions import PolicyValidationError
 from c7n.filters import Filter, ValueFilter, OPERATORS
 from c7n.utils import type_schema
 
@@ -199,6 +200,17 @@ class Infracost(ValueFilter):
     annotation_key = "Infracost"
     cost_map = {}
 
+    def validate(self):
+        try:
+            subprocess.check_output(
+                ['infracost'],
+                stderr=subprocess.DEVNULL
+            )
+        except FileNotFoundError:
+            raise PolicyValidationError(
+                "infracost command not found, ensure that infracost is available in $PATH"
+            )
+
     def _cast_costs(self, entry):
         """
         Cost/Quantity/Price values are all strings, so we need to
@@ -260,16 +272,20 @@ class Infracost(ValueFilter):
             return cost_map
 
         cost_map = {}
+        extra_keys = (
+            'totalHourlyCost',
+            'totalMonthlyCost',
+            'pastTotalHourlyCost',
+            'pastTotalMonthlyCost',
+            'diffTotalHourlyCost',
+            'diffTotalMonthlyCost',
+        )
 
         for r in res["projects"]:
             for i in r["breakdown"].get("resources", []):
-                # add the total monthly cost for filtering purposes
-                i["totalHourlyCost"] = float(res["totalHourlyCost"])
-                i["totalMonthlyCost"] = float(res["totalMonthlyCost"])
-                i['pastTotalHourlyCost'] = float(res.get('pastTotalHourlyCost', 0))
-                i['pastTotalMonthlyCost'] = float(res.get('pastTotalMonthlyCost', 0))
-                i['diffTotalHourlyCost'] = float(res.get('diffTotalHourlyCost', 0))
-                i['diffTotalMonthlyCost'] = float(res.get('diffTotalMonthlyCost', 0))
+                # add all the extra keys
+                for key in extra_keys:
+                    i[key] = float(res.get(key, 0))
                 cost_map[i["name"]] = i
 
         cost_map = self._cast_costs(cost_map)
