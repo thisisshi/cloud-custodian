@@ -760,4 +760,4 @@ def test_jmespath_parse_to_json():
         'to_json(foo).bar',
         {'foo': '{"]}'}
     )
-    assert result == None
+    assert result is None
