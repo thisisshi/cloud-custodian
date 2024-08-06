@@ -370,8 +370,8 @@ Cloud Custodian supports additional custom JMESPath functions, including:
             key: "split(`/`, logGroupName)[-1]"
             tags: "*"
 
-- ``to_json(json_encoded_string) -> obj``: takes 1 argument, a json encoded string.
-  Returns an object.
+- ``from_json(json_encoded_string) -> obj``: takes 1 argument, a json encoded string.
+  Returns an json decoded value.
 
 
 Value Regex
