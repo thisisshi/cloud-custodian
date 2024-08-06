@@ -959,7 +959,7 @@ class C7NJmespathFunctions(functions.Functions):
     @functions.signature(
         {'types': ['string']}
     )
-    def _func_to_json(self, string):
+    def _func_from_json(self, string):
         try:
             return json.loads(string)
         except json.JSONDecodeError:
