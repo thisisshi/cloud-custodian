@@ -47,3 +47,49 @@ jobs:
         if: always()
         with:
           report_paths: 'report-aws.xml'
+  # TODO: move this to the release file
+  Prep:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      checks: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4.2.0
+      - name: Bootstrap poetry
+        shell: bash
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 - --version 1.2.1 -y
+      - name: Install c7n
+        shell: bash
+        run: |
+          python3 -m venv venv
+          python3 -m pip install --upgrade pip
+          pip install -U wheel
+          make install-poetry
+          pip install -r tools/dev/requirements.txt
+      - name: pkg-increment
+        shell: bash
+        run: |
+          make pkg-increment
+          make pkg-rebase
+      - name: Get Version
+        id: get_version
+        shell: python
+        run: |
+          from c7n.version import version
+          print(f"::set-output name=version::{version}")
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4.1.3
+        with:
+          title: "releng - ${{ steps.get_version.outputs.version }} pkg increment, rebase"
+          commit-message: "releng - ${{ steps.get_version.outputs.version }} pkg increment, rebase"
+          branch: "auto/releng/${{ steps.get_version.outputs.version }}"
+          delete-branch: true
+          base: master
+          body: |
+            Automated Pull Request: ${{ steps.get_version.outputs.version }}
+
+            Changes made via the make-pkg-increment and make-pkg-rebase commands
