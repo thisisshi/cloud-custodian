@@ -392,10 +392,8 @@ class LambdaMode(ServerlessExecutionMode):
             # Lambda passthrough config
             'layers': {'type': 'array', 'items': {'type': 'string'}},
             'concurrency': {'type': 'integer'},
-            # Do we really still support 2.7 and 3.6?
-            'runtime': {'enum': ['python2.7', 'python3.6',
-                                 'python3.7', 'python3.8', 'python3.9', 'python3.10',
-                                 'python3.11']},
+            'runtime': {'enum': ['python3.8', 'python3.9', 'python3.10',
+                                 'python3.11', 'python3.12']},
             'role': {'type': 'string'},
             'handler': {'type': 'string'},
             'pattern': {'type': 'object', 'minProperties': 1},
@@ -566,6 +564,13 @@ class LambdaMode(ServerlessExecutionMode):
         tags = self.policy.data['mode'].setdefault('tags', {})
         tags['custodian-info'] = "mode=%s:version=%s" % (
             self.policy.data['mode']['type'], version)
+        # auto tag with schedule name and group to link function to
+        # EventBridge schedule when using schedule mode
+        if self.policy.data['mode']['type'] == 'schedule':
+            prefix = self.policy.data['mode'].get('function-prefix', 'custodian-')
+            name = self.policy.data['name']
+            group = self.policy.data['mode'].get('group-name', 'default')
+            tags['custodian-schedule'] = f'name={prefix + name}:group={group}'
 
         from c7n import mu
         with self.policy.ctx:
@@ -588,13 +593,37 @@ class LambdaMode(ServerlessExecutionMode):
 class PeriodicMode(LambdaMode, PullMode):
     """A policy that runs in pull mode within lambda.
 
-    Runs Custodian in AWS lambda at user defined cron interval.
+    Runs Custodian in AWS lambda at user defined cron interval using EventBridge rules.
     """
 
     POLICY_METRICS = ('ResourceCount', 'ResourceTime', 'ActionTime')
 
     schema = utils.type_schema(
         'periodic', schedule={'type': 'string'}, rinherit=LambdaMode.schema)
+
+    def run(self, event, lambda_context):
+        return PullMode.run(self)
+
+
+@execution.register('schedule')
+class ScheduleMode(LambdaMode, PullMode):
+    """A policy that runs in pull mode within lambda.
+
+    Runs Custodian in AWS lambda at user defined cron interval using EventBridge Scheduler.
+    """
+
+    POLICY_METRICS = ('ResourceCount', 'ResourceTime', 'ActionTime')
+
+    schema = utils.type_schema(
+        'schedule',
+        schedule={'type': 'string'},
+        timezone={'type': 'string'},
+        **{'start-date': {'type': 'string'},
+           'end-date': {'type': 'string'},
+           'scheduler-role': {'type': 'string'},
+           'group-name': {'type': 'string'}},
+        required=['schedule'],
+        rinherit=LambdaMode.schema)
 
     def run(self, event, lambda_context):
         return PullMode.run(self)

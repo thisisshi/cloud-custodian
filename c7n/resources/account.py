@@ -17,9 +17,10 @@ from c7n.filters import Filter, FilterRegistry, ValueFilter
 from c7n.filters.kms import KmsRelatedFilter
 from c7n.filters.multiattr import MultiAttrFilter
 from c7n.filters.missing import Missing
-from c7n.manager import ResourceManager, resources
+from c7n.manager import resources
 from c7n.utils import local_session, type_schema, generate_arn, get_support_region, jmespath_search
-from c7n.query import QueryResourceManager, TypeInfo
+from c7n.query import QueryResourceManager, TypeInfo, DescribeSource
+from c7n.filters import ListItemFilter
 
 from c7n.resources.iam import CredentialReport
 from c7n.resources.securityhub import OtherResourcePostFinding
@@ -33,18 +34,25 @@ retry = staticmethod(QueryResourceManager.retry)
 filters.register('missing', Missing)
 
 
-def get_account(session_factory, config):
-    session = local_session(session_factory)
-    client = session.client('iam')
-    aliases = client.list_account_aliases().get(
-        'AccountAliases', ('',))
-    name = aliases and aliases[0] or ""
-    return {'account_id': config.account_id,
-            'account_name': name}
+class DescribeAccount(DescribeSource):
+
+    def get_account(self):
+        client = local_session(self.manager.session_factory).client("iam")
+        aliases = client.list_account_aliases().get(
+            'AccountAliases', ('',))
+        name = aliases and aliases[0] or ""
+        return {'account_id': self.manager.config.account_id,
+                'account_name': name}
+
+    def resources(self, query=None):
+        return [self.get_account()]
+
+    def get_resources(self, resource_ids):
+        return [self.get_account()]
 
 
 @resources.register('account')
-class Account(ResourceManager):
+class Account(QueryResourceManager):
 
     filter_registry = filters
     action_registry = actions
@@ -61,6 +69,10 @@ class Account(ResourceManager):
         # for posting config rule evaluations
         cfn_type = 'AWS::::Account'
 
+    source_mapping = {
+        'describe': DescribeAccount
+    }
+
     @classmethod
     def get_permissions(cls):
         return ('iam:ListAccountAliases',)
@@ -71,15 +83,6 @@ class Account(ResourceManager):
 
     def get_arns(self, resources):
         return ["arn:::{account_id}".format(**r) for r in resources]
-
-    def get_model(self):
-        return self.resource_type
-
-    def resources(self):
-        return self.filter_resources([get_account(self.session_factory, self.config)])
-
-    def get_resources(self, resource_ids):
-        return [get_account(self.session_factory, self.config)]
 
 
 @filters.register('credential')
@@ -420,7 +423,7 @@ class GuardDutyEnabled(MultiAttrFilter):
 
     annotation = "c7n:guard-duty"
     permissions = (
-        'guardduty:GetMasterAccount',
+        'guardduty:GetAdministratorAccount',
         'guardduty:ListDetectors',
         'guardduty:GetDetector')
 
@@ -447,7 +450,7 @@ class GuardDutyEnabled(MultiAttrFilter):
 
         detector = client.get_detector(DetectorId=detector_id)
         detector.pop('ResponseMetadata', None)
-        master = client.get_master_account(DetectorId=detector_id).get('Master')
+        master = client.get_administrator_account(DetectorId=detector_id).get('Master')
         resource[self.annotation] = r = {'Detector': detector, 'Master': master}
         return r
 
@@ -2390,3 +2393,200 @@ class SesConsecutiveStats(Filter):
         resources[0][self.max_bounce_annotation] = max_bounce_rate
 
         return resources
+
+
+@filters.register('bedrock-model-invocation-logging')
+class BedrockModelInvocationLogging(ListItemFilter):
+    """Filter for account to look at bedrock model invocation logging configuration
+
+    The schema to supply to the attrs follows the schema here:
+     https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedrock/client/get_model_invocation_logging_configuration.html
+
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: bedrock-model-invocation-logging-configuration
+                resource: account
+                filters:
+                  - type: bedrock-model-invocation-logging
+                    attrs:
+                      - imageDataDeliveryEnabled: True
+
+    """
+    schema = type_schema(
+        'bedrock-model-invocation-logging',
+        attrs={'$ref': '#/definitions/filters_common/list_item_attrs'},
+        count={'type': 'number'},
+        count_op={'$ref': '#/definitions/filters_common/comparison_operators'}
+    )
+    permissions = ('bedrock:GetModelInvocationLoggingConfiguration',)
+    annotation_key = 'c7n:BedrockModelInvocationLogging'
+
+    def get_item_values(self, resource):
+        item_values = []
+        client = local_session(self.manager.session_factory).client('bedrock')
+        invocation_logging_config = client \
+                .get_model_invocation_logging_configuration().get('loggingConfig')
+        if invocation_logging_config is not None:
+            item_values.append(invocation_logging_config)
+            resource[self.annotation_key] = invocation_logging_config
+        return item_values
+
+
+@actions.register('set-bedrock-model-invocation-logging')
+class SetBedrockModelInvocationLogging(BaseAction):
+    """Set Bedrock Model Invocation Logging Configuration on an account.
+     https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedrock/client/put_model_invocation_logging_configuration.html
+
+     To delete a configuration, supply enabled to False
+
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: set-bedrock-model-invocation-logging
+                resource: account
+                actions:
+                  - type: set-bedrock-model-invocation-logging
+                    enabled: True
+                    loggingConfig:
+                      textDataDeliveryEnabled: True
+                      s3Config:
+                        bucketName: test-bedrock-1
+                        keyPrefix:  logging/
+
+              - name: delete-bedrock-model-invocation-logging
+                resource: account
+                actions:
+                  - type: set-bedrock-model-invocation-logging
+                    enabled: False
+    """
+
+    schema = {
+        'type': 'object',
+        'additionalProperties': False,
+        'properties': {
+            'type': {'enum': ['set-bedrock-model-invocation-logging']},
+            'enabled': {'type': 'boolean'},
+            'loggingConfig': {'type': 'object'}
+        },
+    }
+
+    permissions = ('bedrock:PutModelInvocationLoggingConfiguration',)
+    shape = 'PutModelInvocationLoggingConfigurationRequest'
+    service = 'bedrock'
+
+    def validate(self):
+        cfg = dict(self.data)
+        enabled = cfg.get('enabled')
+        if enabled:
+            cfg.pop('type')
+            cfg.pop('enabled')
+            return shape_validate(
+                cfg,
+                self.shape,
+                self.service)
+
+    def process(self, resources):
+        client = local_session(self.manager.session_factory).client('bedrock')
+        if self.data.get('enabled'):
+            params = self.data.get('loggingConfig')
+            client.put_model_invocation_logging_configuration(loggingConfig=params)
+        else:
+            client.delete_model_invocation_logging_configuration()
+
+
+@filters.register('ec2-metadata-defaults')
+class EC2MetadataDefaults(ValueFilter):
+    """Filter on the default instance metadata service (IMDS) settings for the specified account and
+    region.  NOTE: Any configuration that has never been set (or is set to 'No Preference'), will
+    not be returned in the response.
+
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: ec2-imds-defaults
+                resource: account
+                filters:
+                - or:
+                  - type: ec2-metadata-defaults
+                    key: HttpTokens
+                    value: optional
+                  - type: ec2-metadata-defaults
+                    key: HttpTokens
+                    value: absent
+    """
+
+    annotation_key = 'c7n:EC2MetadataDefaults'
+    annotate = False  # no annotation from value filter
+    schema = type_schema('ec2-metadata-defaults', rinherit=ValueFilter.schema)
+    permissions = ('ec2:GetInstanceMetadataDefaults',)
+
+    def augment(self, resources):
+        client = local_session(self.manager.session_factory).client('ec2')
+        for r in resources:
+            r[self.annotation_key] = self.manager.retry(
+                client.get_instance_metadata_defaults)["AccountLevel"]
+
+    def process(self, resources, event=None):
+        self.augment([r for r in resources if self.annotation_key not in r])
+        return super(EC2MetadataDefaults, self).process(resources, event)
+
+    def __call__(self, r):
+        return super(EC2MetadataDefaults, self).__call__(r[self.annotation_key])
+
+
+@actions.register('set-ec2-metadata-defaults')
+class SetEC2MetadataDefaults(BaseAction):
+    """Modifies the default instance metadata service (IMDS) settings at the account level.
+
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: set-ec2-metadata-defaults
+                resource: account
+                filters:
+                  - or:
+                    - type: ec2-metadata-defaults
+                      key: HttpTokens
+                      op: eq
+                      value: optional
+                    - type: ec2-metadata-defaults
+                      key: HttpTokens
+                      value: absent
+                actions:
+                  - type: set-ec2-metadata-defaults
+                    HttpTokens: required
+
+    """
+
+    schema = type_schema(
+        'set-ec2-metadata-defaults',
+        HttpTokens={'enum': ['optional', 'required', 'no-preference']},
+        HttpPutResponseHopLimit={'type': 'integer'},
+        HttpEndpoint={'enum': ['enabled', 'disabled', 'no-preference']},
+        InstanceMetadataTags={'enum': ['enabled', 'disabled', 'no-preference']},
+    )
+
+    permissions = ('ec2:ModifyInstanceMetadataDefaults',)
+    service = 'ec2'
+    shape = 'ModifyInstanceMetadataDefaultsRequest'
+
+    def validate(self):
+        req = dict(self.data)
+        req.pop('type')
+        return shape_validate(
+            req, self.shape, self.service
+        )
+
+    def process(self, resources):
+        client = local_session(self.manager.session_factory).client(self.service)
+        self.data.pop('type')
+        client.modify_instance_metadata_defaults(**self.data)

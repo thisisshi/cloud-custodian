@@ -453,6 +453,7 @@ class CrossAccountSnapshot(CrossAccountAccessFilter):
 
     def process(self, resources, event=None):
         self.accounts = self.get_accounts()
+        self.everyone_only = self.data.get("everyone_only", False)
         results = []
         with self.executor_factory(max_workers=2) as w:
             futures = []
@@ -474,6 +475,8 @@ class CrossAccountSnapshot(CrossAccountAccessFilter):
                          'DBClusterSnapshotAttributesResult']['DBClusterSnapshotAttributes']}
             r[self.attributes_key] = attrs
             shared_accounts = set(attrs.get('restore', []))
+            if self.everyone_only:
+                shared_accounts = {a for a in shared_accounts if a == 'all'}
             delta_accounts = shared_accounts.difference(self.accounts)
             if delta_accounts:
                 r[self.annotation_key] = list(delta_accounts)
@@ -732,8 +735,14 @@ class PendingMaintenance(Filter):
                 resource: rds-cluster
                 filters:
                   - pending-maintenance
+                  - type: value
+                    key: '"c7n:PendingMaintenance".PendingMaintenanceActionDetails[].Action'
+                    op: intersect
+                    value:
+                      - system-update
     """
 
+    annotation_key = 'c7n:PendingMaintenance'
     schema = type_schema('pending-maintenance')
     permissions = ('rds:DescribePendingMaintenanceActions',)
 
@@ -741,15 +750,16 @@ class PendingMaintenance(Filter):
         client = local_session(self.manager.session_factory).client('rds')
 
         results = []
-        pending_maintenance = set()
+        resource_maintenances = {}
         paginator = client.get_paginator('describe_pending_maintenance_actions')
         for page in paginator.paginate():
-            pending_maintenance.update(
-                {action['ResourceIdentifier'] for action in page['PendingMaintenanceActions']}
-            )
+            for action in page['PendingMaintenanceActions']:
+                resource_maintenances.setdefault(action['ResourceIdentifier'], []).append(action)
 
         for r in resources:
-            if r['DBClusterArn'] in pending_maintenance:
+            pending_maintenances = resource_maintenances.get(r['DBClusterArn'], [])
+            if len(pending_maintenances) > 0:
+                r[self.annotation_key] = pending_maintenances
                 results.append(r)
 
         return results

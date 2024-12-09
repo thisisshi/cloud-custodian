@@ -14,6 +14,7 @@ from c7n.utils import get_retry, local_session, type_schema, chunks, jmespath_se
 from c7n.filters.iamaccess import CrossAccountAccessFilter
 from c7n.resolver import ValuesFrom
 import c7n.filters.vpc as net_filters
+import json
 
 
 class DescribeWorkspace(DescribeSource):
@@ -32,6 +33,7 @@ class Workspace(QueryResourceManager):
         name = id = dimension = 'WorkspaceId'
         universal_taggable = True
         cfn_type = config_type = 'AWS::WorkSpaces::Workspace'
+        permissions_augment = ("workspaces:DescribeTags",)
 
     source_mapping = {
         'describe': DescribeWorkspace,
@@ -170,6 +172,7 @@ class WorkspaceImage(QueryResourceManager):
         arn_type = 'workspaceimage'
         name = id = 'ImageId'
         universal_taggable = True
+        permissions_augment = ("workspaces:DescribeTags",)
 
     augment = universal_augment
 
@@ -459,6 +462,7 @@ class DeregisterWorkspaceDirectory(BaseAction):
                 'and cannot be deregistered: %s ' % ''.join(map(str, exceptions))
             )
 
+
 @resources.register('workspaces-web')
 class WorkspacesWeb(QueryResourceManager):
 
@@ -470,6 +474,167 @@ class WorkspacesWeb(QueryResourceManager):
         arn = id = "portalArn"
 
     augment = universal_augment
+
+
+@WorkspacesWeb.filter_registry.register('subnet')
+class SubnetFilter(net_filters.SubnetFilter):
+    """Filters Workspaces Secure Browsers based on their associated subnet
+
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: workspaces-web-in-subnet-x
+                resource: workspaces-web
+                filters:
+                  - type: subnet
+                    key: SubnetId
+                    value: subnet-068dfbf3f275a6ae8
+    """
+    RelatedIdsExpression = ""
+
+    def get_permissions(self):
+        perms = super().get_permissions()
+        perms.append('workspaces-web:GetNetworkSettings')
+        return perms
+
+    def get_related_ids(self, resources):
+        subnetIds = set()
+
+        for r in resources:
+            if 'networkSettings' in r:
+                for s in r['networkSettings']['subnetIds']:
+                    subnetIds.add(s)
+        return subnetIds
+
+    def process(self, resources, event=None):
+        client = local_session(self.manager.session_factory).client('workspaces-web')
+
+        for r in resources:
+            if 'networkSettingsArn' in r:
+                r['networkSettings'] = client.get_network_settings(
+                    networkSettingsArn=r['networkSettingsArn']
+                    ).get('networkSettings', {}
+                )
+        return super().process(resources, event)
+
+
+@WorkspacesWeb.filter_registry.register('browser-policy')
+class BrowerPolicyFilter(ValueFilter):
+    """
+    Applies value type filter on the browser policy of a workspaces secured browser.
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: browser-policy-match
+                resource: workspaces-web
+                filters:
+                  - type: browser-policy
+                    key: chromePolicies.AllowDeletingBrowserHistory.value
+                    op: eq
+                    value: false
+    """
+
+    schema = type_schema('browser-policy', rinherit=ValueFilter.schema)
+    schema_alias = False
+    permissions = ('workspaces-web:GetBrowserSettings',)
+    matched_policy_annotation = 'c7n:BrowerPolicyMatches'
+    policy_annotation = "c7n:BrowserPolicy"
+
+    def process(self, resources, event=None):
+        client = local_session(self.manager.session_factory).client('workspaces-web')
+        results = []
+        for r in resources:
+            if (self.policy_annotation not in r) and ('browserSettingsArn' in r):
+                browserSettings = self.manager.retry(
+                    client.get_browser_settings,
+                    browserSettingsArn=r['browserSettingsArn']).get('browserSettings')
+                browserPolicy = json.loads(browserSettings['browserPolicy'])
+                r[self.policy_annotation] = browserPolicy
+            if self.match(r[self.policy_annotation]):
+                if self.matched_policy_annotation not in r:
+                    r[self.matched_policy_annotation] = [self.data.get('key')]
+                else:
+                    r[self.matched_policy_annotation].append(self.data.get('key'))
+                results.append(r)
+        return results
+
+
+@WorkspacesWeb.filter_registry.register('user-settings')
+class UserSettingsFilter(ValueFilter):
+    """
+    Filters workspaces secured browsers based on their user settings.
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: user-settings-match
+                resource: workspaces-web
+                filters:
+                  - type: user-settings
+                    key: copyAllowed
+                    value: Disabled
+    """
+
+    schema = type_schema('user-settings', rinherit=ValueFilter.schema)
+    schema_alias = False
+    permissions = ('workspaces-web:GetUserSettings',)
+    policy_annotation = "c7n:UserSettings"
+
+    def process(self, resources, event=None):
+        client = local_session(self.manager.session_factory).client('workspaces-web')
+        for r in resources:
+            if (self.policy_annotation not in r) and ('userSettingsArn' in r):
+                r[self.policy_annotation] = self.manager.retry(
+                    client.get_user_settings,
+                    userSettingsArn=r['userSettingsArn']).get(
+                        'userSettings', {})
+        return super().process(resources, event)
+
+    def __call__(self, r):
+        return super().__call__(r.get(self.policy_annotation, {}))
+
+
+@WorkspacesWeb.filter_registry.register('user-access-logging')
+class UserAccessLoggingFilter(ValueFilter):
+    """
+    Filters workspaces secured browsers based on their user access logging settings.
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: user-access-logging-match
+                resource: workspaces-web
+                filters:
+                  - type: user-access-logging
+                    key: kinesisStreamArn
+                    value: present
+    """
+
+    schema = type_schema('user-access-logging', rinherit=ValueFilter.schema)
+    schema_alias = False
+    permissions = ('workspaces-web:GetUserAccessLoggingSettings',)
+    policy_annotation = "c7n:UserAccessLogging"
+
+    def process(self, resources, event=None):
+        client = local_session(self.manager.session_factory).client('workspaces-web')
+        for r in resources:
+            if (self.policy_annotation not in r) and (
+                'userAccessLoggingSettingsArn' in r):
+                r[self.policy_annotation] = self.manager.retry(
+                    client.get_user_access_logging_settings,
+                    userAccessLoggingSettingsArn=r['userAccessLoggingSettingsArn']).get(
+                        'userAccessLoggingSettings', {})
+        return super().process(resources, event)
+
+    def __call__(self, r):
+        return super().__call__(r.get(self.policy_annotation, {}))
+
 
 @WorkspacesWeb.action_registry.register('tag')
 class TagWorkspacesWebResource(Tag):
@@ -493,6 +658,7 @@ class TagWorkspacesWebResource(Tag):
         for r in resources:
             client.tag_resource(resourceArn=r["portalArn"], tags=new_tags)
 
+
 @WorkspacesWeb.action_registry.register('remove-tag')
 class RemoveTagWorkspacesWebResource(RemoveTag):
     """Remove tags from a Workspaces Web portal
@@ -513,6 +679,7 @@ class RemoveTagWorkspacesWebResource(RemoveTag):
     def process_resource_set(self, client, resources, tags):
         for r in resources:
             client.untag_resource(resourceArn=r['portalArn'], tagKeys=tags)
+
 
 @WorkspacesWeb.action_registry.register('delete')
 class DeleteWorkspacesWeb(BaseAction):
@@ -563,3 +730,42 @@ class DeleteWorkspacesWeb(BaseAction):
 
     def delete_portal(self, client, resource):
         client.delete_portal(portalArn=resource['portalArn'])
+
+
+@resources.register('workspaces-bundle')
+class WorkspacesBundle(QueryResourceManager):
+
+    class resource_type(TypeInfo):
+        service = 'workspaces'
+        enum_spec = ('describe_workspace_bundles', 'Bundles', None)
+        arn_type = 'workspacebundle'
+        name = id = 'BundleId'
+        universal_taggable = True
+
+
+@WorkspacesBundle.action_registry.register('delete')
+class DeleteWorkspaceBundle(BaseAction):
+    """
+    Deletes a WorkSpaces Bundle
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: delete-workspaces-bundle
+            resource: aws.workspaces-bundle
+            actions:
+              - delete
+    """
+
+    schema = type_schema('delete')
+    permissions = ('workspaces:DeleteWorkspaceBundle',)
+
+    def process(self, bundles):
+        client = local_session(self.manager.session_factory).client('workspaces')
+        for bundle in bundles:
+            try:
+                client.delete_workspace_bundle(BundleId=bundle['BundleId'])
+            except client.exceptions.ResourceNotFoundException:
+                self.log.warning("Bundle not found: %s" % bundle['BundleId'])

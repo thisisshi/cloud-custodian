@@ -58,6 +58,7 @@ class ElasticSearchDomain(QueryResourceManager):
         name = 'Name'
         dimension = "DomainName"
         cfn_type = config_type = 'AWS::Elasticsearch::Domain'
+        permissions_augment = ("es:ListTags",)
 
     def resources(self, query=None):
         if 'query' in self.data:
@@ -345,7 +346,7 @@ class RemovePolicyStatement(RemovePolicyBase):
         if p is None:
             return
 
-        statements, found = self.process_policy(
+        _, found = self.process_policy(
             p, resource, CrossAccountAccessFilter.annotation_key)
 
         if found:
@@ -624,7 +625,8 @@ class UpdateTlsConfig(Action):
     """
 
     schema = type_schema('update-tls-config', value={'type': 'string',
-        'enum': ['Policy-Min-TLS-1-0-2019-07', 'Policy-Min-TLS-1-2-2019-07']}, required=['value'])
+        'enum': ['Policy-Min-TLS-1-0-2019-07', 'Policy-Min-TLS-1-2-2019-07',
+                 'Policy-Min-TLS-1-2-PFS-2023-10']}, required=['value'])
     permissions = ('es:UpdateElasticsearchDomainConfig', 'es:ListDomainNames')
 
     def process(self, resources):

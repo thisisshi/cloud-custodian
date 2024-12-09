@@ -223,6 +223,7 @@ Get Involved
 -   [GitHub](https://github.com/cloud-custodian/cloud-custodian) - (This page)
 -   [Slack](https://communityinviter.com/apps/cloud-custodian/c7n-chat) - Real time chat if you're looking for help or interested in contributing to Custodian! 
     - [Gitter](https://gitter.im/cloud-custodian/cloud-custodian) - (Older real time chat, we're likely migrating away from this)
+-   [Linen.dev](https://www.linen.dev/s/cloud-custodian/c/general) - Follow our discussions on Linen
 -   [Mailing List](https://groups.google.com/forum/#!forum/cloud-custodian) - Our project mailing list, subscribe here for important project announcements, feel free to ask questions
 -   [Reddit](https://reddit.com/r/cloudcustodian) - Our subreddit
 -   [StackOverflow](https://stackoverflow.com/questions/tagged/cloudcustodian) - Q&A site for developers, we keep an eye on the `cloudcustodian` tag
@@ -239,6 +240,7 @@ See the notes below for more technical information on joining the meeting.
 - [Community Meeting Notes Archive](https://github.com/orgs/cloud-custodian/discussions/categories/announcements)
 - [Upcoming Community Events](https://cloudcustodian.io/events/)
 - [Cloud Custodian Annual Report 2021](https://github.com/cncf/toc/blob/main/reviews/2021-cloud-custodian-annual.md) - Annual health check provided to the CNCF outlining the health of the project
+- [Ada Logics Third Party Security Audit](https://ostif.org/cc-audit-complete/)
 
 
 Additional Tools

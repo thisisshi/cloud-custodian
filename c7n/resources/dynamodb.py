@@ -6,6 +6,7 @@ from concurrent.futures import as_completed
 
 from c7n.actions import BaseAction, ModifyVpcSecurityGroupsAction
 from c7n.filters.kms import KmsRelatedFilter
+from c7n.filters.iamaccess import CrossAccountAccessFilter
 from c7n import query
 from c7n.manager import resources
 from c7n.tags import (
@@ -18,6 +19,7 @@ from c7n.filters import Filter
 from c7n.filters import ValueFilter
 from c7n.query import RetryPageIterator
 from c7n.filters.backup import ConsecutiveAwsBackupsFilter
+from c7n.filters.policystatement import HasStatementFilter
 
 
 class ConfigTable(query.ConfigSource):
@@ -58,6 +60,7 @@ class Table(query.QueryResourceManager):
         cfn_type = config_type = 'AWS::DynamoDB::Table'
         universal_taggable = object()
         arn = 'TableArn'
+        permissions_augment = ("dynamodb:ListTagsOfResource",)
 
     source_mapping = {
         'describe': DescribeTable,
@@ -116,7 +119,54 @@ class TableContinuousBackupFilter(ValueFilter):
                 continue
 
     def __call__(self, r):
-        return super().__call__(r[self.annotation_key])
+        return super().__call__(r.get(self.annotation_key, {}))
+
+
+@Table.filter_registry.register('cross-account')
+class CrossAccountTable(CrossAccountAccessFilter):
+
+    permissions = ('dynamodb:GetResourcePolicy',)
+    policy_attribute = 'c7n:Policy'
+
+    def process(self, resources, event=None):
+        client = local_session(self.manager.session_factory).client('dynamodb')
+        for r in resources:
+            if self.policy_attribute in r:
+                continue
+            result = self.manager.retry(
+                client.get_resource_policy,
+                ResourceArn=r['TableArn'],
+                ignore_err_codes=('ResourceNotFoundException', 'PolicyNotFoundException'))
+            if result is not None:
+                r[self.policy_attribute] = result['Policy']
+        return super().process(resources)
+
+
+@Table.filter_registry.register('has-statement')
+class HasStatementTable(HasStatementFilter):
+
+    permissions = ('dynamodb:GetResourcePolicy',)
+    policy_attribute = 'c7n:Policy'
+
+    def get_std_format_args(self, table):
+        return {
+            'table_arn': table[self.manager.resource_type.arn],
+            'account_id': self.manager.config.account_id,
+            'region': self.manager.config.region,
+        }
+
+    def process(self, resources, event=None):
+        client = local_session(self.manager.session_factory).client('dynamodb')
+        for r in resources:
+            if self.policy_attribute in r:
+                continue
+            result = self.manager.retry(
+                client.get_resource_policy,
+                ResourceArn=r['TableArn'],
+                ignore_err_codes=('ResourceNotFoundException', 'PolicyNotFoundException'))
+            if result is not None:
+                r[self.policy_attribute] = result['Policy']
+        return super().process(resources)
 
 
 @Table.action_registry.register('set-continuous-backup')

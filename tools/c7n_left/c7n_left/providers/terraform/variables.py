@@ -61,10 +61,11 @@ class VariableResolver:
 
     def _write_file_content(self, content, suffix=".tfvars"):
         fh = tempfile.NamedTemporaryFile(
-            dir=self.source_dir, prefix="c7n-left-", suffix=suffix, mode="w+"
+            dir=self.source_dir, prefix="c7n-left-", suffix=suffix, mode="w+", delete=False
         )
         fh.write(content)
         fh.flush()
+        fh.close()
         self.temp_files.append(fh)
         return fh
 
@@ -84,6 +85,7 @@ class VariableResolver:
         finally:
             for t in self.temp_files:
                 t.close()
+                os.unlink(t.name)
 
     def get_uninitialized_var_files(self):
         # functions that operate on unknown values will typically result in
@@ -97,7 +99,18 @@ class VariableResolver:
                 if str(f).endswith(".tfvars.json"):
                     f_vars = json.loads((self.source_dir / f).read_text())
                 elif str(f).endswith(".tfvars"):
-                    f_vars = hcl2.loads((self.source_dir / f).read_text())
+                    contents = (self.source_dir / f).read_text()
+                    # the way the hcl2 library / parse is structured
+                    # in golang/terraform it supports a file contents
+                    # in either format, to preserve compatiblity, we
+                    # check if its json, and if its not then load with
+                    # hcl/terraform. we do json first as its fast to
+                    # check and we can return back any hcl parse
+                    # errors.
+                    try:
+                        f_vars = json.loads(contents)
+                    except json.JSONDecodeError:
+                        f_vars = hcl2.loads(contents)
 
                 fpath = type == "user" and self.var_files[idx] or f
                 if isinstance(fpath, Path):
@@ -117,9 +130,9 @@ class VariableResolver:
                 if not v["__tfmeta"]["path"].startswith("variable"):
                     continue
                 if v["__tfmeta"]["label"] not in var_map:
-                    uninitialized_vars[v["__tfmeta"]["label"]] = self.type_defaults[
+                    uninitialized_vars[v["__tfmeta"]["label"]] = self.get_type_default(
                         v.get("type", "string") or "string"
-                    ]
+                    )
 
         if not uninitialized_vars:
             return []
@@ -131,6 +144,15 @@ class VariableResolver:
                 self._write_file_content(json.dumps(uninitialized_vars), ".tfvars.json").name
             ).relative_to(self.source_dir.absolute())
         ]
+
+    @classmethod
+    def get_type_default(cls, vtype):
+        if vtype in cls.type_defaults:
+            return cls.type_defaults[vtype]
+        elif " " in vtype:
+            vtype, _ = vtype.split(' ', 1)
+            return cls.type_defaults[vtype]
+        return cls.type_defaults["string"]
 
     def get_env_variables(self):
         prefix = "TF_VAR_"

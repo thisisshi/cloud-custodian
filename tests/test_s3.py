@@ -4070,7 +4070,6 @@ class IntelligentTieringConfiguration(BaseTest):
         self.assertIn(
             "may only be used in conjunction with `intelligent-tiering`", str(e.exception))
 
-
     def test_s3_int_tiering_set_configurations(self):
         self.patch(s3.S3, "executor_factory", MainThreadExecutor)
         self.patch(s3, "S3_AUGMENT_TABLE", [])
@@ -4079,7 +4078,7 @@ class IntelligentTieringConfiguration(BaseTest):
         session = session_factory()
         client = session.client("s3")
         configs = client.list_bucket_intelligent_tiering_configurations(Bucket=bname)
-        filtered_config =  {
+        filtered_config = {
             'Id': 'test-config',
             'Filter': {'And': {'Prefix': 'test', 'Tags': [{'Key': 'Owner', 'Value': 'c7n'}]}},
             'Status': 'Enabled',
@@ -4391,7 +4390,7 @@ class BucketReplication(BaseTest):
                                 "And": {
                                     "Prefix": "abc", "Tags": [{"Key": "Owner", "Value": "c7n"}]}}},
                             {"DestinationRegion": "us-west-2"},
-                            {"CrossRegion": True }
+                            {"CrossRegion": True}
                             ]
                         }
                     ],
@@ -4433,7 +4432,7 @@ class BucketReplication(BaseTest):
         ):
             resources = p.run()
             self.assertEqual(len(resources), 1)
-            self.assertEqual(resources[0]['Name'],'custodian-replication-test-1')
+            self.assertEqual(resources[0]['Name'], 'custodian-replication-test-1')
 
     def test_s3_bucket_no_replication_rule(self):
         self.patch(s3.S3, "executor_factory", MainThreadExecutor)
@@ -4461,8 +4460,38 @@ class BucketReplication(BaseTest):
         ):
             resources = p.run()
             self.assertEqual(len(resources), 1)
-            self.assertEqual(resources[0]['Name'],'custodian-replication-west')
+            self.assertEqual(resources[0]['Name'], 'custodian-replication-west')
 
+    def test_s3_bucket_replication_no_bucket(self):
+        self.patch(s3.S3, "executor_factory", MainThreadExecutor)
+        self.patch(s3, "S3_AUGMENT_TABLE", [])
+        self.patch(s3, "S3_AUGMENT_TABLE", [('get_bucket_replication',
+        'Replication', None, None, 's3:GetReplicationConfiguration')])
+        session_factory = self.replay_flight_data("test_s3_bucket_replication_no_bucket")
+        p = self.load_policy(
+            {
+                "name": "s3-replication-rule",
+                "resource": "s3",
+                "filters": [
+                        {
+                            "type": "bucket-replication",
+                            "attrs": [
+                            {"Status": "Enabled"},
+                            {"DestinationBucketAvailable": False}
+                            ]
+                        }
+                    ],
+                },
+            session_factory=session_factory,
+        )
+        with vcr.use_cassette(
+          'tests/data/vcr_cassettes/test_s3/replication_rule_no_bucket.yaml',
+           record_mode='none'
+        ):
+            resources = p.run()
+            self.assertEqual(len(resources), 1)
+            self.assertTrue("Replication" in resources[0])
+            self.assertEqual(len(resources[0].get("c7n:ListItemMatches")), 1)
 
     def test_s3_bucket_key_enabled(self):
         self.patch(s3.S3, "executor_factory", MainThreadExecutor)
@@ -4492,7 +4521,6 @@ class BucketReplication(BaseTest):
         resources = p.run()
         self.assertEqual(len(resources), 1)
 
-
     def test_s3_bucket_key_disabled(self):
         self.patch(s3.S3, "executor_factory", MainThreadExecutor)
         self.patch(s3.BucketEncryption, "executor_factory", MainThreadExecutor)
@@ -4521,7 +4549,6 @@ class BucketReplication(BaseTest):
         resources = p.run()
         self.assertEqual(len(resources), 1)
 
-
     def test_bucket_encryption_invalid(self):
         self.assertRaises(
             PolicyValidationError,
@@ -4544,3 +4571,59 @@ class BucketReplication(BaseTest):
                 ]
             },
         )
+
+
+class S3ObjectLockFilterTest(BaseTest):
+    def test_query(self):
+        self.patch(s3.S3, "executor_factory", MainThreadExecutor)
+        self.patch(s3.S3LockConfigurationFilter, "executor_factory", MainThreadExecutor)
+        self.patch(s3, "S3_AUGMENT_TABLE", [])
+        factory = self.replay_flight_data('test_s3_bucket_object_lock_configuration')
+
+        p = self.load_policy(
+            {
+                'name': 'test-s3-bucket-key-disabled',
+                'resource': 'aws.s3',
+                'filters': [
+                    {
+                        'type': 'lock-configuration',
+                        'key': 'Rule.DefaultRetention.Mode',
+                        'value': 'GOVERNANCE',
+                    }
+                ]
+            },
+            session_factory=factory
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        self.assertEqual(resources[0]['Name'], 'c7n-test-s3-bucket')
+        self.assertEqual(
+            resources[0]['c7n:ObjectLockConfiguration']['Rule']['DefaultRetention']['Mode'],
+            'GOVERNANCE'
+        )
+
+    def test_query_exception(self):
+        self.patch(s3.S3, "executor_factory", MainThreadExecutor)
+        self.patch(s3.S3LockConfigurationFilter, "executor_factory", MainThreadExecutor)
+        self.patch(s3, "S3_AUGMENT_TABLE", [])
+        log_mock = mock.MagicMock()
+        self.patch(s3.S3LockConfigurationFilter, "log", log_mock)
+
+        factory = self.replay_flight_data('test_s3_bucket_object_lock_configuration_exception')
+        p = self.load_policy(
+            {
+                'name': 'test-s3-bucket-key-disabled',
+                'resource': 'aws.s3',
+                'filters': [
+                    {
+                        'type': 'lock-configuration',
+                        'key': 'Rule.DefaultRetention.Mode',
+                        'value': 'GOVERNANCE',
+                    }
+                ]
+            },
+            session_factory=factory
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+        log_mock.error.assert_called()
