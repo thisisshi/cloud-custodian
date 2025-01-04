@@ -5,13 +5,13 @@ import datetime
 import json
 import logging
 
-from azure.actions.base import AzureBaseAction
 from azure.keyvault.keys import KeyProperties, KeyReleasePolicy
 
 from c7n.filters import Filter
 from c7n.utils import type_schema
 
 from c7n_azure import constants
+from c7n_azure.actions.base import AzureBaseAction
 from c7n_azure.provider import resources
 from c7n_azure.query import ChildResourceManager, ChildTypeInfo
 from c7n_azure.utils import ThreadHelper, ResourceIdParser
@@ -237,7 +237,7 @@ class KeyVaultKeyUpdateAction(AzureBaseAction):
         tags={"type": "object"},
         not_before={"type": "string", "format": "date-time"},
         expires_on={"type": "string", "format": "date-time"},
-        release_policy={"type": "object"}
+        release_policy={"type": "object"},
     )
 
     def _process_resource(self, resource):
@@ -248,13 +248,13 @@ class KeyVaultKeyUpdateAction(AzureBaseAction):
         client = self.manager.get_client(vault_url=id.vault_url)
 
         not_before = self.data.get("not_before")
-        expires_on = self.data.get("not_before")
+        expires_on = self.data.get("expires_on")
 
         if not_before:
             not_before = datetime.strptime(not_before)
 
         if expires_on:
-            expires_on = datetime.strptime(not_before)
+            expires_on = datetime.strptime(expires_on)
 
         release_policy = self.data.get("release_policy")
         if release_policy:
