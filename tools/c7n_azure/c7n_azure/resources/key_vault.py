@@ -1,7 +1,12 @@
 # Copyright The Cloud Custodian Authors.
 # SPDX-License-Identifier: Apache-2.0
 
+import copy
 import logging
+import inspect
+from typing import get_args, _UnionGenericAlias
+
+from c7n_azure.utils import type_to_jsonschema
 
 from c7n.filters import Filter
 from c7n.utils import type_schema
@@ -331,3 +336,117 @@ class KeyVaultUpdateAccessPolicyAction(AzureBaseAction):
                 "permissions": i['permissions']} for i in access_policies]
 
         return {"accessPolicies": policies}
+
+
+@KeyVault.action_registry.register('update')
+class KeyVaultUpdateAction(AzureBaseAction):
+    """
+    Update a keyvault
+
+    To keep the tenant id the same, set it to "keep"
+    To keep the sku settings the same, set it to {"current": True}
+
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+            - name: keyvault-vault-disable-public-access
+              resource: azure.keyvault
+              filters:
+                - name: test
+              actions:
+                - type: update
+                  configuration:
+                    tenant_id: keep
+                    sku:
+                      current: True
+                    public_network_access: disabled
+    """
+
+    schema = type_schema(
+        "update",
+        name={"type": "string"},
+        value={"type": "string"},
+        setting_type={"type": "string"},
+        required=["name", "value"],
+    )
+
+    @staticmethod
+    def generate_schema():
+        from azure.identity import DefaultAzureCredential
+        from azure.mgmt.keyvault import KeyVaultManagementClient
+
+        sub_id = "00000000-0000-0000-0000-000000000000"
+        client = KeyVaultManagementClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+        vault_properties = client.models().VaultProperties
+        model_signature = inspect.signature(vault_properties)
+
+        schema_dict = {}
+        required = []
+
+        for name, v in model_signature.parameters.items():
+
+            if name == "kwargs":
+                continue
+
+            schema_dict.setdefault(name, {})
+
+            if hasattr(v, "annotation"):
+                if not isinstance(v.annotation, _UnionGenericAlias):
+                    schema_dict[name] = type_to_jsonschema(v.annotation)
+
+                    # anything that isn't a union must be required since we can't have an optional None
+                    required.append(name)
+
+                    continue
+
+                args = get_args(v.annotation)
+
+                if type(None) not in args:
+                    required.append(name)
+                else:
+                    args = list(args)
+                    args.remove(type(None))
+
+                if len(args) == 1:
+                    schema_dict[name]['type'] = args[0]
+
+                schema_dict[name] = type_to_jsonschema(args[0])
+
+        return type_schema(
+            "update",
+            required=["configuration"],
+            **{
+                "configuration": {
+                    "type": "object",
+                    "properties": schema_dict,
+                    "required": required
+                }
+            }
+        )
+
+    schema = generate_schema()
+
+    def _prepare_processing(self):
+        self.client = self.manager.get_client()
+
+    def _process_resource(self, resource):
+        props = copy.deepcopy(self.data["configuration"])
+
+        if props['tenant_id'] == "keep":
+            props["tenant_id"] = resource["properties"]["tenantId"]
+
+        if props["sku"] == {"current": True}:
+            props["sku"] = resource["properties"]["sku"]
+
+        params = self.client.models().VaultCreateOrUpdateParameters(
+            location=resource["location"],
+            properties=self.client.models().VaultProperties(**props)
+        )
+        self.client.vaults.update(
+            resource_group_name=resource["resourceGroup"],
+            vault_name=resource["name"],
+            parameters=params
+        )
