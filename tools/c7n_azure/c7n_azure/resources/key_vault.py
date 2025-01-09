@@ -365,14 +365,6 @@ class KeyVaultUpdateAction(AzureBaseAction):
                     public_network_access: disabled
     """
 
-    schema = type_schema(
-        "update",
-        name={"type": "string"},
-        value={"type": "string"},
-        setting_type={"type": "string"},
-        required=["name", "value"],
-    )
-
     @staticmethod
     def generate_schema():
         from azure.identity import DefaultAzureCredential
