@@ -376,7 +376,7 @@ class KeyVaultUpdateAction(AzureBaseAction):
         model_signature = inspect.signature(vault_properties)
 
         schema_dict = {}
-        required = []
+        required = ["tenant_id", "sku"]
 
         for name, v in model_signature.parameters.items():
 
@@ -388,10 +388,6 @@ class KeyVaultUpdateAction(AzureBaseAction):
             if hasattr(v, "annotation"):
                 if not isinstance(v.annotation, _UnionGenericAlias):
                     schema_dict[name] = type_to_jsonschema(v.annotation)
-
-                    # anything that isn't a union must be required since we can't have an optional None
-                    required.append(name)
-
                     continue
 
                 args = get_args(v.annotation)
@@ -424,6 +420,33 @@ class KeyVaultUpdateAction(AzureBaseAction):
     def _prepare_processing(self):
         self.client = self.manager.get_client()
 
+    def make_access_policy_entry(self, acp):
+        permissions = self.client.models().Permissions(**acp["permissions"])
+        return self.client.models().AccessPolicyEntry(
+            tenant_id=acp["tenant_id"],
+            object_id=acp["object_id"],
+            application_id=acp["application_id"],
+            permissions=permissions
+        )
+
+    def make_network_acl_rule_set(self, acl):
+        ip_rules = [
+            self.client.models().IPRule(**ip_rule)
+            for ip_rule in acl.get("ip_rules", [])
+        ]
+
+        virtual_network_rules = [
+            self.client.models().VirtualNetworkRule(**vn_rule)
+            for vn_rule in acl.get("virtual_network_rules", [])
+        ]
+
+        return self.client.models().NetworkRuleSet(
+            bypass=acl["bypass"],
+            default_action=acl["default_action"],
+            ip_rules=ip_rules,
+            virtual_network_rules=virtual_network_rules,
+        )
+
     def _process_resource(self, resource):
         props = copy.deepcopy(self.data["configuration"])
 
@@ -432,6 +455,15 @@ class KeyVaultUpdateAction(AzureBaseAction):
 
         if props["sku"] == {"current": True}:
             props["sku"] = resource["properties"]["sku"]
+
+        if props.get("access_policies"):
+            props["access_policies"] = [
+                self.make_access_policy_entry(p)
+                for p in props["access_policies"]
+            ]
+
+        if props.get("network_acls"):
+            props["network_acls"] = self.make_network_acl_rule_set(props["network_acls"])
 
         params = self.client.models().VaultCreateOrUpdateParameters(
             location=resource["location"],
