@@ -403,4 +403,114 @@ class KeyVaultFirewallBypassFilterTest(BaseTest):
     def test_run(self, properties, expected):
         resource = {'properties': properties}
         f = KeyVaultFirewallBypassFilter({'mode': 'equal', 'list': []})
+
         self.assertEqual(expected, f._query_bypass(resource))
+
+
+class KeyVaultUpdateActionTest(BaseTest):
+
+    @arm_template("keyvault.json")
+    def test_update_action(self):
+        p = self.load_policy(
+            {
+                'name': 'test-azure-keyvault',
+                'resource': 'azure.keyvault',
+                'filters': [
+                    {
+                        'type': 'value',
+                        'key': 'name',
+                        'op': 'glob',
+                        'value_type': 'normalize',
+                        'value': 'cckeyvault1*'
+                    },
+                    {
+                        "properties.publicNetworkAccess": "Enabled"
+                    }
+                ],
+                'actions': [
+                    {
+                        "type": "update",
+                        "configuration": {
+                            "tenant_id": "keep",
+                            "sku": {"current": True},
+                            "public_network_access": "disabled",
+                        }
+                    }
+                ]
+            }
+        )
+        resources = p.run()
+        self.assertEqual(1, len(resources))
+        vault_before = resources[0]
+
+        client = self.session.client('azure.mgmt.keyvault.KeyVaultManagementClient')
+        vault_after = client.vaults.get(
+            vault_before['resourceGroup'], vault_before['name']
+        )
+        assert vault_after.properties.public_network_access == "Disabled"
+
+    @arm_template("keyvault.json")
+    def test_update_action_network_access(self):
+        subnet_id = "/subscriptions/ea42f556-5106-4743-99b0-c129bfa71a47/resourceGroups/test_keyvault/providers/Microsoft.Network/virtualNetworks/test/subnets/default"  # noqa
+
+        p = self.load_policy(
+            {
+                'name': 'test-azure-keyvault',
+                'resource': 'azure.keyvault',
+                'filters': [
+                    {
+                        'type': 'value',
+                        'key': 'name',
+                        'op': 'glob',
+                        'value_type': 'normalize',
+                        'value': 'cckeyvault1*'
+                    },
+                ],
+                'actions': [
+                    {
+                        "type": "update",
+                        "configuration": {
+                            "tenant_id": "keep",
+                            "sku": {"current": True},
+                            "network_acls": {
+                                "bypass": "None",
+                                "default_action": "Allow",
+                                "ip_rules": [
+                                    {
+                                        "value": "123.45.67.89"
+                                    }
+                                ],
+                                "virtual_network_rules": [
+                                    {
+                                        "id": subnet_id,
+                                        "ignore_missing_vnet_service_endpoint": True
+                                    }
+                                ]
+
+                            }
+                        }
+                    }
+                ]
+            }
+        )
+        resources = p.run()
+        self.assertEqual(1, len(resources))
+        vault_before = resources[0]
+
+        # all the network acls before were the default from the arm template
+        assert vault_before['properties']['networkAcls']['bypass'] == "AzureServices"
+
+        client = self.session.client('azure.mgmt.keyvault.KeyVaultManagementClient')
+        vault_after = client.vaults.get(
+            vault_before['resourceGroup'], vault_before['name']
+        )
+
+        assert vault_after.properties.network_acls.bypass == "None"
+        assert vault_after.properties.network_acls.default_action == "Allow"
+
+        assert len(vault_after.properties.network_acls.ip_rules) == 1
+        assert vault_after.properties.network_acls.ip_rules[0].value == "123.45.67.89"
+
+        assert len(vault_after.properties.network_acls.virtual_network_rules) == 1
+        assert vault_after.properties.network_acls.virtual_network_rules[0].id == subnet_id
+        assert vault_after.properties.network_acls.virtual_network_rules[0].ignore_missing_vnet_service_endpoint is True
