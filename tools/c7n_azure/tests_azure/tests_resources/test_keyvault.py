@@ -516,6 +516,8 @@ class KeyVaultUpdateActionTest(BaseTest):
         assert vault_after.properties.network_acls.ip_rules[0].value == "123.45.67.89/32"
 
         assert len(vault_after.properties.network_acls.virtual_network_rules) == 1
+        vn_rules = vault_after.properties.network_acls.virtual_network_rules[0]
+
         # azure lowercases the id string
-        assert vault_after.properties.network_acls.virtual_network_rules[0].id == subnet_id.lower()
-        assert vault_after.properties.network_acls.virtual_network_rules[0].ignore_missing_vnet_service_endpoint is True
+        assert vn_rules.id == subnet_id.lower()
+        assert vn_rules.ignore_missing_vnet_service_endpoint is True
