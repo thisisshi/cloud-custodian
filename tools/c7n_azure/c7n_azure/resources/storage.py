@@ -575,7 +575,7 @@ class RequireSecureTransferAction(AzureBaseAction):
               - type: require-secure-transfer
                 value: True
 
-    You can also se the minimum tls version on a bucket,
+    You can also set the minimum tls version on a bucket,
     valid values: TLS1_0, TLS1_1, TLS1_2:
 
     .. code-block:: yaml
