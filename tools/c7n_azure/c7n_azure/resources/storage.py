@@ -612,8 +612,7 @@ class RequireSecureTransferAction(AzureBaseAction):
             kwargs["minimum_tls_version"] = self.data.get("minimum_tls_version")
 
         update_params = StorageAccountUpdateParameters(**kwargs)
-
-        res = self.client.storage_accounts.update(
+        self.client.storage_accounts.update(
             resource['resourceGroup'],
             resource['name'],
             update_params,
