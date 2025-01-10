@@ -451,7 +451,10 @@ class KeyVaultUpdateActionTest(BaseTest):
 
     @arm_template("keyvault.json")
     def test_update_action_network_access(self):
-        subnet_id = "/subscriptions/ea42f556-5106-4743-99b0-c129bfa71a47/resourceGroups/test_keyvault/providers/Microsoft.Network/virtualNetworks/test/subnets/default"  # noqa
+        sub = "ea42f556-5106-4743-99b0-c129bfa71a47"
+        rg = "test_keyvault"
+        id_prefix = f"/subscriptions/{sub}/resourceGroups/{rg}/providers"
+        subnet_id = f"{id_prefix}/Microsoft.Network/virtualNetworks/test/subnets/default"
 
         p = self.load_policy(
             {
@@ -509,8 +512,10 @@ class KeyVaultUpdateActionTest(BaseTest):
         assert vault_after.properties.network_acls.default_action == "Allow"
 
         assert len(vault_after.properties.network_acls.ip_rules) == 1
-        assert vault_after.properties.network_acls.ip_rules[0].value == "123.45.67.89"
+        # azure inserts the /32
+        assert vault_after.properties.network_acls.ip_rules[0].value == "123.45.67.89/32"
 
         assert len(vault_after.properties.network_acls.virtual_network_rules) == 1
-        assert vault_after.properties.network_acls.virtual_network_rules[0].id == subnet_id
+        # azure lowercases the id string
+        assert vault_after.properties.network_acls.virtual_network_rules[0].id == subnet_id.lower()
         assert vault_after.properties.network_acls.virtual_network_rules[0].ignore_missing_vnet_service_endpoint is True

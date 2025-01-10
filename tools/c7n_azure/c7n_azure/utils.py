@@ -655,11 +655,11 @@ def type_to_jsonschema(input_type):
     Takes a python type hint and turns into jsonschema
     """
 
-    if input_type == str or input_type == datetime.datetime:
+    if input_type is str or input_type == datetime.datetime:
         return {"type": "string"}
-    elif input_type == int:
+    elif input_type is int:
         return {"type": "number"}
-    elif input_type == bool:
+    elif input_type is bool:
         return {"type": "boolean"}
     elif isinstance(input_type, ForwardRef):
         return {"type": "object"}

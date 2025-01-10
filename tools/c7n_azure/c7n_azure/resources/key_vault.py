@@ -371,7 +371,10 @@ class KeyVaultUpdateAction(AzureBaseAction):
         from azure.mgmt.keyvault import KeyVaultManagementClient
 
         sub_id = "00000000-0000-0000-0000-000000000000"
-        client = KeyVaultManagementClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+        client = KeyVaultManagementClient(
+            credential=DefaultAzureCredential(),
+            subscription_id=sub_id
+        )
         vault_properties = client.models().VaultProperties
         model_signature = inspect.signature(vault_properties)
 
