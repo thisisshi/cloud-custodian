@@ -367,15 +367,9 @@ class KeyVaultUpdateAction(AzureBaseAction):
 
     @staticmethod
     def generate_schema():
-        from azure.identity import DefaultAzureCredential
         from azure.mgmt.keyvault import KeyVaultManagementClient
 
-        sub_id = "00000000-0000-0000-0000-000000000000"
-        client = KeyVaultManagementClient(
-            credential=DefaultAzureCredential(),
-            subscription_id=sub_id
-        )
-        vault_properties = client.models().VaultProperties
+        vault_properties = KeyVaultManagementClient.models().VaultProperties
         model_signature = inspect.signature(vault_properties)
 
         schema_dict = {}
