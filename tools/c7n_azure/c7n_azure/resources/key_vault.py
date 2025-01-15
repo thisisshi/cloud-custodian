@@ -346,6 +346,9 @@ class KeyVaultUpdateAction(AzureBaseAction):
     To keep the tenant id the same, set it to "keep"
     To keep the sku settings the same, set it to {"current": True}
 
+    For more information on Vault properties:
+
+    https://learn.microsoft.com/en-us/python/api/azure-mgmt-keyvault/azure.mgmt.keyvault.v2023_07_01.models.vaultproperties?view=azure-python
 
     :example:
 
