@@ -412,7 +412,7 @@ class KeyVaultUpdateAction(AzureBaseAction):
             }
         )
 
-    schema = generate_schema()
+    schema = generate_schema.__func__()  # python 3.9 compat
 
     def _prepare_processing(self):
         self.client = self.manager.get_client()
