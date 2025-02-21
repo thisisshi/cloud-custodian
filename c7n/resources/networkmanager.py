@@ -3,20 +3,30 @@
 
 from c7n.actions.core import BaseAction
 from c7n.manager import resources as c7n_resources
-from c7n.query import ChildResourceManager, QueryResourceManager, TypeInfo
+from c7n.query import ChildResourceManager, DescribeSource, QueryResourceManager, TypeInfo
 from c7n.utils import local_session, type_schema
 from c7n.tags import RemoveTag, Tag, TagActionFilter, TagDelayedAction
 
 
+class DescribeNetwork(DescribeSource):
+
+    def augment(self, resources):
+        return super().augment(
+            [r for r in resources if r['OwnerAccountId'] == self.manager.config.account_id]
+        )
+
+
 @c7n_resources.register('networkmanager-core')
 class CoreNetwork(QueryResourceManager):
+
+    source_mapping = {'describe': DescribeNetwork}
 
     class resource_type(TypeInfo):
         service = 'networkmanager'
         enum_spec = ('list_core_networks', 'CoreNetworks', None)
         detail_spec = (
             'get_core_network', 'CoreNetworkId',
-            'CoreNetworkId', None)
+            'CoreNetworkId', 'CoreNetwork')
         arn = 'CoreNetworkArn'
         name = 'CoreNetworkId'
         id = 'CoreNetworkId'
