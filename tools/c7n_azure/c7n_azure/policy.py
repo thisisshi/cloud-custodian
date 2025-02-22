@@ -314,10 +314,12 @@ class AzureModeCommon:
 
     @staticmethod
     def annotate_parent(policy, resources):
+        if not issubclass(policy.resource_manager.__class__, ChildResourceManager):
+            return
+
         for r in resources:
-            if not issubclass(policy.resource_manager.__class__, ChildResourceManager):
-                r[policy.resource_maanger.resource_type.parent_key] = \
-                    policy.resource_manager.extract_parent(r)
+            r[policy.resource_manager.resource_type.parent_key] = \
+                policy.resource_manager.__class__.extract_parent(r)
 
     @staticmethod
     def run_for_event(policy, event=None):
