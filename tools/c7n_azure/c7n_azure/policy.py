@@ -315,7 +315,7 @@ class AzureModeCommon:
     @staticmethod
     def annotate_parent(policy, resources):
         for r in resources:
-            if not issubclass(policy.resource_manager, ChildResourceManager):
+            if not issubclass(policy.resource_manager.__class__, ChildResourceManager):
                 r[policy.resource_maanger.resource_type.parent_key] = \
                     policy.resource_manager.extract_parent_id(r)
 
