@@ -202,6 +202,8 @@ class KeyVaultKeyUpdateAction(AzureBaseAction):
     """
     Update a key's properties. This does not update its cryptographic material.
 
+    expires_on and not_before require isoformatted dates
+
     :example:
 
     .. code-block: yaml
@@ -237,11 +239,10 @@ class KeyVaultKeyUpdateAction(AzureBaseAction):
         tags={"type": "object"},
         not_before={"type": "string", "format": "date-time"},
         expires_on={"type": "string", "format": "date-time"},
-        release_policy={"type": "object"},
     )
 
     def _process_resource(self, resource):
-        name = resource['name']
+        name = resource['vault_id']['resource_id']['name']
 
         id = KeyProperties(key_id=resource['id'])
 
@@ -251,17 +252,10 @@ class KeyVaultKeyUpdateAction(AzureBaseAction):
         expires_on = self.data.get("expires_on")
 
         if not_before:
-            not_before = datetime.strptime(not_before)
+            not_before = datetime.datetime.fromisoformat(not_before)
 
         if expires_on:
-            expires_on = datetime.strptime(expires_on)
-
-        release_policy = self.data.get("release_policy")
-        if release_policy:
-            release_policy = KeyReleasePolicy(
-                encoded_policy=json.dumps(release_policy).encode("utf-8"),
-                content_type="application/json; charset=utf-8"
-            )
+            expires_on = datetime.datetime.fromisoformat(expires_on)
 
         client.update_key_properties(
             name=name,
@@ -270,5 +264,4 @@ class KeyVaultKeyUpdateAction(AzureBaseAction):
             tags=self.data.get("tags"),
             not_before=not_before,
             expires_on=expires_on,
-            release_policy=release_policy,
         )
