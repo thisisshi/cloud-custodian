@@ -166,9 +166,10 @@ class KeyVaultKeyTest(BaseTest):
         )
         self.assertEqual(
             key.properties.expires_on,
-            datetime.datetime.fromisoformat("2025-04-01 00:00:00Z")
+            # python 3.9 compat, can't use 00:00:00Z
+            datetime.datetime.fromisoformat("2025-04-01 00:00:00+00:00")
         )
         self.assertEqual(
             key.properties.not_before,
-            datetime.datetime.fromisoformat("2025-03-01 00:00:00Z")
+            datetime.datetime.fromisoformat("2025-03-01 00:00:00+00:00")
         )
