@@ -2,10 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import datetime
-import json
 import logging
 
-from azure.keyvault.keys import KeyProperties, KeyReleasePolicy
+from azure.keyvault.keys import KeyProperties
 
 from c7n.filters import Filter
 from c7n.utils import type_schema
