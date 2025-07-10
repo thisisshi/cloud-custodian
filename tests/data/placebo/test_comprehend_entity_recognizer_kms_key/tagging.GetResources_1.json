@@ -83,15 +83,6 @@
                         "Value": "PolicyTestASV"
                     }
                 ]
-            },
-            {
-                "ResourceARN": "arn:aws:comprehend:us-east-1:644160558196:entity-recognizer/TestVpcEntityRecognizer/version/RBP",
-                "Tags": [
-                    {
-                        "Key": "ASV",
-                        "Value": "PolicyTestASV"
-                    }
-                ]
             }
         ],
         "ResponseMetadata": {}
