@@ -1,4 +1,4 @@
-from c7n.query import sources, TypeInfo
+from c7n.query import sources, TypeInfo, MaxResourceLimit
 from c7n.actions import ActionRegistry
 from c7n.filters import FilterRegistry
 from c7n.manager import ResourceManager
@@ -60,4 +60,23 @@ class QueryResourceManager(ResourceManager, metaclass=QueryMeta):
         return local_session(self.session_factory)
 
     def resources(self):
-        return self.source.get_resources(query=None)
+        resources = {}
+        self._cache.load()
+
+        with self.ctx.tracer.subsegment("resource-fetch"):
+            resources = self.source.get_resources(query=None)
+
+        resource_count = len(resources)
+
+        with self.ctx.tracer.subsegment("filter"):
+            resources = self.filter_resources(resources)
+
+        if self.data == self.ctx.policy.data:
+            self.check_resource_limit(len(resources), resource_count)
+
+        return resources
+
+    def check_resource_limit(self, selection_count, population_count):
+        p = self.ctx.policy
+        max_resource_limits = MaxResourceLimit(p, selection_count, population_count)
+        return max_resource_limits.check_resource_limits()
