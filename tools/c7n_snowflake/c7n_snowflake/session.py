@@ -37,7 +37,7 @@ class SessionFactory:
                     "password": os.environ["SNOWFLAKE_API_KEY"],
                 }
             )
-        except snowflake.connector.errors.DatabaseError:
+        except DatabaseError:
             raise CustodianError("Unable to connect to Snowflake, check your Network Policies")
 
         return Root(connection)
