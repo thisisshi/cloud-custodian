@@ -13,8 +13,21 @@ from c7n_snowflake.utils import class_init_to_jsonschema
 
 @resources.register("warehouse")
 class Warehouse(QueryResourceManager):
+    """
+    Query, Filter, and take Action on Snowflake Warehouse resources
+
+    Permissions:
+
+    .. code-block:: sql
+
+        CREATE ROLE C7N IF NOT EXISTS
+        GRANT MONITOR ON WAREHOUSE $WAREHOUSE_NAME TO ROLE C7N
+
+    """
+
     client = "warehouses"
-    permissions = ("USAGE:WAREHOUSES",)
+    object_domain = "WAREHOUSE"
+    permissions = ("MONITOR:WAREHOUSE",)
 
 
 @Warehouse.action_registry.register("modify")
@@ -22,12 +35,25 @@ class ModifyAction(SnowflakeAction):
     """
     Modify a Warehouse
 
+    Permissions:
+
+    .. code-block:: sql
+
+        GRANT MODIFY WAREHOUSE ON $WAREHOUSE_NAME TO ROLE C7N
+        GRANT MONITOR WAREHOUSE ON $WAREHOUSE_NAME TO ROLE C7N
+
+    :example:
+
     .. code-block:: yaml
 
         policies:
             - name: modify-warehouse-auto-suspend
+              description: Set the auto suspend setting on all warehouses that have a greater than 60 or missing auto_suspend
               resource: snowflake.warehouse
               filters:
+                - type: value
+                  key: auto_suspend
+                  value: absent
                 - type: value
                   key: auto_suspend
                   value: 60
@@ -38,7 +64,10 @@ class ModifyAction(SnowflakeAction):
                     auto_suspend: 60
     """
 
-    permissions = "MODIFY:WAREHOUSE"
+    permissions = (
+        "MODIFY:WAREHOUSE",
+        "MONITOR:WAREHOUSE",
+    )
 
     schema = type_schema(
         "modify",
@@ -62,7 +91,7 @@ class ModifyAction(SnowflakeAction):
             ) as e:
                 error_body = json.loads(e.body)
                 error_message = error_body["message"].replace("\n", " ")
-                self.log.error(f"Unable to modify:{resource_name}, {error_message}")
+                self.log.error(f"Unable to fetch:{resource_name}, {error_message}")
                 failed.append(resource_name)
                 continue
 
