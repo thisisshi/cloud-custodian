@@ -22,7 +22,6 @@ class Warehouse(QueryResourceManager):
 
         CREATE ROLE C7N IF NOT EXISTS
         GRANT MONITOR ON WAREHOUSE $WAREHOUSE_NAME TO ROLE C7N
-
     """
 
     client = "warehouses"
@@ -91,7 +90,7 @@ class ModifyAction(SnowflakeAction):
             ) as e:
                 error_body = json.loads(e.body)
                 error_message = error_body["message"].replace("\n", " ")
-                self.log.error(f"Unable to fetch:{resource_name}, {error_message}")
+                self.log.error(f"Unable to fetch:{resource_name}, {error_message}. Make sure you have granted your role 'MODIFY' and 'MONTIOR' on those resources")
                 failed.append(resource_name)
                 continue
 
@@ -108,7 +107,7 @@ class ModifyAction(SnowflakeAction):
             ) as e:
                 error_body = json.loads(e.body)
                 error_message = error_body["message"].replace("\n", " ")
-                self.log.error(f"Unable to modify:{resource_name}, {error_message}")
+                self.log.error(f"Unable to modify:{resource_name}, {error_message}. Make sure you have granted your role 'MODIFY' and 'MONITOR' on those warehouses")
                 failed.append(resource_name)
                 continue
 

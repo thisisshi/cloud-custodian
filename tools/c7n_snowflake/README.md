@@ -42,6 +42,11 @@ Then, export the role as an environment variable:
 export SNOWFLAKE_ROLE=C7N
 ```
 
+Next, make sure you have appropriate network access to run Cutodian policies. You
+will need to ensure that your IP address is allowed to execute against your Snowflake
+account. You can check these settings in Admin -> Security -> Network Policies in
+the Snowflake console.
+
 ### Tags
 
 Tags in Snowflake must be associated to a database and a schema. To retrieve

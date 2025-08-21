@@ -26,7 +26,7 @@ class DescribeSource:
 
     def get_resources(self, query=None):
         resources = []
-        for i in self.query.filter(self.manager).iter(like='%'):
+        for i in self.query.filter(self.manager).iter():
             resources.append(i.to_dict())
         return resources
 
