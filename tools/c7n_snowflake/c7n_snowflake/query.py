@@ -1,7 +1,7 @@
-from c7n.query import sources, TypeInfo, MaxResourceLimit
 from c7n.actions import ActionRegistry
 from c7n.filters import FilterRegistry
 from c7n.manager import ResourceManager
+from c7n.query import MaxResourceLimit, TypeInfo, sources
 from c7n.utils import local_session
 
 
@@ -33,6 +33,7 @@ class DescribeSource:
 
 class QueryMeta(type):
     """metaclass to have consistent action/filter registry for new resources."""
+
     def __new__(cls, name, parents, attrs):
         if "filter_registry" not in attrs:
             attrs["filter_registry"] = FilterRegistry("%s.filters" % name.lower())

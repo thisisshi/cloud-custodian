@@ -1,8 +1,9 @@
 import os
-from snowflake.connector import connect
-from snowflake.core import Root
-from snowflake.connector.errors import DatabaseError
+
 from c7n.exceptions import CustodianError
+from snowflake.connector import connect
+from snowflake.connector.errors import DatabaseError
+from snowflake.core import Root
 
 
 class SessionFactory:
@@ -35,9 +36,12 @@ class SessionFactory:
                     "account": os.environ["SNOWFLAKE_ACCOUNT"],
                     "user": os.environ["SNOWFLAKE_USER"],
                     "password": os.environ["SNOWFLAKE_API_KEY"],
+                    "role": os.environ.get("SNOWFLAKE_ROLE"),
                 }
             )
-        except DatabaseError:
-            raise CustodianError("Unable to connect to Snowflake, check your Network Policies")
+        except DatabaseError as e:
+            raise CustodianError(
+                "Unable to connect to Snowflake, check your Network Policies: %s" % e
+            )
 
         return Root(connection)

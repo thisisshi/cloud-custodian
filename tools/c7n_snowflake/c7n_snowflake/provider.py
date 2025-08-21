@@ -3,6 +3,7 @@
 
 from c7n.provider import Provider, clouds
 from c7n.registry import PluginRegistry
+
 from c7n_snowflake.resources.resource_map import ResourceMap
 from c7n_snowflake.session import SessionFactory
 
