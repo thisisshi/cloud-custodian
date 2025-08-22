@@ -63,6 +63,8 @@ grant that role access to your Tag database.
 
 ```sql
 GRANT USAGE ON DATABASE C7N TO ROLE C7N
+GRANT USAGE ON SCHEMA IDENTIFIER('"C7N"."PUBLIC"') TO ROLE IDENTIFIER('"C7N"')
+GRANT CREATE TAG ON FUTURE SCHEMAS IN DATABASE IDENTIFIER('"C7N"') TO ROLE IDENTIFIER('"C7N"')
 ```
 
 Tags must be first created in Snowflake before added to resources. you can allow
