@@ -6,6 +6,7 @@ from c7n.manager import ResourceManager
 from c7n.query import MaxResourceLimit, TypeInfo, sources
 from c7n.utils import local_session
 from snowflake.core.exceptions import NotFoundError, UnauthorizedError
+from c7n_snowflake.actions.tags import SnowflakeTagAction
 
 
 class ResourceQuery:
@@ -42,7 +43,12 @@ class QueryMeta(type):
             attrs["filter_registry"] = FilterRegistry("%s.filters" % name.lower())
         if "action_registry" not in attrs:
             attrs["action_registry"] = ActionRegistry("%s.actions" % name.lower())
+
+        if attrs.get('taggable'):
+            attrs['action_registry'].register('tag', SnowflakeTagAction)
+
         return super(QueryMeta, cls).__new__(cls, name, parents, attrs)
+
 
 
 class QueryResourceManager(ResourceManager, metaclass=QueryMeta):
@@ -53,6 +59,7 @@ class QueryResourceManager(ResourceManager, metaclass=QueryMeta):
     type: str
     resource_type: "TypeInfo"
     source_mapping = sources
+    taggable: bool
 
     def __init__(self, ctx, data):
         super(QueryResourceManager, self).__init__(ctx, data)

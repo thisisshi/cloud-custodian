@@ -38,6 +38,7 @@ class Role(QueryResourceManager):
         "future_grants_to",
     )
     permissions = ()
+    taggable = True
 
     def augment(self, resources):
         resources = super(Role, self).augment(resources)

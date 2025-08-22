@@ -27,6 +27,7 @@ class Warehouse(QueryResourceManager):
     client = "warehouses"
     object_domain = "WAREHOUSE"
     permissions = ("MONITOR:WAREHOUSE",)
+    taggable = True
 
 
 @Warehouse.action_registry.register("modify")
