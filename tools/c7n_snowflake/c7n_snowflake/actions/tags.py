@@ -1,11 +1,13 @@
+# Copyright The Cloud Custodian Authors.
+# SPDX-License-Identifier: Apache-2.0
+
 import os
 
-from c7n.tags import DEFAULT_TAG
-from c7n.utils import local_session, type_schema
+from c7n.exceptions import CustodianError
+from c7n.utils import type_schema
+from snowflake.core.exceptions import NotFoundError, UnauthorizedError
 
 from c7n_snowflake.actions.base import SnowflakeAction
-
-from snowflake.core.exceptions import NotFoundError, UnauthorizedError
 
 
 class SnowflakeTagAction(SnowflakeAction):
@@ -24,7 +26,7 @@ class SnowflakeTagAction(SnowflakeAction):
               - name: MY_WH
             actions:
               - type: tag
-                # creates the tag if it doesnt exist
+                # creates the tag if it doesnt exist, default: False
                 create_tags_in_system: true
                 tags:
                   Test: bar
@@ -33,9 +35,7 @@ class SnowflakeTagAction(SnowflakeAction):
     permissions = ()
 
     schema = type_schema(
-        'tag',
-        tags={'type': 'object'},
-        create_tags_in_system={'type': 'boolean', 'default': False}
+        'tag', tags={'type': 'object'}, create_tags_in_system={'type': 'boolean', 'default': False}
     )
 
     def validate(self):
@@ -50,7 +50,10 @@ class SnowflakeTagAction(SnowflakeAction):
         Creates Tag in Snowflake system
         """
         self.log.info(f"Creating tag in system:{tag_name}")
-        create_command = session.sql(f"CREATE TAG IF NOT EXISTS {tag_name} COMMENT = 'Created by Cloud Custodian'")
+        create_command = session.sql(
+            f"CREATE TAG IF NOT EXISTS {tag_name} "
+            "COMMENT = 'Created by Cloud Custodian'"
+        )
         create_command.collect()
 
     def fetch_system_tags(self, session, tag_database: str, tag_schema: str) -> set:
@@ -91,7 +94,9 @@ class SnowflakeTagAction(SnowflakeAction):
             session.use_database(tag_database)
             session.use_schema(tag_schema)
         except (NotFoundError, UnauthorizedError):
-            raise CustodianError(f"Unable to use tag database:{tag_database}, schema:{tag_schema}")
+            raise CustodianError(
+                f"Unable to use tag database:{tag_database}, schema:{tag_schema}"
+            )
 
         tags = self.data.get('tags')
 

@@ -1,3 +1,6 @@
+# Copyright The Cloud Custodian Authors.
+# SPDX-License-Identifier: Apache-2.0
+
 import os
 
 from c7n.actions import ActionRegistry
@@ -6,6 +9,7 @@ from c7n.manager import ResourceManager
 from c7n.query import MaxResourceLimit, TypeInfo, sources
 from c7n.utils import local_session
 from snowflake.core.exceptions import NotFoundError, UnauthorizedError
+
 from c7n_snowflake.actions.tags import SnowflakeTagAction
 
 
@@ -50,12 +54,10 @@ class QueryMeta(type):
         return super(QueryMeta, cls).__new__(cls, name, parents, attrs)
 
 
-
 class QueryResourceManager(ResourceManager, metaclass=QueryMeta):
     """
     A Snowflake Resource
     """
-
     type: str
     resource_type: "TypeInfo"
     source_mapping = sources

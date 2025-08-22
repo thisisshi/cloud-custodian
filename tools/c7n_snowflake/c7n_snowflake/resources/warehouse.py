@@ -1,3 +1,6 @@
+# Copyright The Cloud Custodian Authors.
+# SPDX-License-Identifier: Apache-2.0
+
 import json
 
 from c7n.exceptions import CustodianError
@@ -48,7 +51,9 @@ class ModifyAction(SnowflakeAction):
 
         policies:
             - name: modify-warehouse-auto-suspend
-              description: Set the auto suspend setting on all warehouses that have a greater than 60 or missing auto_suspend
+              description: |
+                Set the auto suspend setting on all warehouses that
+                have a greater than 60 or missing auto_suspend
               resource: snowflake.warehouse
               filters:
                 - type: value
@@ -91,7 +96,11 @@ class ModifyAction(SnowflakeAction):
             ) as e:
                 error_body = json.loads(e.body)
                 error_message = error_body["message"].replace("\n", " ")
-                self.log.error(f"Unable to fetch:{resource_name}, {error_message}. Make sure you have granted your role 'MODIFY' and 'MONTIOR' on those resources")
+                self.log.error(
+                    f"Unable to fetch:{resource_name}, {error_message}. "
+                    "Make sure you have granted your role 'MODIFY' and "
+                    "'MONTIOR' on those resources"
+                )
                 failed.append(resource_name)
                 continue
 
@@ -108,7 +117,11 @@ class ModifyAction(SnowflakeAction):
             ) as e:
                 error_body = json.loads(e.body)
                 error_message = error_body["message"].replace("\n", " ")
-                self.log.error(f"Unable to modify:{resource_name}, {error_message}. Make sure you have granted your role 'MODIFY' and 'MONITOR' on those warehouses")
+                self.log.error(
+                    f"Unable to modify:{resource_name}, {error_message}. "
+                    "Make sure you have granted your role 'MODIFY' and "
+                    "'MONITOR' on those warehouses"
+                )
                 failed.append(resource_name)
                 continue
 
